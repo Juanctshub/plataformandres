@@ -40,7 +40,7 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
             <Building2 className="w-6 h-6 text-zinc-950" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-black tracking-tighter text-zinc-100 leading-none">ANDRÉS BELLO</span>
+            <span className="text-sm font-black tracking-tighter text-zinc-100 leading-none uppercase">Andrés Bello</span>
             <span className="text-[10px] items-center flex gap-1 font-bold text-zinc-500 mt-1 uppercase tracking-widest leading-none">
              Unidad Educativa <ChevronRight className="w-2 h-2 text-zinc-700" /> 2026
             </span>
@@ -91,20 +91,21 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
           </div>
         </div>
         
-        <SidebarMenu>
+        <SidebarMenu className="pb-2">
           <SidebarMenuItem>
             <SidebarMenuButton 
               onClick={() => { localStorage.clear(); window.location.reload(); }}
-              className="py-6 px-4 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all font-bold text-sm tracking-tight group"
+              className="py-6 px-4 rounded-xl text-red-500/80 hover:bg-red-500/10 hover:text-red-400 transition-all font-bold text-sm tracking-tight group"
             >
               <LogOut className="mr-3 w-5 h-5 transition-transform group-hover:-translate-x-1" />
               <span>Cerrar Sesión Segura</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-      </SidebarContent>
+      </SidebarFooter>
     </Sidebar>
   );
 };
 
 export default AppSidebar;
+

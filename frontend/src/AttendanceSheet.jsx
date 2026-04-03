@@ -2,44 +2,47 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ClipboardCheck, 
+  Search, 
   Calendar, 
   CheckCircle2, 
   XCircle, 
-  AlertCircle, 
-  CloudLine,
-  Search,
-  UserCheck,
-  UserX,
-  RefreshCw,
-  MoreVertical
+  AlertCircle,
+  ArrowRight,
+  ShieldCheck,
+  Building2
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const AttendanceSkeleton = () => (
+  <div className="space-y-8">
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-64 bg-zinc-900" />
+        <Skeleton className="h-4 w-48 bg-zinc-900" />
+      </div>
+      <div className="flex gap-3 w-full md:w-auto">
+        <Skeleton className="h-10 w-full md:w-48 bg-zinc-900" />
+        <Skeleton className="h-10 w-48 bg-zinc-900" />
+      </div>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[1, 2, 3, 4, 5, 6].map(i => (
+        <Skeleton key={i} className="h-32 w-full bg-zinc-900 rounded-2xl" />
+      ))}
+    </div>
+  </div>
+);
 
 const AttendanceSheet = () => {
   const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [attendance, setAttendance] = useState({});
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [seccion, setSeccion] = useState('1er Año A');
-  const [msg, setMsg] = useState({ text: '', type: '' });
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => { fetchStudents(); }, [seccion]);
-
   const fetchStudents = async () => {
     try {
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
