@@ -22,7 +22,6 @@ const Login = ({ onLogin }) => {
     const endpoint = isLogin ? '/api/login' : '/api/register';
     
     try {
-      // Usamos el prefijo de Vercel si estamos en producción, de lo contrario localhost
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
       const response = await fetch(`${baseUrl}${endpoint}`, {
         method: 'POST',
@@ -50,25 +49,14 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div style={{
-      display: 'flex',
+    <div style={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      alignItems: 'center', 
       justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh',
-      width: '100vw',
-      background: 'var(--bg-dark)',
-      perspective: '1000px'
+      padding: '20px'
     }}>
       <motion.div 
-        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="glass-effect" 
-        style={{
-          padding: '40px',
-          width: '420px',
-          textAlign: 'center',
-          display: 'flex',
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         className="glass-effect"
@@ -103,8 +91,8 @@ const Login = ({ onLogin }) => {
             <input 
               className="glass-input" 
               placeholder="Nombre de Usuario" 
-              value={formData.username}
-              onChange={(e) => setFormData({...formData, username: e.target.value})}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required 
             />
           </div>
@@ -113,8 +101,8 @@ const Login = ({ onLogin }) => {
               type="password" 
               className="glass-input" 
               placeholder="Contraseña" 
-              value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required 
             />
           </div>
@@ -127,44 +115,55 @@ const Login = ({ onLogin }) => {
                 exit={{ height: 0, opacity: 0 }}
                 style={{ overflow: 'hidden' }}
               >
-                <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>Confirmar Contraseña</label>
-                <input 
-                  type="password" 
-                  className="glass-effect" 
-                  style={{ width: '100%', padding: '12px', border: 'none', color: 'white', background: 'rgba(255,255,255,0.05)' }}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required 
-                />
+                <div style={{ paddingBottom: '20px' }}>
+                  <input 
+                    type="password" 
+                    className="glass-input" 
+                    placeholder="Confirmar Contraseña" 
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required 
+                  />
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
-          
-          {error && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ color: 'var(--danger)', fontSize: '12px', textAlign: 'center' }}>{error}</motion.p>}
-          {success && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ color: 'var(--accent)', fontSize: '12px', textAlign: 'center' }}>{success}</motion.p>}
 
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit" 
-            className="nav-item active" 
-            style={{ width: '100%', border: 'none', marginTop: '10px', justifyContent: 'center', height: '48px', fontSize: '16px' }}
-          >
-            {isLogin ? 'Entrar al Panel' : 'Registrarse Ahora'}
-          </motion.button>
+          <button type="submit" className="login-btn" style={{ marginTop: '12px', fontSize: '16px' }}>
+            {isLogin ? 'Autenticar Acceso' : 'Crear Cuenta'}
+          </button>
         </form>
 
-        <div style={{ marginTop: '20px', fontSize: '13px' }}>
-          <span style={{ color: 'var(--text-muted)' }}>
-            {isLogin ? '¿No tienes cuenta?' : '¿Ya eres parte?'} 
-          </span>
-          <button 
-            onClick={() => { setIsLogin(!isLogin); setError(''); setSuccess(''); }}
-            style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: '600', marginLeft: '8px', cursor: 'pointer' }}
+        <p 
+          onClick={() => setIsLogin(!isLogin)} 
+          style={{ 
+            marginTop: '32px', 
+            cursor: 'pointer', 
+            color: 'var(--primary)', 
+            fontSize: '14px',
+            fontWeight: '600'
+          }}
+        >
+          {isLogin ? '¿No tiene cuenta? Regístrese aquí' : '¿Ya tiene cuenta? Ingrese aquí'}
+        </p>
+
+        {(error || success) && (
+          <motion.p 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            style={{ 
+              color: error ? 'var(--danger)' : 'var(--accent)', 
+              marginTop: '24px', 
+              fontSize: '14px',
+              fontWeight: '600',
+              padding: '12px',
+              background: error ? 'rgba(255, 59, 48, 0.05)' : 'rgba(52, 199, 89, 0.05)',
+              borderRadius: '10px'
+            }}
           >
-            {isLogin ? 'Crea una aquí' : 'Inicia sesión'}
-          </button>
-        </div>
+            {error ? `⚠️ ${error}` : `✅ ${success}`}
+          </motion.p>
+        )}
       </motion.div>
     </div>
   );
