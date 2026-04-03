@@ -121,11 +121,11 @@ const Justifications = () => {
   if (loading) return <JustificationsSkeleton />;
 
   return (
-    <div className="space-y-12 pb-20">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+    <div className="space-y-12 pb-20 relative">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
         <div className="space-y-2">
-          <h2 className="text-4xl font-semibold tracking-tight text-white/90 italic">Justificativos</h2>
-          <p className="text-zinc-500 font-medium font-sans">Gestión administrativa de ausencias justificadas y reposos médicos.</p>
+          <h2 className="text-5xl font-semibold tracking-tighter text-white/90 italic text-apple-gradient">Justificativos</h2>
+          <p className="text-zinc-500 font-medium tracking-tight">Gestión administrativa de ausencias justificadas y reposos médicos.</p>
         </div>
         
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
@@ -205,21 +205,23 @@ const Justifications = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: idx * 0.05 }}
-              className="apple-card p-10 group cursor-default"
+              whileHover={{ y: -5, scale: 1.01 }}
+              className="apple-card p-10 group cursor-default bg-zinc-900/40 border-white/[0.05]"
             >
               <div className="flex justify-between items-start mb-8">
                 <div className="flex items-center gap-6">
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-500 shadow-2xl ${
-                    j.estado === 'aprobado' ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400 ripple-success' : 
-                    j.estado === 'rechazado' ? 'bg-red-500/5 border-red-500/20 text-red-400' :
-                    'bg-amber-500/5 border-amber-500/20 text-amber-400 animate-pulse'
+                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border transition-all duration-700 shadow-2xl relative overflow-hidden ${
+                    j.estado === 'aprobado' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 
+                    j.estado === 'rechazado' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
+                    'bg-amber-500/10 border-amber-500/20 text-amber-400'
                     }`}>
-                    {j.estado === 'aprobado' ? <CheckCircle2 className="w-7 h-7" /> : 
-                     j.estado === 'rechazado' ? <XCircle className="w-7 h-7" /> : 
-                     <Clock className="w-7 h-7" />}
+                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {j.estado === 'aprobado' ? <CheckCircle2 className="w-8 h-8 relative z-10" /> : 
+                     j.estado === 'rechazado' ? <XCircle className="w-8 h-8 relative z-10" /> : 
+                     <Clock className="w-8 h-8 relative z-10 animate-pulse" />}
                     </div>
                     <div>
-                        <h3 className="text-2xl font-semibold text-white/90 group-hover:text-white transition-colors tracking-tight italic uppercase">{j.nombre}</h3>
+                        <h3 className="text-2xl font-semibold text-white/90 group-hover:text-apple-gradient transition-colors tracking-tight italic uppercase">{j.nombre}</h3>
                         <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-1">Sección {j.seccion}</p>
                     </div>
                 </div>
@@ -234,16 +236,16 @@ const Justifications = () => {
               
               <div className="grid grid-cols-2 gap-6 mb-8 py-8 border-y border-white/5">
                 <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em]">Fecha del Evento</span>
-                    <div className="flex items-center gap-2 text-white/70 font-semibold text-sm">
-                        <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+                    <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.25em]">Fecha Evento</span>
+                    <div className="flex items-center gap-2 text-white/80 font-semibold text-sm">
+                        <Calendar className="w-4 h-4 text-zinc-500" />
                         {new Date(j.fecha).toLocaleDateString()}
                     </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em]">Motivo Categorizado</span>
-                    <div className="flex items-center gap-2 text-white/70 font-semibold text-sm">
-                        <FileText className="w-3.5 h-3.5 text-zinc-500" />
+                    <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.25em]">Motivo</span>
+                    <div className="flex items-center gap-2 text-white/80 font-semibold text-sm">
+                        <FileText className="w-4 h-4 text-zinc-500" />
                         {j.motivo}
                     </div>
                 </div>

@@ -48,46 +48,54 @@ const Dashboard = ({ stats, aiData }) => {
       variants={container}
       initial="hidden"
       animate="show"
-      className="space-y-12 pb-20"
+      className="space-y-12 pb-20 relative"
     >
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
         <div className="space-y-2">
-          <h2 className="text-4xl font-semibold tracking-tight text-white/90 italic">Panel Institucional</h2>
-          <p className="text-zinc-500 font-medium tracking-tight">Resumen operativo sincronizado con el núcleo de datos.</p>
+          <h2 className="text-5xl font-semibold tracking-tighter text-white/90 italic text-apple-gradient">Panel Institucional</h2>
+          <p className="text-zinc-500 font-medium tracking-tight">Resumen operativo sincronizado con el núcleo de datos en tiempo real.</p>
         </div>
         
-        <div className="flex items-center gap-4 no-print">
-            <div className="px-4 py-2 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
+        <div className="flex items-center gap-4 no-print bg-zinc-900/50 backdrop-blur-xl p-2 rounded-2xl border border-white/5">
+            <div className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/5 flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)] animate-pulse" />
                 <span className="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Sistema Activo</span>
             </div>
-            <div className="h-10 w-[1px] bg-white/10" />
-            <span className="text-[10px] font-bold text-zinc-600 tracking-widest uppercase italic">v8.4.2 stable</span>
+            <div className="h-8 w-[1px] bg-white/10" />
+            <span className="text-[10px] font-bold text-zinc-600 tracking-widest uppercase italic px-2">v8.5.0 stable</span>
         </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 relative z-10">
         {statCards.map((stat, idx) => (
-          <motion.div key={stat.label} variants={item} className="apple-card p-8 relative overflow-hidden group cursor-default">
-            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-700">
-                <stat.icon className="w-20 h-20" />
+          <motion.div 
+            key={stat.label} 
+            variants={item} 
+            whileHover={{ y: -5, scale: 1.02 }}
+            className="apple-card p-8 relative overflow-hidden group cursor-default bg-zinc-900/40 border-white/[0.05]"
+          >
+            <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover:opacity-[0.08] transition-opacity duration-700">
+                <stat.icon className="w-24 h-24" />
             </div>
             
-            <div className="flex justify-between items-start mb-6">
-                <div className={`w-12 h-12 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center ${stat.color} shadow-inner`}>
-                    <stat.icon className="h-6 w-6" />
+            <div className="flex justify-between items-start mb-8">
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-950 border border-white/10 flex items-center justify-center ${stat.color} shadow-2xl overflow-hidden relative`}>
+                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <stat.icon className="h-6 w-6 relative z-10" />
                 </div>
-                <Badge className="bg-white/5 text-zinc-500 border-none font-bold text-[9px] uppercase tracking-widest px-2 py-1">
-                    {stat.trend}
-                </Badge>
+                <div className="flex flex-col items-end gap-1">
+                    <Badge className="bg-white/5 text-zinc-500 border-none font-bold text-[9px] uppercase tracking-widest px-2 py-1">
+                        {stat.trend}
+                    </Badge>
+                </div>
             </div>
             
             <div className="space-y-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600 mb-1">{stat.label}</p>
-                <div className="text-4xl font-semibold text-white tracking-tighter transition-all duration-700 group-hover:scale-[1.02] origin-left">
+                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-zinc-600 mb-2">{stat.label}</p>
+                <div className="text-4xl font-semibold text-white tracking-tighter transition-all duration-700 group-hover:text-apple-gradient">
                     {stat.value}
                 </div>
-                <p className="text-[10px] font-medium text-zinc-500 mt-2 uppercase tracking-widest opacity-60">
+                <p className="text-[10px] font-medium text-zinc-500 mt-4 uppercase tracking-widest opacity-40">
                     {stat.sub}
                 </p>
             </div>

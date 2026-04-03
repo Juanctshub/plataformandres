@@ -96,36 +96,36 @@ const AttendanceSheet = () => {
   if (loading) return <AttendanceSkeleton />;
 
   return (
-    <div className="space-y-12 pb-20">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+    <div className="space-y-12 pb-20 relative">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
         <div className="space-y-2">
-            <h2 className="text-4xl font-semibold tracking-tight text-white/90 italic">Pase de Lista</h2>
+            <h2 className="text-5xl font-semibold tracking-tighter text-white/90 italic text-apple-gradient">Pase de Lista</h2>
             <div className="flex items-center gap-3">
-                <p className="text-zinc-500 font-medium">Control de asistencia diaria por sección académica.</p>
+                <p className="text-zinc-500 font-medium tracking-tight">Control de asistencia diaria por sección académica.</p>
                 <div className="h-4 w-[1px] bg-white/10" />
-                <Badge className="bg-emerald-500/10 text-emerald-400 border-none rounded-full px-3 py-1 font-bold text-[10px] uppercase tracking-widest">En Vivo</Badge>
+                <Badge className="bg-emerald-500/10 text-emerald-400 border-none rounded-full px-3 py-1 font-bold text-[10px] uppercase tracking-widest animate-pulse">En Vivo</Badge>
             </div>
         </div>
         
         <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 bg-white/[0.03] border border-white/10 rounded-2xl p-1.5 pl-4">
-                <Calendar className="w-4 h-4 text-zinc-600" />
+            <div className="flex items-center gap-2 bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-2xl p-1.5 pl-4 group">
+                <Calendar className="w-4 h-4 text-zinc-600 group-focus-within:text-white transition-colors" />
                 <Input 
                     type="date" 
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="bg-transparent border-none text-white font-medium focus:ring-0 p-1"
+                    className="bg-transparent border-none text-white font-medium focus:ring-0 p-1 apple-input-focus"
                 />
             </div>
             
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-1.5 flex gap-2">
+            <div className="bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-2xl p-1.5 flex gap-2">
                 {sections.map(sec => (
                     <button
                         key={sec}
                         onClick={() => setFilterSection(sec)}
-                        className={`px-4 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${
+                        className={`px-4 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all duration-500 ${
                             filterSection === sec 
-                                ? 'bg-white text-black' 
+                                ? 'bg-white text-black shadow-xl' 
                                 : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
                         }`}
                     >
@@ -144,30 +144,31 @@ const AttendanceSheet = () => {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.05 }}
-              className="apple-card group p-5 flex flex-col md:flex-row md:items-center justify-between gap-6"
+              className="apple-card group p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-zinc-900/40 border-white/[0.05] hover:bg-zinc-800/40"
             >
               <div className="flex items-center gap-6">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all duration-500 ${
-                  s.status === 'presente' ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400' : 
-                  s.status === 'ausente' ? 'bg-red-500/5 border-red-500/20 text-red-400' :
-                  'bg-amber-500/5 border-amber-500/20 text-amber-400'
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-700 shadow-2xl relative overflow-hidden ${
+                  s.status === 'presente' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 
+                  s.status === 'ausente' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
+                  'bg-amber-500/10 border-amber-500/20 text-amber-400'
                 }`}>
-                  {s.status === 'presente' ? <CheckCircle2 className="w-6 h-6" /> : 
-                   s.status === 'ausente' ? <XCircle className="w-6 h-6" /> : 
-                   <Clock className="w-6 h-6" />}
+                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  {s.status === 'presente' ? <CheckCircle2 className="w-7 h-7 relative z-10" /> : 
+                   s.status === 'ausente' ? <XCircle className="w-7 h-7 relative z-10" /> : 
+                   <Clock className="w-7 h-7 relative z-10" />}
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-semibold text-white/90 group-hover:text-white transition-colors tracking-tight uppercase italic">{s.nombre}</h3>
+                  <h3 className="text-xl font-semibold text-white/90 group-hover:text-apple-gradient transition-colors tracking-tight uppercase italic">{s.nombre}</h3>
                   <div className="flex items-center gap-3 mt-1">
                     <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">C.I. {s.cedula}</span>
                     <span className="w-1 h-1 rounded-full bg-zinc-800" />
-                    <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Sección {s.seccion}</span>
+                    <span className="text-[10px] font-bold text-zinc-700 uppercase tracking-widest">Sección {s.seccion}</span>
                   </div>
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 bg-zinc-950/50 p-1.5 rounded-[1.5rem] border border-white/5">
                 {[
                   { id: 'presente', icon: CheckCircle2, label: 'Presente', color: 'emerald' },
                   { id: 'ausente', icon: XCircle, label: 'Ausente', color: 'red' },
@@ -176,13 +177,13 @@ const AttendanceSheet = () => {
                   <Button
                     key={opt.id}
                     onClick={() => handleStatusChange(s.id, opt.id)}
-                    className={`h-11 px-5 rounded-2xl font-bold uppercase tracking-widest text-[9px] transition-all duration-300 border ${
+                    className={`h-11 px-6 rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all duration-500 border ${
                       s.status === opt.id 
-                        ? `bg-${opt.color}-500/10 border-${opt.color}-500/30 text-${opt.color}-400 shadow-[0_0_15px_rgba(0,0,0,0.5)]` 
-                        : 'bg-transparent border-white/5 text-zinc-600 hover:text-zinc-200 hover:bg-white/5'
+                        ? `bg-${opt.color}-500/10 border-${opt.color}-500/40 text-${opt.color}-400 shadow-[0_0_20px_rgba(0,0,0,0.5)]` 
+                        : 'bg-transparent border-transparent text-zinc-600 hover:text-zinc-300 hover:bg-white/5'
                     }`}
                   >
-                    <opt.icon className="w-3.5 h-3.5 mr-2" />
+                    <opt.icon className="w-4 h-4 mr-2" />
                     {opt.label}
                   </Button>
                 ))}

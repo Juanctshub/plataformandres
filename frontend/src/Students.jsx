@@ -13,7 +13,8 @@ import {
   Trash2,
   Filter,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -119,10 +120,10 @@ const Students = () => {
   if (loading) return <StudentsSkeleton />;
 
   return (
-    <div className="space-y-12 pb-20">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+    <div className="space-y-12 pb-20 relative">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
         <div className="space-y-2">
-          <h2 className="text-4xl font-semibold tracking-tight text-white/90">Media General</h2>
+          <h2 className="text-5xl font-semibold tracking-tighter text-white/90 text-apple-gradient italic">Media General</h2>
           <p className="text-zinc-500 font-medium tracking-tight">Gestión y control de matricula institucional.</p>
         </div>
         
@@ -131,7 +132,7 @@ const Students = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 group-focus-within:text-white/40 transition-colors" />
             <Input 
               placeholder="Buscar por nombre o CI..." 
-              className="pl-11 h-12 w-[300px] bg-white/[0.03] border-white/10 rounded-2xl focus:ring-1 focus:ring-white/20 transition-all font-medium text-white/80"
+              className="pl-11 h-12 w-[300px] bg-zinc-900/50 border-white/5 rounded-2xl apple-input-focus placeholder:text-zinc-700 text-white/80"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -235,20 +236,22 @@ const Students = () => {
             key={student.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="apple-card p-8 group cursor-default"
+            whileHover={{ y: -5, scale: 1.01 }}
+            className="apple-card p-10 group cursor-default bg-zinc-900/40 border-white/[0.05]"
           >
             <div className="flex justify-between items-start mb-8">
-              <div className="w-14 h-14 rounded-[1.25rem] bg-white/[0.04] border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-white transition-all duration-500 shadow-inner">
-                <UserIcon className="w-6 h-6" />
+              <div className="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-zinc-800 to-zinc-950 border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-white transition-all duration-700 shadow-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <UserIcon className="w-7 h-7 relative z-10" />
               </div>
-              <span className="px-4 py-1.5 rounded-full bg-white/[0.04] text-[10px] font-bold uppercase tracking-widest text-zinc-500 group-hover:bg-white/10 group-hover:text-white transition-all duration-500 border border-white/5">
+              <Badge className="bg-white/5 text-zinc-500 border-none font-bold text-[9px] uppercase tracking-widest px-4 py-1.5 rounded-xl group-hover:text-white transition-colors">
                 {student.seccion}
-              </span>
+              </Badge>
             </div>
             
-            <div className="space-y-1 mb-8">
-              <h3 className="text-2xl font-semibold text-white/90 group-hover:text-white transition-all duration-500 tracking-tight">{student.nombre}</h3>
-              <p className="text-xs font-semibold text-zinc-500 tracking-widest uppercase">CÉDULA: {student.cedula}</p>
+            <div className="space-y-2 mb-10">
+              <h3 className="text-2xl font-semibold text-white/90 group-hover:text-apple-gradient transition-all duration-700 tracking-tight italic uppercase">{student.nombre}</h3>
+              <p className="text-[10px] font-bold text-zinc-600 tracking-[0.25em] uppercase">CÉDULA: {student.cedula}</p>
             </div>
             
             <div className="pt-8 border-t border-white/[0.05] flex flex-col gap-4">

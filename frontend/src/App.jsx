@@ -158,8 +158,11 @@ const App = () => {
               userName={user?.username} 
             />
             
-            <SidebarInset className="bg-black relative overflow-hidden border-none shadow-none flex flex-col">
-              <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/[0.02] blur-[200px] pointer-events-none rounded-full" />
+            <SidebarInset className="bg-zinc-950 relative overflow-hidden border-none shadow-none flex flex-col">
+              {/* Apple-style background depth */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#18181b,transparent)] pointer-events-none" />
+              <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/[0.03] blur-[150px] pointer-events-none rounded-full" />
+              <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/[0.02] blur-[100px] pointer-events-none rounded-full" />
               
               <header className="flex h-20 shrink-0 items-center justify-between px-10 sticky top-0 bg-black/60 backdrop-blur-3xl z-30 border-b border-white/[0.05]">
                 <div className="flex items-center gap-6">

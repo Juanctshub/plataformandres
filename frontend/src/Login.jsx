@@ -126,21 +126,21 @@ const Login = ({ onLogin }) => {
         animate="visible"
         className="w-full max-w-[460px] z-10"
       >
-        <div className="apple-card p-12 border-white/10 apple-shadow-soft relative overflow-hidden group">
+        <div className="apple-card p-12 border-white/[0.08] bg-zinc-900/40 backdrop-blur-3xl apple-shadow-soft relative overflow-hidden group">
           {/* Subtle Shine Effect */}
-          <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 group-hover:animate-shine transition-all duration-1000 pointer-events-none" />
+          <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/[0.03] to-transparent skew-x-12 group-hover:animate-shine transition-all duration-1000 pointer-events-none" />
 
           <div className="flex flex-col items-center text-center mb-10">
             <motion.div 
                variants={itemVariants}
-               whileHover={{ scale: 1.05 }}
-               className="w-20 h-20 rounded-[2.2rem] bg-white/[0.03] border border-white/10 flex items-center justify-center mb-6 shadow-inner relative"
+               whileHover={{ scale: 1.05, rotate: 2 }}
+               className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-zinc-800 to-zinc-950 border border-white/10 flex items-center justify-center mb-6 shadow-2xl relative overflow-hidden"
             >
-              <div className="absolute inset-0 bg-white/5 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-              <Building2 className="w-9 h-9 text-white/90 relative z-10" />
+              <div className="absolute inset-0 bg-blue-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+              <Building2 className="w-9 h-9 text-white relative z-10" />
             </motion.div>
             
-            <motion.h1 variants={itemVariants} className="text-4xl font-semibold tracking-tight text-white mb-2 italic">Andrés Bello</motion.h1>
+            <motion.h1 variants={itemVariants} className="text-4xl font-semibold tracking-tight text-white mb-2 italic text-apple-gradient">Andrés Bello</motion.h1>
             <motion.p variants={itemVariants} className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-500">
               {isLogin ? 'Acceso Institucional' : 'Registro de Personal'}
             </motion.p>

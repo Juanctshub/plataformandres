@@ -134,32 +134,32 @@ const IAAnalytics = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 no-print">
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="apple-card p-10 relative overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 no-print relative z-10">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} whileHover={{ y: -5 }} className="apple-card p-10 relative overflow-hidden bg-zinc-900/40 border-white/[0.05]">
                     <TrendingDown className="absolute -right-6 -bottom-6 w-32 h-32 text-red-500/5 rotate-12" />
-                    <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4">Índice de Riesgo</h3>
+                    <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.25em] mb-4">Índice de Riesgo</h3>
                     <div className="flex items-end gap-3">
-                        <span className="text-5xl font-semibold text-white tracking-tighter">14.2%</span>
+                        <span className="text-5xl font-semibold text-white tracking-tighter text-apple-gradient">14.2%</span>
                         <span className="text-emerald-400 text-xs font-bold mb-2 flex items-center">
                             -2.1% <TrendingDown className="w-3 h-3 ml-1" />
                         </span>
                     </div>
                 </motion.div>
                 
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="apple-card p-10 relative overflow-hidden">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} whileHover={{ y: -5 }} className="apple-card p-10 relative overflow-hidden bg-zinc-900/40 border-white/[0.05]">
                     <Cpu className="absolute -right-6 -bottom-6 w-32 h-32 text-blue-500/5" />
-                    <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4">Optimización IA</h3>
+                    <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.25em] mb-4">Optimización IA</h3>
                     <div className="flex items-end gap-3">
-                        <span className="text-5xl font-semibold text-white tracking-tighter">98.9%</span>
+                        <span className="text-5xl font-semibold text-white tracking-tighter text-apple-gradient">98.9%</span>
                         <span className="text-zinc-500 text-[10px] font-bold mb-2 uppercase tracking-widest">Confianza</span>
                     </div>
                 </motion.div>
                 
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="apple-card p-10 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
-                    <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4">Cluster Académico</h3>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} whileHover={{ y: -5 }} className="apple-card p-10 relative overflow-hidden bg-zinc-900/40 border-white/[0.05]">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.01] to-transparent pointer-events-none" />
+                    <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.25em] mb-4">Cluster Académico</h3>
                     <div className="flex items-end gap-3">
-                        <span className="text-5xl font-semibold text-white tracking-tighter">V.16.2</span>
+                        <span className="text-5xl font-semibold text-white tracking-tighter text-apple-gradient">V.16.2</span>
                         <span className="text-zinc-500 text-[10px] font-bold mb-2 uppercase tracking-widest italic">NEON TECH</span>
                     </div>
                 </motion.div>
