@@ -69,50 +69,56 @@ const Login = ({ onLogin }) => {
           width: '420px',
           textAlign: 'center',
           display: 'flex',
-          flexDirection: 'column',
-          gap: '15px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-effect"
+        style={{ 
+          width: '100%', 
+          maxWidth: '440px', 
+          padding: '60px 48px',
+          textAlign: 'center'
         }}
       >
-        <motion.div 
-          key={isLogin ? 'login-title' : 'register-title'}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="logo" 
-          style={{ marginBottom: '5px', fontSize: '24px' }}
-        >
-          {isLogin ? 'ANDRÉS BELLO' : 'UNIRSE A LA RED'}
-        </motion.div>
-        
-        <h2 style={{ fontSize: '18px', fontWeight: '500', color: 'var(--text-muted)' }}>
-          {isLogin ? 'Gestión de Asistencia Premium' : 'Crear nueva cuenta de docente'}
-        </h2>
+        <header style={{ marginBottom: '48px' }}>
+          <div style={{ 
+            fontSize: '12px', 
+            fontWeight: '800', 
+            color: 'var(--primary)', 
+            letterSpacing: '5px', 
+            marginBottom: '16px',
+            textTransform: 'uppercase'
+          }}>
+            Andrés Bello Dashboard
+          </div>
+          <h1 style={{ fontSize: '32px', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-1.5px' }}>
+            {isLogin ? 'Iniciar Sesión' : 'Registro Institucional'}
+          </h1>
+          <p style={{ color: 'var(--text-muted)', marginTop: '12px', fontSize: '15px' }}>
+            {isLogin ? 'Acceso al núcleo de gestión administrativa' : 'Cree su cuenta de docente o administrativo'}
+          </p>
+        </header>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', marginTop: '20px' }}>
-          <div>
-            <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>Nombre de Usuario</label>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ position: 'relative' }}>
             <input 
-              type="text" 
-              className="glass-effect" 
-              style={{ width: '100%', padding: '12px', border: 'none', color: 'white', background: 'rgba(255,255,255,0.05)' }}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              className="glass-input" 
+              placeholder="Nombre de Usuario" 
+              value={formData.username}
+              onChange={(e) => setFormData({...formData, username: e.target.value})}
+              required 
+            />
+          </div>
+          <div style={{ position: 'relative' }}>
+            <input 
+              type="password" 
+              className="glass-input" 
+              placeholder="Contraseña" 
+              value={formData.password}
+              onChange={(e) => setFormData({...formData, password: e.target.value})}
               required 
             />
           </div>
           
-          <div>
-            <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>Contraseña</label>
-            <input 
-              type="password" 
-              className="glass-effect" 
-              style={{ width: '100%', padding: '12px', border: 'none', color: 'white', background: 'rgba(255,255,255,0.05)' }}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required 
-            />
-          </div>
-
           <AnimatePresence>
             {!isLogin && (
               <motion.div
