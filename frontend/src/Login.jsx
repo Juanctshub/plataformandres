@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Sparkles
 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
+import { Button } from "./components/ui/button";
+
 
 const Login = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);

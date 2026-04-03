@@ -15,7 +15,9 @@ import {
   ArrowUpRight,
   LayoutGrid
 } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+
 
 const Dashboard = ({ stats, aiData }) => {
   const container = {

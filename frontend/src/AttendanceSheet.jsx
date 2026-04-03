@@ -14,10 +14,10 @@ import {
   ShieldCheck,
   AlertCircle
 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
+import { Skeleton } from "./components/ui/skeleton";
+import { Badge } from "./components/ui/badge";
 
 const AttendanceSkeleton = () => (
   <div className="space-y-12 pb-20">

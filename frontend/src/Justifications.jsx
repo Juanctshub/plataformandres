@@ -15,8 +15,8 @@ import {
   MessageSquare,
   AlertCircle
 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
 import { 
   Dialog, 
   DialogContent, 
@@ -24,9 +24,9 @@ import {
   DialogHeader, 
   DialogTitle, 
   DialogTrigger 
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "./components/ui/dialog";
+import { Badge } from "./components/ui/badge";
+import { Skeleton } from "./components/ui/skeleton";
 
 const JustificationsSkeleton = () => (
   <div className="space-y-12 pb-20">

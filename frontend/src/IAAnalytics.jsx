@@ -17,9 +17,9 @@ import {
   Loader2,
   Mail
 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "./components/ui/button";
+import { Skeleton } from "./components/ui/skeleton";
+import { Badge } from "./components/ui/badge";
 
 const IAAnalyticsSkeleton = () => (
   <div className="space-y-12 pb-20">
