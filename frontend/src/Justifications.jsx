@@ -2,342 +2,290 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FileText, 
-  Plus, 
   Search, 
+  Plus, 
   CheckCircle2, 
+  XCircle, 
   Clock, 
-  AlertCircle,
-  FileSearch,
+  Calendar,
+  User,
   ShieldCheck,
   Building2,
-  XCircle,
-  Calendar
+  Filter,
+  MessageSquare,
+  AlertCircle
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter
-} from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const JustificationsSkeleton = () => (
-  <div className="space-y-8 pb-10">
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div className="space-y-2">
-        <Skeleton className="h-10 w-64 bg-zinc-900" />
-        <Skeleton className="h-4 w-48 bg-zinc-900" />
+  <div className="space-y-12 pb-20">
+    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-64 bg-white/5 rounded-xl" />
+        <Skeleton className="h-4 w-48 bg-white/5 rounded-lg" />
       </div>
-      <div className="flex gap-3 w-full md:w-auto">
-        <Skeleton className="h-10 w-full md:w-64 bg-zinc-900 rounded-xl" />
-        <Skeleton className="h-10 w-32 bg-zinc-900 rounded-xl" />
-      </div>
+      <Skeleton className="h-12 w-48 bg-white/5 rounded-2xl" />
     </div>
-    <Card className="border-zinc-800 bg-zinc-900/40">
-      <CardContent className="p-0">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-zinc-800">
-              <TableHead className="pl-8"><Skeleton className="h-4 w-32 bg-zinc-800" /></TableHead>
-              <TableHead><Skeleton className="h-4 w-40 bg-zinc-800" /></TableHead>
-              <TableHead><Skeleton className="h-4 w-20 bg-zinc-800" /></TableHead>
-              <TableHead className="text-right pr-8"><Skeleton className="h-4 w-12 ml-auto bg-zinc-800" /></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <TableRow key={i} className="border-zinc-800">
-                <TableCell className="pl-8 py-5"><Skeleton className="h-4 w-48 bg-zinc-800" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-60 bg-zinc-800" /></TableCell>
-                <TableCell><Skeleton className="h-6 w-24 bg-zinc-800" /></TableCell>
-                <TableCell className="text-right pr-8"><Skeleton className="h-8 w-8 ml-auto bg-zinc-800" /></TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {[1, 2, 3, 4].map(i => (
+        <Skeleton key={i} className="h-48 w-full bg-white/5 rounded-3xl" />
+      ))}
+    </div>
   </div>
 );
 
 const Justifications = () => {
   const [justifications, setJustifications] = useState([]);
+  const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [open, setOpen] = useState(false);
-  const [students, setStudents] = useState([]);
-  const [formData, setFormData] = useState({
-    estudiante_id: '',
-    fecha: new Date().toISOString().split('T')[0],
-    motivo: '',
-    comentario: ''
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [newJustification, setNewJustification] = useState({ 
+    estudiante_id: '', 
+    fecha: new Date().toISOString().split('T')[0], 
+    motivo: 'Médico', 
+    comentario: '' 
   });
+  const [msg, setMsg] = useState({ text: '', type: '' });
+
+  const fetchData = async () => {
+    try {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+      const headers = { 'Authorization': `Bearer ${localStorage.getItem('token')}` };
+      const [resJ, resS] = await Promise.all([
+        fetch(`${baseUrl}/api/justificaciones`, { headers }),
+        fetch(`${baseUrl}/api/estudiantes`, { headers })
+      ]);
+      setJustifications(await resJ.json());
+      setStudents(await resS.json());
+    } catch (e) { console.error(e); }
+    finally { setTimeout(() => setLoading(false), 800); }
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
+  const handleUpdateStatus = async (id, estado) => {
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
-      const headers = { 'Authorization': `Bearer ${token}` };
-
-      const [resJust, resStd] = await Promise.all([
-        fetch(`${baseUrl}/api/justificaciones`, { headers }),
-        fetch(`${baseUrl}/api/estudiantes`, { headers })
-      ]);
-
-      const justs = await resJust.json();
-      const stds = await resStd.json();
-
-      // Simulated delay for skeleton
-      setTimeout(() => {
-        setJustifications(justs);
-        setStudents(stds);
-        setLoading(false);
-      }, 800);
-    } catch (e) {
-      setLoading(false);
-    }
+      await fetch(`${baseUrl}/api/justificaciones/${id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ estado, comentario: 'Procesado por Auditoría' })
+      });
+      fetchData();
+    } catch (e) { console.error(e); }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
       const res = await fetch(`${baseUrl}/api/justificaciones`, {
         method: 'POST',
         headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(newJustification)
       });
-
       if (res.ok) {
-        setOpen(false);
-        setLoading(true);
+        setMsg({ text: 'Certificado registrado exitosamente', type: 'success' });
+        setIsAddModalOpen(false);
         fetchData();
-        setFormData({
-            estudiante_id: '',
-            fecha: new Date().toISOString().split('T')[0],
-            motivo: '',
-            comentario: ''
-        });
       }
-    } catch (e) {
-      console.error('Error saving justification:', e);
-    }
-  };
-
-  const filtered = justifications.filter(j => 
-    j.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    j.motivo?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const getStatusBadge = (status) => {
-    switch(status) {
-      case 'aprobado': 
-        return <Badge className="bg-emerald-500/10 text-emerald-500 border-none font-black uppercase text-[9px] tracking-widest px-3 italic">Aprobado</Badge>;
-      case 'rechazado': 
-        return <Badge className="bg-red-500/10 text-red-500 border-none font-black uppercase text-[9px] tracking-widest px-3 italic">Rechazado</Badge>;
-      default: 
-        return <Badge className="bg-zinc-800 text-zinc-400 border-none font-black uppercase text-[9px] tracking-widest px-3 italic">Pendiente</Badge>;
+    } catch (e) { setMsg({ text: 'Error al registrar', type: 'error' }); }
+    finally { 
+        setSubmitting(false);
+        setTimeout(() => setMsg({ text: '', type: '' }), 3000);
     }
   };
 
   if (loading) return <JustificationsSkeleton />;
 
   return (
-    <div className="space-y-8 pb-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-zinc-100 tracking-tighter flex items-center gap-3 italic uppercase">
-            <FileText className="w-8 h-8 text-amber-500" />
-            Certificados Médicos
-          </h1>
-          <p className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] mt-1 italic">
-            Validación de Justificativos Administrativos • {justifications.length} Documentos
-          </p>
+    <div className="space-y-12 pb-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <div className="space-y-2">
+          <h2 className="text-4xl font-semibold tracking-tight text-white/90 italic">Justificativos</h2>
+          <p className="text-zinc-500 font-medium font-sans">Gestión administrativa de ausencias justificadas y reposos médicos.</p>
         </div>
-
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-            <Input 
-              placeholder="Buscar por alumno o motivo..." 
-              className="pl-10 bg-zinc-900 border-zinc-800 text-zinc-100 h-11 rounded-xl"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-zinc-100 text-black hover:bg-white font-black uppercase tracking-widest text-[11px] h-11 px-6 rounded-xl">
-                <Plus className="w-4 h-4 mr-2" />
-                Registrar
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-zinc-950 border-zinc-900 text-zinc-100 max-w-lg rounded-2xl">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">Nuevo Justificativo</DialogTitle>
-                <DialogDescription className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">
-                  Protocolo de Validación Institucional 2026
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-6 pt-4">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Estudiante Asociado</Label>
-                    <select 
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl h-11 px-3 text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-700 appearance-none pt-2.5 pb-2"
-                      required 
-                      value={formData.estudiante_id}
-                      onChange={e => setFormData({ ...formData, estudiante_id: e.target.value })}
-                    >
-                      <option value="" className="bg-zinc-950">Seleccione un alumno...</option>
-                      {students.map(s => (
-                        <option key={s.id} value={s.id} className="bg-zinc-950">{s.nombre} ({s.seccion})</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Fecha Ausencia</Label>
-                      <Input 
-                        type="date" 
-                        className="bg-zinc-900 border-zinc-800 h-11 text-zinc-200 rounded-xl"
-                        required 
-                        value={formData.fecha}
-                        onChange={e => setFormData({ ...formData, fecha: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Motivo</Label>
-                      <Input 
-                        placeholder="Médico / Personal"
-                        className="bg-zinc-900 border-zinc-800 h-11 text-zinc-200 rounded-xl"
-                        required 
-                        value={formData.motivo}
-                        onChange={e => setFormData({ ...formData, motivo: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Descripción Detallada</Label>
-                    <textarea 
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm min-h-[100px] text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-700"
-                      placeholder="Indique detalles adicionales del certificado..."
-                      value={formData.comentario}
-                      onChange={e => setFormData({ ...formData, comentario: e.target.value })}
-                    />
-                  </div>
+        
+        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+          <DialogTrigger asChild>
+            <Button className="h-12 px-6 bg-white text-black hover:bg-zinc-200 rounded-2xl font-bold transition-all flex gap-2 active:scale-95 shadow-xl shadow-white/5">
+              <Plus className="w-5 h-5" />
+              Nuevo Justificativo
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-black/90 backdrop-blur-3xl border-white/10 text-white rounded-[2.5rem] p-10 max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+            <DialogHeader>
+              <DialogTitle className="text-3xl font-semibold tracking-tight text-white">Registrar Certificado</DialogTitle>
+              <DialogDescription className="text-zinc-500 font-medium">Carga de justificativos médicos o personales.</DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+              <div className="space-y-2">
+                <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Estudiante</label>
+                <select 
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl h-12 px-4 text-white font-medium focus:ring-1 focus:ring-white/20 appearance-none"
+                  value={newJustification.estudiante_id}
+                  onChange={(e) => setNewJustification({...newJustification, estudiante_id: e.target.value})}
+                  required
+                >
+                  <option value="" className="bg-black">Seleccionar Alumno</option>
+                  {students.map(s => <option key={s.id} value={s.id} className="bg-black">{s.nombre} ({s.seccion})</option>)}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Fecha</label>
+                  <Input 
+                    type="date"
+                    className="bg-white/5 border-white/10 h-12 rounded-2xl focus:ring-1 focus:ring-white/20 text-white font-medium"
+                    value={newJustification.fecha}
+                    onChange={(e) => setNewJustification({...newJustification, fecha: e.target.value})}
+                  />
                 </div>
-                <DialogFooter>
-                  <Button type="submit" className="w-full bg-zinc-100 text-black hover:bg-white font-black uppercase tracking-widest text-[11px] h-12 rounded-xl mt-4">
-                    Almacenar en Archivo Seguro
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Motivo</label>
+                  <select 
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl h-12 px-4 text-white font-medium focus:ring-1 focus:ring-white/20 appearance-none"
+                    value={newJustification.motivo}
+                    onChange={(e) => setNewJustification({...newJustification, motivo: e.target.value})}
+                  >
+                    <option value="Médico" className="bg-black">Motivo Médico</option>
+                    <option value="Personal" className="bg-black">Motivo Personal</option>
+                    <option value="Institucional" className="bg-black">Asunto Institucional</option>
+                  </select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Observaciones</label>
+                <textarea 
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-medium focus:ring-1 focus:ring-white/20 min-h-[100px]"
+                  placeholder="Detalles del justificativo..."
+                  value={newJustification.comentario}
+                  onChange={(e) => setNewJustification({...newJustification, comentario: e.target.value})}
+                />
+              </div>
+              <Button 
+                type="submit" 
+                disabled={submitting}
+                className="w-full h-14 bg-white text-black hover:bg-zinc-200 rounded-2xl font-bold mt-4 transition-all active:scale-95 text-lg"
+              >
+                {submitting ? "Procesando..." : "Registrar Documento"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <Card className="border-zinc-800 bg-zinc-900/40 backdrop-blur-sm overflow-hidden">
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader className="bg-zinc-950/50">
-              <TableRow className="border-zinc-800 hover:bg-transparent">
-                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 py-5 pl-8">Expediente</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Motivo & Descripción</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Estado</TableHead>
-                <TableHead className="text-right pr-8 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Acción</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <AnimatePresence mode="popLayout">
-                {filtered.map((j, idx) => (
-                  <motion.tr 
-                    key={j.id}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.04 }}
-                    className="border-zinc-800 hover:bg-zinc-800/30 group"
-                  >
-                    <TableCell className="pl-8 py-5">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-zinc-100 tracking-tight">{j.nombre}</span>
-                        <div className="flex items-center gap-2 text-[10px] font-black text-zinc-600 uppercase tracking-widest mt-0.5 italic">
-                           <Calendar className="w-3 h-3" /> 
-                           {new Date(j.fecha).toLocaleDateString('es-VE', { day: '2-digit', month: 'short' })}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col max-w-[350px]">
-                        <span className="text-xs font-bold text-zinc-300 uppercase italic tracking-tighter">{j.motivo}</span>
-                        <span className="text-[10px] text-zinc-500 font-medium line-clamp-1 mt-0.5">{j.comentario || "Sin observaciones adicionales"}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                        {getStatusBadge(j.estado)}
-                    </TableCell>
-                    <TableCell className="text-right pr-8">
-                       <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-600 hover:text-zinc-100 group-hover:bg-zinc-800 rounded-full">
-                         <FileSearch className="w-4 h-4" />
-                       </Button>
-                    </TableCell>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </TableBody>
-          </Table>
-          
-          {filtered.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-24 text-zinc-800">
-               <FileText className="w-12 h-12 mb-4 opacity-10" />
-               <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-20">Bóveda Vacía</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <AnimatePresence mode="popLayout">
+          {justifications.map((j, idx) => (
+            <motion.div 
+              key={j.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: idx * 0.05 }}
+              className="apple-card p-10 group cursor-default"
+            >
+              <div className="flex justify-between items-start mb-8">
+                <div className="flex items-center gap-6">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-500 shadow-2xl ${
+                    j.estado === 'aprobado' ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400 ripple-success' : 
+                    j.estado === 'rechazado' ? 'bg-red-500/5 border-red-500/20 text-red-400' :
+                    'bg-amber-500/5 border-amber-500/20 text-amber-400 animate-pulse'
+                    }`}>
+                    {j.estado === 'aprobado' ? <CheckCircle2 className="w-7 h-7" /> : 
+                     j.estado === 'rechazado' ? <XCircle className="w-7 h-7" /> : 
+                     <Clock className="w-7 h-7" />}
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-semibold text-white/90 group-hover:text-white transition-colors tracking-tight italic uppercase">{j.nombre}</h3>
+                        <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-1">Sección {j.seccion}</p>
+                    </div>
+                </div>
+                <Badge className={`rounded-xl px-4 py-1.5 font-bold text-[9px] uppercase tracking-widest border-none ${
+                    j.estado === 'aprobado' ? 'bg-emerald-500/10 text-emerald-400' : 
+                    j.estado === 'rechazado' ? 'bg-red-500/10 text-red-400' :
+                    'bg-amber-500/10 text-amber-400'
+                }`}>
+                    {j.estado}
+                </Badge>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-6 mb-8 py-8 border-y border-white/5">
+                <div className="flex flex-col gap-1">
+                    <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em]">Fecha del Evento</span>
+                    <div className="flex items-center gap-2 text-white/70 font-semibold text-sm">
+                        <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+                        {new Date(j.fecha).toLocaleDateString()}
+                    </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                    <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em]">Motivo Categorizado</span>
+                    <div className="flex items-center gap-2 text-white/70 font-semibold text-sm">
+                        <FileText className="w-3.5 h-3.5 text-zinc-500" />
+                        {j.motivo}
+                    </div>
+                </div>
+              </div>
 
-      <div className="flex flex-col md:flex-row gap-8 opacity-20 mt-10 pointer-events-none grayscale">
-        <div className="flex items-center gap-2 text-zinc-500">
+              <div className="space-y-4">
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 relative group/msg overflow-hidden transition-all duration-700 hover:bg-white/[0.04]">
+                    <MessageSquare className="absolute -right-4 -bottom-4 w-24 h-24 text-white/[0.02] group-hover/msg:scale-110 transition-transform duration-1000" />
+                    <p className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mb-3 italic">Observaciones del Directivo</p>
+                    <p className="text-white/80 text-sm font-medium leading-relaxed italic">"{j.comentario || 'Sin comentarios adicionales'}"</p>
+                </div>
+                
+                {j.estado === 'pendiente' && (
+                    <div className="flex gap-4 pt-4">
+                        <Button 
+                            onClick={() => handleUpdateStatus(j.id, 'aprobado')}
+                            className="flex-1 h-12 bg-emerald-500 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
+                        >
+                            Aprobar Certificado
+                        </Button>
+                        <Button 
+                            onClick={() => handleUpdateStatus(j.id, 'rechazado')}
+                            className="flex-1 h-12 bg-transparent border border-red-500/20 text-red-500 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-red-500/10 active:scale-95 transition-all"
+                        >
+                            Rechazar
+                        </Button>
+                    </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      <div className="flex items-center gap-10 opacity-30 text-zinc-700 select-none pt-10">
+        <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4" />
-            <span className="text-[10px] font-black uppercase tracking-widest italic">Protocolo de Archivo Auditado</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Garantía LOPNA Art. 65</span>
         </div>
-        <div className="flex items-center gap-2 text-zinc-500">
+        <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4" />
-            <span className="text-[10px] font-black uppercase tracking-widest italic">Archivo Digital • Andrés Bello 2026</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Andrés Bello • Nucleo Administrativo</span>
         </div>
       </div>
     </div>

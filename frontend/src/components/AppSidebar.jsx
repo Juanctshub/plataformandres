@@ -25,51 +25,49 @@ import { Separator } from "@/components/ui/separator";
 
 const AppSidebar = ({ activeTab, onTabChange, userName }) => {
   const menuItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard General' },
-    { id: 'students', icon: Users, label: 'Control Estudiantil' },
-    { id: 'attendance', icon: ClipboardCheck, label: 'Asistencia Diaria' },
-    { id: 'justifications', icon: FileText, label: 'Justificaciones' },
+    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { id: 'students', icon: Users, label: 'Media General' },
+    { id: 'attendance', icon: ClipboardCheck, label: 'Asistencia' },
+    { id: 'justifications', icon: FileText, label: 'Justificativos' },
     { id: 'reports', icon: PieChart, label: 'IA Analytics' },
   ];
 
   return (
-    <Sidebar className="border-r border-zinc-800 bg-black">
-      <SidebarHeader className="p-6">
-        <div className="flex items-center gap-3">
-          <div className="bg-zinc-100 p-2 rounded-xl border-2 border-zinc-200">
-            <Building2 className="w-6 h-6 text-zinc-950" />
+    <Sidebar className="border-r border-white/[0.05] bg-black">
+      <SidebarHeader className="p-8">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-zinc-800 to-black border border-white/10 flex items-center justify-center shadow-2xl">
+            <Building2 className="w-5 h-5 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-black tracking-tighter text-zinc-100 leading-none uppercase">Andrés Bello</span>
-            <span className="text-[10px] items-center flex gap-1 font-bold text-zinc-500 mt-1 uppercase tracking-widest leading-none">
-             Unidad Educativa <ChevronRight className="w-2 h-2 text-zinc-700" /> 2026
+            <span className="text-sm font-semibold tracking-tight text-white leading-tight uppercase">Andrés Bello</span>
+            <span className="text-[9px] font-medium text-zinc-500 mt-0.5 uppercase tracking-[0.2em] leading-none">
+             Gestión Escolar
             </span>
           </div>
         </div>
       </SidebarHeader>
       
-      <Separator className="bg-zinc-800/50 mx-4 w-auto" />
-      
-      <SidebarContent className="p-4 px-3">
+      <SidebarContent className="px-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] font-black tracking-[3px] text-zinc-600 mb-4 px-2 uppercase">
-            Gestión Académica
+          <SidebarGroupLabel className="text-[10px] font-medium tracking-[0.2em] text-zinc-600 mb-6 px-4 uppercase">
+            Plataforma
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-2">
+            <SidebarMenu className="gap-1.5">
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton 
                     onClick={() => onTabChange(item.id)}
                     isActive={activeTab === item.id}
-                    className={`py-6 px-4 rounded-xl transition-all font-bold text-sm tracking-tight ${
+                    className={`py-6 px-4 rounded-2xl transition-all duration-300 ${
                       activeTab === item.id 
-                        ? 'bg-zinc-100 text-zinc-950 hover:bg-zinc-200' 
-                        : 'text-zinc-500 hover:text-zinc-100 hover:bg-zinc-900/50'
+                        ? 'bg-white/[0.08] text-white shadow-[0_0_20px_rgba(255,255,255,0.02)]' 
+                        : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.03]'
                     }`}
                   >
-                    <item.icon className={`mr-3 w-5 h-5 ${activeTab === item.id ? 'text-zinc-950' : 'text-zinc-600'}`} />
-                    <span>{item.label}</span>
+                    <item.icon className={`mr-3 w-4 h-4 ${activeTab === item.id ? 'text-white' : 'text-zinc-600'}`} />
+                    <span className="font-medium tracking-tight">{item.label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -78,27 +76,27 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 mt-auto">
-        <div className="p-4 rounded-2xl bg-zinc-900/50 border border-zinc-500/10 mb-4">
+      <SidebarFooter className="p-6">
+        <div className="p-4 rounded-3xl bg-white/[0.02] border border-white/[0.05] mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700">
-              <span className="text-zinc-300 font-bold text-sm uppercase">{userName?.at(0) || 'D'}</span>
+            <div className="w-9 h-9 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center">
+              <span className="text-zinc-300 font-medium text-xs uppercase">{userName?.at(0) || 'A'}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-black text-zinc-100 leading-none uppercase tracking-tight">{userName || 'Docente'}</span>
-              <span className="text-[10px] font-bold text-zinc-500 mt-1 uppercase tracking-widest italic">Rol de Auditor</span>
+              <span className="text-xs font-semibold text-white/90 leading-none">{userName || 'Administrador'}</span>
+              <span className="text-[9px] font-medium text-zinc-600 mt-1 uppercase tracking-wider">Docente Guía</span>
             </div>
           </div>
         </div>
         
-        <SidebarMenu className="pb-2">
+        <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton 
               onClick={() => { localStorage.clear(); window.location.reload(); }}
-              className="py-6 px-4 rounded-xl text-red-500/80 hover:bg-red-500/10 hover:text-red-400 transition-all font-bold text-sm tracking-tight group"
+              className="py-5 px-4 rounded-2xl text-zinc-500 hover:text-red-400 hover:bg-red-500/5 transition-all duration-300 group"
             >
-              <LogOut className="mr-3 w-5 h-5 transition-transform group-hover:-translate-x-1" />
-              <span>Cerrar Sesión Segura</span>
+              <LogOut className="mr-3 w-4 h-4 opacity-50 group-hover:opacity-100" />
+              <span className="text-xs font-medium">Cerrar Sesión</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -106,6 +104,7 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
     </Sidebar>
   );
 };
+
 
 export default AppSidebar;
 

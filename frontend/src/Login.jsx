@@ -8,19 +8,12 @@ import {
   UserPlus, 
   LogIn,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Building2,
+  ChevronRight
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 const Login = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -57,7 +50,8 @@ const Login = ({ onLogin }) => {
       if (response.ok) {
         if (isLogin) {
           localStorage.setItem('token', data.token);
-          onLogin(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          onLogin(data);
         } else {
           setSuccess('Registro completado. Iniciando sesión...');
           setTimeout(() => {
@@ -77,162 +71,154 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-zinc-950 p-4 font-sans relative overflow-hidden">
-      {/* Background Decorator */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500 rounded-full blur-[120px]" />
+    <div className="min-h-screen w-full flex items-center justify-center bg-black p-6 font-sans relative overflow-hidden selection:bg-white selection:text-black">
+      {/* Background Decorators */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-blue-500/10 blur-[150px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-indigo-500/10 blur-[150px] rounded-full" />
       </div>
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-[420px] z-10"
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-[440px] z-10"
       >
-        <Card className="border-zinc-800 bg-zinc-900/80 backdrop-blur-xl shadow-2xl overflow-hidden">
-          <CardHeader className="space-y-1 pb-8 text-center pt-10">
+        <div className="apple-card p-12 border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.5)]">
+          <div className="flex flex-col items-center text-center mb-12">
             <motion.div 
-              initial={{ y: -20 }}
-              animate={{ y: 0 }}
-              className="flex justify-center mb-6"
+               animate={{ 
+                 scale: [1, 1.05, 1],
+                 opacity: [0.8, 1, 0.8]
+               }}
+               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+               className="w-20 h-20 rounded-[2rem] bg-white/[0.03] border border-white/10 flex items-center justify-center mb-8 shadow-inner"
             >
-              <div className="bg-zinc-800 p-3 rounded-2xl border border-zinc-700 shadow-lg group">
-                <ShieldCheck className="w-8 h-8 text-zinc-100 transition-transform group-hover:scale-110" />
-              </div>
+              <Building2 className="w-9 h-9 text-white/90" />
             </motion.div>
-            <CardTitle className="text-3xl font-extrabold tracking-tight text-zinc-100">
-              {isLogin ? 'Acceso Institucional' : 'Registro Docente'}
-            </CardTitle>
-            <CardDescription className="text-zinc-400 font-medium">
-              Andrés Bello Attendance System v2.0
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent className="px-8 pb-8">
-            <form onSubmit={handleSubmit} className="space-y-5">
+            
+            <h1 className="text-4xl font-semibold tracking-tight text-white mb-3 italic">Andrés Bello</h1>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-500">
+              {isLogin ? 'Acceso Institucional' : 'Registro de Personal'}
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-zinc-400 text-xs font-bold uppercase tracking-widest pl-1">
-                  Usuario
-                </Label>
-                <div className="relative group">
-                  <User className="absolute left-3 top-2.5 w-4 h-4 text-zinc-500 group-focus-within:text-zinc-300 transition-colors" />
-                  <Input 
-                    id="username"
-                    placeholder="DocenteID / Admin"
+                <label className="text-[9px] font-bold uppercase tracking-[0.25em] text-zinc-600 pl-4">Identificación</label>
+                <div className="relative group/field">
+                  <User className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 group-focus-within/field:text-white/40 transition-colors" />
+                  <input 
+                    type="text"
+                    placeholder="Usuario / ID"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="bg-zinc-800/50 border-zinc-700 pl-10 focus:ring-zinc-400 focus:border-zinc-500 text-zinc-200 transition-all py-6"
+                    className="w-full h-14 bg-white/[0.03] border border-white/5 rounded-2xl pl-14 pr-6 text-white font-medium focus:ring-1 focus:ring-white/20 transition-all placeholder:text-zinc-700 outline-none"
                     required 
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-zinc-400 text-xs font-bold uppercase tracking-widest pl-1">
-                  Contraseña
-                </Label>
-                <div className="relative group">
-                  <Lock className="absolute left-3 top-2.5 w-4 h-4 text-zinc-500 group-focus-within:text-zinc-300 transition-colors" />
-                  <Input 
-                    id="password"
+                <label className="text-[9px] font-bold uppercase tracking-[0.25em] text-zinc-600 pl-4">Cifrado</label>
+                <div className="relative group/field">
+                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 group-focus-within/field:text-white/40 transition-colors" />
+                  <input 
                     type="password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-zinc-800/50 border-zinc-700 pl-10 focus:ring-zinc-400 focus:border-zinc-500 text-zinc-200 transition-all py-6"
+                    className="w-full h-14 bg-white/[0.03] border border-white/5 rounded-2xl pl-14 pr-6 text-white font-medium focus:ring-1 focus:ring-white/20 transition-all placeholder:text-zinc-700 outline-none"
                     required 
                   />
                 </div>
               </div>
 
-              <AnimatePresence>
-                {!isLogin && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                    animate={{ height: 'auto', opacity: 1, marginTop: 20 }}
-                    exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="text-zinc-400 text-xs font-bold uppercase tracking-widest pl-1">
-                        Confirmar
-                      </Label>
-                      <div className="relative group">
-                        <Lock className="absolute left-3 top-2.5 w-4 h-4 text-zinc-500 group-focus-within:text-zinc-300 transition-colors" />
-                        <Input 
-                          id="confirmPassword"
-                          type="password"
-                          placeholder="••••••••"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="bg-zinc-800/50 border-zinc-700 pl-10 focus:ring-zinc-400 focus:border-zinc-500 text-zinc-200 transition-all py-6"
-                          required 
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <Button 
-                type="submit" 
-                className="w-full py-7 text-base font-bold bg-zinc-100 text-zinc-950 hover:bg-zinc-200 shadow-xl shadow-zinc-950/20 active:scale-[0.98] transition-all rounded-xl mt-4"
-                disabled={loading}
-              >
-                {loading ? (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                    className="w-5 h-5 border-2 border-zinc-900 border-t-transparent rounded-full"
-                  />
-                ) : (
-                  <div className="flex items-center gap-2">
-                    {isLogin ? (
-                      <>Ingresar al Sistema <LogIn className="w-5 h-5 ml-1" /></>
-                    ) : (
-                      <>Crear Cuenta de Acceso <UserPlus className="w-5 h-5 ml-1" /></>
-                    )}
-                  </div>
-                )}
-              </Button>
-            </form>
-
-            <AnimatePresence>
-              {(error || success) && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }} 
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className={`mt-6 p-4 rounded-xl flex items-center gap-3 border ${
-                    error ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-green-500/10 border-green-500/20 text-green-400'
-                  }`}
+              {!isLogin && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  className="space-y-2 pt-2"
                 >
-                  {error ? <AlertCircle className="w-5 h-5 flex-shrink-0" /> : <CheckCircle2 className="w-5 h-5 flex-shrink-0" />}
-                  <span className="text-sm font-semibold">{error || success}</span>
+                  <label className="text-[9px] font-bold uppercase tracking-[0.25em] text-zinc-600 pl-4">Verificación</label>
+                  <div className="relative group/field">
+                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 group-focus-within/field:text-white/40 transition-colors" />
+                    <input 
+                      type="password"
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full h-14 bg-white/[0.03] border border-white/5 rounded-2xl pl-14 pr-6 text-white font-medium focus:ring-1 focus:ring-white/20 transition-all placeholder:text-zinc-700 outline-none"
+                      required 
+                    />
+                  </div>
                 </motion.div>
               )}
-            </AnimatePresence>
-          </CardContent>
-          
-          <CardFooter className="bg-zinc-950/50 py-6 flex flex-col items-center border-t border-zinc-800/50">
+            </div>
+
             <Button 
-              variant="ghost" 
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-zinc-400 hover:text-zinc-100 hover:bg-transparent text-sm font-bold group"
+              type="submit" 
+              className="w-full h-16 text-lg font-bold bg-white text-black hover:bg-zinc-200 rounded-[2rem] shadow-2xl transition-all active:scale-[0.97] group"
+              disabled={loading}
             >
-              {isLogin ? (
-                <>¿Es nuevo en la institución? <span className="text-zinc-200 ml-1 group-hover:underline">Regístrese aquí</span> <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" /></>
+              {loading ? (
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                  className="w-6 h-6 border-[3px] border-black/20 border-t-black rounded-full"
+                />
               ) : (
-                <>¿Ya posee credenciales? <span className="text-zinc-200 ml-1 group-hover:underline">Identifíquese</span></>
+                <div className="flex items-center gap-3">
+                  {isLogin ? (
+                    <>Entrar al Sistema <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>
+                  ) : (
+                    <>Registrar Acceso <UserPlus className="w-5 h-5" /></>
+                  )}
+                </div>
               )}
             </Button>
-          </CardFooter>
-        </Card>
+          </form>
+
+          <AnimatePresence>
+            {(error || success) && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} 
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className={`mt-8 p-5 rounded-2xl flex items-center gap-4 text-xs font-semibold ${
+                  error ? 'bg-red-500/10 text-red-400 border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)]' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]'
+                }`}
+              >
+                {error ? <AlertCircle className="w-5 h-5" /> : <CheckCircle2 className="w-5 h-5" />}
+                {error || success}
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          <div className="mt-12 pt-8 border-t border-white/5 flex flex-col items-center">
+            <button 
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-zinc-500 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest flex items-center gap-2 group"
+            >
+              {isLogin ? (
+                <>Solicitar registro institucional <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" /></>
+              ) : (
+                <>Volver a identificación segura</>
+              )}
+            </button>
+          </div>
+        </div>
         
-        <p className="mt-8 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest opacity-50">
-          Unidad Educativa Andrés Bello © 2026
-        </p>
+        <div className="mt-12 flex flex-col items-center gap-4 opacity-30 select-none">
+            <div className="flex items-center gap-2 text-zinc-700">
+                <ShieldCheck className="w-4 h-4" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Cifrado Protocolo UPEL-2026</span>
+            </div>
+            <p className="text-center text-zinc-800 text-[9px] font-black uppercase tracking-[0.3em]">
+                Unidad Educativa Andrés Bello • Núcleo Administrativo
+            </p>
+        </div>
       </motion.div>
     </div>
   );

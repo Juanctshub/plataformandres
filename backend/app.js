@@ -141,19 +141,29 @@ app.put('/api/justificaciones/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// IA: ANÁLISIS PREDICTIVO (Momento II - Marco Teórico - Big Data Escolar)
+// NOTIFICACIONES (Momento II - Comunicación Proactiva)
+app.post('/api/notify', authenticateToken, async (req, res) => {
+    const { student, msg, contact } = req.body;
+    // Simulación de envío de SMS/Email (Requerimiento LOPNA)
+    console.log(`[ALERTA INSTITUCIONAL] Enviando a ${contact}: ${msg}`);
+    
+    // Aquí se integraría servicios como Twilio o SendGrid en producción
+    setTimeout(() => {
+        res.json({ success: true, message: `Notificación enviada a representante de ${student}` });
+    }, 1000);
+});
+
 app.get('/api/ai/analytics', authenticateToken, async (req, res) => {
     try {
-        // Lógica Avanzada: Faltas sin justificativo aprobado
         const result = await db.query(`
-            SELECT e.nombre, e.seccion, e.contacto, 
+            SELECT e.id, e.nombre, e.seccion, e.contacto, 
             COUNT(DISTINCT a.id) FILTER (WHERE a.estado = 'ausente') as total_faltas,
             COUNT(DISTINCT j.id) FILTER (WHERE j.estado = 'aprobado') as faltas_justificadas
             FROM estudiantes e
             LEFT JOIN asistencia a ON e.id = a.estudiante_id
             LEFT JOIN justificaciones j ON e.id = j.estudiante_id AND a.fecha = j.fecha
             GROUP BY e.id, e.nombre, e.seccion, e.contacto 
-            HAVING COUNT(DISTINCT a.id) FILTER (WHERE a.estado = 'ausente') >= 2
+            HAVING COUNT(DISTINCT a.id) FILTER (WHERE a.estado = 'ausente') >= 1
         `);
 
         const alerts = result.rows.map(r => {
@@ -162,13 +172,15 @@ app.get('/api/ai/analytics', authenticateToken, async (req, res) => {
                 return {
                     msg: `🚨 RIESGO CRÍTICO: ${r.nombre} (${r.seccion}) tiene ${riesgoReal} faltas injustificadas. Posible deserción.`,
                     type: 'danger',
-                    student: r.nombre
+                    student: r.nombre,
+                    contact: r.contacto
                 };
             } else if (riesgoReal > 0) {
                 return {
                     msg: `⚠️ PRECAUCIÓN: ${r.nombre} tiene ${riesgoReal} ausencias pendientes por justificar.`,
                     type: 'warning',
-                    student: r.nombre
+                    student: r.nombre,
+                    contact: r.contacto
                 };
             }
             return null;
@@ -184,6 +196,7 @@ app.get('/api/ai/analytics', authenticateToken, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 
 app.listen(PORT, () => {

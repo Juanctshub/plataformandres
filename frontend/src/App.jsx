@@ -24,41 +24,29 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 const SplashScreen = () => (
-  <div className="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center pointer-events-none">
+  <div className="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center select-none">
     <motion.div 
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: [0.8, 1.1, 1], opacity: 1 }}
-      exit={{ scale: 1.5, opacity: 0 }}
-      transition={{ duration: 0.8, ease: "circOut" }}
-      className="flex flex-col items-center gap-6"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 1.1 }}
+      transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+      className="flex flex-col items-center gap-12"
     >
-      <div className="relative">
-        <div className="w-24 h-24 rounded-[2rem] bg-zinc-900 border-2 border-zinc-800 flex items-center justify-center p-4">
-          <Building2 className="w-full h-full text-zinc-100" />
-        </div>
+      <div className="relative w-20 h-20">
+        <Building2 className="w-full h-full text-white" />
         <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-          className="absolute -inset-4 border-2 border-dashed border-zinc-800 rounded-full opacity-20"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.3, 0.1]
+          }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0 bg-white blur-2xl rounded-full"
         />
       </div>
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-black tracking-tighter text-zinc-100 uppercase italic">Andrés Bello</h1>
-        <div className="flex items-center gap-3 justify-center">
-            <span className="w-8 h-[2px] bg-zinc-800" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500">Núcleo Institucional</span>
-            <span className="w-8 h-[2px] bg-zinc-800" />
-        </div>
-      </div>
-      <div className="flex items-center gap-2 mt-8">
-        {[0, 1, 2].map(i => (
-          <motion.div 
-            key={i}
-            animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
-            className="w-1.5 h-1.5 rounded-full bg-zinc-100"
-          />
-        ))}
+      
+      <div className="space-y-4 text-center">
+        <h1 className="text-3xl font-medium tracking-[-0.02em] text-white">Andrés Bello</h1>
+        <p className="text-[10px] font-medium uppercase tracking-[0.5em] text-zinc-500">Núcleo Institucional</p>
       </div>
     </motion.div>
   </div>
@@ -105,10 +93,9 @@ const App = () => {
         }));
         setAiData(ai);
         
-        // Simular un tiempo mínimo de carga para el splash screen si es muy rápido
-        setTimeout(() => setIsInitializing(false), 1200);
+        setTimeout(() => setIsInitializing(false), 2000);
       } catch (e) { 
-        console.error('Network error - syncing with NeonDB...', e); 
+        console.error('Error sincronizando datos...', e); 
         setIsInitializing(false);
       }
     };
@@ -121,53 +108,45 @@ const App = () => {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-black text-zinc-100 selection:bg-zinc-100 selection:text-black">
+      <div className="flex min-h-screen w-full bg-black text-white selection:bg-white selection:text-black font-sans antialiased">
         <AppSidebar 
           activeTab={activeTab} 
           onTabChange={setActiveTab} 
           userName={user?.username} 
         />
         
-        <SidebarInset className="bg-black/50 border-l border-zinc-900 shadow-2xl relative overflow-hidden">
-          {/* Background Gradient */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] pointer-events-none" />
+        <SidebarInset className="bg-black relative overflow-hidden border-none shadow-none">
+          {/* Subtle Glow */}
+          <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-blue-500/10 blur-[150px] pointer-events-none rounded-full" />
           
-          <header className="flex h-20 shrink-0 items-center gap-4 border-b border-zinc-900 px-8 sticky top-0 bg-black/60 backdrop-blur-md z-30 justify-between">
+          <header className="flex h-16 shrink-0 items-center justify-between px-8 sticky top-0 bg-black/60 backdrop-blur-xl z-30 border-b border-white/[0.05]">
             <div className="flex items-center gap-4">
-              <SidebarTrigger className="text-zinc-500 hover:text-zinc-100 transition-colors" />
-              <Separator orientation="vertical" className="h-6 bg-zinc-800" />
+              <SidebarTrigger className="text-zinc-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg" />
+              <div className="h-4 w-[1px] bg-white/10 mx-2" />
               <div className="flex items-center gap-3">
-                <h1 className="text-xl font-black tracking-tighter text-zinc-100 uppercase italic">Andrés Bello</h1>
-                <ChevronRight className="w-4 h-4 text-zinc-800" />
-                <span className="text-xs font-black uppercase tracking-[2px] text-zinc-500">
-                  {activeTab}
-                </span>
+                <span className="text-sm font-semibold tracking-tight text-white/90">Andrés Bello</span>
+                <ChevronRight className="w-3 h-3 text-zinc-600" />
+                <span className="text-xs font-medium text-zinc-500 capitalize">{activeTab}</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-6">
-              <div className="hidden md:flex flex-col items-end">
-                <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                  <span className="text-[10px] font-black uppercase tracking-[1px] text-zinc-400">Estado: Sincronizado</span>
-                </div>
-                <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mt-0.5">Neon Postgres Cluster v16.2</span>
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl flex items-center gap-3 group hover:border-zinc-700 transition-all cursor-pointer">
-                <Database className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
-                <span className="text-xs font-black tracking-tight text-zinc-400">INSTITUCIÓN-UA-2026</span>
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-3 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.05]">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                <span className="text-[10px] font-medium text-zinc-400">Node Secure</span>
               </div>
             </div>
           </header>
 
-          <main className="flex-1 p-8 overflow-y-auto max-w-[1400px] mx-auto w-full">
+          <main className="flex-1 p-8 max-w-[1400px] mx-auto w-full">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="min-h-full"
               >
                 {activeTab === 'dashboard' && <Dashboard stats={stats} aiData={aiData} />}
                 {activeTab === 'students' && <Students />}
@@ -178,15 +157,10 @@ const App = () => {
             </AnimatePresence>
           </main>
 
-          <footer className="h-16 border-t border-zinc-900 flex items-center px-8 justify-between opacity-30 select-none">
-            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
-              © 2026 UNIDAD EDUCATIVA ANDRÉS BELLO • NÚCLEO TÉCNICO
+          <footer className="h-16 flex items-center px-8 justify-between opacity-20 hover:opacity-100 transition-opacity duration-700">
+            <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-zinc-400">
+              © 2026 UNIDAD EDUCATIVA ANDRÉS BELLO
             </span>
-            <div className="flex gap-4">
-              <div className="h-2 w-2 rounded-full bg-zinc-800" />
-              <div className="h-2 w-2 rounded-full bg-zinc-800" />
-              <div className="h-2 w-2 rounded-full bg-zinc-800" />
-            </div>
           </footer>
         </SidebarInset>
       </div>
@@ -195,3 +169,4 @@ const App = () => {
 };
 
 export default App;
+

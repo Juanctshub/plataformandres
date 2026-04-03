@@ -1,300 +1,270 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  BrainCircuit, 
   TrendingDown, 
+  TrendingUp, 
   AlertTriangle, 
+  CheckCircle2, 
+  PieChart, 
+  Activity, 
+  BrainCircuit, 
   ShieldCheck, 
-  Zap, 
-  BarChart3, 
-  Mail, 
-  UserCircle2,
-  FileText,
-  Activity,
-  Database,
-  Cpu
+  Building2,
+  ChevronRight,
+  Download,
+  Bell,
+  Cpu,
+  Loader2,
+  Mail
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 const IAAnalyticsSkeleton = () => (
-  <div className="space-y-8 pb-10">
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div className="space-y-2">
-        <Skeleton className="h-10 w-80 bg-zinc-900" />
-        <Skeleton className="h-4 w-60 bg-zinc-900" />
+  <div className="space-y-12 pb-20">
+    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-64 bg-white/5 rounded-xl" />
+        <Skeleton className="h-4 w-48 bg-white/5 rounded-lg" />
       </div>
-      <Skeleton className="h-10 w-40 bg-zinc-900 rounded-xl" />
+      <Skeleton className="h-12 w-48 bg-white/5 rounded-2xl" />
     </div>
-
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[1, 2, 3].map(i => (
-          <Skeleton key={i} className="h-32 w-full bg-zinc-900 rounded-xl" />
-        ))}
-      </div>
-      <div className="lg:col-span-4">
-        <Skeleton className="h-32 w-full bg-zinc-900 rounded-xl" />
-      </div>
-      <div className="lg:col-span-5">
-        <Skeleton className="h-[500px] w-full bg-zinc-900 rounded-xl" />
-      </div>
-      <div className="lg:col-span-7">
-        <Skeleton className="h-[500px] w-full bg-zinc-900 rounded-xl" />
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <Skeleton className="h-48 bg-white/5 rounded-3xl" />
+        <Skeleton className="h-48 bg-white/5 rounded-3xl" />
+        <Skeleton className="h-48 bg-white/5 rounded-3xl" />
     </div>
+    <Skeleton className="h-96 bg-white/5 rounded-[2.5rem]" />
   </div>
 );
 
 const IAAnalytics = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const [aiData, setAiData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [notifying, setNotifying] = useState(null);
 
-  useEffect(() => {
-    const fetchAI = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
-        const res = await fetch(`${baseUrl}/api/ai/analytics`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const json = await res.json();
-        
-        // Simular latencia de procesamiento neural para mostrar el skeleton
-        setTimeout(() => {
-          setData(json);
-          setLoading(false);
-        }, 1000);
-      } catch (e) {
-        setLoading(false);
-      }
+    const fetchAiData = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+            const res = await fetch(`${baseUrl}/api/ai/analytics`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            setAiData(data);
+        } catch (e) {
+            console.error('IA Offline:', e);
+        } finally {
+            setTimeout(() => setLoading(false), 1200);
+        }
     };
-    fetchAI();
-  }, []);
 
-  const handlePrint = () => {
-    window.print();
-  };
+    useEffect(() => {
+        fetchAiData();
+    }, []);
 
-  if (loading) return <IAAnalyticsSkeleton />;
+    const handleNotify = async (alert) => {
+        setNotifying(alert.student);
+        try {
+            const token = localStorage.getItem('token');
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+            const res = await fetch(`${baseUrl}/api/notify`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ 
+                    student: alert.student, 
+                    msg: alert.msg, 
+                    contact: alert.contact 
+                })
+            });
+            if (res.ok) {
+                alert.notified = true;
+                setAiData({...aiData});
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setTimeout(() => setNotifying(null), 1000);
+        }
+    };
 
-  return (
-    <div className="space-y-8 pb-10">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-zinc-100 tracking-tighter flex items-center gap-3 italic uppercase">
-            <BrainCircuit className="w-8 h-8 text-indigo-500" />
-            Dashboard Predictivo IA
-          </h1>
-          <p className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] mt-1 italic">
-            Análisis de Deserción • Algoritmos de Intervención Temprana
-          </p>
-        </div>
-        <Button 
-          variant="outline" 
-          onClick={handlePrint}
-          className="border-zinc-800 bg-zinc-950 text-zinc-100 font-black uppercase tracking-widest text-[11px] h-10 px-6 hover:bg-zinc-900 transition-all active:scale-95"
-        >
-          <FileText className="w-4 h-4 mr-2" />
-          Exportar Auditoría IA
-        </Button>
-      </div>
+    const handleExport = () => {
+        window.print();
+    };
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* KPI Cards */}
-        <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border-zinc-800 bg-zinc-900/40 backdrop-blur-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2 italic">
-                <ShieldCheck className="w-3 h-4 text-emerald-500" /> Precisión Modelo
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-black text-zinc-100 tracking-tighter italic">94.2%</div>
-              <p className="text-[9px] text-zinc-600 font-black uppercase mt-1 italic tracking-widest">Sincronizado 2026</p>
-            </CardContent>
-          </Card>
+    if (loading) return <IAAnalyticsSkeleton />;
 
-          <Card className="border-zinc-800 bg-zinc-900/40 backdrop-blur-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2 italic">
-                <Zap className="w-3 h-3 text-amber-500" /> Latencia Inferencial
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-black text-zinc-100 tracking-tighter italic">12ms</div>
-              <p className="text-[9px] text-zinc-600 font-black uppercase mt-1 italic tracking-widest">Tiempo Real Core</p>
-            </CardContent>
-          </Card>
+    return (
+        <div className="space-y-12 pb-20 printable-area">
+            <style dangerouslySetInnerHTML={{ __html: `
+                @media print {
+                  .no-print { display: none !important; }
+                  .apple-card { border: 1px solid #eee !important; background: white !important; color: black !important; }
+                  .text-white { color: black !important; }
+                  .text-zinc-500 { color: #666 !important; }
+                  body { background: white !important; }
+                }
+            ` }} />
 
-          <Card className="border-zinc-800 bg-zinc-900/40 backdrop-blur-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2 italic">
-                <Database className="w-3 h-3 text-blue-500" /> Integridad Datos
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-black text-zinc-100 tracking-tighter italic">100%</div>
-              <p className="text-[9px] text-zinc-600 font-black uppercase mt-1 italic tracking-widest">Neon Cloud Sync</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Neural Activity Card */}
-        <Card className="lg:col-span-4 border-zinc-800 bg-zinc-950/20 backdrop-blur-sm flex flex-col justify-center px-6 relative overflow-hidden group hover:border-indigo-500/30 transition-all">
-            <div className="flex items-center gap-4 py-8">
-                <div className="relative">
-                    <Activity className="w-10 h-10 text-indigo-500 animate-pulse" />
-                    <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-full" />
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 no-print">
+                <div className="space-y-2">
+                    <h2 className="text-4xl font-semibold tracking-tight text-white/90 italic">IA Analytics</h2>
+                    <div className="flex items-center gap-3">
+                        <p className="text-zinc-500 font-medium">Motor de predicción de deserción escolar basado en Big Data.</p>
+                        <div className="h-4 w-[1px] bg-white/10" />
+                        <Badge className="bg-blue-500/10 text-blue-400 border-none rounded-full px-3 py-1 font-bold text-[10px] uppercase tracking-widest flex gap-2">
+                            <Activity className="w-3 h-3" />
+                            Tiempo Real
+                        </Badge>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="text-sm font-black text-zinc-100 uppercase tracking-tighter italic">Motor Neural ACTIVO</h3>
-                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mt-1">Análisis Multivariante v3.8</p>
+                
+                <div className="flex items-center gap-4">
+                    <Button 
+                        onClick={handleExport}
+                        className="h-12 px-6 bg-white/[0.03] border border-white/10 text-white hover:bg-white/10 rounded-2xl font-bold transition-all flex gap-3 active:scale-95"
+                    >
+                        <Download className="w-5 h-5 opacity-50" />
+                        Exportar Auditoría
+                    </Button>
                 </div>
             </div>
-            <div className="absolute bottom-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[60px] pointer-events-none" />
-        </Card>
 
-        {/* Risk Alerts List */}
-        <Card className="lg:col-span-12 xl:col-span-5 border-zinc-800 bg-zinc-900/40 backdrop-blur-sm">
-          <CardHeader className="border-b border-zinc-500/10 pb-4">
-            <CardTitle className="text-xl font-black text-zinc-100 flex items-center gap-2 tracking-tighter italic uppercase">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
-              Riesgo de Deserción
-            </CardTitle>
-            <CardDescription className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">
-              Detecciones Automatizadas Institucionales
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-6 space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar">
-            <AnimatePresence>
-                {data?.alerts?.map((alert, i) => (
-                <motion.div 
-                    key={i} 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className={`p-4 rounded-2xl border bg-zinc-950/40 transition-all hover:bg-zinc-900 group ${
-                        alert.type === 'danger' ? 'border-red-500/20 hover:border-red-500/40' : 'border-amber-500/20 hover:border-amber-500/40'
-                    }`}
-                >
-                    <div className="flex justify-between items-start mb-3">
-                        <Badge className={`font-black uppercase text-[8px] tracking-widest px-2 py-0.5 pointer-events-none ${
-                             alert.type === 'danger' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'
-                        }`}>
-                            {alert.type === 'danger' ? 'ALTA PRIORIDAD' : 'SUGESTIÓN IA'}
-                        </Badge>
-                        <span className="text-[9px] font-black text-zinc-700 tracking-widest">S-REC: 2026-X</span>
-                    </div>
-                    <p className="text-xs font-bold text-zinc-300 leading-relaxed pr-2">{alert.msg}</p>
-                    <div className="flex gap-3 mt-5">
-                       <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-100 bg-zinc-950 px-4 rounded-xl">
-                         <UserCircle2 className="w-3.5 h-3.5 mr-2" /> Perfil
-                       </Button>
-                       <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-indigo-400 bg-zinc-950 px-4 rounded-xl">
-                         <Mail className="w-3.5 h-3.5 mr-2" /> Notificar
-                       </Button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 no-print">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="apple-card p-10 relative overflow-hidden">
+                    <TrendingDown className="absolute -right-6 -bottom-6 w-32 h-32 text-red-500/5 rotate-12" />
+                    <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4">Índice de Riesgo</h3>
+                    <div className="flex items-end gap-3">
+                        <span className="text-5xl font-semibold text-white tracking-tighter">14.2%</span>
+                        <span className="text-emerald-400 text-xs font-bold mb-2 flex items-center">
+                            -2.1% <TrendingDown className="w-3 h-3 ml-1" />
+                        </span>
                     </div>
                 </motion.div>
-                ))}
-            </AnimatePresence>
-            {!data?.alerts?.length && (
-                <div className="py-20 text-center flex flex-col items-center gap-4 opacity-20">
-                    <ShieldCheck className="w-12 h-12 text-zinc-500" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em]">Sin riesgos detectados</span>
-                </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Projection Chart & Trends */}
-        <Card className="lg:col-span-12 xl:col-span-7 border-zinc-800 bg-zinc-900/40 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-zinc-500/10 pb-4">
-            <div className="space-y-1">
-                <CardTitle className="text-xl font-black text-zinc-100 flex items-center gap-2 tracking-tighter italic uppercase">
-                  <BarChart3 className="w-5 h-5 text-indigo-400" />
-                  Proyección Semanal
-                </CardTitle>
-                <CardDescription className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">
-                  Tendencia Predictiva Multinodal
-                </CardDescription>
-            </div>
-            <div className="flex flex-col items-end">
-                <div className="flex items-center gap-2 text-emerald-500">
-                    <TrendingDown className="w-3 h-3 rotate-180" />
-                    <span className="text-xs font-black">+4.2%</span>
-                </div>
-                <span className="text-[9px] text-zinc-600 font-bold uppercase tracking-widest mt-0.5">Incremento esperado</span>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-10">
-            <div className="flex items-end gap-3 md:gap-6 h-48 md:h-64 px-4 bg-zinc-950/20 rounded-2xl p-6 border border-zinc-800/10">
-              {[65, 80, 45, 90, 85, 95, 70].map((h, i) => (
-                <div key={i} className="flex-1 flex flex-col gap-4 items-center group relative">
-                    <div className={`absolute -top-10 scale-0 group-hover:scale-100 transition-transform bg-zinc-100 text-zinc-950 text-[10px] font-black px-2 py-1 rounded-md mb-2 z-10`}>
-                        {h}%
+                
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="apple-card p-10 relative overflow-hidden">
+                    <Cpu className="absolute -right-6 -bottom-6 w-32 h-32 text-blue-500/5" />
+                    <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4">Optimización IA</h3>
+                    <div className="flex items-end gap-3">
+                        <span className="text-5xl font-semibold text-white tracking-tighter">98.9%</span>
+                        <span className="text-zinc-500 text-[10px] font-bold mb-2 uppercase tracking-widest">Confianza</span>
                     </div>
-                  <motion.div 
-                    initial={{ height: 0 }}
-                    animate={{ height: `${h}%` }}
-                    transition={{ duration: 1, delay: i * 0.1, ease: "circOut" }}
-                    className={`w-full max-w-[32px] md:max-w-[48px] rounded-t-2xl transition-all ${
-                      h < 50 
-                        ? 'bg-gradient-to-t from-red-600/80 to-red-400 shadow-[0_0_20px_rgba(239,68,68,0.15)]' 
-                        : 'bg-gradient-to-t from-indigo-600/80 to-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.15)]'
-                    } group-hover:brightness-125 group-hover:scale-x-110`}
-                  />
-                  <div className="flex flex-col items-center">
-                    <span className="text-[9px] font-black text-zinc-600 group-hover:text-zinc-200 transition-colors uppercase tracking-[0.2em]">
-                        {['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'][i]}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                </motion.div>
+                
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="apple-card p-10 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+                    <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] mb-4">Cluster Académico</h3>
+                    <div className="flex items-end gap-3">
+                        <span className="text-5xl font-semibold text-white tracking-tighter">V.16.2</span>
+                        <span className="text-zinc-500 text-[10px] font-bold mb-2 uppercase tracking-widest italic">NEON TECH</span>
+                    </div>
+                </motion.div>
             </div>
-            
-            <div className="mt-12 flex flex-wrap justify-center gap-8 pt-8 opacity-40">
-                <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
-                    <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Normal</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                    <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Crítico</span>
-                </div>
-                <div className="flex items-center gap-2 text-zinc-600">
-                    <Database className="w-3 h-3" />
-                    <span className="text-[9px] font-black uppercase tracking-widest">Sync Neon</span>
-                </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
-      <div className="mt-8 pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] select-none">
-        <div className="flex items-center gap-2">
-            <Cpu className="w-3.5 h-3.5 text-zinc-800" />
-            <span>Andrés Bello Neural Engine v3.8 • {data?.security || 'RSA-4096'}</span>
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="apple-card p-12 border-white/10 shadow-2xl"
+            >
+                <div className="flex items-center gap-6 mb-12 border-b border-white/5 pb-8">
+                    <div className="w-16 h-16 rounded-[1.5rem] bg-blue-500/10 flex items-center justify-center text-blue-400 shadow-2xl shadow-blue-500/20">
+                        <BrainCircuit className="w-8 h-8" />
+                    </div>
+                    <div>
+                        <h3 className="text-3xl font-semibold text-white tracking-tight italic uppercase">Detección de Patrones</h3>
+                        <p className="text-zinc-500 font-medium mt-1">Análisis preventivo de deserción escolar por inasistencia injustificada.</p>
+                    </div>
+                </div>
+
+                <div className="space-y-6">
+                    {aiData?.alerts.map((alert, i) => (
+                        <motion.div 
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4 + (i * 0.1) }}
+                            className={`p-8 rounded-[2rem] border transition-all duration-700 flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden relative group ${
+                                alert.type === 'danger' ? 'bg-red-500/5 border-red-500/10' : 
+                                alert.type === 'warning' ? 'bg-amber-500/5 border-amber-500/10' : 
+                                'bg-emerald-500/5 border-emerald-500/10'
+                            }`}
+                        >
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                                    alert.type === 'danger' ? 'bg-red-500/10 text-red-400' : 
+                                    alert.type === 'warning' ? 'bg-amber-500/10 text-amber-400' : 
+                                    'bg-emerald-500/10 text-emerald-400'
+                                }`}>
+                                    {alert.type === 'danger' ? <AlertTriangle className="w-6 h-6" /> : 
+                                     alert.type === 'warning' ? <Bell className="w-6 h-6" /> : 
+                                     <CheckCircle2 className="w-6 h-6" />}
+                                </div>
+                                <div>
+                                    <p className={`text-lg font-semibold tracking-tight ${
+                                        alert.type === 'danger' ? 'text-red-300' : 
+                                        alert.type === 'warning' ? 'text-amber-300' : 
+                                        'text-emerald-300'
+                                    }`}>
+                                        {alert.msg}
+                                    </p>
+                                    <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mt-1 italic">Análisis probabilístico v3.8 • {aiData.timestamp}</p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-4 relative z-10 no-print">
+                                {alert.type !== 'success' && (
+                                    <Button 
+                                        onClick={() => handleNotify(alert)}
+                                        disabled={notifying === alert.student || alert.notified}
+                                        className={`rounded-2xl font-bold text-[10px] uppercase tracking-widest px-6 h-12 transition-all active:scale-95 border ${
+                                            alert.notified 
+                                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 cursor-default' 
+                                            : 'bg-white text-black hover:bg-zinc-200 shadow-xl shadow-white/5 border-transparent'
+                                        }`}
+                                    >
+                                        {notifying === alert.student ? (
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                        ) : alert.notified ? (
+                                            <div className="flex items-center gap-2">
+                                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                                Representante Notificado
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <Mail className="w-3.5 h-3.5" />
+                                                Notificar Representante
+                                            </div>
+                                        )}
+                                    </Button>
+                                )}
+                            </div>
+                            
+                            <div className={`absolute right-[-2.5rem] bottom-[-2.5rem] w-40 h-40 opacity-[0.03] transition-transform duration-1000 group-hover:scale-110 ${
+                                alert.type === 'danger' ? 'text-red-500' : 'text-zinc-500'
+                            }`}>
+                                <Activity className="w-full h-full" />
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </motion.div>
+
+            <div className="flex items-center gap-10 opacity-30 text-zinc-700 select-none pt-10 no-print">
+                <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Big Data Engine • Andrés Bello</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Building2 className="w-4 h-4" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Cluster de Auditoría Institucional</span>
+                </div>
+            </div>
         </div>
-        <div className="flex items-center gap-2">
-            <Activity className="w-3.5 h-3.5 text-emerald-950" />
-            <span>Última Interferencia: {data?.timestamp || 'Justo ahora'}</span>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default IAAnalytics;
