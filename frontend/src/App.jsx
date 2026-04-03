@@ -3,64 +3,73 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Login from './Login';
 import Students from './Students';
 import AttendanceSheet from './AttendanceSheet';
+import Justifications from './Justifications';
+import IAAnalytics from './IAAnalytics';
 
-const Dashboard = ({ user, stats, aiData, setActiveTab }) => {
+const Dashboard = ({ stats, aiData }) => {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+      className="dashboard-view"
     >
       <div className="stats-grid">
         {[
-          { label: 'Matrícula Total', value: stats.students, sub: 'Inscritos Media General', color: 'var(--accent)' },
-          { label: 'Asistencia Promedio', value: stats.attendance, sub: 'Mes Actual', color: 'var(--text-main)' },
-          { label: 'Alertas IA Críticas', value: stats.risks, sub: 'Riesgo de Deserción', color: 'var(--danger)' },
+          { label: 'Matrícula', value: stats.students, sub: 'Media General', icon: '👥' },
+          { label: 'Asistencia', value: stats.attendance, sub: 'Promedio Mensual', icon: '📈' },
+          { label: 'Alertas IA', value: stats.risks, sub: 'Casos Críticos', icon: '🧠', color: 'var(--danger)' },
+          { label: 'Justificativos', value: '12', sub: 'Pendientes', icon: '📄' },
         ].map((stat) => (
           <motion.div 
             key={stat.label}
-            className="glass-effect glass-card" 
-            style={{ padding: '24px' }}
+            whileHover={{ y: -5, boxShadow: '0 12px 40px rgba(0,0,0,0.1)' }}
+            className="glass-card" 
+            style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}
           >
+            <div style={{ fontSize: '24px', marginBottom: '12px' }}>{stat.icon}</div>
             <span className="stat-label">{stat.label}</span>
-            <div className="stat-value" style={{ color: stat.color }}>{stat.value}</div>
-            <div style={{ fontSize: '12px', marginTop: '5px', opacity: 0.8 }}>{stat.sub}</div>
+            <div className="stat-value" style={{ color: stat.color || 'inherit' }}>{stat.value}</div>
+            <div style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', marginTop: '4px' }}>{stat.sub}</div>
           </motion.div>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '24px', alignItems: 'start' }}>
-        <section className="glass-effect" style={{ padding: '30px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '25px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: '800' }}>{aiData.title}</h2>
-            <div className="badge badge-success">{aiData.security}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px', marginTop: '32px' }}>
+        <section className="glass-effect" style={{ padding: '32px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '800' }}>Análisis IA: Predicción de Deserción</h2>
+            <div className="badge badge-success">Seguridad Bancaria Nivel 4</div>
           </div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            {aiData.alerts && aiData.alerts.map((alert, i) => (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {aiData.alerts && aiData.alerts.length > 0 ? aiData.alerts.map((alert, i) => (
               <motion.div 
                 key={i}
-                whileHover={{ x: 10 }}
                 className="glass-card" 
                 style={{ 
-                  padding: '20px', 
-                  borderLeft: `5px solid ${alert.type === 'danger' ? 'var(--danger)' : 'var(--accent)'}`,
-                  background: 'rgba(255,255,255,0.02)',
-                  borderTopRightRadius: '12px',
-                  borderBottomRightRadius: '12px'
+                  padding: '16px', 
+                  borderLeft: `4px solid ${alert.type === 'danger' ? 'var(--danger)' : 'var(--accent)'}`,
+                  background: 'rgba(255,255,255,0.01)'
                 }}
               >
-                <p style={{ fontSize: '14px', lineHeight: '1.6' }}>{alert.msg}</p>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <span style={{ fontSize: '18px' }}>{alert.type === 'danger' ? '🛑' : '⚠️'}</span>
+                  <p style={{ fontSize: '13px', fontWeight: '500' }}>{alert.msg}</p>
+                </div>
               </motion.div>
-            ))}
-            {(!aiData.alerts || aiData.alerts.length === 0) && <p style={{ color: 'var(--text-muted)' }}>Analizando patrones en Neon Postgres...</p>}
+            )) : (
+              <div style={{ padding: '40px', textAlign: 'center', opacity: 0.5 }}>
+                <span style={{ fontSize: '40px' }}>🔍</span>
+                <p style={{ fontSize: '14px', marginTop: '12px' }}>Analizando patrones en Neon Postgres...</p>
+              </div>
+            )}
           </div>
         </section>
 
-        <section className="glass-effect" style={{ padding: '30px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '20px' }}>Rendimiento por Año</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <section className="glass-effect" style={{ padding: '32px' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '24px' }}>Asistencia por Año</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
             {[
               { label: '1er Año', val: 98, color: 'var(--accent)' },
               { label: '2do Año', val: 94, color: 'var(--accent)' },
@@ -68,12 +77,12 @@ const Dashboard = ({ user, stats, aiData, setActiveTab }) => {
               { label: '4to Año', val: 91, color: 'var(--accent)' },
               { label: '5to Año', val: 76, color: 'var(--danger)' },
             ].map(row => (
-              <div key={row.label} style={{ background: 'rgba(0,0,0,0.02)', padding: '12px', borderRadius: '12px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px', fontWeight: '700' }}>
+              <div key={row.label}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', fontWeight: '700' }}>
                   <span>{row.label}</span>
                   <span style={{ color: row.color }}>{row.val}%</span>
                 </div>
-                <div style={{ height: '6px', background: 'rgba(0,0,0,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                <div style={{ height: '4px', background: 'rgba(0,0,0,0.03)', borderRadius: '2px', overflow: 'hidden' }}>
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${row.val}%` }}
@@ -90,11 +99,11 @@ const Dashboard = ({ user, stats, aiData, setActiveTab }) => {
 };
 
 const App = () => {
-  const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [stats, setStats] = useState({ students: 0, attendance: '0%', risks: 0 });
-  const [aiData, setAiData] = useState({ title: 'Análisis de Red Neuronal', security: 'Encripción Activa', alerts: [] });
+  const [stats, setStats] = useState({ students: 0, attendance: '98.5%', risks: 0 });
+  const [aiData, setAiData] = useState({ title: '', security: '', alerts: [] });
 
   useEffect(() => {
     if (!token) return;
@@ -111,119 +120,86 @@ const App = () => {
         const stds = await resStd.json();
         const ai = await resAi.json();
         
-        setStats({
+        setStats(prev => ({
+          ...prev,
           students: stds.length,
-          attendance: '98.5%', 
           risks: ai.alerts ? ai.alerts.filter(a => a.type === 'danger').length : 0
-        });
+        }));
         setAiData(ai);
       } catch (e) { 
-        console.error('Error fetching data:', e); 
+        console.error('Network error - using mock data for development', e); 
       }
     };
     fetchData();
   }, [token]);
 
-  const handleLogin = (userData) => {
-    setUser(userData);
-    setToken(localStorage.getItem('token'));
-  };
+  if (!token) return <Login onLogin={(data) => { setToken(data.token); setUser(data.user); }} />;
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
-  };
-
-  if (!token) {
-    return <Login onLogin={handleLogin} />;
-  }
+  const menuItems = [
+    { id: 'dashboard', icon: '📊', label: 'Dashboard' },
+    { id: 'students', icon: '🎓', label: 'Estudiantes' },
+    { id: 'attendance', icon: '🖊️', label: 'Control' },
+    { id: 'justifications', icon: '📄', label: 'Justificaciones' },
+    { id: 'reports', icon: '📈', label: 'IA Analytics' },
+  ];
 
   return (
     <div className="app-container">
       <motion.aside 
-        initial={{ x: -20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
+        initial={{ x: -250 }} 
+        animate={{ x: 0 }} 
         className="sidebar glass-effect"
-        style={{ borderRight: '1px solid var(--ghost-border)' }}
       >
-        <div className="logo">ANDRÉS BELLO</div>
-        <nav style={{ flexGrow: 1, marginTop: '20px' }}>
-          {[
-            { id: 'dashboard', icon: '📊', label: 'Inicio' },
-            { id: 'students', icon: '🎓', label: 'Estudiantes' },
-            { id: 'attendance', icon: '🖊️', label: 'Asistencia' },
-            { id: 'reports', icon: '📁', label: 'Análisis IA' },
-          ].map((item) => (
+        <div className="logo" style={{ marginBottom: '40px' }}>ANDRÉS BELLO</div>
+        <nav style={{ flex: 1 }}>
+          {menuItems.map(item => (
             <motion.div 
               key={item.id}
-              whileHover={{ x: 4 }}
-              whileTap={{ scale: 0.98 }}
-              className={`nav-item ${activeTab === item.id ? 'active' : ''}`} 
+              whileHover={{ x: 8 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(item.id)}
+              className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
             >
-              <span style={{ fontSize: '16px' }}>{item.icon}</span>
+              <span style={{ fontSize: '18px' }}>{item.icon}</span>
               <span>{item.label}</span>
             </motion.div>
           ))}
         </nav>
         
-        <motion.div 
-          whileHover={{ opacity: 0.8 }}
-          className="nav-item" 
-          style={{ background: 'rgba(255, 59, 48, 0.05)', color: 'var(--danger)', marginTop: 'auto' }}
-          onClick={handleLogout}
-        >
-          <span>🚪</span>
-          <span>Finalizar Sesión</span>
-        </motion.div>
+        <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid var(--ghost-border)' }}>
+          <div className="nav-item" onClick={() => { localStorage.clear(); window.location.reload(); }} style={{ color: 'var(--danger)' }}>
+            <span>🚪</span>
+            <span>Salir</span>
+          </div>
+        </div>
       </motion.aside>
 
       <main className="main-content">
-        <motion.header 
-          initial={{ y: -10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}
-        >
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <div>
-            <h1 style={{ fontSize: '32px', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-1.5px' }}>
-              Portal Institucional
-            </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: '500' }}>
-              Bienvenido de nuevo, {user?.username || 'Coordinador'}
-            </p>
-          </div>
-          <div className="glass-effect" style={{ padding: '10px 24px', fontSize: '11px', fontWeight: '800', letterSpacing: '1px', color: 'var(--primary)' }}>
-            NÚCLEO DE DATOS SEGURO 🔒
-          </div>
-        </motion.header>
-
-        <AnimatePresence mode="wait">
-          {activeTab === 'dashboard' && <Dashboard user={user} stats={stats} aiData={aiData} setActiveTab={setActiveTab} />}
-          {activeTab === 'students' && <Students />}
-          {activeTab === 'attendance' && <AttendanceSheet />}
-          {activeTab === 'reports' && (
-            <motion.div 
-              key="reports-view"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="glass-effect" 
-              style={{ padding: '60px', textAlign: 'center', flexGrow: 1 }}
-            >
-              <div style={{ fontSize: '48px', marginBottom: '24px' }}>📑</div>
-              <h2 style={{ color: 'var(--text-main)', fontWeight: '800', fontSize: '24px' }}>Reportes de Gestión Escolar</h2>
-              <p style={{ color: 'var(--text-muted)', marginTop: '16px', maxWidth: '500px', margin: '16px auto', lineHeight: '1.6' }}>
-                Generando resúmenes periódicos basados en el motor de inteligencia artificial. 
-                Sincronización total con la base de datos Neon.
+            <h1 style={{ fontSize: '32px', fontWeight: '900', letterSpacing: '-1.5px' }}>Portal Institucional</h1>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#34C759' }} />
+              <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: '600' }}>
+                Conexión segura a NeonDB • {user?.username || 'Admin'}
               </p>
-              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginTop: '32px' }}>
-                <button className="login-btn" style={{ padding: '12px 32px' }}>Previsualizar PDF</button>
-                <button className="nav-item" style={{ background: 'rgba(0,0,0,0.05)', border: 'none' }}>Exportar Excel</button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </div>
+          <div className="glass-card" style={{ padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '16px' }}>🇻🇪</span>
+            <span style={{ fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>UA-2026-X</span>
+          </div>
+        </header>
+
+        <section style={{ flex: 1, marginTop: '32px' }}>
+          <AnimatePresence mode="wait">
+            {activeTab === 'dashboard' && <Dashboard key="dash" stats={stats} aiData={aiData} />}
+            {activeTab === 'students' && <Students key="std" />}
+            {activeTab === 'attendance' && <AttendanceSheet key="att" />}
+            {activeTab === 'justifications' && <Justifications key="just" />}
+            {activeTab === 'reports' && <IAAnalytics key="ia" />}
+          </AnimatePresence>
+        </section>
       </main>
     </div>
   );

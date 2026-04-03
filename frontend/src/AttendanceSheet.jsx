@@ -52,21 +52,19 @@ const AttendanceSheet = () => {
           <h1 style={{ fontSize: '28px', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-1px' }}>Control de Asistencia</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: '500' }}>Sesión Operativa: {new Date().toLocaleDateString()}</p>
         </div>
-        <div className="glass-effect" style={{ padding: '8px', display: 'flex', borderRadius: '14px', gap: '8px' }}>
+        <div className="glass-effect" style={{ padding: '6px', display: 'flex', borderRadius: '16px', gap: '4px', background: 'rgba(0,0,0,0.02)' }}>
           {['1er Año A', '2do Año A', '3er Año A', '4to Año A', '5to Año A'].map(opt => (
             <button 
               key={opt}
               onClick={() => setSeccion(opt)}
+              className={seccion === opt ? 'login-btn' : 'nav-item'}
               style={{ 
-                padding: '8px 16px', 
+                padding: '10px 18px', 
                 border: 'none', 
-                background: seccion === opt ? 'var(--primary)' : 'transparent',
-                color: seccion === opt ? 'white' : 'var(--text-muted)',
-                borderRadius: '10px',
-                fontSize: '12px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: '0.3s'
+                margin: 0,
+                fontSize: '11px',
+                fontWeight: '800',
+                letterSpacing: '0.5px'
               }}
             >
               {opt}
@@ -75,15 +73,15 @@ const AttendanceSheet = () => {
         </div>
       </header>
 
-      <section className="glass-effect" style={{ padding: '40px' }}>
+      <section className="glass-effect" style={{ padding: '40px', minHeight: '400px' }}>
         {students.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px', opacity: 0.5 }}>
             <p style={{ fontSize: '48px', marginBottom: '16px' }}>🎒</p>
-            <p>No se encontraron alumnos para la sección {seccion}.</p>
+            <p style={{ fontWeight: '600' }}>Sin registros para {seccion}.</p>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '0 24px', fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '0 24px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
               <span>ID & Datos del Alumno</span>
               <span>Estado de la Sesión</span>
             </div>
@@ -94,73 +92,85 @@ const AttendanceSheet = () => {
                   layout
                   key={s.id} 
                   className="glass-card" 
+                  whileHover={{ x: 5, background: 'rgba(255,255,255,0.03)' }}
                   style={{ 
                     display: 'flex', 
                     justifyContent: 'space-between', 
                     alignItems: 'center', 
-                    padding: '20px 24px',
-                    border: '1px solid var(--ghost-border)'
+                    padding: '16px 24px',
                   }}
                 >
                   <div>
-                    <div style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-main)' }}>{s.nombre}</div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>CI: {s.cedula}</div>
+                    <div style={{ fontWeight: '800', fontSize: '15px', color: 'var(--text-main)' }}>{s.nombre}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', fontWeight: '600' }}>CI: {s.cedula}</div>
                   </div>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button 
                       onClick={() => handleToggle(s.id, 'presente')}
-                      className="nav-item"
+                      className={`badge ${attendance[s.id] === 'presente' ? 'badge-success' : ''}`}
                       style={{ 
-                        margin: 0, 
-                        background: attendance[s.id] === 'presente' ? 'var(--accent)' : 'rgba(0,0,0,0.03)',
+                        cursor: 'pointer',
+                        padding: '10px 24px',
+                        border: '1px solid var(--ghost-border)',
+                        background: attendance[s.id] === 'presente' ? 'var(--success)' : 'transparent',
                         color: attendance[s.id] === 'presente' ? 'white' : 'var(--text-muted)',
-                        border: 'none',
-                        padding: '10px 20px',
-                        fontSize: '12px'
+                        fontSize: '11px',
+                        fontWeight: '800'
                       }}
                     >
-                      Presente
+                      PRESENTE
                     </button>
                     <button 
                       onClick={() => handleToggle(s.id, 'ausente')}
-                      className="nav-item"
+                      className={`badge ${attendance[s.id] === 'ausente' ? 'badge-danger' : ''}`}
                       style={{ 
-                        margin: 0, 
-                        background: attendance[s.id] === 'ausente' ? 'var(--danger)' : 'rgba(0,0,0,0.03)',
+                        cursor: 'pointer',
+                        padding: '10px 24px',
+                        border: '1px solid var(--ghost-border)',
+                        background: attendance[s.id] === 'ausente' ? 'var(--danger)' : 'transparent',
                         color: attendance[s.id] === 'ausente' ? 'white' : 'var(--text-muted)',
-                        border: 'none',
-                        padding: '10px 20px',
-                        fontSize: '12px'
+                        fontSize: '11px',
+                        fontWeight: '800'
                       }}
                     >
-                      Ausente
+                      AUSENTE
                     </button>
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
             
-            <div style={{ marginTop: '32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: '600' }}>
-                Estudiantes auditados: {Object.keys(attendance).length} / {students.length}
-              </p>
-              <button 
+            <div style={{ marginTop: '40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '32px', borderTop: '1px solid var(--ghost-border)' }}>
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '20px', fontWeight: '900' }}>{Object.keys(attendance).length}</div>
+                  <div style={{ fontSize: '10px', fontWeight: '800', color: 'var(--text-muted)' }}>AUDITADOS</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '20px', fontWeight: '900' }}>{students.length}</div>
+                  <div style={{ fontSize: '10px', fontWeight: '800', color: 'var(--text-muted)' }}>TOTAL</div>
+                </div>
+              </div>
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={submitAttendance} 
                 className="login-btn" 
-                style={{ padding: '16px 48px', minWidth: '300px' }}
+                style={{ padding: '18px 60px' }}
                 disabled={Object.keys(attendance).length === 0}
               >
-                Cargar Asistencia a la Nube ☁️
-              </button>
+                Sincronizar con NeonDB ☁️
+              </motion.button>
             </div>
             {msg && (
-              <motion.p 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                style={{ textAlign: 'center', color: 'var(--primary)', fontWeight: '700', marginTop: '20px' }}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                className="badge badge-success"
+                style={{ textAlign: 'center', fontWeight: '800', marginTop: '20px', padding: '14px' }}
               >
                 {msg}
-              </motion.p>
+              </motion.div>
             )}
           </div>
         )}

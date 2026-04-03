@@ -55,13 +55,37 @@ const initDB = async () => {
       )
     `);
 
-    console.log('Connected to Neon Postgres and tables initialized.');
+    // 5. Tabla de Horarios (Mencionado en Momento III)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS horarios (
+        id SERIAL PRIMARY KEY,
+        seccion TEXT NOT NULL,
+        dia TEXT NOT NULL,
+        materia TEXT NOT NULL,
+        bloque TEXT
+      )
+    `);
+
+    // 6. Tabla de Justificaciones (Mencionado en Momento II y III)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS justificaciones (
+        id SERIAL PRIMARY KEY,
+        estudiante_id INTEGER REFERENCES estudiantes(id),
+        fecha TEXT NOT NULL,
+        motivo TEXT NOT NULL,
+        estado TEXT NOT NULL DEFAULT 'pendiente',
+        comentario TEXT
+      )
+    `);
+
+    console.log('Connected to Neon Postgres and all tables initialized.');
   } catch (err) {
     console.error('Error initializing Postgres:', err.message);
   } finally {
-    client.release();
+    if (client) client.release();
   }
 };
+
 
 initDB();
 

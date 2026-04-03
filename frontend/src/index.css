@@ -3,16 +3,20 @@
 :root {
   --primary: #0058bc;
   --primary-container: #0070eb;
+  --secondary: #4c4aca;
+  --tertiary: #8a2bb9;
   --surface: rgba(250, 249, 254, 0.65);
-  --surface-low: rgba(250, 249, 254, 0.4);
+  --surface-bright: #faf9fe;
+  --surface-container: rgba(238, 237, 243, 0.7);
   --surface-lowest: #ffffff;
   --text-main: #1a1b1f;
   --text-muted: #414755;
   --accent: #34C759;
   --warning: #FF9500;
   --danger: #FF3B30;
-  --ghost-border: rgba(255, 255, 255, 0.2);
+  --ghost-border: rgba(255, 255, 255, 0.25);
   --ambient-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --glass-blur: 25px;
 }
 
 * {
@@ -20,6 +24,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
@@ -27,31 +32,34 @@ body {
   color: var(--text-main);
   overflow-x: hidden;
   min-height: 100vh;
-  /* Mesh Gradient inspired by Stitch */
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(0, 88, 188, 0.15) 0px, transparent 50%),
+  /* Premium Mesh Gradient from Stitch */
+  background: 
+    radial-gradient(at 0% 0%, rgba(0, 88, 188, 0.12) 0px, transparent 50%),
     radial-gradient(at 100% 0%, rgba(138, 43, 185, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(0, 112, 235, 0.1) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(255, 149, 0, 0.05) 0px, transparent 50%);
+    radial-gradient(at 100% 100%, rgba(0, 112, 235, 0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(255, 149, 0, 0.05) 0px, transparent 50%),
+    #faf9fe;
   background-attachment: fixed;
 }
 
 /* Crystalline Glass Effects */
 .glass-effect {
   background: var(--surface);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
   border: 1px solid var(--ghost-border);
-  border-radius: 24px;
+  border-radius: 28px;
   box-shadow: var(--ambient-shadow);
 }
 
 .glass-card {
   background: var(--surface-lowest);
-  border-radius: 20px;
-  border: 1px solid rgba(0,0,0,0.03);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
+
 
 .glass-card:hover {
   transform: translateY(-4px);

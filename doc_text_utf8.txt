@@ -1,0 +1,630 @@
+﻿REPÃšBLICA BOLIVARIANA DE VENEZUELA MINISTERIO
+DEL
+PODER
+POPULAR
+PARA
+LA
+EDUCACIÃ“N
+U.E.
+COLEGIO
+BELLO
+DISEÃ‘O
+DE
+UNA
+PLATAFORMA DE AUTOMATIZACIÃ“N PARA
+Y
+CONTROL
+DE
+ASISTENCIA
+ESTUDIANTIL
+EN
+MEDIA GENERAL DEL COLEGIO ANDRÃ‰S BELLO.
+Autores:
+Bastidas,
+P. GonzÃ¡lez, A. Oviedo, F. RodrÃ­guez,
+S. Romero, M. Santeliz, L.
+Tutor
+metodolÃ³gico:
+Tona,
+A.
+Barquisimeto,
+enero
+CONTENIDO
+MOMENTO
+I
+4
+EL
+4
+Planteamiento
+del
+Problema
+4
+Objetivos
+de
+La
+InvestigaciÃ³n
+6
+JustificaciÃ³n
+7
+MOMENTO
+II
+9
+MARCO
+TEÃ“RICO
+REFERENCIAL
+9
+Antecedentes
+de
+la
+9
+Bases
+TeÃ³ricas
+11
+12
+Interfaz
+De
+ProgramaciÃ³n
+De
+Aplicaciones
+12
+Tipos
+de
+API
+13
+Usos
+comunes
+en
+las
+API
+14
+Inteligencia Artificial aplicada a la automatizaciÃ³n ..................................................................... 12
+Sistema
+15
+Sistema
+A
+utomatizado
+C
+ontrol
+de
+A
+sistencia
+15
+Control
+de
+16
+GestiÃ³n
+administrativa
+escolar
+17
+Funciones
+Administrativas
+17
+MÃ©todos
+y
+Herramientas
+de
+Control
+de
+Asistencia
+18
+MÃ©todos
+Tradicionales:
+18
+Bases
+Legales
+19
+MOMENTO
+III
+21
+MARCO
+METODOLÃ“GICO
+21
+Naturaleza
+de
+la
+InvestigaciÃ³n
+21
+DiseÃ±o
+de
+InvestigaciÃ³n
+21
+Fase
+I.
+DiagnÃ³stico
+de
+investigaciÃ³n
+22
+Fase II. DiseÃ±o de la Plataforma de AutomatizaciÃ³n ....................................................................
+23
+Fase
+III.
+ValidaciÃ³n de
+la
+propuesta
+25
+Sujetos
+de
+Estudio
+26
+Sistema
+de
+26
+Variable
+27
+TÃ©cnica
+e
+instrumentos
+de
+RecolecciÃ³n
+Datos
+27
+Validez
+y
+Confiabilidad
+28
+TÃ©cnica
+de
+AnÃ¡lisis
+Datos
+29
+REFERENCIAS
+30
+MOMENTO I EL PROBLEMA
+Planteamiento
+del
+El
+La escolaridad es un proceso acumulativo donde cada dÃ­a de clase contribuye a una buena comprensiÃ³n continua. GarcÃ­a, E. y Weiss, E. (2023) explican que â€œasistir regularmente a clases favorece desarrollar habilidades sociales, emocionales y de disciplina, asÃ­ como la participaciÃ³n en las actividades prÃ¡cticas y el acceso a recursos educativos que no se obtienen de manera independienteâ€ (p. 2). En este sentido, Eskoufias, E., y Parker, S.W. (2001) plantean:
+Llevar la asistencia escolar como parte del trabajo administrativo de una instituciÃ³n educativa es fundamental por varias razones relacionadas con la gestiÃ³n eficiente, la seguridad, control y apoyo de los estudiantes. Registrar la asistencia permite a la administraciÃ³n escolar planificar y supervisar el proceso educativo con datos precisos, ayuda a tomar estrategias preventivas y de intervenciÃ³n, optimizando los recursos y las acciones pedagÃ³gicas.
+la poblaciÃ³n estudiantil.
+Desde la perspectiva de la gestiÃ³n del tiempo, el proceso manual o semiautomatizado de asistencia impone una carga administrativa innecesaria sobre el personal docente. Cada minuto invertido en el registro manual y la posterior conciliaciÃ³n de datos es tiempo sustraÃ­do de la planificaciÃ³n de clases o del acompaÃ±amiento directo a los estudiantes. Entre tanto, y ligado al planteamiento anterior, la fiabilidad y accesibilidad de la informaciÃ³n toman un rol fundamental ya que, cuando los datos de asistencia no son consolidados en tiempo real y con precisiÃ³n, la directiva y los orientadores carecen de la base empÃ­rica necesaria para tomar decisiones informadas sobre intervenciones pedagÃ³gicas o disciplinarias.
+Aunque numerosas instituciones educativas aÃºn registran la asistencia de forma manual, esta prÃ¡ctica conlleva riesgos significativos para la gestiÃ³n escolar. El registro manual es susceptible a errores humanos, como omisiones, anotaciones incorrectas o pÃ©rdida de informaciÃ³n por daÃ±os fÃ­sicos en las carpetas de almacenamiento. AdemÃ¡s, este mÃ©todo resulta lento y carece de automatizaciÃ³n, lo que impide la obtenciÃ³n de datos en tiempo real y genera retrasos en la toma de decisiones oportunas.
+Desde la perspectiva tecnolÃ³gica, Cantillo L. y otros (2015) sostienen que la tecnologÃ­a ayuda en todos los aspectos cotidianos a quienes la utilizan. En las instituciones educativas, la gestiÃ³n eficiente y en tiempo real de la asistencia escolar representa un desafÃ­o significativo, derivado de la ausencia de herramientas tecnolÃ³gicas adecuadas. Estas buscan facilitar un control actualizado y preciso, pero demandan mejoras en tiempo y recursos. Por ello, surge como problema principal la necesidad de mecanismos de control de asistencia adaptados a tecnologÃ­as modernas y apropiadas.
+En el contexto particular del Colegio AndrÃ©s Bello, a travÃ©s de observaciones indirectas y entrevistas informales, se observa que este carece de un programa automatizado para llevar el registro de asistencia escolar. La instituciÃ³n utiliza un mÃ©todo manual para llevar el control y datos de la asistencia, lo que pudiera generar algunos errores, asÃ­ como demoras en la obtenciÃ³n de datos y dificultades para realizar un seguimiento oportuno de las ausencias estudiantiles.
+capacidad de intervenciÃ³n temprana ante los problemas de inasistencia (producto de mÃºltiples razones) de los estudiantes. Por tanto, la falta de un sistema automatizado expone a la instituciÃ³n a riesgos administrativos y limita la posibilidad de una gestiÃ³n rÃ¡pida y eficiente en el rendimiento acadÃ©mico, el desarrollo socioemocional y en el riesgo de abandono escolar.
+En el presente trabajo de investigaciÃ³n se plantea la necesidad de diseÃ±ar una plataforma de automatizaciÃ³n para la gestiÃ³n administrativa y control de asistencia estudiantil en Media General del Colegio AndrÃ©s Bello. Esta propuesta tecnolÃ³gica estarÃ¡ estructurada por una Interfaz de ProgramaciÃ³n de Aplicaciones (API) como motor lÃ³gico, conectada a un entorno web y potenciada con mÃ³dulos de Inteligencia Artificial (IA), representando un trabajo mÃ¡s efectivo, seguro y Ã¡gil. De esta manera, se busca mejorar la gestiÃ³n educativa apoyÃ¡ndose en las tecnologÃ­as avanzadas de la actualidad que facilitan el control del trabajo acadÃ©mico-administrativo. Ante esta situaciÃ³n surgen las interrogantes que orientarÃ¡n el desarrollo del presente estudio:
+Â¿CuÃ¡l es la situaciÃ³n actual de los procesos de registro y control de asistencia estudiantil en Media General del Colegio AndrÃ©s Bello?
+Â¿CuÃ¡les son los requerimientos tÃ©cnicos para estructurar una plataforma de automatizaciÃ³n que integre un entorno web, una API lÃ³gica y mÃ³dulos de Inteligencia Artificial para la gestiÃ³n escolar?
+Â¿QuÃ© validaciÃ³n por parte de expertos requiere el diseÃ±o propuesto de esta plataforma?
+Objetivos de La InvestigaciÃ³n
+DiseÃ±ar una plataforma de automatizaciÃ³n para la gestiÃ³n administrativa y control de asistencia estudiantil en Media General del Colegio AndrÃ©s Bello.
+Diagnosticar la situaciÃ³n actual de los procesos manuales de registro y control de asistencia estudiantil en Media General, para establecer los requerimientos tÃ©cnicos de la plataforma.
+DiseÃ±ar la arquitectura de la plataforma, estructurando la Interfaz de ProgramaciÃ³n de Aplicaciones (API) como motor central, la interfaz web de usuario y la integraciÃ³n de mÃ³dulos de Inteligencia Artificial.
+Validar a travÃ©s de juicio de expertos la pertinencia y funcionabilidad del diseÃ±o de la plataforma propuesta.
+JustificaciÃ³n
+Los actuales procesos manuales o semiautomatizados generan una carga de trabajo innecesaria en el personal administrativo y docente, retrasan la toma de decisiones oportunas y limitan la capacidad de generar estadÃ­sticas y reportes en tiempo real. La eficiencia operativa es uno de los factores determinantes en la gestiÃ³n y control de asistencia, ya que postula que la optimizaciÃ³n de los flujos de trabajo mediante la tecnologÃ­a incrementa la productividad y reduce los costos indirectos.
+En la actualidad, el mundo estÃ¡ caracterizado por el uso de tecnologÃ­as digitales; sin embargo, no todas las instituciones han adaptado sus procesos a estos avances. Al respecto, Cantillo L. y otros (ob. cit), refieren que â€œmuchas plataformas automatizadas permiten enviar informes de asistencia a padres o representantes mediante mensajes de texto o aplicaciones, facilitando el control y la intervenciÃ³n oportuna si un estudiante falta a claseâ€.
+La implementaciÃ³n de un sistema automatizado para la asistencia estudiantil del Colegio AndrÃ©s Bello facilita los procesos administrativos de control y seguimiento de los estudiantes de la instituciÃ³n, para asÃ­ hacer posible llevar una gestiÃ³n de manera adecuada y Ãºtil. El mundo se encuentra en un cambio constante y evoluciona al ritmo de la tecnologÃ­a, por eso es importante para la instituciÃ³n el diseÃ±o e implementaciÃ³n de esta herramienta.
+Esta realidad contrasta con la necesidad de incorporar tecnologÃ­as de informaciÃ³n que optimicen los flujos de trabajo, una premisa fundamental de la transformaciÃ³n digital educativa. Por esta razÃ³n, esta propuesta responde a la necesidad de modernizar y automatizar procesos que actualmente son manuales, lentos y propensos a errores, siguiendo las tendencias de la transformaciÃ³n digital educativa.
+Es importante destacar que la plataforma de automatizaciÃ³n funcionarÃ¡ mediante una sÃ³lida arquitectura tecnolÃ³gica, donde la API actuarÃ¡ como un canal de comunicaciÃ³n seguro y eficiente. Esto permitirÃ¡ que la interfaz web y los mÃ³dulos de Inteligencia Artificial (IA) interactÃºen con la base de datos de asistencia de manera integrada. Conceptualmente, esta propuesta se basa en arquitecturas de software modernas que garantizan calidad de gestiÃ³n, acceso inmediato a la informaciÃ³n, transparencia y rendiciÃ³n de cuentas al disponer de indicadores de asistencia precisos y auditables, elevando el estÃ¡ndar de la supervisiÃ³n acadÃ©mica.
+Desde una perspectiva teÃ³rica, este estudio aportarÃ¡ un modelo de gestiÃ³n de informaciÃ³n digital diseÃ±ado especÃ­ficamente para el contexto de la EducaciÃ³n Media General, sirviendo como marco de referencia para otras instituciones con retos similares. MetodolÃ³gicamente, el proceso de investigaciÃ³n proyectiva, desde el diagnÃ³stico de los requerimientos hasta el diseÃ±o final de la plataforma tecnolÃ³gica, sentarÃ¡ las bases para la estructuraciÃ³n de proyectos de desarrollo de software en entornos educativos. En esencia, la investigaciÃ³n no solo soluciona un problema prÃ¡ctico, sino que tambiÃ©n genera conocimiento aplicado sobre la automatizaciÃ³n de procesos administrativos clave a travÃ©s de interfaces tecnolÃ³gicas.
+MOMENTO
+II
+MARCO
+TEÃ“RICO
+Antecedentes
+de
+la
+InvestigaciÃ³n
+Dentro de esta secciÃ³n se exponen diferentes trabajos que se han desarrollado en fechas recientes y que tienen relaciÃ³n con este trabajo investigativo, con el fin de encontrar aportaciones sobre el diseÃ±o de una plataforma de automatizaciÃ³n que permita el control de asistencia de los estudiantes en instituciones de formaciÃ³n educativa.
+En el Ã¡mbito internacional, se encuentra una tesis desarrollada por Salcedo, C. (2023) quien elaborÃ³ un aplicativo web para mejorar el sistema de control de las asistencias en la instituciÃ³n educativa â€œSan Luis Gonzagaâ€ de la cuidad de Ica (PerÃº). El objetivo de la investigaciÃ³n fue mejorar el proceso de control de asistencia en la instituciÃ³n educativa con el fin de otorgar un servicio de manera veloz y eficiente; se espera que este trabajo de investigaciÃ³n tenga acogida tanto del personal administrativo como de la persona que realiza el proceso de control de asistencia.
+La metodologÃ­a utilizada fue bajo un enfoque cuantitativo y en base a un diseÃ±o experimental que involucrÃ³ a los estudiantes, profesores y miembros del personal administrativo de la I.E. â€œSan Luis Gonzagaâ€. Se trabajÃ³ usando el gestor de bases de datos SQL Server y se utilizÃ³ la metodologÃ­a orientada a objetos desarrollada con el Lenguaje de Modelado Unificado (UML) para esquematizar los procesos y, de esta manera, diseÃ±ar el aplicativo. Los resultados obtenidos evidencian una mejora significativa en el manejo de los procesos administrativos del sistema de control de asistencia, produciÃ©ndose un aumento del 98.04% en la aceptaciÃ³n de dichos procesos.
+El aporte que otorga este antecedente al presente estudio se puntualiza en la importancia que tiene el uso de bases de datos relacionales (SQL Server) y el modelado de procesos (UML) para la construcciÃ³n de la arquitectura lÃ³gica. Esto sirve como referencia directa para el diseÃ±o del entorno web y la estructuraciÃ³n de la API de la plataforma propuesta.
+en el control de asistencia estudiantil.
+La metodologÃ­a utilizada fue la metodologÃ­a Ãgil XP, ya que se adapta al desarrollo de sistemas centrados en potencializar las relaciones interpersonales mediante una retroalimentaciÃ³n continua entre el usuario y el equipo de desarrollo. El nivel de investigaciÃ³n fue explicativo, enfocÃ¡ndose en los procesos de registro, bÃºsqueda y generaciÃ³n de informes a travÃ©s de una herramienta de tecnologÃ­a de la informaciÃ³n. La poblaciÃ³n estuvo conformada por 43 alumnos de la instituciÃ³n.
+Los resultados evidenciaron que, al realizar la implementaciÃ³n del aplicativo web, se logrÃ³ mejorar el control de asistencia y los reportes de cada estudiante, cubriendo las necesidades de la investigaciÃ³n. El aporte que otorga al presente estudio es el uso y manejo de metodologÃ­as Ã¡giles (XP) para el desarrollo de un entorno web enfocado en la usabilidad del usuario final, un factor clave que debe integrarse en la interfaz visual de la plataforma de automatizaciÃ³n del Colegio AndrÃ©s Bello.
+En al Ã¡mbito nacional, Ojeda, A. (2024) desarrollÃ³ un estudio titulado â€œSistema de InformaciÃ³n Automatizado de Control de Calificaciones de los Estudiantes GestiÃ³n del Centro de CapacitaciÃ³n de JÃ³venes y Adultos Arturo Sarco Villenaâ€ en Turmero, Estado Aragua. El objetivo de la investigaciÃ³n fue desarrollar un sistema de informaciÃ³n automatizado de control de calificaciones.
+La metodologÃ­a utilizada se enmarcÃ³ en un enfoque de proyecto factible, buscando la elaboraciÃ³n de una propuesta viable o un modelo operativo para solucionar un problema. En cuanto a los resultados, el principal fue la creaciÃ³n y el diseÃ±o de un sistema interactivo en lÃ­nea (aplicaciÃ³n web) que centraliza el proceso de registro y consulta de calificaciones. El sistema permitiÃ³ eliminar la dependencia del registro manual y presencial, mejorando la eficiencia y la claridad del seguimiento del progreso acadÃ©mico. AsÃ­, se obtuvo una herramienta moderna que facilita el acceso a la informaciÃ³n tanto para el personal administrativo como para los estudiantes, destacando la necesidad y el Ã©xito de la migraciÃ³n digital.
+de asistencia, demostrando la viabilidad de implementar plataformas tecnolÃ³gicas y validando la modalidad de "Proyecto Factible" en el contexto nacional.
+Por Ãºltimo, AÃ±ez, N., PiÃ±a, A. y otros (2024) desarrollaron una investigaciÃ³n titulada "Desarrollo de una AplicaciÃ³n de Control de Asistencia Estudiantil para la Unidad Educativa Privada Madre Mercedes De JesÃºs Molina" en San Francisco, Estado Zulia. El objetivo de este estudio fue reemplazar los mÃ©todos manuales por una soluciÃ³n tecnolÃ³gica, demostrando la necesidad actual de modernizar este proceso.
+Los resultados evidencian que se entregÃ³ y probÃ³ una aplicaciÃ³n operativa diseÃ±ada para el registro y control de la asistencia estudiantil. Se demostrÃ³ la migraciÃ³n exitosa del proceso manual (listas o libros fÃ­sicos) a un proceso digital, eliminando los pasos que causaban lentitud y errores. Se logrÃ³ la generaciÃ³n automatizada de reportes y estadÃ­sticas de inasistencia en tiempo real, facilitando la labor administrativa y la toma de decisiones. Finalmente, mediante pruebas de campo, se confirmÃ³ que el nuevo sistema redujo el tiempo de registro y aumentÃ³ la precisiÃ³n de los datos.
+El aporte que brinda a esta investigaciÃ³n se fundamenta en que sirve como un modelo base del flujo de datos. La aplicaciÃ³n desarrollada en el Zulia tuvo que interactuar con bases de datos de estudiantes y horarios, funciones exactas que la API de la nueva plataforma deberÃ¡ emular mediante la creaciÃ³n de sus puntos finales (endpoints). Adicionalmente, este antecedente deja abierto el camino para que la presente propuesta innove incorporando Inteligencia Artificial, un elemento ausente en los estudios previos.
+Bases
+TeÃ³ricas
+A continuaciÃ³n, se presentan las definiciones, conceptos y posturas teÃ³ricas que sustentan la presente investigaciÃ³n. Este apartado tiene como propÃ³sito proporcionar una comprensiÃ³n clara y estructurada sobre los fundamentos tecnolÃ³gicos y administrativos que componen el proyecto, abarcando las plataformas web de gestiÃ³n, las Interfaces de ProgramaciÃ³n de Aplicaciones (API), la Inteligencia Artificial y los sistemas automatizados para el control de asistencia.
+Plataformas Web de GestiÃ³n Educativa
+En el Ã¡mbito de la informÃ¡tica educativa, una plataforma web de gestiÃ³n se define como un ecosistema digital centralizado y alojado en internet, diseÃ±ado especÃ­ficamente para planificar, automatizar y monitorear los procesos administrativos y acadÃ©micos de una instituciÃ³n. Estas herramientas actÃºan como el espacio de interacciÃ³n visual (interfaz de usuario o frontend) donde el personal directivo y docente ingresa, gestiona y consulta la informaciÃ³n escolar diaria de manera intuitiva.
+Desde una perspectiva arquitectÃ³nica, las plataformas web modernas no operan de manera aislada, sino que se estructuran bajo un modelo de cliente-servidor. En este modelo, la plataforma web (cliente) depende de una Interfaz de ProgramaciÃ³n de Aplicaciones (API) que actÃºa como puente lÃ³gico para procesar, resguardar y solicitar los datos a la base de datos central (servidor). Esta separaciÃ³n entre la interfaz grÃ¡fica y el motor de procesamiento garantiza que la plataforma sea escalable, rÃ¡pida y mantenga un alto estÃ¡ndar de seguridad para la informaciÃ³n estudiantil.
+En relaciÃ³n con la administraciÃ³n escolar, la adopciÃ³n de un entorno web permite erradicar la dependencia de planillas fÃ­sicas y transcripciones manuales. Al digitalizar procesos como el control de asistencia, la plataforma permite el acceso concurrente desde diversos dispositivos (computadoras de escritorio, tabletas o telÃ©fonos mÃ³viles), consolidando la informaciÃ³n en tiempo real. Esto facilita la generaciÃ³n inmediata de estadÃ­sticas de ausentismo, reduce sustancialmente la carga burocrÃ¡tica del docente y provee a la directiva de un panel de control interactivo, fundamental para la toma de decisiones informadas y la aplicaciÃ³n de intervenciones pedagÃ³gicas oportunas.
+Interfaz
+De
+ProgramaciÃ³n
+De
+(API)
+para de esta forma sea posible el intercambio de datos y funciones". En el Ã¡mbito del desarrollo, estas interfaces se utilizan principalmente para conectar sistemas independientes, haciendo posible una comunicaciÃ³n estructurada entre aplicaciones.
+En el contexto de la plataforma de automatizaciÃ³n planteada para la instituciÃ³n, la API representarÃ¡ la arquitectura lÃ³gica central (backend). Su funciÃ³n serÃ¡ recibir las peticiones desde la plataforma web, procesar la informaciÃ³n de la asistencia estudiantil en la base de datos y servir como puente de conexiÃ³n para integrar de manera armÃ³nica los algoritmos de Inteligencia Artificial.
+Tipos
+de
+API
+En el ecosistema del desarrollo de software, existen diferentes enfoques para estructurar la comunicaciÃ³n entre sistemas. Al respecto, Lauret (2019) establece que las API REST (Representational State Transfer) siguen un estilo arquitectÃ³nico que usa protocolos web estÃ¡ndar como HTTP (Protocolo de Transferencia de Hipertexto). Este es un protocolo esencial para la correcta transferencia de datos en la red y es ampliamente utilizado para la creaciÃ³n de sitios web, permitiendo el intercambio de datos en formatos ligeros como JSON o XML. La funciÃ³n de dichos formatos es transportar de manera estructurada los datos usados para la comunicaciÃ³n entre sistemas o aplicaciones.
+De igual forma, existen otros modelos y protocolos de interfaces, entre los cuales destacan:
+GraphQL
+:
+SOAP (Simple Object Access Protocol): Es un protocolo robusto que se basa estrictamente en el lenguaje XML para hacer posible el intercambio de informaciÃ³n de manera estructurada y con altos niveles de seguridad.
+API basadas en Llamadas a Procedimientos Remotos (RPC): Este modelo permite que una aplicaciÃ³n invoque y ejecute una funciÃ³n especÃ­fica en otra aplicaciÃ³n que se encuentra alojada en un servidor diferente.
+API Web: Estas representan las interfaces mÃ¡s comunes en el desarrollo actual, haciendo posible la comunicaciÃ³n bidireccional y fluida entre distintas aplicaciones a travÃ©s de internet utilizando el protocolo HTTP.
+Usos comunes de las API
+Â 
+Las Interfaces de ProgramaciÃ³n de Aplicaciones poseen diversas aplicaciones prÃ¡cticas en el entorno del desarrollo tecnolÃ³gico, destacando las siguientes:
+Conectar aplicaciones: Permiten establecer un canal de comunicaciÃ³n directo y estructurado entre distintos sistemas de software, logrando que interactÃºen de forma fluida.
+Integrar funcionalidades: Facilitan a los desarrolladores la implementaciÃ³n de herramientas y caracterÃ­sticas complejas en sus propios sistemas sin la necesidad de programarlas desde cero, optimizando los recursos y tiempos de desarrollo.
+AutomatizaciÃ³n de tareas: Se utilizan para programar y ejecutar procesos repetitivos de manera autÃ³noma, tales como la gestiÃ³n de inventarios, la validaciÃ³n de pagos o el envÃ­o masivo de correos electrÃ³nicos.
+Inteligencia Artificial aplicada a la AutomatizaciÃ³n
+y autonomÃ­a.
+En el sector de la gestiÃ³n educativa, la aplicaciÃ³n de la IA transforma la operatividad administrativa al evolucionar de un modelo de registro estÃ¡tico a uno dinÃ¡mico y proactivo. Al integrar herramientas analÃ­ticas inteligentes, las instituciones pueden procesar el flujo diario de informaciÃ³n para anticiparse a problemas acadÃ©micos, optimizando la asignaciÃ³n de recursos y minimizando la incidencia del error humano en la supervisiÃ³n institucional.
+Para el desarrollo de la plataforma tecnolÃ³gica del Colegio AndrÃ©s Bello, la Inteligencia Artificial actuarÃ¡ como un componente analÃ­tico de alto nivel integrado directamente con la API. Una vez que la interfaz web capture los datos de asistencia y el motor lÃ³gico los estructure en la base de datos, los mÃ³dulos de IA evaluarÃ¡n estos registros histÃ³ricos. Esta integraciÃ³n permitirÃ¡ detectar patrones de inasistencia, generar alertas tempranas sobre estudiantes en riesgo de bajo rendimiento o abandono escolar, y automatizar el envÃ­o de notificaciones a la directiva, facilitando asÃ­ una intervenciÃ³n pedagÃ³gica oportuna y fundamentada en datos empÃ­ricos.
+Automatizado
+Un
+sistema
+automatizado
+como
+software
+o
+hardware
+es
+un
+conjunto
+de
+tecnologÃ­as
+y diseÃ±adas para hacer procesos o tareas de manera que el ser humano tenga una intervenciÃ³n mÃ­nima y que el proceso se pueda facilitar.
+Sistema
+de C
+A
+sistencia
+En este sentido, la implementaciÃ³n de estas herramientas tecnolÃ³gicas permite un monitoreo en tiempo real, contribuyendo significativamente a mejorar las gestiones escolares administrativas. Asimismo, Alfaro (2024) establece que:
+administraciÃ³n.
+Bajo esta perspectiva teÃ³rica, la plataforma de automatizaciÃ³n diseÃ±ada para el Colegio AndrÃ©s Bello materializa estos conceptos al integrar un entorno web de fÃ¡cil acceso con una API robusta y mÃ³dulos de Inteligencia Artificial. Esta sinergia tecnolÃ³gica no solo agilizarÃ¡ el registro diario, sino que crearÃ¡ un ecosistema interoperable capaz de proporcionar a la directiva los datos precisos, analizados y en tiempo real que son necesarios para la toma de decisiones estratÃ©gicas.
+asistencia
+Yusuf y Alabi (2019) definen el control de asistencia como un sistema utilizado para registrar y monitorear la entrada, salida y permanencia de los estudiantes a sus diversas clases. Este mecanismo permite llevar un registro preciso de las horas de clase, ausencias, retrasos y descansos. Exponen, asimismo, que las instituciones educativas enfrentan diversos desafÃ­os, entre los que se incluyen la falta de puntualidad, las altas tasas de ausentismo no autorizado y la dificultad para gestionar grandes volÃºmenes de datos de manera precisa.
+La transiciÃ³n de un sistema manual a uno automatizado podrÃ­a generar una curva de aprendizaje y exigir inversiones iniciales en infraestructura tecnolÃ³gica.
+En cuanto a su mediciÃ³n, PortÃ³n (2015) expone que la asistencia escolar â€œes un indicador que mide la cantidad de dÃ­as que un estudiante asiste a clases, con relaciÃ³n al total de jornadas escolares de un aÃ±oâ€ (p.18). Es importante destacar que el concepto de asistencia es variable de acuerdo con la modalidad de mediciÃ³n que se utiliza, y los resultados obtenidos pueden mostrar realidades completamente distintas.
+A nivel pedagÃ³gico, la asistencia constante permite que los estudiantes desarrollen en clase los conocimientos, habilidades y actitudes que deben aprender durante la educaciÃ³n escolar. AdemÃ¡s, permite a los alumnos construir relaciones de amistad con sus compaÃ±eros y conocer mejor a sus profesores. Asistir regularmente promueve el desarrollo de la responsabilidad, la perseverancia y otros hÃ¡bitos que facilitarÃ¡n la vida futura de los jÃ³venes, aumentando su capacidad de resiliencia y previniendo factores como la depresiÃ³n. De hecho, pruebas estandarizadas internacionales, como el Simce y la PSU, muestran que los resultados acadÃ©micos se relacionan directamente con el porcentaje de asistencia.
+GestiÃ³n
+administrativa
+escolar
+La gestiÃ³n administrativa escolar enfocada en el control de asistencia estudiantil es un proceso fundamental que busca registrar, monitorear, analizar y reportar la presencia o ausencia de los alumnos. Este control es crucial para el cumplimiento de las normativas educativas, el seguimiento del rendimiento acadÃ©mico y la seguridad de la poblaciÃ³n estudiantil. En este contexto, teÃ³ricos como Riffo San MartÃ­n (2019) destacan la necesidad de que la administraciÃ³n educativa modernice sus estrategias organizacionales, asegurando que el flujo de informaciÃ³n sea continuo, verificable y Ãºtil para la instituciÃ³n.
+Para alcanzar estos estÃ¡ndares de gestiÃ³n en el Colegio AndrÃ©s Bello, la plataforma de automatizaciÃ³n propuesta sustituirÃ¡ la transcripciÃ³n manual por un entorno digital integrado. A travÃ©s de la API y los algoritmos de Inteligencia Artificial, el personal directivo dispondrÃ¡ de un panel de control web que no solo agilizarÃ¡ el registro de asistencia, sino que automatizarÃ¡ el anÃ¡lisis de estos datos, optimizando el tiempo del personal y garantizando una respuesta administrativa oportuna.
+Funciones
+Administrativas
+La gestiÃ³n administrativa escolar es la responsable de establecer las polÃ­ticas y protocolos que rigen el control de asistencia estudiantil. Entre sus funciones principales se encuentran:
+Establecimiento de PolÃ­ticas: Definir los criterios tÃ©cnicos para categorizar la asistencia, tardanza o inasistencia (justificada o injustificada), asÃ­ como determinar las consecuencias acadÃ©micas derivadas del incumplimiento de los lÃ­mites de faltas permitidos.
+Registro y Seguimiento: Supervisar que el personal docente realice el registro de datos de forma oportuna y precisa. En el Ã¡mbito de los sistemas digitales, esta funciÃ³n incluye la gestiÃ³n de privilegios, permisos de acceso y configuraciones de seguridad del sistema.
+GestiÃ³n de Justificaciones: Procesar, validar y documentar las solicitudes de permisos o justificativos de inasistencia presentados por los padres, representantes o tutores legales.
+GeneraciÃ³n de Informes: Elaborar reportes periÃ³dicos (diarios, semanales o mensuales) y registros acumulados sobre las tasas de asistencia por secciÃ³n, curso o nivel educativo para su posterior anÃ¡lisis estadÃ­stico.
+ComunicaciÃ³n Proactiva: Implementar canales y sistemas de notificaciÃ³n para el envÃ­o de alertas automÃ¡ticas o comunicaciones directas a los representantes en caso de detectarse inasistencias no justificadas.
+MÃ©todos
+y
+Herramientas
+de
+Control
+de
+Tradicionalmente, el control de asistencia en las instituciones educativas se ha ejecutado de forma manual. Sin embargo, la tendencia tecnolÃ³gica contemporÃ¡nea se orienta hacia la digitalizaciÃ³n y la automatizaciÃ³n mediante sistemas integrados de gestiÃ³n escolar. Esta evoluciÃ³n busca optimizar la precisiÃ³n de los registros y facilitar el acceso a la informaciÃ³n en tiempo real para todos los actores del proceso educativo.
+MÃ©todos
+Tradicionales:
+Listas
+o
+Planillas
+FÃ­sicas:
+El
+profesor
+registra
+manualmente
+las
+asistencias
+y
+ausencias
+en
+un documento impreso.
+Libros
+de
+Registro:
+Se
+centraliza
+la
+informaciÃ³n
+en
+un
+libro
+oficial
+del
+centro
+educativo.
+Sistemas
+de
+GestiÃ³n
+Automatizados
+(Software
+Escolar/Plataformas
+LMS):
+Aplicaciones MÃ³viles o Web
+Los docentes registran la asistencia a travÃ©s de una aplicaciÃ³n en tiempo real, desde cualquier dispositivo.
+Sistemas
+de
+IdentificaciÃ³n
+(RFID,
+Huella
+Dactilar):
+Los
+estudiantes
+registran
+su
+entrada
+y
+automÃ¡ticamente mediante un carnÃ© digital, huella dactilar o reconocimiento facial. Esto permite un registro preciso de horarios.
+IntegraciÃ³n:
+Estos sistemas suelen integrarse con otras funcionalidades como calificaciones, comunicaciÃ³n con padres y horarios, ofreciendo una visiÃ³n 360Âº del estudiante.
+Bases Legales:
+A continuaciÃ³n, se exponen las normativas legales que sirven de testimonio referencial y soporte jurÃ­dico al diseÃ±o de la plataforma de automatizaciÃ³n para la gestiÃ³n administrativa y control de asistencia. SegÃºn Arias (2016), estas bases constituyen el conjunto de documentos de naturaleza legal que sustentan la investigaciÃ³n que se realiza.
+ConstituciÃ³n de la RepÃºblica Bolivariana de Venezuela (1999)
+:
+ArtÃ­culo 102:
+ArtÃ­culo 108:
+La plataforma propuesta se alinea con este mandato al modernizar el acceso a la informaciÃ³n administrativa mediante herramientas digitales de vanguardia.
+Ley OrgÃ¡nica para la ProtecciÃ³n de NiÃ±os, NiÃ±as y Adolescentes (LOPNA)
+ArtÃ­culo 54 (ObligaciÃ³n de los Padres y Representantes):
+La plataforma de automatizaciÃ³n actÃºa como el soporte tecnolÃ³gico que permite a la instituciÃ³n notificar y a los padres supervisar este cumplimiento en tiempo real.
+ArtÃ­culo 65 (Derecho al Honor y Vida Privada):
+garantizar que los registros de asistencia sean confidenciales y no vulnerables frente a terceros.
+ArtÃ­culo 69 (EducaciÃ³n para el Consumo CrÃ­tico):
+El despliegue de esta plataforma en el Colegio AndrÃ©s Bello cumple una funciÃ³n pedagÃ³gica indirecta al familiarizar a la comunidad educativa con ecosistemas digitales modernos basados en IA.
+ArtÃ­culo 1:
+ArtÃ­culo 7:
+MARCO
+METODOLÃ“GICO
+SegÃºn Tamayo y Tamayo (2003) el marco metodolÃ³gico consiste en "Un proceso que, mediante el mÃ©todo cientÃ­fico, procura obtener informaciÃ³n relevante para entender, verificar, corregir o aplicar el conocimiento, dicho conocimiento se adquiere para relacionarlo con las hipÃ³tesis presentadas ante los problemas planteados" (p.37). En pocas palabras, el marco metodolÃ³gico,
+se
+refiere
+a
+la
+forma
+del
+cÃ³mo
+se
+realiza
+el
+estudio,
+para
+responder
+la
+problemÃ¡tica planteada detallando todos los pasos que serÃ¡n utilizados para llevar a cabo la investigaciÃ³n.
+Naturaleza
+de
+la
+InvestigaciÃ³n
+La presente investigaciÃ³n se fundamenta bajo el paradigma positivista, definido por HernÃ¡ndez, R. FernÃ¡ndez, C y Batista, L (2014) como aquel que â€œbusca explicar, predecir, controlar los fenÃ³menos; identificar causas reales, temporalmente precedentes o simultÃ¡neas.â€ (pÃ¡g. 16). Asimismo, yace bajo el enfoque cuantitativo.
+En este orden de ideas, Dobles y Cols. (2015), destacan que â€œel positivismo se caracteriza por afirmar que el Ãºnico conocimiento verdadero es aquel que es producido por la ciencia, particularmente
+con
+el
+empleo
+de
+su
+mÃ©todoâ€
+(p.33).
+Por
+tal
+razÃ³n,
+se
+seleccionÃ³
+ubicar
+este
+trabajo en
+el
+referido
+paradigma,
+puesto
+que
+hace
+Ã©nfasis
+en
+lo
+observable
+y
+medible,
+donde
+el
+proceso
+de evaluaciÃ³n se concluye sobre la base de la aplicaciÃ³n de instrumentos comprobables.
+De
+igual
+modo,
+el
+trabajo
+se
+ajusta
+en
+un
+enfoque
+cuantitativo,
+que
+segÃºn
+Neill
+y
+Cortez
+(2018) â€œse basa en los aspectos numÃ©ricos para investigar, analizar y comprobar informaciÃ³n y datosâ€ (p.69).
+Dicho
+esto,
+se
+relacionarÃ¡
+las
+variables
+del
+estudio
+con
+la
+problemÃ¡tica
+planteada,
+mediante la obtenciÃ³n de informaciÃ³n cuantificable que posteriormente, permitirÃ¡ generar una serie de conclusiones y recomendaciones a la sociedad.
+DiseÃ±o de la InvestigaciÃ³n:
+intencionalmente las variables independientes" (p. 189). En este estudio, se observarÃ¡n los fenÃ³menos administrativos y de control de asistencia tal cual como se manifiestan en su contexto natural para ser registrados y analizados.
+A tal efecto, el estudio se ubica dentro de los parÃ¡metros de la investigaciÃ³n descriptiva y proyectiva. SegÃºn Balestrini (2006), la investigaciÃ³n descriptiva consiste en "la aplicaciÃ³n al anÃ¡lisis de datos por los cuales se presentan los fenÃ³menos o hechos de la realidad... a fin de evitar un error en su manejo" (p. 126). Es proyectiva puesto que busca proponer una soluciÃ³n tecnolÃ³gica funcional a un problema detectado.
+Asimismo, la investigaciÃ³n es considerada de campo, definida por Arias (2012) como aquella que consiste en "la recolecciÃ³n de datos directamente de los sujetos investigados, o de la realidad donde ocurren los hechos (datos primarios), sin manipular o controlar variable alguna" (p. 31). De igual manera, se define como un diseÃ±o transaccional o transversal, ya que, segÃºn HernÃ¡ndez y otros (2014), son aquellos que recolectan datos en un solo momento y en un tiempo Ãºnico.
+Modalidad de la InvestigaciÃ³n
+:
+El presente estudio estÃ¡ enmarcado en la modalidad de Proyecto Especial, que de acuerdo con el Manual de Trabajos de Grado de EspecializaciÃ³n y MaestrÃ­a y Tesis Doctorales de la UPEL (2021) se define como:
+Trabajos que lleven a creaciones tangibles, susceptibles de ser utilizadas como soluciones a problemas demostrados; en esta categorÃ­a se incluyen los trabajos de elaboraciÃ³n de libros de texto, el desarrollo de software, prototipos y de productos tecnolÃ³gicos en general (p. 22).
+Esta modalidad justifica la creaciÃ³n de la plataforma de automatizaciÃ³n, la API y los mÃ³dulos de Inteligencia Artificial como una respuesta tangible y tecnolÃ³gica a las necesidades del Colegio AndrÃ©s Bello.
+Fase I: DiagnÃ³stico de la InvestigaciÃ³n
+utilizados, ademÃ¡s de ser manuales, cuentan con algÃºn soporte digital o base de datos que pueda integrarse a la nueva infraestructura tecnolÃ³gica.
+Asimismo, se evaluarÃ¡ el nivel de conocimiento tÃ©cnico del personal administrativo y docente para asegurar que la interfaz web sea funcional, intuitiva y fÃ¡cil de usar en el entorno institucional. Para lograr esto, se aplicarÃ¡ una encuesta diagnÃ³stica dirigida a los responsables de la gestiÃ³n estudiantil, cuyos resultados servirÃ¡n de base para establecer los requerimientos tÃ©cnicos de programaciÃ³n, lÃ³gica de datos y algoritmos de anÃ¡lisis. De esta manera, se busca que la propuesta no solo automatice el registro de asistencias, sino que transforme la operatividad administrativa en un sistema moderno, eficiente y adaptado a las necesidades reales de la instituciÃ³n.
+Fase II: DiseÃ±o de la Plataforma de AutomatizaciÃ³n
+Esta fase constituye la etapa medular del proyecto, donde se define la arquitectura de software bajo un enfoque de ingenierÃ­a moderna. El diseÃ±o se orienta a la creaciÃ³n de una plataforma escalable, robusta y mantenible, utilizando un stack tecnolÃ³gico de vanguardia que garantiza la eficiencia en el manejo de datos escolares.
+1. Arquitectura de Front-end (Interfaz de Usuario de Alto Rendimiento):
+El desarrollo de la interfaz se fundamenta en el uso de React o Next.js, permitiendo una navegaciÃ³n fluida sin recargas de pÃ¡gina innecesarias. Se opta por TypeScript como lenguaje principal para implementar un tipado estÃ¡tico, lo que reduce drÃ¡sticamente los errores en tiempo de ejecuciÃ³n y facilita el mantenimiento del cÃ³digo a largo plazo.
+La plataforma se estructurarÃ¡ mediante componentes reutilizables (Botones, Formularios, Tablas de Asistencia), lo que permite una escalabilidad inmediata.
+Se diseÃ±arÃ¡ una lÃ³gica de estados para manejar la informaciÃ³n de los estudiantes de forma reactiva, asegurando que cuando un docente marque una inasistencia, el cambio se refleje instantÃ¡neamente en los reportes globales.
+Se prioriza un diseÃ±o limpio y minimalista, optimizado para que la carga de datos sea rÃ¡pida incluso en condiciones de conectividad limitada, algo vital en el contexto institucional actual.
+2. DiseÃ±o de la API RESTful (Cerebro LÃ³gico y ComunicaciÃ³n):
+La comunicaciÃ³n entre la interfaz web y el servidor se realizarÃ¡ a travÃ©s de una Interfaz de ProgramaciÃ³n de Aplicaciones (API) bajo el estÃ¡ndar REST.
+Se diseÃ±arÃ¡n puntos de acceso especÃ­ficos (ej. /api/v1/asistencia) para que la aplicaciÃ³n web pueda solicitar o enviar datos de manera segura.
+Se in
+tegrarÃ¡n protocolos de seguridad (como JWT - JSON Web Tokens) para garantizar que solo los usuarios autorizados (Directivos y Docentes registrados) puedan acceder a la informaciÃ³n sensible de los menores, cumpliendo estrictamente con la LOPNA.
+El uso de formatos JSON asegura que la transferencia de informaciÃ³n sea ligera y compatible con los mÃ³dulos de anÃ¡lisis posteriores.
+3. IntegraciÃ³n de la Capa de Inteligencia Artificial (IA AnalÃ­tica):
+A diferencia de los sistemas tradicionales, esta plataforma incorpora una capa de IA diseÃ±ada para procesar la "Big Data" escolar.
+La IA consumirÃ¡ los datos servidos por la API para identificar tendencias de ausentismo antes de que se conviertan en un problema crÃ­tico (DeserciÃ³n Escolar).
+Se diseÃ±an algoritmos que, basÃ¡ndose en el histÃ³rico de asistencia, puedan predecir quÃ© estudiantes requieren una intervenciÃ³n administrativa o pedagÃ³gica inmediata, enviando alertas automÃ¡ticas a travÃ©s del dashboard de la plataforma.
+4. DiseÃ±o de la Persistencia de Datos (Base de Datos Relacional):
+Para soportar esta arquitectura, se diseÃ±arÃ¡ una base de datos relacional (ej. PostgreSQL o MySQL) altamente normalizada. Se estructurarÃ¡n tablas interconectadas para Estudiantes, Docentes, Secciones, Horarios y Registros Diarios, garantizando la integridad referencial. Esto asegura que cada dato de asistencia estÃ© vinculado correctamente a un estudiante Ãºnico y a una fecha especÃ­fica sin duplicidades.
+Fase
+III.
+ValidaciÃ³n
+de
+la
+propuesta
+Â 
+En esta etapa final, se procederÃ¡ a verificar la funcionalidad, pertinencia tÃ©cnica y consistencia metodolÃ³gica de la plataforma de automatizaciÃ³n. Dado que el proyecto integra tecnologÃ­as avanzadas como Next.js, TypeScript y mÃ³dulos de Inteligencia Artificial, la validaciÃ³n se estructurarÃ¡ bajo dos enfoques complementarios:
+1. Pruebas de Funcionalidad y Estabilidad TÃ©cnica:
+Antes de someter la propuesta al juicio externo, se realizarÃ¡n pruebas de entorno para asegurar la integridad de la arquitectura. Esto incluye la verificaciÃ³n de los endpoints de la API para garantizar que el intercambio de datos en formato JSON sea correcto, y pruebas de tipado en el frontend con TypeScript para minimizar errores de lÃ³gica. Se validarÃ¡ que la comunicaciÃ³n entre la interfaz web y el motor de IA sea fluida, permitiendo que los reportes de asistencia se generen sin latencia.
+2. ValidaciÃ³n por Juicio de Expertos:
+Una vez comprobada la estabilidad del sistema, se someterÃ¡ la propuesta a la evaluaciÃ³n de un comitÃ© de expertos en las Ã¡reas de InformÃ¡tica (IngenierÃ­a de Software) y MetodologÃ­a de la InvestigaciÃ³n.
+Instrumento de ValidaciÃ³n:
+Likert
+), donde los especialistas evaluarÃ¡n dimensiones como: claridad de la interfaz, seguridad en el manejo de datos, coherencia de los algoritmos de IA y la eficiencia de la API como puente de comunicaciÃ³n.
+Pertinencia Institucional:
+alto impacto, lista para su implementaciÃ³n y escalabilidad en el sector educativo.
+Sujetos de Estudio (PoblaciÃ³n y Censo)Â 
+Los sujetos de estudio comprenden la definiciÃ³n de las unidades de anÃ¡lisis que poseen las caracterÃ­sticas comunes objeto de la investigaciÃ³n; a este grupo tambiÃ©n se le conoce como poblaciÃ³n o universo. SegÃºn Barrantes (2005), la poblaciÃ³n es el â€œconjunto de elementos que tienen caracterÃ­sticas en comÃºnâ€¦ Pueden ser finitas o infinitasâ€ (p. 135).
+Para la presente investigaciÃ³n, la poblaciÃ³n es de carÃ¡cter finito y accesible, constituida por el personal docente y directivo del Colegio AndrÃ©s Bello que hace uso diario de los registros de asistencia estudiantil en el nivel de Media General. Esta poblaciÃ³n estÃ¡ integrada por un total de 25 sujetos.
+Debido a que el nÃºmero de individuos es manejable y permite el estudio integral de la realidad institucional, no se extraerÃ¡ una muestra representativa, sino que se aplicarÃ¡ un Censo Poblacional. SegÃºn Arias (2012), el censo consiste en obtener datos de la totalidad de los individuos que conforman la poblaciÃ³n, lo que garantiza un margen de error nulo en la recolecciÃ³n de los requerimientos para el diseÃ±o de la plataforma de automatizaciÃ³n.
+Sistema de Variable
+HernÃ¡ndez, FernÃ¡ndez y Baptista (2014) definen variable como una propiedad que tiene una variaciÃ³n que puede medirse y observarse (p.170). Por lo tanto, se infiere que la variable es un elemento que puede obtener diferentes valores, donde esta puede analizarse por medio de la recolecciÃ³n de datos que facilite la compresiÃ³n de comportamiento de la informaciÃ³n.
+la creaciÃ³n de una plataforma de automatizaciÃ³n (Web, API e Inteligencia Artificial)
+variable nominal
+Variable
+Esta
+variable
+conceptual
+debe
+ser
+definida
+conceptualmente,
+es
+decir
+Balestrini
+(2010)
+seÃ±ala
+que en esta etapa se establece especÃ­ficamente el significado que ha de otorgÃ¡rsele a un determinado termino dentro de la investigaciÃ³nâ€¦ tienen la ventaja de proporcionar una mayor precisiÃ³n en el establecimiento de los objetivos del proyecto. La variable conceptual del presente estudio queda definida como: El proceso de evaluaciÃ³n sistemÃ¡tica de las deficiencias actuales en los mÃ©todos manuales o tradicionales de registro de asistencia, con el fin de justificar el desarrollo de una herramienta
+digital
+que
+optimice
+la
+eficiencia,
+precisiÃ³n
+y
+accesibilidad
+de
+los
+entornos
+educativos en la modalidad media general del Colegio AndrÃ©s Bello.
+TÃ©cnica
+e
+instrumentos
+de
+RecolecciÃ³n
+de
+Datos
+Para recabar la informaciÃ³n sobre la necesidad de diseÃ±ar una plataforma de automatizaciÃ³n (con arquitectura Web, API e IA) para la gestiÃ³n administrativa y el control de asistencia estudiantil en el nivel de Media General del Colegio AndrÃ©s Bello, se utilizarÃ¡ la tÃ©cnica de la encuesta y el cuestionario como instrumento. Al respecto, Cea (1999) define la encuesta de la siguiente manera:
+Se trata de una tÃ©cnica de investigaciÃ³n basada en las declaraciones emitidas por una muestra representativa de una poblaciÃ³n concreta y que nos permite conocer sus opiniones, actitudes, creencias, valoraciones subjetivas, etc. Dada su enorme potencial como fuente de informaciÃ³n, es utilizada por un amplio espectro de investigadores, siendo el instrumento de sondeo mÃ¡s valioso en instituciones como el Instituto Nacional de EstadÃ­stica (INE), el Centro de Investigaciones SociolÃ³gicas (CIS), el Ministerio de Asuntos Sociales, numerosos periÃ³dicos, entre otros muchos (p. 14)
+Asimismo, dicho autor define el cuestionario como â€œun mÃ©todo para obtener informaciÃ³n de manera clara y precisa, donde existe un formato estandarizado de preguntas y donde el informante reporta sus respuestasâ€ (p. 61). Para los fines de este diagnÃ³stico, se elaborarÃ¡ un cuestionario de preguntas cerradas de opiniÃ³n y opciones mÃºltiples, estructurado bajo una escala de estimaciÃ³n (tipo Likert) con las siguientes alternativas de respuesta:
+Poco Necesario (PN)
+No Necesario (NN)
+Muy Necesario (MN)
+Necesario (N)
+Medianamente Necesario (ME
+N)
+Validez
+Confiabilidad
+Validez
+Â 
+Para HernÃ¡ndez, FernÃ¡ndez y Baptista (2003), â€œla validez en tÃ©rminos generales se refiere al grado en que un instrumento realmente mide la variable que quiere medirâ€ (p. 243). En tal sentido, la validez del instrumento de recolecciÃ³n de datos se determinarÃ¡ a travÃ©s del mÃ©todo de validez de contenido, mediante la tÃ©cnica de juicio de expertos, que segÃºn Hurtado (1998) consiste en â€œsometer el instrumento al anÃ¡lisis de especialistas, quienes emiten sus opiniones y sugerencias para modificarloâ€ (p. 419).
+Para llevar a cabo este proceso, se seleccionarÃ¡n tres (3) especialistas: uno (1) en el Ã¡rea de MetodologÃ­a de la InvestigaciÃ³n, uno (1) experto en InformÃ¡tica (Arquitectura de Software) y uno (1) especialista en GestiÃ³n Administrativa Escolar. Estos profesionales emitirÃ¡n sus opiniones sobre cada Ã­tem del cuestionario, evaluando a travÃ©s de una matriz de validaciÃ³n si existe tendenciosidad, claridad, pertinencia y congruencia entre el contenido de las preguntas y los objetivos de la investigaciÃ³n. Luego de esta revisiÃ³n exhaustiva, y de aplicar las correcciones sugeridas, los expertos certificarÃ¡n la validez del cuestionario para proceder a su aplicaciÃ³n a la totalidad de la poblaciÃ³n objeto de estudio.
+Confiabilidad:
+Para Palella y Martins (2012), la confiabilidad de un instrumento de mediciÃ³n se define como "la ausencia de error aleatorio en un instrumento de recolecciÃ³n de datos" (p. 164). En otras palabras, representa el grado en que la aplicaciÃ³n repetida del cuestionario al mismo sujeto u objeto de estudio produce resultados consistentes y coherentes.
+Dada la naturaleza del instrumento diseÃ±ado para esta investigaciÃ³n, el cual consiste en un cuestionario con Ã­tems de respuesta mÃºltiple estructurados bajo una escala de estimaciÃ³n tipo Likert, la confiabilidad se determinarÃ¡ estadÃ­sticamente a travÃ©s del coeficiente de Alfa de Cronbach. Este mÃ©todo es el indicado para instrumentos con mÃºltiples opciones de respuesta policotÃ³micas.
+Para calcular dicho coeficiente, se aplicarÃ¡ una prueba piloto a un grupo reducido de individuos que posean caracterÃ­sticas similares a la poblaciÃ³n de estudio, pero que no formen parte de la muestra final. Los resultados obtenidos de esta prueba piloto serÃ¡n procesados y tabulados; estadÃ­sticamente, si el coeficiente arrojado por la fÃ³rmula se acerca a 1 (uno), se confirmarÃ¡ que el instrumento posee una confiabilidad alta y que las re
+spuestas obtenidas son precisas.
+TÃ©cnica
+de
+AnÃ¡lisis
+de
+Datos
+Los resultados y el anÃ¡lisis estadÃ­stico de los datos obtenidos tras la aplicaciÃ³n del instrumento a la poblaciÃ³n de estudio se procesarÃ¡n mediante la estadÃ­stica descriptiva. Para ello, se utilizarÃ¡n herramientas informÃ¡ticas de hojas de cÃ¡lculo (como las versiones recientes de Microsoft Excel), donde los datos serÃ¡n tabulados y presentados a travÃ©s de frecuencias y porcentajes. Este procesamiento numÃ©rico permitirÃ¡ analizar las dimensiones establecidas en el cuadro de operacionalizaciÃ³n para confirmar, de manera objetiva, la necesidad de implementar la plataforma de automatizaciÃ³n (interfaz Web, API e Inteligencia Artificial) en el colegio. Relacionando este punto, ChÃ¡vez (2001) seÃ±ala que la tabulaciÃ³n â€œes una tÃ©cnica que emplea el investigador para procesar la informaciÃ³n recolectada, la cual permite lograr la organizaciÃ³n de los datos relativos a una variable, indicadores o Ã­temsâ€ (p. 187). Asimismo, para facilitar la comprensiÃ³n visual de los hallazgos ante la directiva y los expertos, los resultados tabulados se representarÃ¡n grÃ¡ficamente mediante tablas de distribuciÃ³n de frecuencias y diagramas, sirviendo como base empÃ­rica para la Fase de DiseÃ±o del proyecto.
+REFERENCIAS
+Interoperabilidad y automatizaciÃ³n: El futuro de la gestiÃ³n administrativa en instituciones educativas
+. Editorial TecnolÃ³gica Educativa.
+Desarrollo de una AplicaciÃ³n de Control de Asistencia Estudiantil para la Unidad Educativa Privada Madre Mercedes De JesÃºs Molina
+El proyecto de investigaciÃ³n. IntroducciÃ³n a la metodologÃ­a cientÃ­fica
+. Editorial Episteme.
+CÃ³mo se elabora el Proyecto de InvestigaciÃ³n
+. Caracas, Venezuela: BL Consultores Asociados. Servicio Editorial.
+CÃ³mo se elabora un Proyecto de InvestigaciÃ³n
+. Caracas, Venezuela: Editorial Consultores Asociados BL.
+Learning React: Modern Patterns for Developing React Apps
+O'Reilly Media.
+InvestigaciÃ³n: Un camino al conocimiento, un enfoque cuantitativo y cualitativo
+. Editorial Universidad Estatal a Distancia.
+Tendencias actuales en el uso de dispositivos mÃ³viles en educaciÃ³n
+. Editorial Universitaria.
+MetodologÃ­a de la investigaciÃ³n
+. Editorial SÃ­ntesis.
+IntroducciÃ³n a la investigaciÃ³n educativa
+. Talleres de Artes GrÃ¡ficas S.A.
+InvestigaciÃ³n en educaciÃ³n: procesos, interacciones y proyecciones
+. Editorial Universidad Estatal a Distancia (EUNED).
+EconomÃ­a
+.
+Economic Policy Institute
+https://www.epi.org/publication/student-absenteeism-who-misses-school-and-how-missing-school-matters-for-performance/
+MetodologÃ­a de la investigaciÃ³n
+MetodologÃ­a de la investigaciÃ³n
+MetodologÃ­a de la investigaciÃ³n holÃ­stica
+. FundaciÃ³n Sypal.
+Aplicativo web para la mejora del control de asistencias de los estudiantes de la InstituciÃ³n Educativa CÃ©sar Vallejo de Champacco
+Universidad Nacional de Huancavelica.
+The Design of Everyday APIs
+. Manning Publications.
+Revista Latinoamericana de GestiÃ³n Educativa
+.
+MetodologÃ­a de la investigaciÃ³n cientÃ­fica
+. Editorial Utmach.
+Sistema de InformaciÃ³n Automatizado de Control de Calificaciones de los Estudiantes GestiÃ³n del Centro de CapacitaciÃ³n de JÃ³venes y Adultos â€œArturo Sarco Villenaâ€ Turmero Estado-Aragua
+Revista Iberoamericana de TecnologÃ­a y EducaciÃ³n
+.
+La importancia del control de asistencia en el rendimiento acadÃ©mico escolar
+. Editorial Universitaria.
+Revista de InnovaciÃ³n TecnolÃ³gica Aplicada
+.
+Inteligencia Artificial: Un Enfoque Moderno
+Aplicativo web para la mejora del sistema de control de asistencias en la InstituciÃ³n Educativa San Luis Gonzaga - Ica
+El proceso de la investigaciÃ³n cientÃ­fica
+Manual de Trabajos de Grado de EspecializaciÃ³n y MaestrÃ­a y Tesis Doctorales
+. Fedupel.
+Manual de Trabajos de Grado de EspecializaciÃ³n y MaestrÃ­a y Tesis Doctorales
+. Fedupel.
+Desarrollo de aplicaciones web modernas: Arquitecturas escalables con React y TypeScript
+. Ediciones TecnolÃ³gicas.
+Revista TecnolÃ³gica de InnovaciÃ³n y EducaciÃ³n
+.
+Journal of Educational Management and Policy
+.
+AnÃ¡lisis de la viabilidad en la adopciÃ³n de tecnologÃ­as educativas: DesafÃ­os y estrategias
+Editorial Universitaria.

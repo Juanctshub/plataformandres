@@ -77,28 +77,29 @@ const Students = () => {
         <section className="glass-effect" style={{ padding: '32px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '24px' }}>Nueva Inscripción</h2>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label className="stat-label">Documento de Identidad</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>DOCUMENTO DE IDENTIDAD</label>
               <input 
                 className="glass-input" 
                 placeholder="V-00.000.000" 
                 value={formData.cedula}
                 onChange={(e) => setFormData({...formData, cedula: e.target.value})}
                 required 
+                spellCheck={false}
               />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label className="stat-label">Nombre del Estudiante</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>NOMBRE COMPLETO</label>
               <input 
                 className="glass-input" 
-                placeholder="Nombre Completo" 
+                placeholder="Ej: Andrés Bello…"
                 value={formData.nombre}
                 onChange={(e) => setFormData({...formData, nombre: e.target.value})}
                 required 
               />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label className="stat-label">Sección Asignada</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>SECCIÓN ASIGNADA</label>
               <select 
                 className="glass-input"
                 value={formData.seccion}
@@ -110,37 +111,37 @@ const Students = () => {
                 <option>5to Año A</option>
               </select>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label className="stat-label">Representante Legal</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>REPRESENTANTE LEGAL</label>
               <input 
                 className="glass-input" 
-                placeholder="Nombre del Representante" 
+                placeholder="Nombre del Tutor…"
                 value={formData.representante}
                 onChange={(e) => setFormData({...formData, representante: e.target.value})}
               />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label className="stat-label">Contacto Telefónico</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>CONTACTO TELEFÓNICO</label>
               <input 
                 className="glass-input" 
+                type="tel"
                 placeholder="+58 4XX-XXXXXXX" 
                 value={formData.contacto}
                 onChange={(e) => setFormData({...formData, contacto: e.target.value})}
               />
             </div>
-            <button type="submit" className="login-btn" style={{ marginTop: '16px' }}>Inscribir en el Sistema</button>
+            <button type="submit" className="login-btn" style={{ marginTop: '16px', padding: '14px' }}>Inscribir Estudiante</button>
             {msg.text && (
               <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
+                initial={{ opacity: 0, y: 10 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                className={`badge ${msg.type === 'success' ? 'badge-success' : 'badge-danger'}`}
                 style={{ 
-                  padding: '12px', 
-                  borderRadius: '12px', 
+                  padding: '16px', 
                   fontSize: '13px', 
                   textAlign: 'center',
                   fontWeight: '700',
-                  background: msg.type === 'success' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 59, 48, 0.1)',
-                  color: msg.type === 'success' ? '#248a3d' : '#cc2f26'
+                  marginTop: '16px'
                 }}
               >
                 {msg.text}
