@@ -1,102 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  ShieldCheck, 
+  Database, 
+  Menu,
+  ChevronRight,
+  User as UserIcon
+} from 'lucide-react';
 import Login from './Login';
+import Dashboard from './components/Dashboard';
 import Students from './Students';
 import AttendanceSheet from './AttendanceSheet';
 import Justifications from './Justifications';
 import IAAnalytics from './IAAnalytics';
 
-const Dashboard = ({ stats, aiData }) => {
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="dashboard-view"
-    >
-      <div className="stats-grid">
-        {[
-          { label: 'Matrícula', value: stats.students, sub: 'Media General', icon: '👥' },
-          { label: 'Asistencia', value: stats.attendance, sub: 'Promedio Mensual', icon: '📈' },
-          { label: 'Alertas IA', value: stats.risks, sub: 'Casos Críticos', icon: '🧠', color: 'var(--danger)' },
-          { label: 'Justificativos', value: '12', sub: 'Pendientes', icon: '📄' },
-        ].map((stat) => (
-          <motion.div 
-            key={stat.label}
-            whileHover={{ y: -5, boxShadow: '0 12px 40px rgba(0,0,0,0.1)' }}
-            className="glass-card" 
-            style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}
-          >
-            <div style={{ fontSize: '24px', marginBottom: '12px' }}>{stat.icon}</div>
-            <span className="stat-label">{stat.label}</span>
-            <div className="stat-value" style={{ color: stat.color || 'inherit' }}>{stat.value}</div>
-            <div style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', marginTop: '4px' }}>{stat.sub}</div>
-          </motion.div>
-        ))}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px', marginTop: '32px' }}>
-        <section className="glass-effect" style={{ padding: '32px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: '800' }}>Análisis IA: Predicción de Deserción</h2>
-            <div className="badge badge-success">Seguridad Bancaria Nivel 4</div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {aiData.alerts && aiData.alerts.length > 0 ? aiData.alerts.map((alert, i) => (
-              <motion.div 
-                key={i}
-                className="glass-card" 
-                style={{ 
-                  padding: '16px', 
-                  borderLeft: `4px solid ${alert.type === 'danger' ? 'var(--danger)' : 'var(--accent)'}`,
-                  background: 'rgba(255,255,255,0.01)'
-                }}
-              >
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                  <span style={{ fontSize: '18px' }}>{alert.type === 'danger' ? '🛑' : '⚠️'}</span>
-                  <p style={{ fontSize: '13px', fontWeight: '500' }}>{alert.msg}</p>
-                </div>
-              </motion.div>
-            )) : (
-              <div style={{ padding: '40px', textAlign: 'center', opacity: 0.5 }}>
-                <span style={{ fontSize: '40px' }}>🔍</span>
-                <p style={{ fontSize: '14px', marginTop: '12px' }}>Analizando patrones en Neon Postgres...</p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        <section className="glass-effect" style={{ padding: '32px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '24px' }}>Asistencia por Año</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-            {[
-              { label: '1er Año', val: 98, color: 'var(--accent)' },
-              { label: '2do Año', val: 94, color: 'var(--accent)' },
-              { label: '3er Año', val: 82, color: 'var(--warning)' },
-              { label: '4to Año', val: 91, color: 'var(--accent)' },
-              { label: '5to Año', val: 76, color: 'var(--danger)' },
-            ].map(row => (
-              <div key={row.label}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', fontWeight: '700' }}>
-                  <span>{row.label}</span>
-                  <span style={{ color: row.color }}>{row.val}%</span>
-                </div>
-                <div style={{ height: '4px', background: 'rgba(0,0,0,0.03)', borderRadius: '2px', overflow: 'hidden' }}>
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${row.val}%` }}
-                    style={{ height: '100%', background: row.color }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-    </motion.div>
-  );
-};
+import { 
+  SidebarProvider, 
+  SidebarInset, 
+  SidebarTrigger 
+} from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -104,6 +27,16 @@ const App = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [stats, setStats] = useState({ students: 0, attendance: '98.5%', risks: 0 });
   const [aiData, setAiData] = useState({ title: '', security: '', alerts: [] });
+
+  // Import dynamic AppSidebar inside to prevent circular issues if any, 
+  // though it's clean here.
+  const [AppSidebar, setAppSidebar] = useState(null);
+
+  useEffect(() => {
+    import('./components/AppSidebar').then(module => {
+      setAppSidebar(() => module.default);
+    });
+  }, []);
 
   useEffect(() => {
     if (!token) return;
@@ -127,81 +60,87 @@ const App = () => {
         }));
         setAiData(ai);
       } catch (e) { 
-        console.error('Network error - using mock data for development', e); 
+        console.error('Network error - syncing with NeonDB...', e); 
       }
     };
     fetchData();
   }, [token]);
 
   if (!token) return <Login onLogin={(data) => { setToken(data.token); setUser(data.user); }} />;
-
-  const menuItems = [
-    { id: 'dashboard', icon: '📊', label: 'Dashboard' },
-    { id: 'students', icon: '🎓', label: 'Estudiantes' },
-    { id: 'attendance', icon: '🖊️', label: 'Control' },
-    { id: 'justifications', icon: '📄', label: 'Justificaciones' },
-    { id: 'reports', icon: '📈', label: 'IA Analytics' },
-  ];
+  if (!AppSidebar) return <div className="h-screen bg-black flex items-center justify-center text-zinc-500 font-black tracking-widest uppercase italic">Iniciando Núcleo Institucional...</div>;
 
   return (
-    <div className="app-container">
-      <motion.aside 
-        initial={{ x: -250 }} 
-        animate={{ x: 0 }} 
-        className="sidebar glass-effect"
-      >
-        <div className="logo" style={{ marginBottom: '40px' }}>ANDRÉS BELLO</div>
-        <nav style={{ flex: 1 }}>
-          {menuItems.map(item => (
-            <motion.div 
-              key={item.id}
-              whileHover={{ x: 8 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveTab(item.id)}
-              className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-            >
-              <span style={{ fontSize: '18px' }}>{item.icon}</span>
-              <span>{item.label}</span>
-            </motion.div>
-          ))}
-        </nav>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-black text-zinc-100 selection:bg-zinc-100 selection:text-black">
+        <AppSidebar 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab} 
+          userName={user?.username} 
+        />
         
-        <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid var(--ghost-border)' }}>
-          <div className="nav-item" onClick={() => { localStorage.clear(); window.location.reload(); }} style={{ color: 'var(--danger)' }}>
-            <span>🚪</span>
-            <span>Salir</span>
-          </div>
-        </div>
-      </motion.aside>
-
-      <main className="main-content">
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: '900', letterSpacing: '-1.5px' }}>Portal Institucional</h1>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#34C759' }} />
-              <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: '600' }}>
-                Conexión segura a NeonDB • {user?.username || 'Admin'}
-              </p>
+        <SidebarInset className="bg-black/50 border-l border-zinc-900 shadow-2xl relative overflow-hidden">
+          {/* Background Gradient */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] pointer-events-none" />
+          
+          <header className="flex h-20 shrink-0 items-center gap-4 border-b border-zinc-900 px-8 sticky top-0 bg-black/60 backdrop-blur-md z-30 justify-between">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="text-zinc-500 hover:text-zinc-100 transition-colors" />
+              <Separator orientation="vertical" className="h-6 bg-zinc-800" />
+              <div className="flex items-center gap-3">
+                <h1 className="text-xl font-black tracking-tighter text-zinc-100">PLATAFORMA ANDRÉS BELLO</h1>
+                <ChevronRight className="w-4 h-4 text-zinc-800" />
+                <span className="text-xs font-black uppercase tracking-[2px] text-zinc-500">
+                  {activeTab}
+                </span>
+              </div>
             </div>
-          </div>
-          <div className="glass-card" style={{ padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '16px' }}>🇻🇪</span>
-            <span style={{ fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>UA-2026-X</span>
-          </div>
-        </header>
 
-        <section style={{ flex: 1, marginTop: '32px' }}>
-          <AnimatePresence mode="wait">
-            {activeTab === 'dashboard' && <Dashboard key="dash" stats={stats} aiData={aiData} />}
-            {activeTab === 'students' && <Students key="std" />}
-            {activeTab === 'attendance' && <AttendanceSheet key="att" />}
-            {activeTab === 'justifications' && <Justifications key="just" />}
-            {activeTab === 'reports' && <IAAnalytics key="ia" />}
-          </AnimatePresence>
-        </section>
-      </main>
-    </div>
+            <div className="flex items-center gap-6">
+              <div className="hidden md:flex flex-col items-end">
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                  <span className="text-[10px] font-black uppercase tracking-[1px] text-zinc-400">Estado: Sincronizado</span>
+                </div>
+                <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mt-0.5">Neon Postgres Cluster v16.2</span>
+              </div>
+              <div className="bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl flex items-center gap-3 group hover:border-zinc-700 transition-all cursor-pointer">
+                <Database className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+                <span className="text-xs font-black tracking-tight text-zinc-400">INSTITUCIÓN-UA-2026</span>
+              </div>
+            </div>
+          </header>
+
+          <main className="flex-1 p-8 overflow-y-auto max-w-[1400px] mx-auto w-full">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                {activeTab === 'dashboard' && <Dashboard stats={stats} aiData={aiData} />}
+                {activeTab === 'students' && <Students />}
+                {activeTab === 'attendance' && <AttendanceSheet />}
+                {activeTab === 'justifications' && <Justifications />}
+                {activeTab === 'reports' && <IAAnalytics />}
+              </motion.div>
+            </AnimatePresence>
+          </main>
+
+          <footer className="h-16 border-t border-zinc-900 flex items-center px-8 justify-between opacity-30 select-none">
+            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
+              © 2026 UNIDAD EDUCATIVA ANDRÉS BELLO • NÚCLEO TÉCNICO
+            </span>
+            <div className="flex gap-4">
+              <div className="h-2 w-2 rounded-full bg-zinc-800" />
+              <div className="h-2 w-2 rounded-full bg-zinc-800" />
+              <div className="h-2 w-2 rounded-full bg-zinc-800" />
+            </div>
+          </footer>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 

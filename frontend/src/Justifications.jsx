@@ -1,10 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  FileText, 
+  Calendar, 
+  Plus, 
+  CheckCircle2, 
+  Clock, 
+  XCircle, 
+  Search,
+  Filter,
+  User,
+  MoreVertical,
+  FileCheck,
+  FileX,
+  AlertCircle
+} from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog";
 
 const Justifications = () => {
   const [justifications, setJustifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     estudiante_id: '',
     fecha: new Date().toISOString().split('T')[0],
@@ -12,6 +55,7 @@ const Justifications = () => {
     comentario: ''
   });
   const [students, setStudents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -56,8 +100,14 @@ const Justifications = () => {
       });
 
       if (res.ok) {
-        setShowForm(false);
+        setOpen(false);
         fetchData();
+        setFormData({
+          estudiante_id: '',
+          fecha: new Date().toISOString().split('T')[0],
+          motivo: '',
+          comentario: ''
+        });
       }
     } catch (e) {
       console.error('Error saving:', e);
@@ -67,165 +117,212 @@ const Justifications = () => {
   const formatDate = (dateStr) => {
     return new Intl.DateTimeFormat('es-VE', { 
       day: '2-digit', 
-      month: 'long', 
+      month: 'short', 
       year: 'numeric' 
     }).format(new Date(dateStr));
   };
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'aprobado': return <span className="badge badge-success">Aprobado</span>;
-      case 'rechazado': return <span className="badge badge-danger">Rechazado</span>;
-      default: return <span className="badge badge-warning">En Revisión</span>;
+      case 'aprobado': 
+        return (
+          <Badge className="bg-emerald-500/10 text-emerald-500 border-none font-black uppercase text-[10px] tracking-widest flex w-fit gap-1 items-center">
+            <CheckCircle2 className="w-3 h-3" /> Aprobado
+          </Badge>
+        );
+      case 'rechazado': 
+        return (
+          <Badge className="bg-red-500/10 text-red-500 border-none font-black uppercase text-[10px] tracking-widest flex w-fit gap-1 items-center">
+            <XCircle className="w-3 h-3" /> Rechazado
+          </Badge>
+        );
+      default: 
+        return (
+          <Badge className="bg-zinc-800 text-zinc-400 border-none font-black uppercase text-[10px] tracking-widest flex w-fit gap-1 items-center">
+            <Clock className="w-3 h-3" /> Pendiente
+          </Badge>
+        );
     }
   };
 
+  const filteredJusts = justifications.filter(j => 
+    j.nombre.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    j.motivo.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="justifications-container"
-    >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+    <div className="space-y-8 pb-10">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 style={{ fontSize: '28px', fontWeight: '900', letterSpacing: '-1px' }}>Centro de Justificativos</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Gestión de permisos y validación de inasistencias</p>
+          <h1 className="text-3xl font-black text-zinc-100 tracking-tighter flex items-center gap-3">
+            <FileText className="w-8 h-8 text-blue-500" />
+            Certificados Administrativos
+          </h1>
+          <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">
+            Gestión Docente • Protocolo de Justificación v2.0
+          </p>
         </div>
-        <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="login-btn" 
-          onClick={() => setShowForm(true)}
-          style={{ padding: '12px 28px' }}
-        >
-          Registrar Certificado
-        </motion.button>
+        
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="relative flex-1 md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <Input 
+              placeholder="Filtrar por estudiante o motivo..." 
+              className="pl-10 bg-zinc-900/50 border-zinc-800 text-zinc-200"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="font-black uppercase tracking-widest text-[11px] bg-zinc-100 text-zinc-950 hover:bg-zinc-200 h-10 px-6">
+                <Plus className="w-4 h-4 mr-2" />
+                Nuevo Registro
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-zinc-950 border-zinc-800 text-zinc-100 max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-black italic tracking-tighter">Protocolo de Registro</DialogTitle>
+                <DialogDescription className="text-zinc-500 font-bold uppercase text-[10px] tracking-widest">
+                  Validación institucional de inasistencias
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Estudiante Asociado</Label>
+                    <select 
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-md h-12 px-3 text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-700"
+                      required 
+                      value={formData.estudiante_id}
+                      onChange={e => setFormData({ ...formData, estudiante_id: e.target.value })}
+                    >
+                      <option value="">Seleccione un alumno...</option>
+                      {students.map(s => (
+                        <option key={s.id} value={s.id}>{s.nombre} ({s.seccion})</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Fecha Ausencia</Label>
+                      <Input 
+                        type="date" 
+                        className="bg-zinc-900 border-zinc-800 h-12 text-zinc-200"
+                        required 
+                        value={formData.fecha}
+                        onChange={e => setFormData({ ...formData, fecha: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Motivo Principal</Label>
+                      <Input 
+                        placeholder="Médico / Personal"
+                        className="bg-zinc-900 border-zinc-800 h-12 text-zinc-200"
+                        required 
+                        value={formData.motivo}
+                        onChange={e => setFormData({ ...formData, motivo: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Descripción Detallada</Label>
+                    <textarea 
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-md p-3 text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-700 min-h-[100px] resize-none"
+                      placeholder="Indique detalles adicionales del reposo o certificado..."
+                      value={formData.comentario}
+                      onChange={e => setFormData({ ...formData, comentario: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="submit" className="w-full bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest text-[11px] h-12 mb-2">
+                    Almacenar en Historial Seguro
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
-      <AnimatePresence>
-        {showForm && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{ 
-              position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-              background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)',
-              zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}
-            onClick={() => setShowForm(false)}
-          >
-            <motion.form 
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              className="glass-effect"
-              style={{ width: '100%', maxWidth: '500px', padding: '40px' }}
-              onClick={e => e.stopPropagation()}
-              onSubmit={handleSubmit}
-            >
-              <h3 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '24px' }}>Nuevo Justificativo</h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div>
-                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>ESTUDIANTE</label>
-                  <select 
-                    className="glass-input" 
-                    required 
-                    value={formData.estudiante_id}
-                    onChange={e => setFormData({ ...formData, estudiante_id: e.target.value })}
-                  >
-                    <option value="">Seleccione un alumno…</option>
-                    {students.map(s => (
-                      <option key={s.id} value={s.id}>{s.nombre} ({s.seccion})</option>
-                    ))}
-                  </select>
-                </div>
+      <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm overflow-hidden">
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader className="bg-zinc-950/50">
+              <TableRow className="border-zinc-800 hover:bg-transparent">
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-zinc-500 py-5 pl-8">Expediente</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Motivo & Descripción</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Fecha Validada</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Estado</TableHead>
+                <TableHead className="text-right pr-8 text-[10px] font-black uppercase tracking-widest text-zinc-500">Auditoría</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-60 text-center text-zinc-600 font-bold uppercase text-xs tracking-widest">
+                    Consultando Archivos...
+                  </TableCell>
+                </TableRow>
+              ) : filteredJusts.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-60 text-center">
+                    <div className="flex flex-col items-center justify-center text-zinc-700">
+                      <AlertCircle className="w-12 h-12 mb-4 opacity-50" />
+                      <p className="text-sm font-black uppercase tracking-widest opacity-50 italic">Sin certificados registrados</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredJusts.map((item) => (
+                  <TableRow key={item.id} className="border-zinc-800 hover:bg-zinc-800/30 group">
+                    <TableCell className="pl-8">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-zinc-100 tracking-tight">{item.nombre}</span>
+                        <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">{item.seccion}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col max-w-[250px]">
+                        <span className="text-xs font-bold text-zinc-300 italic">{item.motivo}</span>
+                        <span className="text-[10px] text-zinc-600 truncate">{item.comentario || "Sin comentarios"}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-xs font-bold text-zinc-400">
+                        <Calendar className="w-3 h-3 text-zinc-600" />
+                        {formatDate(item.fecha)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(item.estado)}
+                    </TableCell>
+                    <TableCell className="text-right pr-8">
+                       <Button variant="ghost" size="icon" className="text-zinc-700 hover:text-zinc-200">
+                         <MoreVertical className="w-4 h-4" />
+                       </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
-                <div>
-                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>FECHA DE LA INASISTENCIA</label>
-                  <input 
-                    type="date" 
-                    className="glass-input" 
-                    required 
-                    value={formData.fecha}
-                    onChange={e => setFormData({ ...formData, fecha: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>MOTIVO (MÉDICO, PERSONAL, ETC.)</label>
-                  <input 
-                    type="text" 
-                    className="glass-input" 
-                    placeholder="Ej: Reposo médico por 48h…"
-                    required 
-                    value={formData.motivo}
-                    onChange={e => setFormData({ ...formData, motivo: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>COMENTARIOS ADICIONALES</label>
-                  <textarea 
-                    className="glass-input" 
-                    style={{ minHeight: '100px', resize: 'none' }}
-                    value={formData.comentario}
-                    onChange={e => setFormData({ ...formData, comentario: e.target.value })}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-                  <button type="submit" className="login-btn" style={{ flex: 1 }}>Guardar Registro</button>
-                  <button type="button" className="nav-item" style={{ flex: 1, border: 'none' }} onClick={() => setShowForm(false)}>Cancelar</button>
-                </div>
-              </div>
-            </motion.form>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="glass-effect" style={{ padding: '32px', minHeight: '300px' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>Cargando registros…</div>
-        ) : justifications.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px', opacity: 0.5 }}>
-            <span style={{ fontSize: '48px' }}>📁</span>
-            <p style={{ marginTop: '16px' }}>No hay justificativos registrados en el sistema.</p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1fr 1fr', padding: '0 20px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '1px' }}>
-              <span>ESTUDIANTE</span>
-              <span>MOTIVO</span>
-              <span>FECHA</span>
-              <span>ESTADO</span>
-            </div>
-            {justifications.map((item) => (
-              <motion.div 
-                key={item.id}
-                whileHover={{ x: 5, background: 'rgba(255,255,255,0.03)' }}
-                className="glass-card" 
-                style={{ 
-                  padding: '20px', 
-                  display: 'grid', 
-                  gridTemplateColumns: '2fr 1.5fr 1fr 1fr',
-                  alignItems: 'center'
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: '700', fontSize: '14px' }}>{item.nombre}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.seccion}</div>
-                </div>
-                <div style={{ fontSize: '13px' }}>{item.motivo}</div>
-                <div style={{ fontSize: '13px', fontVariantNumeric: 'tabular-nums' }}>{formatDate(item.fecha)}</div>
-                <div>{getStatusBadge(item.estado)}</div>
-              </motion.div>
-            ))}
-          </div>
-        )}
+      <div className="flex items-center justify-center gap-6 opacity-30 grayscale saturate-0 pointer-events-none">
+        <FileText className="w-6 h-6 text-zinc-500" />
+        <FileCheck className="w-6 h-6 text-zinc-500" />
+        <FileX className="w-6 h-6 text-zinc-500" />
       </div>
-    </motion.div>
+    </div>
   );
 };
 
 export default Justifications;
+

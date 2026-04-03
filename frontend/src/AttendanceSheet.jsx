@@ -1,11 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  ClipboardCheck, 
+  Calendar, 
+  CheckCircle2, 
+  XCircle, 
+  AlertCircle, 
+  CloudLine,
+  Search,
+  UserCheck,
+  UserX,
+  RefreshCw,
+  MoreVertical
+} from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const AttendanceSheet = () => {
   const [students, setStudents] = useState([]);
   const [attendance, setAttendance] = useState({});
   const [seccion, setSeccion] = useState('1er Año A');
-  const [msg, setMsg] = useState('');
+  const [msg, setMsg] = useState({ text: '', type: '' });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => { fetchStudents(); }, [seccion]);
 
@@ -17,15 +48,18 @@ const AttendanceSheet = () => {
       });
       const data = await response.json();
       setStudents(data.filter(s => s.seccion === seccion));
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error('Fetch error:', e);
+    }
   };
 
   const handleToggle = (id, status) => {
-    setAttendance({ ...attendance, [id]: status });
+    setAttendance(prev => ({ ...prev, [id]: status }));
   };
 
   const submitAttendance = async () => {
-    setMsg('Sincronizando con Neon...');
+    setLoading(true);
+    setMsg({ text: 'Sincronizando con NeonDB...', type: 'info' });
     const date = new Date().toISOString().split('T')[0];
     try {
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
@@ -40,142 +74,185 @@ const AttendanceSheet = () => {
         })
       );
       await Promise.all(promises);
-      setMsg('✅ Datos auditados y almacenados con éxito.');
-      setTimeout(() => setMsg(''), 3000);
-    } catch (e) { setMsg('❌ Error de comunicación.'); }
+      setMsg({ text: 'Lista auditada y almacenada con éxito', type: 'success' });
+      setTimeout(() => setMsg({ text: '', type: '' }), 4000);
+    } catch (e) {
+      setMsg({ text: 'Fallo en la comunicación con el servidor', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const auditCount = Object.keys(attendance).length;
+  const presentCount = Object.values(attendance).filter(v => v === 'presente').length;
+  const absentCount = Object.values(attendance).filter(v => v === 'ausente').length;
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="space-y-8 pb-10">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 style={{ fontSize: '28px', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-1px' }}>Control de Asistencia</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: '500' }}>Sesión Operativa: {new Date().toLocaleDateString()}</p>
+          <h1 className="text-3xl font-black text-zinc-100 tracking-tighter flex items-center gap-3">
+            <ClipboardCheck className="w-8 h-8 text-emerald-500" />
+            Pase de Lista Diaria
+          </h1>
+          <div className="flex items-center gap-2 mt-1">
+             <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+             <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
+               Sesión Administrativa: {new Date().toLocaleDateString('es-VE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+             </p>
+          </div>
         </div>
-        <div className="glass-effect" style={{ padding: '6px', display: 'flex', borderRadius: '16px', gap: '4px', background: 'rgba(0,0,0,0.02)' }}>
+        
+        <div className="flex bg-zinc-950 border border-zinc-800 p-1 rounded-xl gap-1">
           {['1er Año A', '2do Año A', '3er Año A', '4to Año A', '5to Año A'].map(opt => (
-            <button 
+            <Button 
               key={opt}
+              size="sm"
+              variant={seccion === opt ? "default" : "ghost"}
               onClick={() => setSeccion(opt)}
-              className={seccion === opt ? 'login-btn' : 'nav-item'}
-              style={{ 
-                padding: '10px 18px', 
-                border: 'none', 
-                margin: 0,
-                fontSize: '11px',
-                fontWeight: '800',
-                letterSpacing: '0.5px'
-              }}
+              className={`text-[10px] h-8 font-black uppercase tracking-wider ${
+                seccion === opt ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:text-zinc-200'
+              }`}
             >
               {opt}
-            </button>
+            </Button>
           ))}
         </div>
-      </header>
+      </div>
 
-      <section className="glass-effect" style={{ padding: '40px', minHeight: '400px' }}>
-        {students.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px', opacity: 0.5 }}>
-            <p style={{ fontSize: '48px', marginBottom: '16px' }}>🎒</p>
-            <p style={{ fontWeight: '600' }}>Sin registros para {seccion}.</p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '0 24px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              <span>ID & Datos del Alumno</span>
-              <span>Estado de la Sesión</span>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Statistics Summary */}
+        <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-black text-zinc-500 uppercase tracking-widest">Resumen de Sesión</CardTitle>
+          </CardHeader>
+          <CardContent className="flex justify-between items-end">
+            <div className="space-y-1">
+              <div className="text-4xl font-black text-zinc-100 tracking-tighter">{auditCount}/{students.length}</div>
+              <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-[2px]">Auditados</p>
             </div>
-            
-            <AnimatePresence>
-              {students.map(s => (
-                <motion.div 
-                  layout
-                  key={s.id} 
-                  className="glass-card" 
-                  whileHover={{ x: 5, background: 'rgba(255,255,255,0.03)' }}
-                  style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center', 
-                    padding: '16px 24px',
-                  }}
-                >
-                  <div>
-                    <div style={{ fontWeight: '800', fontSize: '15px', color: 'var(--text-main)' }}>{s.nombre}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', fontWeight: '600' }}>CI: {s.cedula}</div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button 
-                      onClick={() => handleToggle(s.id, 'presente')}
-                      className={`badge ${attendance[s.id] === 'presente' ? 'badge-success' : ''}`}
-                      style={{ 
-                        cursor: 'pointer',
-                        padding: '10px 24px',
-                        border: '1px solid var(--ghost-border)',
-                        background: attendance[s.id] === 'presente' ? 'var(--success)' : 'transparent',
-                        color: attendance[s.id] === 'presente' ? 'white' : 'var(--text-muted)',
-                        fontSize: '11px',
-                        fontWeight: '800'
-                      }}
-                    >
-                      PRESENTE
-                    </button>
-                    <button 
-                      onClick={() => handleToggle(s.id, 'ausente')}
-                      className={`badge ${attendance[s.id] === 'ausente' ? 'badge-danger' : ''}`}
-                      style={{ 
-                        cursor: 'pointer',
-                        padding: '10px 24px',
-                        border: '1px solid var(--ghost-border)',
-                        background: attendance[s.id] === 'ausente' ? 'var(--danger)' : 'transparent',
-                        color: attendance[s.id] === 'ausente' ? 'white' : 'var(--text-muted)',
-                        fontSize: '11px',
-                        fontWeight: '800'
-                      }}
-                    >
-                      AUSENTE
-                    </button>
-                  </div>
-                </motion.div>
+            <div className="flex flex-col items-end gap-1">
+              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-none px-2 py-0.5 font-bold">{presentCount} PRES</Badge>
+              <Badge variant="outline" className="bg-red-500/10 text-red-500 border-none px-2 py-0.5 font-bold">{absentCount} AUS</Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Sync Status / Info */}
+        <Card className="lg:col-span-3 border-zinc-800 bg-zinc-900/50 backdrop-blur-sm flex flex-row items-center px-8 relative overflow-hidden">
+           <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-emerald-500/5 to-transparent pointer-events-none" />
+           <div className="flex-1">
+             <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center">
+                   <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                </div>
+                <div>
+                   <h3 className="text-sm font-black text-zinc-200 uppercase tracking-tight italic">Protocolo de Asistencia Activo</h3>
+                   <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Verifique cada registro antes de la sincronización final con la base de datos.</p>
+                </div>
+             </div>
+           </div>
+           <Button 
+            onClick={submitAttendance}
+            disabled={auditCount === 0 || loading}
+            className="h-12 px-8 bg-zinc-100 text-zinc-950 hover:bg-zinc-200 font-black uppercase tracking-widest text-[11px] shadow-xl shadow-emerald-500/5"
+           >
+             {loading ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+             Sincronizar con NeonDB
+           </Button>
+        </Card>
+      </div>
+
+      <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader className="bg-zinc-950/50">
+              <TableRow className="border-zinc-800 hover:bg-transparent">
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-zinc-500 py-5 pl-8 w-24">Identificador</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Datos Institucionales del Estudiante</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-center">Control de Presencia</TableHead>
+                <TableHead className="text-right pr-8 text-[10px] font-black uppercase tracking-widest text-zinc-500">Observaciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {students.map((s) => (
+                <TableRow key={s.id} className="border-zinc-800 hover:bg-zinc-800/30 group">
+                  <TableCell className="font-black text-zinc-600 text-xs pl-8">#{s.id.toString().padStart(4, '0')}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <span className="font-bold text-zinc-100 tracking-tight text-base">{s.nombre}</span>
+                      <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Documento: {s.cedula}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center gap-2">
+                       <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleToggle(s.id, 'presente')}
+                        className={`h-9 px-6 font-black uppercase tracking-widest text-[10px] border-zinc-800 transition-all ${
+                          attendance[s.id] === 'presente' 
+                            ? 'bg-emerald-500 text-white border-emerald-500' 
+                            : 'bg-zinc-950 text-zinc-500 hover:text-zinc-200'
+                        }`}
+                       >
+                         <UserCheck className="w-3.5 h-3.5 mr-2" />
+                         Presente
+                       </Button>
+                       <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleToggle(s.id, 'ausente')}
+                        className={`h-9 px-6 font-black uppercase tracking-widest text-[10px] border-zinc-800 transition-all ${
+                          attendance[s.id] === 'ausente' 
+                            ? 'bg-red-500 text-white border-red-500' 
+                            : 'bg-zinc-950 text-zinc-500 hover:text-zinc-200'
+                        }`}
+                       >
+                         <UserX className="w-3.5 h-3.5 mr-2" />
+                         Ausente
+                       </Button>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right pr-8">
+                    <Button variant="ghost" size="icon" className="text-zinc-700 hover:text-zinc-300">
+                      <MoreVertical className="w-4 h-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
               ))}
-            </AnimatePresence>
-            
-            <div style={{ marginTop: '40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '32px', borderTop: '1px solid var(--ghost-border)' }}>
-              <div style={{ display: 'flex', gap: '20px' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '20px', fontWeight: '900' }}>{Object.keys(attendance).length}</div>
-                  <div style={{ fontSize: '10px', fontWeight: '800', color: 'var(--text-muted)' }}>AUDITADOS</div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '20px', fontWeight: '900' }}>{students.length}</div>
-                  <div style={{ fontSize: '10px', fontWeight: '800', color: 'var(--text-muted)' }}>TOTAL</div>
-                </div>
-              </div>
-              <motion.button 
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={submitAttendance} 
-                className="login-btn" 
-                style={{ padding: '18px 60px' }}
-                disabled={Object.keys(attendance).length === 0}
-              >
-                Sincronizar con NeonDB ☁️
-              </motion.button>
-            </div>
-            {msg && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                className="badge badge-success"
-                style={{ textAlign: 'center', fontWeight: '800', marginTop: '20px', padding: '14px' }}
-              >
-                {msg}
-              </motion.div>
-            )}
-          </div>
+              {students.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} className="h-60 text-center">
+                    <div className="flex flex-col items-center justify-center text-zinc-700">
+                      <AlertCircle className="w-12 h-12 mb-4 opacity-50" />
+                      <p className="text-sm font-black uppercase tracking-widest opacity-50 italic">Sin registros matriculados en {seccion}</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <AnimatePresence>
+        {msg.text && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className={`fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-4 z-50 ${
+              msg.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-blue-500/10 border-blue-500/20 text-blue-400'
+            }`}
+          >
+            {msg.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+            <span className="text-sm font-black tracking-tight uppercase tracking-widest">{msg.text}</span>
+          </motion.div>
         )}
-      </section>
-    </motion.div>
+      </AnimatePresence>
+    </div>
   );
 };
 
