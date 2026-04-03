@@ -1,52 +1,69 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
 
-const dbPath = path.resolve(__dirname, 'asistencia.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Error connecting to database:', err.message);
-    } else {
-        console.log('Connected to the SQLite database.');
-    }
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Requerido para conexiones externas a Neon
+  }
 });
 
-db.serialize(() => {
-    // Tabla de Usuarios para Seguridad
-    db.run(`CREATE TABLE IF NOT EXISTS usuarios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+const initDB = async () => {
+  const client = await pool.connect();
+  try {
+    // 1. Tabla de Usuarios
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS usuarios (
+        id SERIAL PRIMARY KEY,
         username TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         role TEXT NOT NULL DEFAULT 'docente'
-    )`);
+      )
+    `);
 
-    // Crear Administrador Inicial si no existe
+    // 2. Crear Administrador Inicial si no existe
     const adminPass = "AndresBello2026";
-    bcrypt.hash(adminPass, 10, (err, hash) => {
-        if (!err) {
-            db.run("INSERT OR IGNORE INTO usuarios (username, password, role) VALUES (?, ?, ?)", ["admin", hash, "admin"]);
-        }
-    });
+    const hashedPass = await bcrypt.hash(adminPass, 10);
+    await client.query(`
+      INSERT INTO usuarios (username, password, role) 
+      VALUES ($1, $2, $3) 
+      ON CONFLICT (username) DO NOTHING
+    `, ["admin", hashedPass, "admin"]);
 
-    // Tabla de Estudiantes
-    db.run(`CREATE TABLE IF NOT EXISTS estudiantes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    // 3. Tabla de Estudiantes
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS estudiantes (
+        id SERIAL PRIMARY KEY,
         cedula TEXT UNIQUE NOT NULL,
         nombre TEXT NOT NULL,
         seccion TEXT NOT NULL,
         representante TEXT,
         contacto TEXT
-    )`);
+      )
+    `);
 
-    // Tabla de Asistencia
-    db.run(`CREATE TABLE IF NOT EXISTS asistencia (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        estudiante_id INTEGER,
+    // 4. Tabla de Asistencia
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS asistencia (
+        id SERIAL PRIMARY KEY,
+        estudiante_id INTEGER REFERENCES estudiantes(id),
         fecha TEXT NOT NULL,
         estado TEXT NOT NULL,
-        observacion TEXT,
-        FOREIGN KEY (estudiante_id) REFERENCES estudiantes (id)
-    )`);
-});
+        observacion TEXT
+      )
+    `);
 
-module.exports = db;
+    console.log('Connected to Neon Postgres and tables initialized.');
+  } catch (err) {
+    console.error('Error initializing Postgres:', err.message);
+  } finally {
+    client.release();
+  }
+};
+
+initDB();
+
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+};

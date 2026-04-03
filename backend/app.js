@@ -12,16 +12,13 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Endpoint de LOGIN Seguro
-app.post('/api/login', (req, res) => {
+// LOGIN
+app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
+    try {
+        const result = await db.query("SELECT * FROM usuarios WHERE username = $1", [username]);
+        const user = result.rows[0];
 
-    if (!username || !password) {
-        return res.status(400).json({ error: "Faltan credenciales" });
-    }
-
-    db.get("SELECT * FROM usuarios WHERE username = ?", [username], async (err, user) => {
-        if (err) return res.status(500).json({ error: err.message });
         if (!user) return res.status(401).json({ error: "Usuario no registrado" });
 
         const validPass = await bcrypt.compare(password, user.password);
@@ -29,83 +26,64 @@ app.post('/api/login', (req, res) => {
 
         const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '8h' });
         res.json({ token, user: { username: user.username, role: user.role } });
-    });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-// Endpoint de REGISTRO SEGURO
+// REGISTRO
 app.post('/api/register', async (req, res) => {
     const { username, password, role } = req.body;
-
-    if (!username || !password) {
-        return res.status(400).json({ error: "Faltan datos obligatorios" });
-    }
+    if (!username || !password) return res.status(400).json({ error: "Faltan datos" });
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const userRole = role || 'docente';
-
-        db.run("INSERT INTO usuarios (username, password, role) VALUES (?, ?, ?)", 
-               [username, hashedPassword, userRole], 
-               function(err) {
-            if (err) {
-                if (err.message.includes('UNIQUE')) {
-                    return res.status(400).json({ error: "El nombre de usuario ya está en uso" });
-                }
-                return res.status(500).json({ error: err.message });
-            }
-            res.json({ success: true, id: this.lastID });
-        });
+        await db.query("INSERT INTO usuarios (username, password, role) VALUES ($1, $2, $3)", 
+                      [username, hashedPassword, role || 'docente']);
+        res.json({ success: true });
     } catch (err) {
-        res.status(500).json({ error: "Error interno durante el cifrado" });
+        if (err.message.includes('unique')) return res.status(400).json({ error: "Usuario ya existe" });
+        res.status(500).json({ error: err.message });
     }
 });
 
-// --- RUPTAS PROTEGIDAS (Requiere JWT) ---
-
-app.get('/api/estudiantes', authenticateToken, (req, res) => {
-    db.all("SELECT * FROM estudiantes", [], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
-    });
+// ESTUDIANTES
+app.get('/api/estudiantes', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query("SELECT * FROM estudiantes");
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-app.get('/api/asistencia', authenticateToken, (req, res) => {
-    db.all("SELECT a.id, e.nombre, e.seccion, a.fecha, a.estado, a.observacion FROM asistencia a JOIN estudiantes e ON a.estudiante_id = e.id", [], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
-    });
+// ASISTENCIA
+app.get('/api/asistencia', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT a.id, e.nombre, e.seccion, a.fecha, a.estado, a.observacion 
+            FROM asistencia a 
+            JOIN estudiantes e ON a.estudiante_id = e.id
+        `);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-app.post('/api/asistencia', authenticateToken, (req, res) => {
+app.post('/api/asistencia', authenticateToken, async (req, res) => {
     const { estudiante_id, fecha, estado, observacion } = req.body;
-    if (!estudiante_id || !fecha || !estado) {
-        return res.status(400).json({ error: "Missing fields" });
+    try {
+        const result = await db.query(
+            "INSERT INTO asistencia (estudiante_id, fecha, estado, observacion) VALUES ($1, $2, $3, $4) RETURNING id",
+            [estudiante_id, fecha, estado, observacion]
+        );
+        res.json({ id: result.rows[0].id });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-    const stmt = db.prepare("INSERT INTO asistencia (estudiante_id, fecha, estado, observacion) VALUES (?, ?, ?, ?)");
-    stmt.run(estudiante_id, fecha, estado, observacion, function (err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ id: this.lastID });
-    });
-    stmt.finalize();
-});
-
-app.get('/api/ai/analytics', authenticateToken, (req, res) => {
-    db.all("SELECT estudiante_id, count(*) as faltas FROM asistencia WHERE estado = 'ausente' GROUP BY estudiante_id HAVING faltas > 2", [], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        const alerts = rows.map(r => ({
-            id: r.estudiante_id,
-            msg: `AI Alert: Estudiante ID ${r.estudiante_id} con riesgo de deserción (${r.faltas} faltas).`,
-            type: 'warning'
-        }));
-        res.json({
-            title: "Security & AI Stats",
-            timestamp: new Date().toISOString(),
-            alerts: alerts,
-            security: "JWT Encrypted Session Active"
-        });
-    });
 });
 
 app.listen(PORT, () => {
-    console.log(`SECURE Server running on port ${PORT}`);
+    console.log(`SECURE NEON Server running on port ${PORT}`);
 });
