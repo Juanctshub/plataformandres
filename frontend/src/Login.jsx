@@ -22,7 +22,9 @@ const Login = ({ onLogin }) => {
     const endpoint = isLogin ? '/api/login' : '/api/register';
     
     try {
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      // Usamos el prefijo de Vercel si estamos en producción, de lo contrario localhost
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+      const response = await fetch(`${baseUrl}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
