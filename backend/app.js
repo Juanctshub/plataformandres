@@ -32,6 +32,34 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+// Endpoint de REGISTRO SEGURO
+app.post('/api/register', async (req, res) => {
+    const { username, password, role } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: "Faltan datos obligatorios" });
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const userRole = role || 'docente';
+
+        db.run("INSERT INTO usuarios (username, password, role) VALUES (?, ?, ?)", 
+               [username, hashedPassword, userRole], 
+               function(err) {
+            if (err) {
+                if (err.message.includes('UNIQUE')) {
+                    return res.status(400).json({ error: "El nombre de usuario ya está en uso" });
+                }
+                return res.status(500).json({ error: err.message });
+            }
+            res.json({ success: true, id: this.lastID });
+        });
+    } catch (err) {
+        res.status(500).json({ error: "Error interno durante el cifrado" });
+    }
+});
+
 // --- RUPTAS PROTEGIDAS (Requiere JWT) ---
 
 app.get('/api/estudiantes', authenticateToken, (req, res) => {
