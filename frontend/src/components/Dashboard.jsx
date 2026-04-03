@@ -13,10 +13,14 @@ import {
   Building2,
   ChevronRight,
   ArrowUpRight,
-  LayoutGrid
+  LayoutGrid,
+  Clock,
+  Settings,
+  Sparkles
 } from 'lucide-react';
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 
 
 const Dashboard = ({ stats, aiData }) => {
@@ -37,10 +41,10 @@ const Dashboard = ({ stats, aiData }) => {
   };
 
   const statCards = [
-    { label: 'Matrícula Total', value: stats.students, sub: 'Estudiantes Activos', icon: Users, color: 'text-blue-500', trend: '+2%' },
-    { label: 'Asistencia Promedio', value: stats.attendance, sub: 'Mes de Abril', icon: TrendingUp, color: 'text-emerald-500', trend: '+0.5%' },
-    { label: 'Alertas IA', value: stats.risks, sub: 'Casos en Seguimiento', icon: Activity, color: 'text-red-500', trend: '-14%' },
-    { label: 'Reposos Médicos', value: '12', sub: 'Certificados Hoy', icon: FileText, color: 'text-amber-500', trend: 'Estable' },
+    { label: 'Matrícula Institucional', value: stats.students, sub: 'Media General Activa', icon: Users, color: 'text-blue-500', trend: 'Actualizado' },
+    { label: 'Asistencia Hoy', value: stats.attendance, sub: 'Promedio Secciones', icon: CheckCircle2, color: 'text-emerald-500', trend: 'Alta' },
+    { label: 'Protocolos IA', value: stats.risks, sub: 'Casos en Seguimiento', icon: Sparkles, color: 'text-purple-500', trend: 'IA v3' },
+    { label: 'Pendientes', value: '12', sub: 'Justificativos por validar', icon: Clock, color: 'text-amber-500', trend: 'Atención' },
   ];
 
   return (
@@ -51,18 +55,35 @@ const Dashboard = ({ stats, aiData }) => {
       className="space-y-12 pb-20 relative"
     >
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
-        <div className="space-y-2">
-          <h2 className="text-5xl font-semibold tracking-tighter text-white/90 italic text-apple-gradient">Panel Institucional</h2>
-          <p className="text-zinc-500 font-medium tracking-tight">Resumen operativo sincronizado con el núcleo de datos en tiempo real.</p>
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center apple-shadow-soft">
+                <Building2 className="w-5 h-5 text-zinc-500" />
+             </div>
+             <Badge className="bg-blue-500/10 text-blue-400 border-none rounded-full px-4 py-1.5 font-bold text-[9px] uppercase tracking-[0.3em]">Gestión v2.6.5</Badge>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-6xl font-semibold tracking-tighter text-white/90 italic text-apple-gradient leading-tight">Centro de Control</h2>
+            <p className="text-zinc-500 font-medium tracking-tight text-lg">Monitoreo integral del rendimiento académico y operacional institucional.</p>
+          </div>
         </div>
         
-        <div className="flex items-center gap-4 no-print bg-zinc-900/50 backdrop-blur-xl p-2 rounded-2xl border border-white/5">
-            <div className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/5 flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)] animate-pulse" />
-                <span className="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Sistema Activo</span>
+        <div className="flex items-center gap-4 no-print bg-zinc-900/30 backdrop-blur-3xl p-3 rounded-[2rem] border border-white/[0.03] shadow-2xl">
+            <div className="px-5 py-2.5 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex items-center gap-4 group cursor-help hover:bg-emerald-500/10 transition-all duration-700">
+                <div className="relative">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)] animate-pulse" />
+                  <div className="absolute inset-0 bg-emerald-500 rounded-full blur-[4px] animate-ping opacity-30" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-black text-emerald-400 tracking-[0.2em] uppercase leading-none">Nodos Activos</span>
+                  <span className="text-[10px] font-bold text-emerald-500/60 uppercase tracking-widest mt-1">Sincronizado</span>
+                </div>
             </div>
-            <div className="h-8 w-[1px] bg-white/10" />
-            <span className="text-[10px] font-bold text-zinc-600 tracking-widest uppercase italic px-2">v8.5.0 stable</span>
+            <div className="h-10 w-[1px] bg-white/5" />
+            <div className="px-4 flex flex-col items-end">
+              <span className="text-[10px] font-black text-zinc-600 tracking-[0.3em] uppercase italic">Nucleo Andres Bello</span>
+              <span className="text-[10px] font-bold text-zinc-800 uppercase tracking-widest mt-1">ID: AB-2026-X4</span>
+            </div>
         </div>
       </div>
 
@@ -183,8 +204,49 @@ const Dashboard = ({ stats, aiData }) => {
               </div>
             ))}
           </div>
+
+          <Separator className="my-10 bg-white/5" />
+          
+          <div className="space-y-6">
+             <h4 className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] mb-4">Actividad del Sistema</h4>
+             {[
+                { time: '10:45 AM', event: 'Justificativo Aprobado: Alumno J. Maira', type: 'system' },
+                { time: '09:12 AM', event: 'Asistencia Sincronizada: 4to Año B', type: 'success' },
+                { time: '08:00 AM', event: 'Backup semanal completado', type: 'info' }
+             ].map((log, i) => (
+                <div key={i} className="flex gap-4 items-start">
+                   <span className="text-[8px] font-bold text-zinc-700 w-16 pt-0.5">{log.time}</span>
+                   <p className="text-[10px] text-zinc-400 font-medium tracking-tight leading-relaxed">{log.event}</p>
+                </div>
+             ))}
+          </div>
         </motion.div>
       </div>
+
+      <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            { title: 'Emitir Reporte de Asistencia', desc: 'Generar PDF mensual por sección académica.', icon: FileText, action: 'Generar' },
+            { title: 'Inscribir Nueva Matrícula', desc: 'Añadir estudiante al núcleo de datos.', icon: Users, action: 'Registrar' },
+            { title: 'Configurar Periodo Escolar', desc: 'Ajustar fechas y parámetros del año.', icon: Settings, action: 'Ajustar' }
+          ].map((action, i) => (
+            <motion.button
+              key={i}
+              whileHover={{ y: -5, backgroundColor: 'rgba(255,255,255,0.03)' }}
+              className="apple-card p-8 flex items-center justify-between group transition-all duration-700 bg-zinc-900/20 border-white/[0.03] hover:border-white/10"
+            >
+              <div className="flex items-center gap-6">
+                <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-500 group-hover:text-white transition-colors">
+                  <action.icon className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <h4 className="text-sm font-semibold text-white/90 mb-1">{action.title}</h4>
+                  <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">{action.desc}</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-800" />
+            </motion.button>
+          ))}
+      </motion.div>
 
       <div className="flex items-center gap-10 opacity-30 text-zinc-700 select-none pt-10">
         <div className="flex items-center gap-2">

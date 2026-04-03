@@ -8,7 +8,16 @@ import {
   User as UserIcon,
   Cpu,
   Building2,
-  Loader2
+  Loader2,
+  LayoutDashboard,
+  Users,
+  ClipboardCheck,
+  FileText,
+  GraduationCap,
+  CalendarRange,
+  Briefcase,
+  Sparkles,
+  Settings
 } from 'lucide-react';
 import Login from './Login';
 import Dashboard from './components/Dashboard';
@@ -16,6 +25,19 @@ import Students from './Students';
 import AttendanceSheet from './AttendanceSheet';
 import Justifications from './Justifications';
 import IAAnalytics from './IAAnalytics';
+import Grades from './Grades';
+
+const menuItems = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'students', label: 'Estudiantes', icon: Users },
+  { id: 'attendance', label: 'Asistencia', icon: ClipboardCheck },
+  { id: 'justifications', label: 'Justificativos', icon: FileText },
+  { id: 'grades', label: 'Calificaciones', icon: GraduationCap },
+  { id: 'schedules', label: 'Horarios', icon: CalendarRange },
+  { id: 'staff', label: 'Personal Docente', icon: Briefcase },
+  { id: 'analytics', label: 'Inteligencia IA', icon: Sparkles },
+  { id: 'settings', label: 'Configuración', icon: Settings },
+];
 
 import { 
   SidebarProvider, 
@@ -199,7 +221,11 @@ const App = () => {
                     {activeTab === 'students' && <Students />}
                     {activeTab === 'attendance' && <AttendanceSheet />}
                     {activeTab === 'justifications' && <Justifications />}
-                    {activeTab === 'reports' && <IAAnalytics />}
+                    {activeTab === 'grades' && <Grades />}
+                    {activeTab === 'schedules' && <div className="flex items-center justify-center h-[60vh] text-zinc-600 font-bold uppercase tracking-widest text-xs italic">Módulo de Horarios en Desarrollo...</div>}
+                    {activeTab === 'staff' && <div className="flex items-center justify-center h-[60vh] text-zinc-600 font-bold uppercase tracking-widest text-xs italic">Módulo de Personal Docente en Desarrollo...</div>}
+                    {activeTab === 'analytics' && <IAAnalytics />}
+                    {activeTab === 'settings' && <div className="flex items-center justify-center h-[60vh] text-zinc-600 font-bold uppercase tracking-widest text-xs italic">Módulo de Configuración en Desarrollo...</div>}
                   </motion.div>
                 </AnimatePresence>
               </main>

@@ -1,13 +1,17 @@
-import React from 'react';
 import { 
   LayoutDashboard, 
   Users, 
   ClipboardCheck, 
   FileText, 
-  PieChart, 
+  GraduationCap, 
+  CalendarRange, 
+  Briefcase, 
+  Sparkles, 
+  Settings,
   LogOut,
   Building2,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck
 } from 'lucide-react';
 import {
   Sidebar,
@@ -20,16 +24,20 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator";
+} from "./ui/sidebar"
+import { Separator } from "./ui/separator";
 
 const AppSidebar = ({ activeTab, onTabChange, userName }) => {
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { id: 'students', icon: Users, label: 'Media General' },
-    { id: 'attendance', icon: ClipboardCheck, label: 'Asistencia' },
+    { id: 'students', icon: Users, label: 'Matrícula Escolar' },
+    { id: 'attendance', icon: ClipboardCheck, label: 'Control de Asistencia' },
     { id: 'justifications', icon: FileText, label: 'Justificativos' },
-    { id: 'reports', icon: PieChart, label: 'IA Analytics' },
+    { id: 'grades', icon: GraduationCap, label: 'Calificaciones' },
+    { id: 'schedules', icon: CalendarRange, label: 'Horarios Académicos' },
+    { id: 'staff', icon: Briefcase, label: 'Gestión Docente' },
+    { id: 'analytics', icon: Sparkles, label: 'Inteligencia IA' },
+    { id: 'settings', icon: Settings, label: 'Configuración' },
   ];
 
   return (
