@@ -139,10 +139,14 @@ const IAAnalytics = () => {
                     <TrendingDown className="absolute -right-6 -bottom-6 w-32 h-32 text-red-500/5 rotate-12" />
                     <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.25em] mb-4">Índice de Riesgo</h3>
                     <div className="flex items-end gap-3">
-                        <span className="text-5xl font-semibold text-white tracking-tighter text-apple-gradient">14.2%</span>
-                        <span className="text-emerald-400 text-xs font-bold mb-2 flex items-center">
-                            -2.1% <TrendingDown className="w-3 h-3 ml-1" />
+                        <span className="text-5xl font-semibold text-white tracking-tighter text-apple-gradient">
+                            {aiData?.riskIndex || '0.0%'}
                         </span>
+                        {aiData?.riskTrend && (
+                            <span className={`${aiData.riskTrend.startsWith('-') ? 'text-emerald-400' : 'text-red-400'} text-xs font-bold mb-2 flex items-center`}>
+                                {aiData.riskTrend} <TrendingDown className="w-3 h-3 ml-1" />
+                            </span>
+                        )}
                     </div>
                 </motion.div>
                 
@@ -150,7 +154,9 @@ const IAAnalytics = () => {
                     <Cpu className="absolute -right-6 -bottom-6 w-32 h-32 text-blue-500/5" />
                     <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.25em] mb-4">Optimización IA</h3>
                     <div className="flex items-end gap-3">
-                        <span className="text-5xl font-semibold text-white tracking-tighter text-apple-gradient">98.9%</span>
+                        <span className="text-5xl font-semibold text-white tracking-tighter text-apple-gradient">
+                            {aiData?.optimization || '0.0%'}
+                        </span>
                         <span className="text-zinc-500 text-[10px] font-bold mb-2 uppercase tracking-widest">Confianza</span>
                     </div>
                 </motion.div>

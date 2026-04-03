@@ -41,10 +41,10 @@ const Dashboard = ({ stats, aiData }) => {
   };
 
   const statCards = [
-    { label: 'Matrícula Institucional', value: stats.students, sub: 'Media General Activa', icon: Users, color: 'text-blue-500', trend: 'Actualizado' },
-    { label: 'Asistencia Hoy', value: stats.attendance, sub: 'Promedio Secciones', icon: CheckCircle2, color: 'text-emerald-500', trend: 'Alta' },
-    { label: 'Protocolos IA', value: stats.risks, sub: 'Casos en Seguimiento', icon: Sparkles, color: 'text-purple-500', trend: 'IA v3' },
-    { label: 'Pendientes', value: '12', sub: 'Justificativos por validar', icon: Clock, color: 'text-amber-500', trend: 'Atención' },
+    { label: 'Matrícula Institucional', value: stats.students || 0, sub: 'Media General Activa', icon: Users, color: 'text-blue-500', trend: stats.students > 0 ? 'Actualizado' : 'S/D' },
+    { label: 'Asistencia Hoy', value: stats.attendance || '0.0%', sub: 'Promedio Secciones', icon: CheckCircle2, color: 'text-emerald-500', trend: stats.attendance !== '0.0%' ? 'Sincronizado' : 'S/D' },
+    { label: 'Protocolos IA', value: stats.risks || 0, sub: 'Casos en Seguimiento', icon: Sparkles, color: 'text-purple-500', trend: 'IA v3' },
+    { label: 'Pendientes', value: stats.justifications || 0, sub: 'Justificativos por validar', icon: Clock, color: 'text-amber-500', trend: stats.justifications > 0 ? 'Atención' : 'Limpio' },
   ];
 
   return (
@@ -182,16 +182,16 @@ const Dashboard = ({ stats, aiData }) => {
           
           <div className="space-y-8">
             {[
-              { label: '1er Año', val: 98, color: 'bg-blue-500' },
-              { label: '2do Año', val: 94, color: 'bg-blue-500' },
-              { label: '3er Año', val: 82, color: 'bg-amber-500' },
-              { label: '4to Año', val: 91, color: 'bg-blue-400' },
-              { label: '5to Año', val: 76, color: 'bg-red-500' },
+              { label: '1er Año', val: stats.retention?.[0] || 0, color: 'bg-blue-500' },
+              { label: '2do Año', val: stats.retention?.[1] || 0, color: 'bg-blue-500' },
+              { label: '3er Año', val: stats.retention?.[2] || 0, color: 'bg-amber-500' },
+              { label: '4to Año', val: stats.retention?.[3] || 0, color: 'bg-blue-400' },
+              { label: '5to Año', val: stats.retention?.[4] || 0, color: 'bg-red-500' },
             ].map(row => (
               <div key={row.label} className="space-y-3">
                 <div className="flex justify-between items-end">
                   <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">{row.label}</span>
-                  <span className={`text-xs font-bold ${row.val < 80 ? 'text-red-400' : 'text-zinc-300'}`}>{row.val}%</span>
+                  <span className={`text-xs font-bold ${row.val > 0 && row.val < 80 ? 'text-red-400' : 'text-zinc-800'}`}>{row.val}%</span>
                 </div>
                 <div className="h-[3px] w-full bg-white/[0.03] rounded-full overflow-hidden">
                   <motion.div 
@@ -209,16 +209,17 @@ const Dashboard = ({ stats, aiData }) => {
           
           <div className="space-y-6">
              <h4 className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] mb-4">Actividad del Sistema</h4>
-             {[
-                { time: '10:45 AM', event: 'Justificativo Aprobado: Alumno J. Maira', type: 'system' },
-                { time: '09:12 AM', event: 'Asistencia Sincronizada: 4to Año B', type: 'success' },
-                { time: '08:00 AM', event: 'Backup semanal completado', type: 'info' }
-             ].map((log, i) => (
+             {stats.recentActivity && stats.recentActivity.length > 0 ? stats.recentActivity.map((log, i) => (
                 <div key={i} className="flex gap-4 items-start">
                    <span className="text-[8px] font-bold text-zinc-700 w-16 pt-0.5">{log.time}</span>
                    <p className="text-[10px] text-zinc-400 font-medium tracking-tight leading-relaxed">{log.event}</p>
                 </div>
-             ))}
+             )) : (
+                <div className="py-10 flex flex-col items-center justify-center opacity-20 space-y-3">
+                    <Activity className="w-8 h-8 text-zinc-700" />
+                    <span className="text-[8px] font-bold uppercase tracking-[0.2em]">Sin actividad reciente</span>
+                </div>
+             )}
           </div>
         </motion.div>
       </div>

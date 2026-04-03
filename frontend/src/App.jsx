@@ -26,6 +26,9 @@ import AttendanceSheet from './AttendanceSheet';
 import Justifications from './Justifications';
 import IAAnalytics from './IAAnalytics';
 import Grades from './Grades';
+import Schedules from './Schedules';
+import Staff from './Staff';
+import Settings from './Settings';
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -98,7 +101,14 @@ const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [stats, setStats] = useState({ students: 0, attendance: '98.5%', risks: 0 });
+  const [stats, setStats] = useState({ 
+    students: 0, 
+    attendance: '0.0%', 
+    risks: 0, 
+    justifications: 0,
+    retention: [0, 0, 0, 0, 0],
+    recentActivity: []
+  });
   const [aiData, setAiData] = useState({ title: '', security: '', alerts: [] });
   const [isInitializing, setIsInitializing] = useState(true);
   const [AppSidebar, setAppSidebar] = useState(null);
@@ -121,24 +131,45 @@ const App = () => {
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
       const headers = { 'Authorization': `Bearer ${tokenValue}` };
       
-      const [resStd, resAi] = await Promise.all([
+      const [resStd, resAi, resJust, resStaff, resAsist] = await Promise.all([
         fetch(`${baseUrl}/api/estudiantes`, { headers }),
-        fetch(`${baseUrl}/api/ai/analytics`, { headers })
+        fetch(`${baseUrl}/api/ai/analytics`, { headers }),
+        fetch(`${baseUrl}/api/justificaciones`, { headers }),
+        fetch(`${baseUrl}/api/personal`, { headers }),
+        fetch(`${baseUrl}/api/asistencia?fecha=${new Date().toISOString().split('T')[0]}`, { headers })
       ]);
       
-      if (resStd.ok && resAi.ok) {
+      if (resStd.ok && resAi.ok && resJust.ok && resStaff.ok && resAsist.ok) {
           const stds = await resStd.json();
           const ai = await resAi.json();
+          const justs = await resJust.json();
+          const staffArr = await resStaff.json();
+          const asistArr = await resAsist.json();
+
+          // Calcular % asistencia de hoy
+          let attendPerc = '0.0%';
+          if (stds.length > 0) {
+            const presentes = asistArr.filter(a => a.estado === 'presente' || a.estado === 'retraso').length;
+            attendPerc = ((presentes / stds.length) * 100).toFixed(1) + '%';
+          }
           
           setStats(prev => ({
             ...prev,
             students: stds.length,
-            risks: ai.alerts ? ai.alerts.filter(a => a.type === 'danger').length : 0
+            attendance: attendPerc,
+            risks: ai.alerts ? ai.alerts.filter(a => a.type === 'danger').length : 0,
+            justifications: justs.filter(j => j.estado === 'pendiente').length,
+            staffCount: staffArr.length,
+            recentActivity: justs.slice(0, 3).map(j => ({
+              time: j.fecha,
+              msg: `Justificativo ${j.estado}: ${j.nombre}`,
+              type: j.estado === 'aprobado' ? 'success' : 'warning'
+            }))
           }));
           setAiData(ai);
       }
       
-      setTimeout(() => setIsInitializing(false), 1200);
+      setTimeout(() => setIsInitializing(false), 800);
     } catch (e) { 
       console.error('Error de sincronización:', e); 
       setIsInitializing(false);
@@ -222,10 +253,10 @@ const App = () => {
                     {activeTab === 'attendance' && <AttendanceSheet />}
                     {activeTab === 'justifications' && <Justifications />}
                     {activeTab === 'grades' && <Grades />}
-                    {activeTab === 'schedules' && <div className="flex items-center justify-center h-[60vh] text-zinc-600 font-bold uppercase tracking-widest text-xs italic">Módulo de Horarios en Desarrollo...</div>}
-                    {activeTab === 'staff' && <div className="flex items-center justify-center h-[60vh] text-zinc-600 font-bold uppercase tracking-widest text-xs italic">Módulo de Personal Docente en Desarrollo...</div>}
+                    {activeTab === 'schedules' && <Schedules />}
+                    {activeTab === 'staff' && <Staff />}
                     {activeTab === 'analytics' && <IAAnalytics />}
-                    {activeTab === 'settings' && <div className="flex items-center justify-center h-[60vh] text-zinc-600 font-bold uppercase tracking-widest text-xs italic">Módulo de Configuración en Desarrollo...</div>}
+                    {activeTab === 'settings' && <Settings />}
                   </motion.div>
                 </AnimatePresence>
               </main>

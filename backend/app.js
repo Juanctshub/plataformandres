@@ -117,24 +117,74 @@ app.get('/api/justificaciones', authenticateToken, async (req, res) => {
     }
 });
 
-app.post('/api/justificaciones', authenticateToken, async (req, res) => {
-    const { estudiante_id, fecha, motivo, comentario } = req.body;
+// CALIFICACIONES (Notas 0-20)
+app.get('/api/notas', authenticateToken, async (req, res) => {
     try {
-        await db.query(
-            "INSERT INTO justificaciones (estudiante_id, fecha, motivo, estado, comentario) VALUES ($1, $2, $3, $4, $5)",
-            [estudiante_id, fecha, motivo, 'pendiente', comentario]
-        );
+        const result = await db.query(`
+            SELECT n.id, e.nombre as student, e.seccion, n.materia as subject, n.nota as grade, n.lapso, n.fecha
+            FROM notas n
+            JOIN estudiantes e ON n.estudiante_id = e.id
+            ORDER BY n.fecha DESC
+        `);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/notas', authenticateToken, async (req, res) => {
+    const { estudiante_id, materia, nota, lapso, fecha } = req.body;
+    try {
+        await db.query(`
+            INSERT INTO notas (estudiante_id, materia, nota, lapso, fecha)
+            VALUES ($1, $2, $3, $4, $5)
+        `, [estudiante_id, materia, nota, lapso || 1, fecha || new Date().toISOString().split('T')[0]]);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-app.put('/api/justificaciones/:id', authenticateToken, async (req, res) => {
-    const { id } = req.params;
-    const { estado, comentario } = req.body;
+// HORARIOS
+app.get('/api/horarios', authenticateToken, async (req, res) => {
     try {
-        await db.query("UPDATE justificaciones SET estado = $1, comentario = $2 WHERE id = $3", [estado, comentario, id]);
+        const result = await db.query("SELECT * FROM horarios ORDER BY dia, bloque");
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/horarios', authenticateToken, async (req, res) => {
+    const { seccion, dia, materia, bloque } = req.body;
+    try {
+        await db.query(`
+            INSERT INTO horarios (seccion, dia, materia, bloque)
+            VALUES ($1, $2, $3, $4)
+        `, [seccion, dia, materia, bloque]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// PERSONAL
+app.get('/api/personal', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query("SELECT * FROM personal ORDER BY nombre");
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/personal', authenticateToken, async (req, res) => {
+    const { nombre, rol, email, contacto } = req.body;
+    try {
+        await db.query(`
+            INSERT INTO personal (nombre, rol, email, contacto)
+            VALUES ($1, $2, $3, $4)
+        `, [nombre, rol, email, contacto]);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -144,10 +194,7 @@ app.put('/api/justificaciones/:id', authenticateToken, async (req, res) => {
 // NOTIFICACIONES (Momento II - Comunicación Proactiva)
 app.post('/api/notify', authenticateToken, async (req, res) => {
     const { student, msg, contact } = req.body;
-    // Simulación de envío de SMS/Email (Requerimiento LOPNA)
     console.log(`[ALERTA INSTITUCIONAL] Enviando a ${contact}: ${msg}`);
-    
-    // Aquí se integraría servicios como Twilio o SendGrid en producción
     setTimeout(() => {
         res.json({ success: true, message: `Notificación enviada a representante de ${student}` });
     }, 1000);

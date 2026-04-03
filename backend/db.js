@@ -78,7 +78,31 @@ const initDB = async () => {
       )
     `);
 
-    console.log('Connected to Neon Postgres and all tables initialized.');
+    // 7. Tabla de Calificaciones (Notas 0-20)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS notas (
+        id SERIAL PRIMARY KEY,
+        estudiante_id INTEGER REFERENCES estudiantes(id),
+        materia TEXT NOT NULL,
+        nota DECIMAL(4,2) NOT NULL,
+        lapso INTEGER NOT NULL DEFAULT 1,
+        fecha TEXT NOT NULL
+      )
+    `);
+
+    // 8. Tabla de Personal Docente/Administrativo
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS personal (
+        id SERIAL PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        rol TEXT NOT NULL,
+        email TEXT,
+        contacto TEXT,
+        estado TEXT NOT NULL DEFAULT 'activo'
+      )
+    `);
+
+    console.log('Connected to Neon Postgres and all professional tables initialized.');
   } catch (err) {
     console.error('Error initializing Postgres:', err.message);
   } finally {
