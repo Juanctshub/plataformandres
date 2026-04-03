@@ -22,7 +22,7 @@ import {
 } from "./components/ui/dialog";
 import { Input } from "./components/ui/input";
 
-const Schedules = () => {
+const SchedulesModule = () => {
     const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
     const [activeDay, setActiveDay] = useState('Lunes');
     const [sessions, setSessions] = useState([]);
@@ -254,4 +254,4 @@ const Schedules = () => {
     );
 };
 
-export default Schedules;
+export default SchedulesModule;

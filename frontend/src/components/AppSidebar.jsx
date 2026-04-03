@@ -7,7 +7,7 @@ import {
   CalendarRange, 
   Briefcase, 
   Sparkles, 
-  Settings,
+  Settings as SettingsIcon,
   LogOut,
   Building2,
   ChevronRight,
@@ -37,7 +37,7 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
     { id: 'schedules', icon: CalendarRange, label: 'Horarios Académicos' },
     { id: 'staff', icon: Briefcase, label: 'Gestión Docente' },
     { id: 'analytics', icon: Sparkles, label: 'Inteligencia IA' },
-    { id: 'settings', icon: Settings, label: 'Configuración' },
+    { id: 'settings', icon: SettingsIcon, label: 'Configuración' },
   ];
 
   return (

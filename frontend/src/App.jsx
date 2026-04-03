@@ -17,8 +17,9 @@ import {
   CalendarRange,
   Briefcase,
   Sparkles,
-  Settings
+  Settings as SettingsIcon
 } from 'lucide-react';
+
 import Login from './Login';
 import Dashboard from './components/Dashboard';
 import Students from './Students';
@@ -26,9 +27,15 @@ import AttendanceSheet from './AttendanceSheet';
 import Justifications from './Justifications';
 import IAAnalytics from './IAAnalytics';
 import Grades from './Grades';
-import Schedules from './Schedules';
+import SchedulesModule from './Schedules';
 import Staff from './Staff';
-import Settings from './Settings';
+import InstitutionalSettings from './InstitutionalSettings';
+
+import { 
+  SidebarProvider, 
+  SidebarInset, 
+  SidebarTrigger 
+} from "./components/ui/sidebar";
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -39,14 +46,8 @@ const menuItems = [
   { id: 'schedules', label: 'Horarios', icon: CalendarRange },
   { id: 'staff', label: 'Personal Docente', icon: Briefcase },
   { id: 'analytics', label: 'Inteligencia IA', icon: Sparkles },
-  { id: 'settings', label: 'Configuración', icon: Settings },
+  { id: 'settings', label: 'Configuración', icon: SettingsIcon },
 ];
-
-import { 
-  SidebarProvider, 
-  SidebarInset, 
-  SidebarTrigger 
-} from "./components/ui/sidebar";
 
 const SplashScreen = ({ isInitialized }) => (
   <motion.div 
@@ -61,7 +62,6 @@ const SplashScreen = ({ isInitialized }) => (
       transition={{ duration: 1.5, ease: "easeOut" }}
       className="flex flex-col items-center gap-16"
     >
-      {/* Apple Breathing Logo */}
       <motion.div 
         animate={{ 
           scale: [1, 1.04, 1],
@@ -79,7 +79,6 @@ const SplashScreen = ({ isInitialized }) => (
             <p className="text-[8px] font-medium tracking-[0.5em] text-zinc-600 uppercase text-center pl-2">Núcleo Institucional</p>
         </div>
 
-        {/* Minimalist Apple Progress Line (1px) */}
         <div className="w-40 h-[1px] bg-zinc-900 rounded-full overflow-hidden relative mt-4">
            <motion.div 
              initial={{ x: "-100%" }}
@@ -97,8 +96,8 @@ const SplashScreen = ({ isInitialized }) => (
   </motion.div>
 );
 
-const App = () => {
-  const [token, setToken] = useState(localStorage.getItem('token'));
+const AndresBelloSuite = () => {
+    const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [stats, setStats] = useState({ 
@@ -111,12 +110,12 @@ const App = () => {
   });
   const [aiData, setAiData] = useState({ title: '', security: '', alerts: [] });
   const [isInitializing, setIsInitializing] = useState(true);
-  const [AppSidebar, setAppSidebar] = useState(null);
+  const [SidebarComp, setSidebarComp] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
     import('./components/AppSidebar').then(module => {
-      if (isMounted) setAppSidebar(() => module.default);
+      if (isMounted) setSidebarComp(() => module.default);
     }).catch(err => console.error("Error cargando Sidebar:", err));
     return () => { isMounted = false; };
   }, []);
@@ -146,15 +145,13 @@ const App = () => {
           const staffArr = await resStaff.json();
           const asistArr = await resAsist.json();
 
-          // Calcular % asistencia de hoy
           let attendPerc = '0.0%';
           if (stds.length > 0) {
             const presentes = asistArr.filter(a => a.estado === 'presente' || a.estado === 'retraso').length;
             attendPerc = ((presentes / stds.length) * 100).toFixed(1) + '%';
           }
           
-          setStats(prev => ({
-            ...prev,
+          setStats({
             students: stds.length,
             attendance: attendPerc,
             risks: ai.alerts ? ai.alerts.filter(a => a.type === 'danger').length : 0,
@@ -162,10 +159,9 @@ const App = () => {
             staffCount: staffArr.length,
             recentActivity: justs.slice(0, 3).map(j => ({
               time: j.fecha,
-              msg: `Justificativo ${j.estado}: ${j.nombre}`,
-              type: j.estado === 'aprobado' ? 'success' : 'warning'
+              event: `Justificativo ${j.estado}: ${j.nombre}`
             }))
-          }));
+          });
           setAiData(ai);
       }
       
@@ -177,7 +173,11 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    fetchData(token);
+    if (token) {
+        fetchData(token);
+    } else {
+        setIsInitializing(false);
+    }
   }, [token, fetchData]);
 
   const handleLogin = (data) => {
@@ -194,7 +194,7 @@ const App = () => {
         <SplashScreen key="splash" isInitialized={!isInitializing} />
       ) : !token ? (
         <Login key="login" onLogin={handleLogin} />
-      ) : !AppSidebar ? (
+      ) : !SidebarComp ? (
         <div key="sidebar-loader" className="min-h-screen bg-black flex items-center justify-center">
             <motion.div 
                animate={{ rotate: 360 }}
@@ -205,14 +205,13 @@ const App = () => {
       ) : (
         <SidebarProvider key="app-shell">
           <div className="flex min-h-screen w-full bg-black text-white selection:bg-white selection:text-black font-sans antialiased overflow-hidden">
-            <AppSidebar 
+            <SidebarComp 
               activeTab={activeTab} 
               onTabChange={setActiveTab} 
               userName={user?.username} 
             />
             
             <SidebarInset className="bg-zinc-950 relative overflow-hidden border-none shadow-none flex flex-col">
-              {/* Apple-style background depth */}
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#18181b,transparent)] pointer-events-none" />
               <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/[0.03] blur-[150px] pointer-events-none rounded-full" />
               <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/[0.02] blur-[100px] pointer-events-none rounded-full" />
@@ -224,7 +223,7 @@ const App = () => {
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-medium tracking-tight text-white/90 italic">Andrés Bello</span>
                     <ChevronRight className="w-3.5 h-3.5 text-zinc-800" />
-                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em] bg-blue-500/5 px-4 py-1.5 rounded-full border border-blue-500/10 apple-shadow-soft">
+                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em] bg-blue-500/5 px-4 py-1.5 rounded-full border border-blue-500/10">
                         {activeTab}
                     </span>
                   </div>
@@ -253,10 +252,10 @@ const App = () => {
                     {activeTab === 'attendance' && <AttendanceSheet />}
                     {activeTab === 'justifications' && <Justifications />}
                     {activeTab === 'grades' && <Grades />}
-                    {activeTab === 'schedules' && <Schedules />}
+                    {activeTab === 'schedules' && <SchedulesModule />}
                     {activeTab === 'staff' && <Staff />}
                     {activeTab === 'analytics' && <IAAnalytics />}
-                    {activeTab === 'settings' && <Settings />}
+                    {activeTab === 'settings' && <InstitutionalSettings />}
                   </motion.div>
                 </AnimatePresence>
               </main>
@@ -277,4 +276,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default AndresBelloSuite;

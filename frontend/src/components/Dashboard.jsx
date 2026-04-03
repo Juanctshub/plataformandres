@@ -15,7 +15,7 @@ import {
   ArrowUpRight,
   LayoutGrid,
   Clock,
-  Settings,
+  Settings as SettingsIcon,
   Sparkles
 } from 'lucide-react';
 import { Badge } from "./ui/badge";
@@ -228,7 +228,7 @@ const Dashboard = ({ stats, aiData }) => {
           {[
             { title: 'Emitir Reporte de Asistencia', desc: 'Generar PDF mensual por sección académica.', icon: FileText, action: 'Generar' },
             { title: 'Inscribir Nueva Matrícula', desc: 'Añadir estudiante al núcleo de datos.', icon: Users, action: 'Registrar' },
-            { title: 'Configurar Periodo Escolar', desc: 'Ajustar fechas y parámetros del año.', icon: Settings, action: 'Ajustar' }
+            { title: 'Configurar Periodo Escolar', desc: 'Ajustar fechas y parámetros del año.', icon: SettingsIcon, action: 'Ajustar' }
           ].map((action, i) => (
             <motion.button
               key={i}
