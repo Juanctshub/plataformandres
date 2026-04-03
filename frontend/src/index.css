@@ -29,10 +29,13 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-zinc-950 text-foreground antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   ::selection {
@@ -43,7 +46,11 @@
 
 @layer components {
   .glass {
-    @apply bg-zinc-900/40 backdrop-blur-2xl border border-white/5 shadow-2xl;
+    background-color: rgba(24, 24, 27, 0.4);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }
   
   .apple-card {
