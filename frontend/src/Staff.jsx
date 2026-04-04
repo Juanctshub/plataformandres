@@ -10,7 +10,13 @@ import {
   ShieldCheck,
   Plus,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Building2,
+  User,
+  MoreVertical,
+  Loader2,
+  Trash2,
+  GraduationCap
 } from 'lucide-react';
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
@@ -23,6 +29,23 @@ import {
     DialogTrigger,
     DialogDescription
 } from "./components/ui/dialog";
+
+const StaffSkeleton = () => (
+    <div className="space-y-12 pb-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-64 bg-zinc-100 rounded-xl" />
+          <Skeleton className="h-4 w-48 bg-zinc-50 rounded-lg" />
+        </div>
+        <Skeleton className="h-12 w-48 bg-zinc-100 rounded-2xl" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        {[1, 2, 3, 4].map(i => (
+          <Skeleton key={i} className="h-72 w-full bg-white border border-zinc-100 rounded-[3rem]" />
+        ))}
+      </div>
+    </div>
+);
 
 const Staff = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -47,7 +70,7 @@ const Staff = () => {
         } catch (e) {
             console.error('Error fetching staff:', e);
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 800);
         }
     };
 
@@ -56,7 +79,7 @@ const Staff = () => {
     }, []);
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         setSubmitting(true);
         try {
             const token = localStorage.getItem('token');
@@ -70,16 +93,16 @@ const Staff = () => {
                 body: JSON.stringify(newStaff)
             });
             if (res.ok) {
-                setMsg({ text: 'Personal registrado correctamente', type: 'success' });
+                setMsg({ text: 'Acreditación institucional verificada', type: 'success' });
                 setIsAddModalOpen(false);
                 setNewStaff({ nombre: '', rol: 'Docente', email: '', contacto: '' });
                 fetchStaff();
             }
         } catch (e) {
-            setMsg({ text: 'Error al registrar personal', type: 'error' });
+            setMsg({ text: 'Error de sincronización con el núcleo', type: 'error' });
         } finally {
             setSubmitting(false);
-            setTimeout(() => setMsg({ text: '', type: '' }), 3000);
+            setTimeout(() => setMsg({ text: '', type: '' }), 4000);
         }
     };
 
@@ -88,74 +111,88 @@ const Staff = () => {
         s.rol.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    if (loading) return <div className="p-20 text-center text-zinc-300 font-black uppercase tracking-widest text-xs">Sincronizando Directorio Corporativo...</div>;
+
     return (
         <div className="space-y-12 pb-20 relative">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
-                <div className="space-y-2">
-                    <h2 className="text-5xl font-semibold tracking-tighter text-white/90 text-apple-gradient italic">Personal Docente</h2>
-                    <p className="text-zinc-500 font-medium tracking-tight">Directorio del núcleo institucional y gestión de roles académicos.</p>
+            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10 relative z-10">
+                <div className="space-y-6">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-[1.25rem] bg-zinc-950 flex items-center justify-center shadow-xl">
+                            <Briefcase className="w-6 h-6 text-white" />
+                        </div>
+                        <Badge className="bg-zinc-100 text-zinc-900 border-none rounded-full px-5 py-2 font-black text-[10px] uppercase tracking-[0.3em]">
+                            Nómina Verificada • 2026
+                        </Badge>
+                    </div>
+                    <div className="space-y-2">
+                        <h2 className="text-6xl font-black tracking-tighter text-zinc-900 leading-none italic uppercase underline decoration-zinc-100 decoration-8 underline-offset-8">Gestión Docente</h2>
+                        <p className="text-zinc-400 font-bold tracking-tight text-lg mt-4 max-w-2xl">
+                            Directorio centralizado del capital humano y administración de roles pedagógicos institucionales.
+                        </p>
+                    </div>
                 </div>
                 
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 group-focus-within:text-white/40 transition-colors" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-zinc-300 group-focus-within:text-zinc-900 transition-colors" />
                         <Input 
-                            placeholder="Buscar docente o rol..." 
+                            placeholder="Buscar docente o perfil..." 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-11 h-12 w-[280px] bg-zinc-900/50 border-white/5 rounded-2xl apple-input-focus placeholder:text-zinc-700 text-white/80"
+                            className="pl-12 h-14 w-[340px] bg-white border-zinc-100 rounded-2xl shadow-sm focus:ring-1 focus:ring-zinc-200 placeholder:text-zinc-300 font-bold text-xs uppercase tracking-widest text-zinc-900"
                         />
                     </div>
                     
                     <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                         <DialogTrigger asChild>
-                            <Button className="h-12 px-6 bg-white text-black hover:bg-zinc-200 rounded-2xl font-bold transition-all flex gap-2 active:scale-95 shadow-xl shadow-white/5">
+                            <Button className="h-14 px-8 bg-zinc-950 text-white hover:bg-zinc-800 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex gap-3 active:scale-95 shadow-xl shadow-zinc-900/10">
                                 <Plus className="w-5 h-5" />
-                                Nuevo Personal
+                                Acreditar Personal
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="bg-black/90 backdrop-blur-3xl border-white/10 text-white rounded-[2.5rem] p-10 max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                            <DialogHeader>
-                                <DialogTitle className="text-3xl font-semibold tracking-tight text-white">Registrar Staff</DialogTitle>
-                                <DialogDescription className="text-zinc-500 font-medium">Añadir nuevo integrante al núcleo institucional.</DialogDescription>
+                        <DialogContent className="bg-white border-none text-zinc-900 rounded-[3rem] p-12 max-w-xl shadow-[0_40px_100px_-10px_rgba(0,0,0,0.15)]">
+                            <DialogHeader className="mb-8">
+                                <DialogTitle className="text-4xl font-black tracking-tighter text-zinc-900 uppercase">Nuevo Staff</DialogTitle>
+                                <DialogDescription className="text-zinc-400 font-bold text-sm mt-3">Incorporación oficial al sistema de gestión de personal</DialogDescription>
                             </DialogHeader>
-                            <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Nombre Completo</label>
+                            <form onSubmit={handleSubmit} className="space-y-8">
+                                <div className="space-y-3">
+                                    <label className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 font-black pl-2">Nombres y Apellidos</label>
                                     <Input 
-                                        placeholder="Ej: Profe Meléndez"
-                                        className="bg-white/5 border-white/10 h-12 rounded-2xl text-white font-medium"
+                                        className="bg-zinc-50 border-zinc-100 h-14 rounded-2xl text-zinc-900 font-bold uppercase"
+                                        placeholder="Ej: Lic. Meléndez"
                                         value={newStaff.nombre}
                                         onChange={(e) => setNewStaff({...newStaff, nombre: e.target.value})}
                                         required
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Rol Institucional</label>
+                                <div className="space-y-3">
+                                    <label className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 font-black pl-2">Rol dentro del Núcleo</label>
                                     <select 
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl h-12 px-4 text-white font-medium focus:ring-1 focus:ring-white/20 appearance-none"
+                                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl h-14 px-6 text-sm font-bold text-zinc-900 outline-none appearance-none"
                                         value={newStaff.rol}
                                         onChange={(e) => setNewStaff({...newStaff, rol: e.target.value})}
                                     >
-                                        {roles.map(r => <option key={r} value={r} className="bg-black">{r}</option>)}
+                                        {roles.map(r => <option key={r} value={r}>{r}</option>)}
                                     </select>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Email</label>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 font-black pl-2">Correo Corporativo</label>
                                         <Input 
-                                            placeholder="correo@ejemplo.com"
-                                            className="bg-white/5 border-white/10 h-12 rounded-2xl text-white font-medium"
+                                            placeholder="correo@andresbello.edu.ve"
+                                            className="bg-zinc-50 border-zinc-100 h-14 rounded-2xl text-zinc-900 font-bold"
                                             value={newStaff.email}
                                             onChange={(e) => setNewStaff({...newStaff, email: e.target.value})}
                                             required
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Contacto</label>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 font-black pl-2">Contacto Directo</label>
                                         <Input 
-                                            placeholder="0412-0000000"
-                                            className="bg-white/5 border-white/10 h-12 rounded-2xl text-white font-medium"
+                                            placeholder="+58 ..."
+                                            className="bg-zinc-50 border-zinc-100 h-14 rounded-2xl text-zinc-900 font-bold"
                                             value={newStaff.contacto}
                                             onChange={(e) => setNewStaff({...newStaff, contacto: e.target.value})}
                                             required
@@ -165,9 +202,9 @@ const Staff = () => {
                                 <Button 
                                     type="submit" 
                                     disabled={submitting}
-                                    className="w-full h-14 bg-white text-black hover:bg-zinc-200 rounded-2xl font-bold mt-4 transition-all active:scale-95 text-lg"
+                                    className="w-full h-16 bg-zinc-950 text-white hover:bg-zinc-800 rounded-2xl font-black mt-4 transition-all active:scale-[0.98] text-xs uppercase tracking-widest shadow-2xl shadow-zinc-900/10"
                                 >
-                                    {submitting ? "Sincronizando..." : "Acreditar Personal"}
+                                    {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Validar e Inscribir"}
                                 </Button>
                             </form>
                         </DialogContent>
@@ -175,87 +212,105 @@ const Staff = () => {
                 </div>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="grid gap-10 md:grid-cols-2">
                 <AnimatePresence mode="popLayout">
                     {filteredStaff.length > 0 ? filteredStaff.map((s, idx) => (
                         <motion.div 
-                            key={s.id}
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ delay: idx * 0.05 }}
-                            whileHover={{ y: -5, scale: 1.005 }}
-                            className="apple-card p-10 group bg-zinc-900/40 border-white/[0.05] transition-all duration-700 hover:bg-zinc-800/40"
+                            key={s.id || idx}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: idx * 0.03 }}
+                            className="bg-white border border-zinc-100 rounded-[3rem] p-12 group hover:shadow-2xl hover:border-zinc-200 transition-all duration-700 relative overflow-hidden"
                         >
                             <div className="flex justify-between items-start mb-10">
-                                <div className="flex items-center gap-6">
-                                    <div className={`w-16 h-16 rounded-[1.75rem] border flex items-center justify-center transition-all duration-700 shadow-2xl relative overflow-hidden ${
-                                        s.rol === 'Directivo' ? 'bg-purple-500/10 border-purple-500/20 text-purple-400' :
-                                        s.rol === 'Docente' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
-                                        'bg-zinc-800 border-white/10 text-zinc-500'
+                                <div className="flex items-center gap-8">
+                                    <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center transition-all duration-700 shadow-sm relative overflow-hidden ${
+                                        s.rol === 'Directivo' ? 'bg-zinc-950 text-white' :
+                                        s.rol === 'Docente' ? 'bg-zinc-50 text-zinc-900 border border-zinc-100' :
+                                        'bg-zinc-50 text-zinc-400'
                                     }`}>
-                                         <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                         <Briefcase className="w-8 h-8 relative z-10" />
+                                         <Briefcase className="w-9 h-9" />
                                     </div>
-                                    <div className="flex flex-col">
-                                        <h3 className="text-xl font-semibold text-white/90 group-hover:text-apple-gradient transition-all duration-700 uppercase italic tracking-tight">{s.nombre}</h3>
-                                        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mt-1 italic">{s.rol}</p>
+                                    <div className="space-y-1">
+                                        <h3 className="text-3xl font-black text-zinc-900 tracking-tighter uppercase group-hover:underline decoration-zinc-100 decoration-4 underline-offset-4">{s.nombre}</h3>
+                                        <div className="flex items-center gap-3">
+                                          <Badge className="bg-zinc-50 text-zinc-400 border-none font-black text-[9px] uppercase tracking-widest px-4 py-1.5 rounded-xl">{s.rol}</Badge>
+                                          <span className="text-[10px] font-black text-zinc-200 uppercase tracking-widest">• Staff ID {s.id}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className={`w-2.5 h-2.5 rounded-full mt-2 ${s.estado === 'activo' ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]'}`} />
-                            </div>
-
-                            <div className="space-y-6 pt-10 border-t border-white/5">
-                                <div className="flex flex-col gap-4">
-                                    <div className="flex items-center gap-4 text-zinc-500 text-xs font-semibold hover:text-white transition-colors">
-                                         <Mail className="w-4 h-4 text-zinc-700" />
-                                         {s.email}
-                                    </div>
-                                    <div className="flex items-center gap-4 text-zinc-500 text-xs font-semibold hover:text-white transition-colors">
-                                         <Phone className="w-4 h-4 text-zinc-700" />
-                                         {s.contacto}
-                                    </div>
+                                <div className="flex items-center gap-1 bg-emerald-50 px-4 py-1.5 rounded-full">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                    <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest">Activo</span>
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between mt-10">
-                                <div className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-white/[0.02] border border-white/5">
-                                    <Award className="w-3.5 h-3.5 text-blue-500" />
-                                    <span className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest italic">Acreditado</span>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-10 border-t border-zinc-50 mb-10">
+                                <div className="space-y-2">
+                                    <span className="text-[10px] font-black text-zinc-200 uppercase tracking-[0.3em]">Comunicación</span>
+                                    <div className="flex items-center gap-3 text-zinc-900 font-black text-xs lowercase">
+                                        <Mail className="w-4 h-4 text-zinc-200" />
+                                        {s.email}
+                                    </div>
                                 </div>
-                                <Button variant="ghost" className="text-zinc-500 hover:text-white group-hover:translate-x-1 transition-all p-2 rounded-xl">
-                                    <ChevronRight className="w-6 h-6" strokeWidth={1} />
-                                </Button>
+                                <div className="space-y-2">
+                                    <span className="text-[10px] font-black text-zinc-200 uppercase tracking-[0.4em]">Fase de Contacto</span>
+                                    <div className="flex items-center gap-3 text-zinc-900 font-black text-xs uppercase">
+                                        <Phone className="w-4 h-4 text-zinc-200" />
+                                        {s.contacto}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3 bg-zinc-50 px-5 py-2.5 rounded-2xl group-hover:bg-zinc-950 group-hover:text-white transition-all duration-700">
+                                    <Award className="w-4.5 h-4.5 text-blue-500" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest italic">Personal Acreditado</span>
+                                </div>
+                                <div className="w-12 h-12 rounded-full border border-zinc-50 flex items-center justify-center text-zinc-100 group-hover:text-zinc-950 transition-all duration-700">
+                                    <ChevronRight className="w-6 h-6" />
+                                </div>
                             </div>
                         </motion.div>
                     )) : (
-                        <div className="col-span-full flex flex-col items-center justify-center py-32 text-zinc-800 space-y-4 opacity-30 select-none">
-                            <Briefcase className="w-16 h-16" strokeWidth={1} />
-                            <p className="text-[10px] font-bold uppercase tracking-[0.3em] italic">
-                                {loading ? "Sincronizando directorio..." : "No se ha registrado personal todavía"}
-                            </p>
+                        <div className="col-span-full py-40 flex flex-col items-center justify-center space-y-8 opacity-20 select-none">
+                            <div className="w-24 h-24 rounded-full border-4 border-dashed border-zinc-100 flex items-center justify-center">
+                              <User className="w-10 h-10" />
+                            </div>
+                            <p className="text-[11px] font-black uppercase tracking-[0.6em] italic">No se registran integrantes en el directorio</p>
                         </div>
                     )}
                 </AnimatePresence>
             </div>
 
-            {/* Toasts / Feedback */}
-            <div className="fixed bottom-10 right-10 z-[100]">
+            {/* Notifications */}
+            <div className="fixed bottom-12 right-12 z-[100]">
                 <AnimatePresence>
                     {msg.text && (
                         <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className={`p-6 rounded-[2rem] flex items-center gap-4 text-sm font-bold uppercase tracking-widest shadow-2xl backdrop-blur-3xl border ${
-                                msg.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className={`p-6 rounded-[2rem] flex items-center gap-4 text-xs font-black uppercase tracking-widest shadow-2xl backdrop-blur-3xl border ${
+                                msg.type === 'success' ? 'bg-white text-emerald-600 border-emerald-100' : 'bg-white text-red-600 border-red-100'
                             }`}
                         >
-                            {msg.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                            <CheckCircle2 className="w-5 h-5" />
                             {msg.text}
                         </motion.div>
                     )}
                 </AnimatePresence>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center gap-10 opacity-30 text-zinc-300 select-none pt-20">
+                <div className="flex items-center gap-3">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.4em]">Núcleo de Datos Neon Secure</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Building2 className="w-4 h-4" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.4em]">Suite Andrés Bello v10.0</span>
+                </div>
             </div>
         </div>
     );
