@@ -157,6 +157,7 @@ const AndresBelloSuite = () => {
     recentActivity: []
   });
   const [aiData, setAiData] = useState({ title: '', security: '', alerts: [] });
+  const [hasCriticalError, setHasCriticalError] = useState(false);
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
@@ -212,6 +213,7 @@ const AndresBelloSuite = () => {
       setTimeout(() => setIsInitializing(false), 800);
     } catch (e) { 
       console.error("Critical Fetch Error:", e);
+      setHasCriticalError(true);
       setIsInitializing(false);
     }
   }, [handleLogout]);
@@ -231,7 +233,13 @@ const AndresBelloSuite = () => {
 
   return (
     <AnimatePresence mode="wait">
-      {isInitializing ? (
+      {hasCriticalError ? (
+        <CriticalErrorScreen key="error" onRetry={() => {
+           setHasCriticalError(false);
+           setIsInitializing(true);
+           fetchData(token);
+        }} />
+      ) : isInitializing ? (
         <SplashScreen key="splash" isInitialized={!isInitializing} />
       ) : !token ? (
         <Login key="login" onLogin={handleLogin} />
