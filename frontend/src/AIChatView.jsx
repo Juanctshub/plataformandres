@@ -27,7 +27,7 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
   const [messages, setMessages] = useState([
     { 
       role: 'assistant', 
-      content: 'Bienvenido al Núcleo de Inferencia v15.0. Soy tu asistente de gestión interconectado. Puedo verificar estados de alumnos, modificar registros o analizar patrones de deserción. ¿En qué auditoría administrativa procedemos?',
+      content: 'Bienvenido al Núcleo de Inferencia v20.0. Soy tu asistente de gestión institucional. Puedo verificar estados de alumnos, modificar registros, registrar calificaciones o analizar patrones de deserción. ¿En qué auditoría administrativa procedemos?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -113,6 +113,28 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ estado: 'suspendido' })
         });
+      } else if (action.type === 'ACTIVATE') {
+        res = await fetch(`${baseUrl}/api/estudiantes/${action.id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ estado: 'activo' })
+        });
+      } else if (action.type === 'DELETE') {
+        res = await fetch(`${baseUrl}/api/estudiantes/${action.id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      } else if (action.type === 'CREATE_NOTE') {
+        res = await fetch(`${baseUrl}/api/notas`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({
+            estudiante_id: action.id,
+            materia: action.materia,
+            nota: action.nota,
+            lapso: action.lapso || 1
+          })
+        });
       }
 
       if (res && res.ok) {
@@ -120,6 +142,13 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
           const newMessages = [...prev];
           newMessages[msgIndex].actionExecuted = true;
           newMessages[msgIndex].content += "\n\n✅ ACCIÓN EJECUTADA EXITOSAMENTE.";
+          return newMessages;
+        });
+      } else {
+        const errData = res ? await res.json().catch(() => ({})) : {};
+        setMessages(prev => {
+          const newMessages = [...prev];
+          newMessages[msgIndex].content += `\n\n❌ Error al ejecutar: ${errData.error || 'Fallo de conexión'}`;
           return newMessages;
         });
       }
@@ -158,15 +187,15 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
               animate={{ opacity: 1, y: 0 }}
               className="mb-12 space-y-12 flex flex-col items-center text-center"
             >
-              <div className="flex flex-col items-center gap-6">
-                 <div className="w-20 h-20 rounded-[2.5rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/30">
+              <div className="flex flex-col items-center gap-8">
+                 <div className="w-20 h-20 rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-600/30">
                     <Sparkles className="w-10 h-10 text-white" />
                  </div>
-                 <div className="space-y-4">
-                    <h2 className="text-7xl font-black tracking-tighter text-white leading-none">
-                      ¡Hola!, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{user?.username || 'Admin'}</span>
+                 <div className="space-y-3">
+                    <h2 className="text-6xl md:text-7xl font-semibold text-white leading-none" style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif", letterSpacing: '-0.04em' }}>
+                      ¡Hola!, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-300 to-indigo-400">{user?.username || 'Admin'}</span>
                     </h2>
-                    <p className="text-2xl text-[#86868b] font-medium tracking-tight">¿En qué auditoría procedemos hoy?</p>
+                    <p className="text-xl md:text-2xl text-[#86868b] font-medium" style={{ letterSpacing: '-0.02em' }}>¿En qué auditoría procedemos hoy?</p>
                  </div>
               </div>
 
@@ -179,11 +208,17 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
                  ].map((tool, i) => (
                    <button 
                      key={i}
-                     onClick={() => { setInput(tool.prompt); }}
-                     className="p-8 rounded-[2.5rem] bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all text-left group"
+                     onClick={() => {
+                       setInput(tool.prompt);
+                       setTimeout(() => {
+                         const fakeEvent = { preventDefault: () => {} };
+                         handleSend(fakeEvent);
+                       }, 100);
+                     }}
+                     className="p-6 md:p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/10 transition-all duration-500 text-left group"
                    >
-                     <tool.icon className="w-6 h-6 text-blue-400 mb-4 group-hover:scale-110 transition-transform" />
-                     <span className="text-base font-bold text-white/90">{tool.label}</span>
+                     <tool.icon className="w-5 h-5 text-blue-400 mb-3 group-hover:scale-110 transition-transform" />
+                     <span className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors">{tool.label}</span>
                    </button>
                  ))}
               </div>

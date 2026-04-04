@@ -114,9 +114,14 @@ app.delete('/api/estudiantes/:id', authenticateToken, async (req, res) => {
         const { id } = req.params;
         if (isNaN(parseInt(id))) return res.status(400).json({ error: "ID de estudiante inválido para eliminación" });
         
-        const result = await db.query("DELETE FROM estudiantes WHERE id = $1 RETURNING id", [id]);
+        // Cascading delete: purge all dependent records first
+        await db.query("DELETE FROM asistencia WHERE estudiante_id = $1", [id]);
+        await db.query("DELETE FROM notas WHERE estudiante_id = $1", [id]);
+        await db.query("DELETE FROM justificaciones WHERE estudiante_id = $1", [id]);
+        
+        const result = await db.query("DELETE FROM estudiantes WHERE id = $1 RETURNING id, nombre", [id]);
         if (result.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado para eliminación" });
-        res.json({ success: true, message: "Registro eliminado permanentemente del Nodo Maestro", id: result.rows[0].id });
+        res.json({ success: true, message: `${result.rows[0].nombre} eliminado permanentemente del Nodo Maestro`, id: result.rows[0].id });
     } catch (err) {
         res.status(500).json({ error: "Fallo en protocolo de eliminación: " + err.message });
     }
@@ -144,16 +149,6 @@ app.patch('/api/estudiantes/:id/status', authenticateToken, async (req, res) => 
     const { estado } = req.body;
     try {
         await db.query("UPDATE estudiantes SET estado = $1 WHERE id = $2", [estado, id]);
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.delete('/api/estudiantes/:id', authenticateToken, async (req, res) => {
-    const { id } = req.params;
-    try {
-        await db.query("DELETE FROM estudiantes WHERE id = $1", [id]);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -284,16 +279,56 @@ app.post('/api/notify', authenticateToken, async (req, res) => {
         res.json({ success: true, message: `Notificación enviada a representante de ${student}` });
     }, 1000);
 });
-// NOTIFICACIONES (Sugerencias Proactivas de la IA)
+// NOTIFICACIONES (Alertas Reales desde la Base de Datos)
 app.get('/api/notifications', authenticateToken, async (req, res) => {
     try {
-        // En una fase avanzada, esto vendría de un análisis periódico
-        // Por ahora simulamos sugerencias inteligentes basadas en el estado del sistema
-        const notifications = [
-            { id: 1, type: 'ai_suggestion', title: 'Optimización de Matrícula', msg: 'He detectado que 2 alumnos tienen 0% asistencia. ¿Deseas iniciar protocolo de suspensión?', action: 'PROPOSE_SUSPEND', student: 'Andrés Morales' },
-            { id: 2, type: 'system', title: 'Nodo Estable', msg: 'Sincronización con base de datos Neon completada exitosamente.', action: 'NONE' }
-        ];
+        const notifications = [];
+        
+        // Check for suspended students
+        const suspended = await db.query("SELECT nombre FROM estudiantes WHERE estado = 'suspendido'");
+        if (suspended.rows.length > 0) {
+            notifications.push({
+                id: 'susp-1', type: 'ai_suggestion', 
+                title: 'Alumnos Suspendidos',
+                msg: `${suspended.rows.length} alumno(s) en estado suspendido: ${suspended.rows.map(s => s.nombre).join(', ')}`
+            });
+        }
+        
+        // Check for pending justifications
+        const pending = await db.query("SELECT COUNT(*) as count FROM justificaciones WHERE estado = 'pendiente'");
+        if (parseInt(pending.rows[0].count) > 0) {
+            notifications.push({
+                id: 'just-1', type: 'system',
+                title: 'Justificativos Pendientes',
+                msg: `${pending.rows[0].count} justificativo(s) requieren validación administrativa.`
+            });
+        }
+        
+        // System status
+        const totalStudents = await db.query("SELECT COUNT(*) as count FROM estudiantes");
+        notifications.push({
+            id: 'sys-1', type: 'system',
+            title: 'Estado del Nodo',
+            msg: `${totalStudents.rows[0].count} estudiante(s) registrados. Sistema operativo.`
+        });
+        
         res.json(notifications);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ASISTENCIA STATS (Cálculo Real)
+app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
+    try {
+        const total = await db.query("SELECT COUNT(*) as count FROM asistencia");
+        const present = await db.query("SELECT COUNT(*) as count FROM asistencia WHERE estado = 'presente'");
+        
+        const totalCount = parseInt(total.rows[0].count);
+        const presentCount = parseInt(present.rows[0].count);
+        const percentage = totalCount > 0 ? ((presentCount / totalCount) * 100).toFixed(1) + '%' : 'Sin datos';
+        
+        res.json({ percentage, total: totalCount, present: presentCount });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -312,7 +347,8 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
         ]);
 
         const systemContext = `
-            Eres el "Núcleo de Inferencia Andrés Bello v15.0", un gestor omnisciente y omnipotente.
+            Eres el "Núcleo de Inferencia Andrés Bello v20.0", un gestor omnisciente y omnipotente de la plataforma educativa.
+            
             DATOS ACTUALES DEL SISTEMA:
             - Estudiantes: ${JSON.stringify(stds.rows.slice(0, 50))}
             - Notas (Muestra): ${JSON.stringify(grades.rows.slice(0, 20))}
@@ -320,11 +356,19 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
             - Justificaciones: ${JSON.stringify(justs.rows.slice(0, 10))}
 
             INSTRUCCIONES:
-            1. Eres un gestor formal, técnico y proactivo.
-            2. Si el usuario te pide un cambio (suspender, eliminar, cambiar nota), analiza los datos y responde.
-            3. Si decides proponer una ACCIÓN REAL, incluye al final de tu respuesta un bloque JSON como este: 
+            1. Eres un gestor formal, técnico y proactivo. Habla con autoridad institucional.
+            2. Si el usuario te pide un cambio (suspender, activar, eliminar, crear nota), analiza los datos y responde con claridad.
+            3. Si decides proponer una ACCIÓN REAL sobre un estudiante, incluye al final de tu respuesta UN SOLO bloque JSON así:
                ACTION_REQUIRED: {"type": "SUSPEND", "student": "Nombre", "id": 123}
+               
+               Acciones disponibles:
+               - SUSPEND: Suspender a un estudiante.
+               - ACTIVATE: Reactivar a un estudiante suspendido.
+               - DELETE: Eliminar permanentemente a un estudiante y todos sus registros.
+               - CREATE_NOTE: Registrar calificación. Formato: {"type": "CREATE_NOTE", "student": "Nombre", "id": 123, "materia": "Matemáticas", "nota": 18, "lapso": 1}
             4. El usuario tiene la última palabra. Siempre pregunta "¿Procedo con la ejecución?" después de una propuesta.
+            5. Si el usuario te pide buscar información en la web o algo fuera de tus datos, responde que tu alcance está limitado a los datos institucionales del sistema.
+            6. Puedes enviar notificaciones al usuario cuando detectes situaciones críticas. Indica con claridad qué acción recomiendas.
         `;
 
         if (!groq) {

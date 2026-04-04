@@ -231,7 +231,7 @@ const AndresBelloSuite = () => {
 
       setStats({
         students: Array.isArray(stds) ? stds.length : 0,
-        attendance: '98.5%',
+        attendance: 'Cargando...',
         risks: (ai.alerts && Array.isArray(ai.alerts)) ? ai.alerts.filter(a => a.type === 'danger').length : 0,
         justifications: Array.isArray(justs) ? justs.filter(j => j.estado === 'pendiente').length : 0,
         staffCount: Array.isArray(staffArr) ? staffArr.length : 0,
@@ -241,6 +241,15 @@ const AndresBelloSuite = () => {
         })) : []
       });
       setAiData(ai);
+      
+      // Fetch real attendance stats
+      try {
+        const resAtt = await fetch(`${baseUrl}/api/asistencia/stats`, { headers });
+        if (resAtt.ok) {
+          const attData = await resAtt.json();
+          setStats(prev => ({ ...prev, attendance: attData.percentage }));
+        }
+      } catch (e) { /* attendance stats optional */ }
       
       // Fetch Notifications
       const resNotif = await fetch(`${baseUrl}/api/notifications`, { headers });

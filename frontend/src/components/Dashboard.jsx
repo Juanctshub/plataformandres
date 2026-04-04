@@ -46,7 +46,7 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
   };
 
   const generateAttendanceReport = () => {
-    const doc = jsPDF();
+    const doc = new jsPDF();
     const date = new Date().toLocaleDateString();
     
     doc.setFontSize(22);
