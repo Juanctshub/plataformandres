@@ -87,6 +87,12 @@ app.post('/api/bio-auth', async (req, res) => {
 });
 
 // ESTUDIANTES (Gestión Institucional)
+app.get('/api/estudiantes', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query("SELECT * FROM estudiantes ORDER BY seccion, nombre");
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
