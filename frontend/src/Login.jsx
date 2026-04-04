@@ -20,6 +20,8 @@ import {
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 
+import logo from './assets/logo.jpg';
+
 const Login = ({ onLogin }) => {
     const [view, setView] = useState('login'); // login, recovery, bio, signup
     const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -162,11 +164,11 @@ const Login = ({ onLogin }) => {
                             >
                                 <div className="flex flex-col items-center text-center space-y-6">
                                     <motion.div 
-                                      whileHover={{ rotate: 15, scale: 1.1 }}
-                                      className="w-20 h-20 rounded-[1.75rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-500/30"
-                                    >
-                                        <ShieldCheck className="w-10 h-10 text-white" strokeWidth={2} />
-                                    </motion.div>
+                                       whileHover={{ scale: 1.05 }}
+                                       className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center shadow-2xl shadow-blue-500/10 overflow-hidden border border-white/10"
+                                     >
+                                         <img src={logo} className="w-full h-full object-cover scale-110" alt="Logo" />
+                                     </motion.div>
                                     <div className="space-y-3">
                                         <h2 className="text-4xl font-semibold tracking-tight text-white leading-none">Andrés Bello</h2>
                                         <p className="text-[#86868b] font-medium text-lg uppercase tracking-widest text-[10px]">Identidad de Acceso Institucional</p>

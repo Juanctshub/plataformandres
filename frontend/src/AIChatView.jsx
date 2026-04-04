@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";
+import logo from './assets/logo.jpg';
 
 const AIChatView = ({ searchTerm, user, onClose }) => {
   const [messages, setMessages] = useState([
@@ -37,7 +38,10 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
 
   useEffect(() => {
     if (scrollRef.current) {
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        scrollRef.current.scrollTo({
+            top: scrollRef.current.scrollHeight,
+            behavior: 'smooth'
+        });
     }
   }, [messages, isTyping]);
 
@@ -167,9 +171,9 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
 
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 md:px-20 pt-10 pb-40 space-y-12 no-scrollbar"
+        className="flex-1 overflow-y-auto px-4 md:px-20 pt-10 pb-[22rem] space-y-12 no-scrollbar"
       >
-        <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col h-[85vh]">
+        <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col min-h-[60vh] justify-center">
           
         {/* Inmersive Exit Button (Favicon Style) */}
         <motion.button
@@ -188,8 +192,8 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
               className="mb-12 space-y-12 flex flex-col items-center text-center"
             >
               <div className="flex flex-col items-center gap-8">
-                 <div className="w-20 h-20 rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-600/30">
-                    <Sparkles className="w-10 h-10 text-white" />
+                 <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-600/30 overflow-hidden border border-white/10">
+                    <img src={logo} className="w-full h-full object-cover scale-110" alt="Logo" />
                  </div>
                  <div className="space-y-3">
                     <h2 className="text-6xl md:text-7xl font-semibold text-white leading-none" style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif", letterSpacing: '-0.04em' }}>

@@ -35,6 +35,7 @@ import Staff from './Staff';
 import AIChatView from './AIChatView';
 import { Badge } from "./components/ui/badge";
 import InstitutionalSettings from './InstitutionalSettings';
+import logo from './assets/logo.jpg';
 
 
 const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
@@ -96,26 +97,11 @@ const SplashScreen = ({ isInitialized }) => (
   >
     <div className="relative flex flex-col items-center">
       <div className="absolute inset-0 bg-blue-600/10 blur-[120px] rounded-full scale-150 animate-pulse" />
-      <svg width="100" height="100" viewBox="0 0 100 100" className="mb-10 relative z-10">
-        <motion.path
-          d="M20,30 L50,15 L80,30 L50,45 Z"
-          fill="none"
-          stroke="white"
-          strokeWidth="1.5"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
-        />
-        <motion.path
-          d="M20,30 L20,60 C20,75 50,85 50,85 C50,85 80,75 80,60 L80,30"
-          fill="none"
-          stroke="white"
-          strokeWidth="1.5"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
-        />
-      </svg>
+      <img 
+        src={logo} 
+        alt="Logo Andrés Bello" 
+        className="w-28 h-28 rounded-[2.5rem] mb-10 relative z-10 shadow-2xl shadow-blue-500/20 border border-white/10" 
+      />
       
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
@@ -306,12 +292,10 @@ const AndresBelloSuite = () => {
               >
                 <div className="flex items-center gap-8">
                   <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-                     <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
-                        <ShieldCheck className="w-6 h-6 text-white" />
-                     </div>
+                     <img src={logo} className="w-11 h-11 rounded-2xl shadow-lg border border-white/10 group-hover:scale-105 transition-transform" alt="Logo" />
                      <div className="flex flex-col">
-                        <h2 className="text-sm font-bold tracking-tight text-white leading-none">Andrés Bello</h2>
-                        <span className="text-[10px] font-medium text-[#86868b] tracking-wider uppercase mt-1">SaaS Suite v15.0</span>
+                        <h2 className="text-sm font-black tracking-tighter text-white leading-none uppercase italic">Andrés Bello</h2>
+                        <span className="text-[9px] font-black tracking-[0.2em] text-[#86868b] uppercase mt-1">SaaS Suite v20.0</span>
                      </div>
                   </div>
                   <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-5 py-2 active:scale-95 group focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">
