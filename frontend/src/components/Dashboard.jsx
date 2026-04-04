@@ -426,13 +426,35 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
           let success = 0, failed = 0;
           
           for (const row of data) {
-            const payload = {
-              nombre: row.Nombre || row.nombre || row.NOMBRE || row.name || row.Name || '',
-              cedula: String(row.Cedula || row.cedula || row.CEDULA || row.CI || row.ci || row.ID || row.id || ''),
-              seccion: row.Seccion || row.seccion || row.SECCION || row.Grado || row.grado || row.GRADO || '',
-              representante: row.Representante || row.representante || row.REPRESENTANTE || row.Padre || row.Madre || '',
-              contacto: String(row.Contacto || row.contacto || row.CONTACTO || row.Telefono || row.telefono || '')
+            // Normalize: try ALL common column name variations
+            const keys = Object.keys(row);
+            const findCol = (...names) => {
+              for (const n of names) {
+                // Exact match first
+                if (row[n] !== undefined && row[n] !== null && String(row[n]).trim() !== '') return String(row[n]).trim();
+              }
+              // Case-insensitive / partial match
+              for (const k of keys) {
+                const kl = k.toLowerCase().replace(/[_\s-]/g, '');
+                for (const n of names) {
+                  const nl = n.toLowerCase().replace(/[_\s-]/g, '');
+                  if (kl === nl || kl.includes(nl) || nl.includes(kl)) {
+                    if (row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return String(row[k]).trim();
+                  }
+                }
+              }
+              return '';
             };
+
+            const payload = {
+              nombre: findCol('Nombre_Completo', 'NombreCompleto', 'Nombre', 'nombre', 'NOMBRE', 'Name', 'name', 'Alumno', 'Estudiante', 'STUDENT', 'Student', 'Apellido_Nombre'),
+              cedula: findCol('Identidad', 'Cedula', 'cedula', 'CEDULA', 'CI', 'ci', 'ID', 'id', 'Numero_Cedula', 'DNI', 'Documento', 'V', 'Cédula'),
+              seccion: findCol('Seccion', 'seccion', 'SECCION', 'Sección', 'Grado', 'grado', 'GRADO', 'Grade', 'Año', 'Curso', 'Nivel', 'Section'),
+              representante: findCol('Representante', 'representante', 'REPRESENTANTE', 'Padre', 'Madre', 'Tutor', 'Acudiente', 'Parent'),
+              contacto: findCol('Contacto', 'contacto', 'CONTACTO', 'Telefono', 'telefono', 'Phone', 'Celular', 'Movil', 'Tel')
+            };
+            
+            console.log('Importing row:', payload);
             if (!payload.nombre || !payload.cedula || !payload.seccion) { failed++; continue; }
             try {
               const res = await fetch(`${baseUrl}/api/estudiantes`, {

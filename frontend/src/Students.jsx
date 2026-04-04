@@ -187,12 +187,29 @@ const Students = () => {
         const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
         let successCount = 0;
         for (const row of data) {
+          const keys = Object.keys(row);
+          const findCol = (...names) => {
+            for (const n of names) {
+              if (row[n] !== undefined && row[n] !== null && String(row[n]).trim() !== '') return String(row[n]).trim();
+            }
+            for (const k of keys) {
+              const kl = k.toLowerCase().replace(/[_\s-]/g, '');
+              for (const n of names) {
+                const nl = n.toLowerCase().replace(/[_\s-]/g, '');
+                if (kl === nl || kl.includes(nl) || nl.includes(kl)) {
+                  if (row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return String(row[k]).trim();
+                }
+              }
+            }
+            return '';
+          };
+
           const payload = {
-            nombre: row.Nombre || row.nombre || row.STUDENT || '',
-            cedula: String(row.Cedula || row.cedula || row.ID || ''),
-            seccion: row.Seccion || row.seccion || row.GRADE || '',
-            representante: row.Representante || row.representante || '',
-            contacto: String(row.Contacto || row.contacto || '')
+            nombre: findCol('Nombre_Completo', 'NombreCompleto', 'Nombre', 'nombre', 'NOMBRE', 'Name', 'Alumno', 'Estudiante', 'STUDENT'),
+            cedula: findCol('Identidad', 'Cedula', 'cedula', 'CEDULA', 'CI', 'ci', 'ID', 'id', 'Numero_Cedula', 'DNI', 'Documento', 'Cédula'),
+            seccion: findCol('Seccion', 'seccion', 'SECCION', 'Sección', 'Grado', 'grado', 'GRADO', 'Grade', 'Año', 'Curso', 'Nivel'),
+            representante: findCol('Representante', 'representante', 'REPRESENTANTE', 'Padre', 'Madre', 'Tutor', 'Acudiente'),
+            contacto: findCol('Contacto', 'contacto', 'CONTACTO', 'Telefono', 'telefono', 'Phone', 'Celular', 'Movil')
           };
           if (!payload.nombre || !payload.cedula || !payload.seccion) continue;
           const res = await fetch(`${baseUrl}/api/estudiantes`, {

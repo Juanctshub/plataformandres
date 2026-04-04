@@ -315,6 +315,8 @@ app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
                 resolved_at TIMESTAMP
             )
         `);
+        // Ensure unique constraint on cedula for ON CONFLICT to work
+        await db.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_estudiantes_cedula ON estudiantes(cedula)`).catch(() => {});
         console.log("[IA ADMIN] Tabla ai_proposals sincronizada.");
     } catch (e) {
         console.error("[IA ADMIN] Error creando tabla:", e.message);
@@ -548,46 +550,120 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
             db.query("SELECT a.id, e.nombre, a.fecha, a.estado FROM asistencia a JOIN estudiantes e ON a.estudiante_id = e.id ORDER BY a.fecha DESC LIMIT 30")
         ]);
 
+        // Check if user is providing a bulk student list directly
+        const msgLower = message.toLowerCase();
+        const looksLikeBulkStudents = (message.match(/V-\d+/gi) || []).length >= 3;
+        
         const systemContext = `
-Eres el "Núcleo de Inferencia Andrés Bello v21.0", un CO-ADMINISTRADOR OMNISCIENTE de la plataforma educativa.
+Eres el "Núcleo de Inferencia Andrés Bello v21.0", un CO-ADMINISTRADOR OMNISCIENTE.
 
-DATOS ACTUALES DEL SISTEMA:
+DATOS DEL SISTEMA:
 - Estudiantes (${stds.rows.length}): ${JSON.stringify(stds.rows.slice(0, 50))}
-- Calificaciones (${grades.rows.length}): ${JSON.stringify(grades.rows.slice(0, 30))}
+- Calificaciones (${grades.rows.length}): ${JSON.stringify(grades.rows.slice(0, 20))}
 - Personal: ${JSON.stringify(personal.rows)}
-- Justificaciones: ${JSON.stringify(justs.rows.slice(0, 15))}
-- Asistencia reciente: ${JSON.stringify(attendance.rows.slice(0, 20))}
+- Justificaciones: ${JSON.stringify(justs.rows.slice(0, 10))}
+- Asistencia: ${JSON.stringify(attendance.rows.slice(0, 15))}
 
-INSTRUCCIONES COMO CO-ADMINISTRADOR:
-1. Eres un gestor formal, técnico y proactivo. Habla con autoridad institucional.
-2. Tienes el PODER de proponer CUALQUIER acción administrativa sobre la plataforma.
-3. Cuando propongas una acción, incluye AL FINAL un bloque JSON:
-   PROPOSAL: {"type": "TIPO", "title": "Titulo corto", "description": "Explicación detallada", "payload": {...datos necesarios...}}
+INSTRUCCIONES CRÍTICAS:
+1. Habla con autoridad institucional, sé directo y conciso.
+2. CUANDO EL USUARIO TE PIDA REGISTRAR ESTUDIANTES O TE PASE UNA LISTA, NO preguntes confirmación. Genera INMEDIATAMENTE las propuestas PROPOSAL.
+3. Para CADA acción, incluye EXACTAMENTE esta línea (TODO EN UNA SOLA LÍNEA, JSON compacto):
+   PROPOSAL: {"type":"CREATE_STUDENT","title":"Inscribir Nombre","description":"Registro de nuevo alumno","payload":{"cedula":"V-123","nombre":"Nombre Completo","seccion":"1er Año A","representante":"Padre","contacto":""}}
 
-ACCIONES DISPONIBLES (usa el type exacto):
-- CREATE_STUDENT: Inscribir nuevo estudiante. Payload: {"cedula": "V-123", "nombre": "Nombre", "seccion": "1ro A", "representante": "...", "contacto": "..."}
-- UPDATE_STUDENT: Modificar datos. Payload: {"student_id": 1, "fields": {"nombre": "Nuevo", "seccion": "2do A"}}
-- DELETE: Eliminar estudiante y todos sus registros. Payload: {"id": 1, "student": "Nombre"}
-- SUSPEND: Suspender estudiante. Payload: {"id": 1, "student": "Nombre"}
-- ACTIVATE: Reactivar estudiante. Payload: {"id": 1, "student": "Nombre"}
-- CREATE_NOTE: Registrar calificación. Payload: {"id": 1, "student": "Nombre", "materia": "Matemáticas", "nota": 18, "lapso": 1}
-- REGISTER_ATTENDANCE: Registrar asistencia. Payload: {"id": 1, "student": "Nombre", "estado": "presente", "fecha": "2026-04-04"}
-- CREATE_JUSTIFICATION: Crear justificativo. Payload: {"id": 1, "student": "Nombre", "motivo": "Razón médica"}
-- UPDATE_SCHEDULE: Crear/modificar horario. Payload: {"seccion": "1ro A", "dia": "Lunes", "materia": "Física", "bloque": "1"}
-- NOTIFY_PARENT: Notificar representante. Payload: {"student": "Nombre", "message": "Contenido de la notificación"}
+ACCIONES DISPONIBLES:
+- CREATE_STUDENT: payload: {"cedula":"","nombre":"","seccion":"","representante":"","contacto":""}
+- DELETE: payload: {"id":NUM,"student":"Nombre"}
+- SUSPEND: payload: {"id":NUM,"student":"Nombre"}
+- ACTIVATE: payload: {"id":NUM,"student":"Nombre"}
+- CREATE_NOTE: payload: {"id":NUM,"materia":"","nota":NUM,"lapso":NUM}
+- REGISTER_ATTENDANCE: payload: {"id":NUM,"estado":"presente","fecha":"2026-04-04"}
+- CREATE_JUSTIFICATION: payload: {"id":NUM,"motivo":""}
+- NOTIFY_PARENT: payload: {"student":"","message":""}
+- BULK_CREATE_STUDENTS: Para 5+ estudiantes de una vez. payload: {"students":[{"cedula":"","nombre":"","seccion":"","representante":""},...]}
 
-REGLAS IMPORTANTES:
-4. SIEMPRE explica tu razonamiento antes de proponer una acción.
-5. Las propuestas irán al panel de notificaciones del usuario. Él aprobará, rechazará o responderá.
-6. Puedes proponer MÚLTIPLES acciones si lo consideras necesario (una PROPOSAL por acción, cada una en línea separada).
-7. Si el usuario te dice "sí", "procede", "hazlo", "acepto" como respuesta a una propuesta previa, confirma la ejecución.
-8. Si el usuario responde con un texto personalizado, adáptate a su solicitud.
-9. Sé proactivo: si ves datos anómalos (0% asistencia, notas muy bajas), sugiere acciones concretas.
-10. Tu alcance está limitado a los datos institucionales del sistema.
+REGLAS:
+4. CADA PROPOSAL debe estar en UNA SOLA LÍNEA. No uses saltos de línea dentro del JSON.
+5. Si el usuario te da una lista de estudiantes, usa BULK_CREATE_STUDENTS con TODOS en un solo PROPOSAL.
+6. Si el usuario dice "sí", "procede", "hazlo", "ok", genera la PROPOSAL correspondiente inmediatamente.
+7. NO preguntes "¿desea que continúe?" más de una vez. Sé decisivo.
+8. Sé proactivo con alertas sobre datos anómalos.
+9. Tu alcance está limitado a datos institucionales.
 `;
 
         if (!groq) {
             return res.status(503).json({ error: "El núcleo de inferencia Groq no está configurado." });
+        }
+
+        // If user is pasting a bulk list of students, handle it directly
+        if (looksLikeBulkStudents && (msgLower.includes('añade') || msgLower.includes('agrega') || msgLower.includes('registra') || msgLower.includes('inscrib') || msgLower.includes('lista'))) {
+            // Parse students directly from the message
+            const lines = message.split(/[\n,]+/).map(l => l.trim()).filter(l => l.length > 5);
+            const studentsList = [];
+            
+            for (const line of lines) {
+                const vMatch = line.match(/(V-[\d.]+)/i);
+                if (!vMatch) continue;
+                const cedula = vMatch[1];
+                // Try to extract: cedula, seccion, nombre, representante
+                const parts = line.split(/[,\t]+/).map(p => p.trim());
+                if (parts.length >= 3) {
+                    studentsList.push({
+                        cedula: parts[0] || cedula,
+                        seccion: parts[1] || '',
+                        nombre: parts[2] || '',
+                        representante: parts[3] || ''
+                    });
+                } else {
+                    // Try extracting from the full line after the cedula
+                    const afterCedula = line.substring(line.indexOf(cedula) + cedula.length).trim();
+                    const segments = afterCedula.split(/[,\t]+/).map(s => s.trim());
+                    studentsList.push({
+                        cedula,
+                        seccion: segments[0] || '',
+                        nombre: segments[1] || '',
+                        representante: segments[2] || ''
+                    });
+                }
+            }
+
+            if (studentsList.length > 0) {
+                // Insert all students directly
+                let successCount = 0;
+                let failCount = 0;
+                const registered = [];
+                
+                for (const s of studentsList) {
+                    if (!s.nombre || !s.cedula) { failCount++; continue; }
+                    try {
+                        await db.query(
+                            "INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto) VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING",
+                            [s.cedula, s.nombre, s.seccion || 'Sin Sección', s.representante || '', '']
+                        );
+                        successCount++;
+                        registered.push(s.nombre);
+                    } catch (e) {
+                        failCount++;
+                    }
+                }
+
+                // Also record as a completed proposal
+                await db.query(
+                    "INSERT INTO ai_proposals (type, title, description, payload, status, ai_reasoning, resolved_at) VALUES ($1,$2,$3,$4,'executed',$5,NOW())",
+                    [
+                        'BULK_CREATE_STUDENTS',
+                        `Registro masivo: ${successCount} estudiantes`,
+                        `Se registraron ${successCount} estudiantes de ${studentsList.length} proporcionados.`,
+                        JSON.stringify({ students: studentsList }),
+                        `Carga directa desde el chat.`
+                    ]
+                );
+
+                return res.json({
+                    content: `✅ **Registro masivo completado.**\n\n• **${successCount}** estudiantes registrados exitosamente\n• **${failCount}** omitidos (datos incompletos o duplicados)\n• **Total procesados:** ${studentsList.length}\n\n${registered.length <= 10 ? '**Registrados:** ' + registered.join(', ') : '**Primeros 10:** ' + registered.slice(0, 10).join(', ') + '...'}\n\nLos estudiantes ya aparecen en el módulo de Matrícula.`,
+                    proposals: [],
+                    timestamp: new Date().toLocaleTimeString()
+                });
+            }
         }
 
         const chatCompletion = await groq.chat.completions.create({
@@ -597,65 +673,107 @@ REGLAS IMPORTANTES:
                 { role: "user", content: message }
             ],
             model: "llama-3.3-70b-versatile",
-            temperature: 0.7,
-            max_tokens: 1500,
+            temperature: 0.6,
+            max_tokens: 2500,
         });
 
         let aiContent = chatCompletion.choices[0].message.content;
+        console.log("[AI RAW]:", aiContent.substring(0, 500));
         
-        // Extract and save proposals automatically
-        const proposalMatches = aiContent.match(/PROPOSAL:\s*(\{[\s\S]*?\})/g);
+        // ─── ROBUST PROPOSAL EXTRACTION ───
         const savedProposals = [];
-
-        if (proposalMatches) {
-            for (const match of proposalMatches) {
-                try {
-                    const jsonStr = match.replace(/PROPOSAL:\s*/, '');
-                    const proposal = JSON.parse(jsonStr);
-                    const insertResult = await db.query(
-                        "INSERT INTO ai_proposals (type, title, description, payload, ai_reasoning, status) VALUES ($1, $2, $3, $4, $5, 'pending') RETURNING id",
-                        [
-                            proposal.type || 'UNKNOWN',
-                            proposal.title || `Acción ${proposal.type}`,
-                            proposal.description || '',
-                            JSON.stringify(proposal.payload || {}),
-                            aiContent.replace(/PROPOSAL:[\s\S]*$/g, '').trim()
-                        ]
-                    );
-                    savedProposals.push({ id: insertResult.rows[0].id, ...proposal });
-                } catch (parseErr) {
-                    console.error("Error parsing proposal:", parseErr.message);
+        
+        // Method 1: Line-by-line extraction (most reliable)
+        const aiLines = aiContent.split('\n');
+        for (const line of aiLines) {
+            const proposalIdx = line.indexOf('PROPOSAL:');
+            const actionIdx = line.indexOf('ACTION_REQUIRED:');
+            
+            if (proposalIdx !== -1 || actionIdx !== -1) {
+                const prefix = proposalIdx !== -1 ? 'PROPOSAL:' : 'ACTION_REQUIRED:';
+                const idx = proposalIdx !== -1 ? proposalIdx : actionIdx;
+                const jsonPart = line.substring(idx + prefix.length).trim();
+                
+                // Find the JSON object in this line
+                let braceCount = 0;
+                let jsonStart = -1;
+                let jsonEnd = -1;
+                
+                for (let i = 0; i < jsonPart.length; i++) {
+                    if (jsonPart[i] === '{') {
+                        if (jsonStart === -1) jsonStart = i;
+                        braceCount++;
+                    } else if (jsonPart[i] === '}') {
+                        braceCount--;
+                        if (braceCount === 0) {
+                            jsonEnd = i;
+                            break;
+                        }
+                    }
+                }
+                
+                if (jsonStart !== -1 && jsonEnd !== -1) {
+                    const jsonStr = jsonPart.substring(jsonStart, jsonEnd + 1);
+                    try {
+                        const proposal = JSON.parse(jsonStr);
+                        
+                        // Handle BULK_CREATE_STUDENTS directly
+                        if (proposal.type === 'BULK_CREATE_STUDENTS' && proposal.payload?.students) {
+                            let successCount = 0;
+                            for (const s of proposal.payload.students) {
+                                if (!s.nombre || !s.cedula) continue;
+                                try {
+                                    await db.query(
+                                        "INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto) VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING",
+                                        [s.cedula, s.nombre, s.seccion || '', s.representante || '', s.contacto || '']
+                                    );
+                                    successCount++;
+                                } catch (e) { /* skip */ }
+                            }
+                            const insertResult = await db.query(
+                                "INSERT INTO ai_proposals (type, title, description, payload, status, ai_reasoning, resolved_at) VALUES ($1,$2,$3,$4,'executed',$5,NOW()) RETURNING id",
+                                ['BULK_CREATE_STUDENTS', proposal.title || `Registro masivo: ${successCount}`, proposal.description || `${successCount} estudiantes registrados`, JSON.stringify(proposal.payload), 'Ejecución directa por lote']
+                            );
+                            savedProposals.push({ id: insertResult.rows[0].id, ...proposal, autoExecuted: true, count: successCount });
+                        } else {
+                            // Save as pending proposal
+                            const insertResult = await db.query(
+                                "INSERT INTO ai_proposals (type, title, description, payload, ai_reasoning, status) VALUES ($1, $2, $3, $4, $5, 'pending') RETURNING id",
+                                [
+                                    proposal.type || 'UNKNOWN',
+                                    proposal.title || `Acción: ${proposal.type}`,
+                                    proposal.description || `La IA propone: ${proposal.type}`,
+                                    JSON.stringify(proposal.payload || proposal),
+                                    aiContent.split('PROPOSAL:')[0].split('ACTION_REQUIRED:')[0].trim().substring(0, 500)
+                                ]
+                            );
+                            savedProposals.push({ id: insertResult.rows[0].id, ...proposal });
+                        }
+                    } catch (parseErr) {
+                        console.error("[PROPOSAL PARSE ERROR]:", parseErr.message, "JSON:", jsonStr.substring(0, 100));
+                    }
                 }
             }
         }
 
-        // Also support old ACTION_REQUIRED format
-        const actionMatch = aiContent.match(/ACTION_REQUIRED:\s*(\{[\s\S]*?\})/);
-        if (actionMatch && savedProposals.length === 0) {
-            try {
-                const action = JSON.parse(actionMatch[1]);
-                const insertResult = await db.query(
-                    "INSERT INTO ai_proposals (type, title, description, payload, ai_reasoning, status) VALUES ($1, $2, $3, $4, $5, 'pending') RETURNING id",
-                    [
-                        action.type,
-                        `${action.type}: ${action.student || 'Acción'}`,
-                        `La IA propone ${action.type} sobre ${action.student || 'un registro'}`,
-                        JSON.stringify(action),
-                        aiContent.replace(/ACTION_REQUIRED:[\s\S]*$/g, '').trim()
-                    ]
-                );
-                savedProposals.push({ id: insertResult.rows[0].id, ...action });
-            } catch (e) { /* ignore parse errors */ }
-        }
-
         // Clean response for frontend
         const cleanContent = aiContent
-            .replace(/PROPOSAL:\s*\{[\s\S]*?\}/g, '')
-            .replace(/ACTION_REQUIRED:\s*\{[\s\S]*?\}/g, '')
+            .replace(/PROPOSAL:\s*\{[^\n]*/g, '')
+            .replace(/ACTION_REQUIRED:\s*\{[^\n]*/g, '')
+            .replace(/\n{3,}/g, '\n\n')
             .trim();
 
+        const bulkExecuted = savedProposals.filter(p => p.autoExecuted);
+        let finalContent = cleanContent;
+        if (bulkExecuted.length > 0) {
+            finalContent += `\n\n✅ **Ejecución directa completada:** ${bulkExecuted.reduce((a, b) => a + (b.count || 0), 0)} estudiantes registrados en el sistema.`;
+        }
+        if (savedProposals.filter(p => !p.autoExecuted).length > 0) {
+            finalContent += `\n\n🔔 Se crearon ${savedProposals.filter(p => !p.autoExecuted).length} propuesta(s). Revisa las notificaciones (🔔) para aprobar o rechazar.`;
+        }
+
         res.json({ 
-            content: cleanContent,
+            content: finalContent,
             proposals: savedProposals,
             timestamp: new Date().toLocaleTimeString()
         });
