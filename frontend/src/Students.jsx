@@ -108,6 +108,44 @@ const Students = () => {
     }
   };
 
+  const handleStatusToggle = async (student) => {
+    const newStatus = student.estado === 'activo' ? 'suspendido' : 'activo';
+    try {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+      const res = await fetch(`${baseUrl}/api/estudiantes/${student.id}/status`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ estado: newStatus })
+      });
+      if (res.ok) {
+        setMsg({ text: `Estado actualizado: ${newStatus.toUpperCase()}`, type: 'success' });
+        fetchStudents();
+      }
+    } catch (e) {
+      setMsg({ text: 'Error al cambiar estado', type: 'error' });
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Estás seguro de eliminar este registro del nodo maestro? Esta acción es irreversible.")) return;
+    try {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+      const res = await fetch(`${baseUrl}/api/estudiantes/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        setMsg({ text: 'Registro eliminado permanentemente', type: 'success' });
+        fetchStudents();
+      }
+    } catch (e) {
+      setMsg({ text: 'Error al eliminar registro', type: 'error' });
+    }
+  };
+
   const handleExcelImport = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -281,13 +319,18 @@ const Students = () => {
                 className="apple-card group"
               >
                 <div className="flex justify-between items-start mb-8">
-                   <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 group-hover:bg-blue-600/20 group-hover:text-blue-400 group-hover:border-blue-500/30 transition-all duration-700">
-                      <UserIcon className="w-8 h-8" strokeWidth={1.5} />
-                   </div>
-                   <Badge className="bg-white/5 text-[#86868b] border border-white/10 rounded-full px-4 py-1.5 text-[11px] font-semibold group-hover:bg-white group-hover:text-black transition-all">
-                      Sección {student.seccion}
-                   </Badge>
-                </div>
+                    <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 group-hover:bg-blue-600/20 group-hover:text-blue-400 group-hover:border-blue-500/30 transition-all duration-700">
+                       <UserIcon className="w-8 h-8" strokeWidth={1.5} />
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                       <Badge className="bg-white/5 text-[#86868b] border border-white/10 rounded-full px-4 py-1.5 text-[11px] font-semibold group-hover:bg-white group-hover:text-black transition-all">
+                          Sección {student.seccion}
+                       </Badge>
+                       <Badge className={`${student.estado === 'activo' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'} border-none px-4 py-1 text-[9px] uppercase font-bold tracking-widest`}>
+                          {student.estado || 'activo'}
+                       </Badge>
+                    </div>
+                 </div>
 
                 <div className="space-y-3 mb-10">
                    <h3 className="text-2xl font-semibold text-white tracking-tight group-hover:translate-x-1 transition-transform">{student.nombre}</h3>
@@ -308,11 +351,27 @@ const Students = () => {
                    </div>
                 </div>
 
-                <div className="mt-8 flex justify-end">
-                   <button className="p-3 rounded-full bg-white/5 text-white/10 hover:bg-white/10 hover:text-white transition-all">
-                      <ArrowRight className="w-4 h-4" />
-                   </button>
-                </div>
+                 <div className="mt-8 flex justify-between items-center bg-white/[0.03] p-4 rounded-2xl border border-white/5 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
+                    <div className="flex items-center gap-3">
+                       <button 
+                          onClick={() => handleStatusToggle(student)}
+                          className={`p-3 rounded-xl transition-all ${student.estado === 'activo' ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white' : 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white'}`}
+                          title={student.estado === 'activo' ? 'Suspender Alumno' : 'Activar Alumno'}
+                       >
+                          <AlertCircle className="w-4 h-4" />
+                       </button>
+                       <button 
+                          onClick={() => handleDelete(student.id)}
+                          className="p-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                          title="Eliminar Registro"
+                       >
+                          <Trash2 className="w-4 h-4" />
+                       </button>
+                    </div>
+                    <button className="p-3 rounded-full bg-white/5 text-white/10 hover:bg-white/10 hover:text-white transition-all">
+                       <ArrowRight className="w-4 h-4" />
+                    </button>
+                 </div>
               </motion.div>
             ))
           ) : (

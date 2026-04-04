@@ -200,7 +200,7 @@ const Grades = () => {
                   <div className="relative flex-1 max-w-lg group">
                      <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
                      <Input 
-                        placeholder="Buscar por alumno o materia..." 
+                        placeholder="..." 
                         className="pl-16 h-14 bg-white/5 border-white/5 rounded-2xl text-white text-sm font-medium focus:ring-1 focus:ring-blue-500/50"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

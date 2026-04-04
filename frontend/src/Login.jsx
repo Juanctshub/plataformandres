@@ -74,7 +74,7 @@ const Login = ({ onLogin }) => {
                 setBioStatus('success');
                 setTimeout(() => {
                     setMsg({ text: data.message || 'Identidad Biométrica Validada', type: 'success' });
-                    setTimeout(() => setView('login'), 1000);
+                    setTimeout(() => onLogin(data), 1000);
                 }, 1000);
             } else {
                 setBioStatus('idle');

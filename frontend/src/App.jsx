@@ -30,7 +30,7 @@ import Grades from './Grades';
 import SchedulesModule from './Schedules';
 import Staff from './Staff';
 import InstitutionalSettings from './InstitutionalSettings';
-import AIChat from './components/AIChat';
+import AIChatView from './AIChatView';
 
 // SplashScreen (Keeping the current one as requested)
 const SplashScreen = ({ isInitialized }) => (
@@ -158,6 +158,9 @@ const AndresBelloSuite = () => {
   });
   const [aiData, setAiData] = useState({ title: '', security: '', alerts: [] });
   const [hasCriticalError, setHasCriticalError] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [notifications, setNotifications] = useState([]);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
@@ -210,6 +213,10 @@ const AndresBelloSuite = () => {
       });
       setAiData(ai);
       
+      // Fetch Notifications
+      const resNotif = await fetch(`${baseUrl}/api/notifications`, { headers });
+      if (resNotif.ok) setNotifications(await resNotif.json());
+
       setTimeout(() => setIsInitializing(false), 800);
     } catch (e) { 
       console.error("Critical Fetch Error:", e);
@@ -258,17 +265,64 @@ const AndresBelloSuite = () => {
                  </div>
               </div>
               <div className="h-6 w-[1px] bg-white/10 hidden md:block" />
-              <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-5 py-1.5 active:scale-95 cursor-pointer hover:bg-white/10 transition-all">
-                 <Search className="w-3.5 h-3.5 text-[#86868b]" />
-                 <span className="text-[11px] font-medium text-[#86868b]">Explorar sistema...</span>
+              <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-5 py-2 active:scale-95 group focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">
+                 <Search className="w-3.5 h-3.5 text-[#86868b] group-focus-within:text-blue-400" />
+                 <input 
+                   type="text" 
+                   placeholder="Explorar sistema..." 
+                   value={searchTerm}
+                   onChange={(e) => setSearchTerm(e.target.value)}
+                   className="bg-transparent border-none outline-none text-[11px] font-medium text-white placeholder:text-[#86868b] w-48"
+                 />
               </div>
             </div>
 
             <div className="flex items-center gap-6">
-               <button className="relative p-2.5 rounded-full hover:bg-white/5 text-[#86868b] hover:text-white transition-all">
-                  <Bell className="w-5 h-5" />
-                  <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-blue-500 rounded-full border-2 border-black" />
-               </button>
+               <div className="relative">
+                  <button 
+                    onClick={() => setIsNotifOpen(!isNotifOpen)}
+                    className={`relative p-2.5 rounded-full hover:bg-white/5 transition-all ${isNotifOpen ? 'bg-white/10 text-white' : 'text-[#86868b]'}`}
+                  >
+                     <Bell className="w-5 h-5" />
+                     {notifications.length > 0 && (
+                        <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-blue-500 rounded-full border-2 border-black" />
+                     )}
+                  </button>
+                  
+                  <AnimatePresence>
+                    {isNotifOpen && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="absolute right-0 mt-4 w-80 apple-glass border border-white/10 rounded-[1.75rem] shadow-2xl p-6 z-[100]"
+                      >
+                         <div className="flex items-center justify-between mb-6">
+                            <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">Notificaciones</h4>
+                            <Badge className="bg-blue-600/20 text-blue-400 border-none px-2 py-0.5 text-[8px]">{notifications.length}</Badge>
+                         </div>
+                         <div className="space-y-3 max-h-[300px] overflow-y-auto no-scrollbar">
+                            {notifications.map(n => (
+                              <div 
+                                key={n.id} 
+                                onClick={() => {
+                                  setActiveTab('aichat');
+                                  setIsNotifOpen(false);
+                                }}
+                                className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group"
+                              >
+                                 <div className="flex items-center gap-3 mb-1">
+                                    <Sparkles className="w-3 h-3 text-blue-400" />
+                                    <span className="text-[9px] font-bold text-white uppercase">{n.title}</span>
+                                 </div>
+                                 <p className="text-[11px] text-[#86868b] leading-tight group-hover:text-white/80 transition-colors">{n.msg}</p>
+                              </div>
+                            ))}
+                         </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+               </div>
                <div className="h-8 w-[1px] bg-white/10" />
                <div className="flex items-center gap-4 group cursor-pointer pr-2">
                   <div className="flex flex-col items-end">
@@ -300,6 +354,7 @@ const AndresBelloSuite = () => {
                 {activeTab === 'staff' && <Staff />}
                 {activeTab === 'analytics' && <IAAnalytics />}
                 {activeTab === 'settings' && <InstitutionalSettings />}
+                {activeTab === 'aichat' && <AIChatView searchTerm={searchTerm} />}
               </motion.div>
             </AnimatePresence>
           </main>
@@ -314,8 +369,8 @@ const AndresBelloSuite = () => {
           <motion.button
             whileHover={{ scale: 1.1, y: -2 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setIsAIChatOpen(true)}
-            className="fixed bottom-24 right-10 w-16 h-16 apple-glass text-blue-400 rounded-3xl flex items-center justify-center z-[90] group shadow-2xl"
+            onClick={() => setActiveTab('aichat')}
+            className={`fixed bottom-24 right-10 w-16 h-16 apple-glass rounded-3xl flex items-center justify-center z-[90] group shadow-2xl transition-all ${activeTab === 'aichat' ? 'bg-blue-600 text-white' : 'text-blue-400'}`}
           >
              <Sparkles className="w-7 h-7" />
              <div className="absolute -top-12 right-0 apple-glass px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none scale-90 group-hover:scale-100">

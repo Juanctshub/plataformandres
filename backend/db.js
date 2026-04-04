@@ -40,7 +40,8 @@ const initDB = async () => {
         nombre TEXT NOT NULL,
         seccion TEXT NOT NULL,
         representante TEXT,
-        contacto TEXT
+        contacto TEXT,
+        estado TEXT NOT NULL DEFAULT 'activo'
       )
     `);
 

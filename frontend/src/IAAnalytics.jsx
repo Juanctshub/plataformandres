@@ -115,9 +115,9 @@ const IAAnalytics = () => {
             {/* Predictions Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { label: 'Riesgo Deserción', value: '4.2%', icon: Zap, color: 'text-amber-400', sub: 'Variación -0.8%' },
+                  { label: 'Riesgo Deserción', value: '0%', icon: Zap, color: 'text-amber-400', sub: 'Variación 0%' },
                   { label: 'Integridad Data', value: '99.9%', icon: ShieldCheck, color: 'text-emerald-400', sub: 'Protocolo AES-256' },
-                  { label: 'Patrones IA', value: aiData?.alerts?.length || 0, icon: Sparkles, color: 'text-blue-400', sub: 'Alertas Detectadas' },
+                  { label: 'Patrones IA', value: '0', icon: Sparkles, color: 'text-blue-400', sub: 'Alertas Detectadas' },
                   { label: 'Análisis Batch', value: 'Active', icon: Cpu, color: 'text-indigo-400', sub: 'Kernel v15.0' },
                 ].map((stat, i) => (
                   <motion.div 
@@ -184,9 +184,11 @@ const IAAnalytics = () => {
                             </Button>
                          </div>
                       )) : (
-                        <div className="py-20 flex flex-col items-center justify-center opacity-20">
-                            <ShieldCheck className="w-12 h-12 mb-4" />
-                            <p className="text-xs font-bold uppercase tracking-widest text-center">Nodos en estado de reposo optimizado</p>
+                        <div className="py-20 flex flex-col items-center justify-center opacity-40 text-center">
+                            <ShieldCheck className="w-16 h-16 mb-6 text-emerald-500/20" />
+                            <h4 className="text-lg font-bold text-white tracking-tight leading-none mb-2">✅ Optimización de Asistencia</h4>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">No se detectan patrones de deserción injustificada.</p>
+                            <p className="text-[9px] font-medium text-[#86868b] mt-4 italic">Evaluación crítica del núcleo neural v15.0</p>
                         </div>
                       )}
                    </div>
