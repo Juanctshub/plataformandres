@@ -20,7 +20,7 @@ import {
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 
-import logo from './assets/logo.jpg';
+import logo from './assets/logo.png';
 
 const Login = ({ onLogin }) => {
     const [view, setView] = useState('login'); // login, recovery, bio, signup
