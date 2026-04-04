@@ -19,7 +19,8 @@ import {
   Sparkles,
   Printer,
   UserPlus,
-  Plus
+  Plus,
+  Command
 } from 'lucide-react';
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
