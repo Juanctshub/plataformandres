@@ -66,10 +66,11 @@ app.post('/api/recover', async (req, res) => {
 // BIO-AUTENTICACIÓN (Nodo de Validación)
 app.post('/api/bio-auth', async (req, res) => {
     try {
-        const userResult = await db.query("SELECT id, username, role FROM usuarios WHERE id = $1", [1]); // Mock admin
+        const userResult = await db.query("SELECT id, username, role FROM usuarios WHERE username = 'admin'");
         const user = userResult.rows[0];
-        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '24h' });
-        res.json({ success: true, message: "Acceso Biométrico Validado en Nodo Seguro", token, user });
+        if (!user) throw new Error("Nodo Administrador no encontrado");
+        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '48h' });
+        res.json({ success: true, message: "Acceso Biométrico Validado en Nodo Seguro", token, user: { username: user.username, role: user.role } });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

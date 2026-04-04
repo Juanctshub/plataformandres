@@ -378,7 +378,6 @@ const AndresBelloSuite = () => {
             </div>
           </motion.button>
 
-          <AIChat isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} />
         </div>
       )}
     </AnimatePresence>
