@@ -81,15 +81,19 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
         const data = await res.json();
         
         if (res.ok) {
-            // Detectar si hay una acción requerida
-            const actionMatch = data.content.match(/ACTION_REQUIRED: (\{.*\})/);
-            const action = actionMatch ? JSON.parse(actionMatch[1]) : null;
+            // Proposals are now auto-saved by the backend
+            const hasProposals = data.proposals && data.proposals.length > 0;
+
+            let content = data.content || '';
+            if (hasProposals) {
+                content += '\n\n🔔 He creado ' + data.proposals.length + ' propuesta(s) que requieren tu aprobación. Revisa el panel de notificaciones (🔔) para aprobar, rechazar o responder.';
+            }
 
             setMessages(prev => [...prev, { 
                 role: 'assistant', 
-                content: data.content.replace(/ACTION_REQUIRED: \{.*\}/, '').trim(),
+                content: content,
                 timestamp: data.timestamp || new Date().toLocaleTimeString(),
-                action: action
+                proposals: data.proposals || []
             }]);
         } else {
             throw new Error(data.error);

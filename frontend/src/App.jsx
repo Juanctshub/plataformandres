@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShieldCheck, 
@@ -20,7 +20,13 @@ import {
   X,
   AlertCircle,
   CheckCircle2,
-  Loader2
+  Loader2,
+  Bot,
+  Check,
+  XCircle,
+  Send,
+  Zap,
+  MessageSquare
 } from 'lucide-react';
 
 import Login from './Login';
@@ -34,6 +40,7 @@ import SchedulesModule from './Schedules';
 import Staff from './Staff';
 import AIChatView from './AIChatView';
 import { Badge } from "./components/ui/badge";
+import { Button } from "./components/ui/button";
 import InstitutionalSettings from './InstitutionalSettings';
 import logo from './assets/logo.jpg';
 
@@ -170,6 +177,65 @@ const AndresBelloSuite = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [notifications, setNotifications] = useState([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+
+  // ═══ AI PROPOSALS STATE ═══
+  const [proposals, setProposals] = useState([]);
+  const [selectedProposal, setSelectedProposal] = useState(null);
+  const [proposalResponse, setProposalResponse] = useState('');
+  const [proposalLoading, setProposalLoading] = useState(false);
+  const [proposalResult, setProposalResult] = useState(null);
+  const pollRef = useRef(null);
+
+  // Poll for proposals every 15 seconds
+  useEffect(() => {
+    if (!token) return;
+    const fetchProposals = async () => {
+      try {
+        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+        const res = await fetch(`${baseUrl}/api/ai/proposals?status=pending`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setProposals(data);
+        }
+      } catch (e) { /* silent */ }
+    };
+    fetchProposals();
+    pollRef.current = setInterval(fetchProposals, 15000);
+    return () => clearInterval(pollRef.current);
+  }, [token]);
+
+  const handleProposalDecision = async (proposalId, decision, customMsg) => {
+    setProposalLoading(true);
+    setProposalResult(null);
+    try {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+      const res = await fetch(`${baseUrl}/api/ai/proposals/${proposalId}/respond`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ decision, customMessage: customMsg })
+      });
+      const data = await res.json();
+      setProposalResult(data);
+      // Remove from list
+      setProposals(prev => prev.filter(p => p.id !== proposalId));
+      // Refresh notifications  
+      setTimeout(() => {
+        setSelectedProposal(null);
+        setProposalResult(null);
+        setProposalResponse('');
+        fetchData(token);
+      }, 2000);
+    } catch (e) {
+      setProposalResult({ success: false, message: 'Error de conexión' });
+    } finally {
+      setProposalLoading(false);
+    }
+  };
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
@@ -324,8 +390,12 @@ const AndresBelloSuite = () => {
                         className={`relative p-2.5 rounded-full hover:bg-white/5 transition-all ${isNotifOpen ? 'bg-white/10 text-white' : 'text-[#86868b]'}`}
                       >
                          <Bell className="w-5 h-5" />
-                         {notifications.length > 0 && (
-                            <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-blue-500 rounded-full border-2 border-black" />
+                         {(notifications.length > 0 || proposals.length > 0) && (
+                            <div className="absolute top-1 right-1 flex items-center justify-center">
+                              <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center animate-pulse">
+                                <span className="text-[7px] font-black text-white">{proposals.length + notifications.length}</span>
+                              </div>
+                            </div>
                          )}
                       </button>
                       
@@ -335,14 +405,51 @@ const AndresBelloSuite = () => {
                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="absolute right-0 mt-4 w-80 apple-glass border border-white/10 rounded-[1.75rem] shadow-2xl p-6 z-[100]"
+                            className="absolute right-0 mt-4 w-96 apple-glass border border-white/10 rounded-[1.75rem] shadow-2xl p-6 z-[100]"
                           >
                              <div className="flex items-center justify-between mb-6">
-                                <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">Notificaciones</h4>
-                                <Badge className="bg-blue-600/20 text-blue-400 border-none px-2 py-0.5 text-[8px]">{notifications.length}</Badge>
+                                <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">Centro de Comandos</h4>
+                                <div className="flex gap-2">
+                                  {proposals.length > 0 && (
+                                    <Badge className="bg-blue-600 text-white border-none px-2.5 py-0.5 text-[8px] font-black animate-pulse">
+                                      {proposals.length} IA
+                                    </Badge>
+                                  )}
+                                  <Badge className="bg-white/10 text-white/60 border-none px-2 py-0.5 text-[8px]">{notifications.length}</Badge>
+                                </div>
                              </div>
-                             <div className="space-y-3 max-h-[300px] overflow-y-auto no-scrollbar">
-                                {notifications.map(n => (
+                             <div className="space-y-3 max-h-[400px] overflow-y-auto no-scrollbar">
+                                {/* AI Proposals - Priority */}
+                                {proposals.map(p => (
+                                  <div 
+                                    key={`prop-${p.id}`}
+                                    onClick={() => {
+                                      setSelectedProposal(p);
+                                      setIsNotifOpen(false);
+                                    }}
+                                    className="p-4 rounded-2xl bg-blue-600/10 border border-blue-500/20 hover:bg-blue-600/20 transition-all cursor-pointer group"
+                                  >
+                                     <div className="flex items-center gap-3 mb-2">
+                                        <div className="w-6 h-6 rounded-lg bg-blue-600 flex items-center justify-center">
+                                          <Bot className="w-3 h-3 text-white" />
+                                        </div>
+                                        <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">PROPUESTA IA</span>
+                                        <span className="text-[8px] text-blue-400/50 font-bold ml-auto">{p.type}</span>
+                                     </div>
+                                     <h5 className="text-xs font-bold text-white mb-1">{p.title}</h5>
+                                     <p className="text-[10px] text-blue-300/60 leading-tight">{(p.description || '').slice(0, 80)}...</p>
+                                     <div className="flex items-center gap-2 mt-3">
+                                       <span className="text-[8px] font-black text-blue-400 uppercase tracking-wider">Click para revisar →</span>
+                                     </div>
+                                  </div>
+                                ))}
+
+                                {proposals.length > 0 && notifications.length > 0 && (
+                                  <div className="border-t border-white/5 my-2" />
+                                )}
+
+                                {/* Regular notifications */}
+                                {notifications.filter(n => n.type !== 'ai_proposal').map(n => (
                                   <div 
                                     key={n.id} 
                                     onClick={() => {
@@ -414,6 +521,137 @@ const AndresBelloSuite = () => {
             )}
           </AnimatePresence>
 
+          {/* ═══ AI PROPOSAL MODAL ═══ */}
+          <AnimatePresence>
+            {selectedProposal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-xl flex items-center justify-center p-6"
+                onClick={() => { if (!proposalLoading) { setSelectedProposal(null); setProposalResult(null); setProposalResponse(''); }}}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, y: 20, opacity: 0 }}
+                  animate={{ scale: 1, y: 0, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
+                  onClick={e => e.stopPropagation()}
+                  className="w-full max-w-lg apple-glass border border-white/10 rounded-[2.5rem] p-10 shadow-2xl space-y-8"
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-xl shadow-blue-600/30">
+                        <Bot className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-white tracking-tight">Propuesta del Núcleo IA</h3>
+                        <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">{selectedProposal.type}</span>
+                      </div>
+                    </div>
+                    <button onClick={() => { setSelectedProposal(null); setProposalResult(null); }} className="p-2 rounded-full hover:bg-white/10 text-white/30 hover:text-white transition-all">
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="space-y-4">
+                    <h4 className="text-xl font-semibold text-white leading-snug">{selectedProposal.title}</h4>
+                    <p className="text-sm text-[#86868b] leading-relaxed">{selectedProposal.description}</p>
+                    
+                    {selectedProposal.ai_reasoning && (
+                      <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Zap className="w-3 h-3 text-blue-400" />
+                          <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Razonamiento IA</span>
+                        </div>
+                        <p className="text-xs text-white/60 leading-relaxed">{(selectedProposal.ai_reasoning || '').slice(0, 300)}</p>
+                      </div>
+                    )}
+
+                    {selectedProposal.payload && Object.keys(selectedProposal.payload).length > 0 && (
+                      <div className="p-4 rounded-2xl bg-indigo-600/5 border border-indigo-500/10">
+                        <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Datos de la acción</span>
+                        <div className="mt-2 space-y-1">
+                          {Object.entries(selectedProposal.payload).map(([k, v]) => (
+                            <div key={k} className="flex justify-between text-xs">
+                              <span className="text-white/40 font-medium">{k}:</span>
+                              <span className="text-white/80 font-semibold">{typeof v === 'object' ? JSON.stringify(v) : String(v)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Result Banner */}
+                  {proposalResult && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`p-4 rounded-2xl flex items-center gap-3 ${proposalResult.success ? 'bg-emerald-600/10 border border-emerald-500/20' : 'bg-red-600/10 border border-red-500/20'}`}
+                    >
+                      {proposalResult.success ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <XCircle className="w-5 h-5 text-red-400" />}
+                      <span className={`text-sm font-semibold ${proposalResult.success ? 'text-emerald-300' : 'text-red-300'}`}>{proposalResult.message}</span>
+                    </motion.div>
+                  )}
+
+                  {/* Actions */}
+                  {!proposalResult && (
+                    <div className="space-y-4">
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => handleProposalDecision(selectedProposal.id, 'approved')}
+                          disabled={proposalLoading}
+                          className="flex-1 h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-xs tracking-wider shadow-xl shadow-emerald-600/20 disabled:opacity-50"
+                        >
+                          {proposalLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
+                          APROBAR Y EJECUTAR
+                        </Button>
+                        <Button
+                          onClick={() => handleProposalDecision(selectedProposal.id, 'rejected')}
+                          disabled={proposalLoading}
+                          variant="ghost"
+                          className="h-14 px-6 text-red-400 hover:bg-red-400/10 rounded-2xl font-bold text-xs tracking-wider disabled:opacity-50"
+                        >
+                          <XCircle className="w-4 h-4 mr-1" />
+                          RECHAZAR
+                        </Button>
+                      </div>
+
+                      {/* Custom response */}
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={proposalResponse}
+                          onChange={e => setProposalResponse(e.target.value)}
+                          placeholder="Respuesta personalizada..."
+                          className="flex-1 h-12 bg-white/5 border border-white/10 rounded-xl px-5 text-sm text-white placeholder:text-white/20 outline-none focus:ring-1 focus:ring-blue-500/50 font-medium"
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' && proposalResponse.trim()) {
+                              handleProposalDecision(selectedProposal.id, 'custom', proposalResponse);
+                            }
+                          }}
+                        />
+                        <Button
+                          onClick={() => {
+                            if (proposalResponse.trim()) {
+                              handleProposalDecision(selectedProposal.id, 'custom', proposalResponse);
+                            }
+                          }}
+                          disabled={!proposalResponse.trim() || proposalLoading}
+                          className="h-12 w-12 bg-blue-600 hover:bg-blue-500 text-white rounded-xl p-0 flex items-center justify-center disabled:opacity-30"
+                        >
+                          <Send className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <p className="text-[9px] text-white/20 text-center font-medium tracking-wider uppercase">Escribe una respuesta personalizada o usa los botones de arriba</p>
+                    </div>
+                  )}
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <AnimatePresence>
             {activeTab !== 'aichat' && (
