@@ -8,7 +8,17 @@ const jwt = require('jsonwebtoken');
 const db = require('./db');
 const { authenticateToken, JWT_SECRET } = require('./auth');
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+let groq;
+try {
+    if (process.env.GROQ_API_KEY) {
+        groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+        console.log("Nucleo Groq Llama 3 Sincronizado.");
+    } else {
+        console.warn("ADVERTENCIA: GROQ_API_KEY no detectada. El asistente IA operara en modo diagnostico.");
+    }
+} catch (e) {
+    console.error("Fallo en inicializacion de Nucleo Groq:", e.message);
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -290,6 +300,10 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
                ACTION_REQUIRED: {"type": "SUSPEND", "student": "Nombre", "id": 123}
             4. El usuario tiene la última palabra. Siempre pregunta "¿Procedo con la ejecución?" después de una propuesta.
         `;
+
+        if (!groq) {
+            return res.status(503).json({ error: "El núcleo de inferencia Groq no está configurado en este nodo." });
+        }
 
         const chatCompletion = await groq.chat.completions.create({
             messages: [
