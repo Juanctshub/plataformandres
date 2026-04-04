@@ -89,36 +89,60 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
 // Sub-componentes Maestros
 const SplashScreen = ({ isInitialized }) => (
   <motion.div 
+    key="splash-screen"
     initial={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    className="fixed inset-0 z-[1000] bg-black flex flex-col items-center justify-center overflow-hidden"
+    exit={{ opacity: 0, transition: { duration: 1, ease: "easeInOut" } }}
+    className="fixed inset-0 bg-black z-[2000] flex flex-col items-center justify-center select-none overflow-hidden"
   >
-    <div className="absolute inset-0">
-       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/20 blur-[150px] rounded-full animate-pulse" />
-    </div>
-    <motion.div 
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      className="relative flex flex-col items-center space-y-8"
-    >
-       <div className="w-24 h-24 rounded-[2.5rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/20">
-          <ShieldCheck className="w-12 h-12 text-white" />
-       </div>
-       <div className="flex flex-col items-center text-center">
-          <h1 className="text-3xl font-black tracking-tighter text-white">Andrés Bello</h1>
-          <span className="text-[11px] font-bold text-blue-400 uppercase tracking-[0.4em] mt-2">Nodo Maestro v19.1</span>
-       </div>
-    </motion.div>
-    <div className="absolute bottom-12 flex flex-col items-center space-y-2">
-       <div className="w-48 h-[2px] bg-white/5 rounded-full overflow-hidden">
-          <motion.div 
-            initial={{ x: '-100%' }}
-            animate={{ x: isInitialized ? '0%' : '100%' }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-full h-full bg-blue-500"
-          />
-       </div>
-       <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">Sincronizando registros estelares</span>
+    <div className="relative flex flex-col items-center">
+      <div className="absolute inset-0 bg-blue-600/10 blur-[120px] rounded-full scale-150 animate-pulse" />
+      <svg width="100" height="100" viewBox="0 0 100 100" className="mb-10 relative z-10">
+        <motion.path
+          d="M20,30 L50,15 L80,30 L50,45 Z"
+          fill="none"
+          stroke="white"
+          strokeWidth="1.5"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+        />
+        <motion.path
+          d="M20,30 L20,60 C20,75 50,85 50,85 C50,85 80,75 80,60 L80,30"
+          fill="none"
+          stroke="white"
+          strokeWidth="1.5"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
+        />
+      </svg>
+      
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.8 }}
+        className="text-center relative z-10"
+      >
+        <h1 className="text-3xl font-black tracking-tighter text-white uppercase italic leading-none">Andrés Bello</h1>
+        <div className="flex items-center justify-center gap-3 mt-4">
+           <div className="h-[1px] w-4 bg-white/10" />
+           <p className="text-[9px] font-black tracking-[0.4em] text-white/40 uppercase">Apple Glass v15.0 • Pro</p>
+           <div className="h-[1px] w-4 bg-white/10" />
+        </div>
+      </motion.div>
+
+      <div className="mt-12 w-32 h-[2px] bg-white/5 rounded-full overflow-hidden relative">
+        <motion.div 
+          initial={{ x: "-100%" }}
+          animate={{ x: isInitialized ? "0%" : "100%" }}
+          transition={{ 
+            duration: isInitialized ? 0.5 : 2.5, 
+            repeat: isInitialized ? 0 : Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute inset-0 bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.5)]"
+        />
+      </div>
     </div>
   </motion.div>
 );

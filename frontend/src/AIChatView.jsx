@@ -47,12 +47,6 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
     }
   }, [searchTerm]);
 
-  useEffect(() => {
-    if (searchTerm) {
-      setInput(searchTerm);
-    }
-  }, [searchTerm]);
-
   const handleSend = async (e) => {
     if (e) e.preventDefault();
     if (!input.trim()) return;
@@ -148,36 +142,35 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
       >
         <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col h-[85vh]">
           
-        {/* Inmersive Exit Button */}
+        {/* Inmersive Exit Button (Favicon Style) */}
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           onClick={onClose}
-          className="absolute -top-16 right-0 p-3 rounded-2xl apple-glass text-white/40 hover:text-white hover:bg-white/10 transition-all group flex items-center gap-2"
+          className="fixed top-12 right-12 p-4 rounded-[1.5rem] apple-glass text-white/40 hover:text-white hover:bg-white/10 transition-all border border-white/5 z-[100] shadow-2xl backdrop-blur-3xl group"
         >
-          <span className="text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">Salir del Núcleo</span>
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
         </motion.button>
 
           {messages.length === 1 && !isTyping && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-12 space-y-12"
+              className="mb-12 space-y-12 flex flex-col items-center text-center"
             >
-              <div className="flex items-center gap-6">
-                 <div className="w-16 h-16 rounded-[2rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/30">
-                    <Sparkles className="w-8 h-8 text-white" />
+              <div className="flex flex-col items-center gap-6">
+                 <div className="w-20 h-20 rounded-[2.5rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/30">
+                    <Sparkles className="w-10 h-10 text-white" />
                  </div>
-                 <div className="space-y-1">
-                    <h2 className="text-6xl font-black tracking-tighter text-white leading-none">
+                 <div className="space-y-4">
+                    <h2 className="text-7xl font-black tracking-tighter text-white leading-none">
                       ¡Hola!, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{user?.username || 'Admin'}</span>
                     </h2>
                     <p className="text-2xl text-[#86868b] font-medium tracking-tight">¿En qué auditoría procedemos hoy?</p>
                  </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl w-full mx-auto">
                  {[
                    { label: 'Analizar Deserción', icon: BrainCircuit, prompt: 'Realiza un análisis profundo de los estudiantes en riesgo de deserción' },
                    { label: 'Resumen de Notas', icon: GraduationCap, prompt: 'Dame un resumen de las calificaciones del 1er Lapso' },
