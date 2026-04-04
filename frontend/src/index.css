@@ -2,87 +2,179 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 11%;
+  --card-foreground: 0 0% 100%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 210 100% 52%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 17%;
+  --input: 240 3.7% 17%;
+  --ring: 210 100% 52%;
+  --radius: 1.25rem;
+}
+
 @layer base {
-  :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 11%;
-    --card-foreground: 0 0% 100%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 210 100% 52%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 17%;
-    --input: 240 3.7% 17%;
-    --ring: 210 100% 52%;
-    --radius: 1.25rem;
+  body {
+    background-color: black;
+    color: white;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.015em;
+    overflow-x: hidden;
   }
 }
 
-body {
-  @apply bg-black text-white font-sans antialiased selection:bg-indigo-500/30 selection:text-white overflow-x-hidden;
-  letter-spacing: -0.015em;
+body *::selection {
+  background-color: rgba(99, 102, 241, 0.3);
+  color: white;
 }
 
 /* Apple Pro Dark Components */
 .apple-pro-card {
-  @apply bg-[#1C1C1E] border border-white/5 rounded-[1.5rem] shadow-2xl transition-all duration-500 overflow-hidden relative;
+  background-color: #1C1C1E;
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.05);
+  border-radius: 1.5rem;
   box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.4);
+  transition-property: all;
+  transition-duration: 500ms;
+  overflow: hidden;
+  position: relative;
 }
 
 .apple-pro-card::before {
   content: '';
-  @apply absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none;
+  position: absolute;
+  inset: 0px;
+  background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.03), transparent);
+  pointer-events: none;
 }
 
 .glass-dark {
-  @apply backdrop-blur-2xl bg-black/40 border border-white/10;
+  backdrop-filter: blur(40px);
+  background-color: rgba(0, 0, 0, 0.4);
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .stat-card-pro {
-  @apply bg-[#1C1C1E] border border-white/[0.05] rounded-[1.75rem] p-10 hover:border-white/10 transition-all duration-700 relative overflow-hidden group;
+  background-color: #1C1C1E;
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.05);
+  border-radius: 1.75rem;
+  padding: 2.5rem;
+  transition-property: all;
+  transition-duration: 700ms;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-pro:hover {
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .action-btn-pro {
-  @apply h-14 px-8 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95 flex items-center justify-center gap-4 bg-[#2C2C2E] text-white border border-white/5 hover:border-white/20 hover:bg-[#3A3A3C] shadow-lg;
+  height: 3.5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  border-radius: 1rem;
+  font-weight: 900;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  transition-property: all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background-color: #2C2C2E;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .cta-pro {
-  @apply bg-[#0A84FF] text-white hover:bg-[#007AFF] border-none shadow-[0_10px_20px_-10px_rgba(10,132,255,0.4)];
+  background-color: #0A84FF;
+  color: white;
+  border: none;
+  box-shadow: 0 10px 20px -10px rgba(10, 132, 255, 0.4);
 }
 
-/* Hierarchy & Balance Typography */
+.cta-pro:hover {
+  background-color: #007AFF;
+}
+
+/* Typography tokens purely with classes */
 .text-pro-title {
-  @apply text-white font-black tracking-tighter italic uppercase;
+  color: white;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  font-style: italic;
+  text-transform: uppercase;
 }
 
 .text-pro-desc {
-  @apply text-[#8E8E93] font-bold tracking-tight;
+  color: #8E8E93;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 .text-pro-value {
-  @apply text-white font-black tracking-tighter leading-none;
+  color: white;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 1;
 }
 
 .badge-pro {
-  @apply bg-white/5 text-white/40 border border-white/5 font-black text-[8px] uppercase tracking-widest px-3 py-1 rounded-lg;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  font-weight: 900;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-radius: 0.5rem;
 }
 
-/* Space & Movement (Aire & Ritmo) */
+/* Space & Movement */
 .section-air {
-  @apply py-16 px-12 space-y-16;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  padding-left: 3rem;
+  padding-right: 3rem;
 }
 
 .grid-pro {
-  @apply grid gap-10 md:grid-cols-2 lg:grid-cols-4;
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid-pro {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-pro {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 /* Custom Pro Scrollbar */
@@ -90,10 +182,14 @@ body {
   width: 5px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-black;
+  background-color: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Transitions */
@@ -105,7 +201,7 @@ body {
 .dark-mesh {
   background-color: #000000;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(10, 132, 255, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(255, 55, 95, 0.03) 0px, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.03) 0px, transparent 50%);
+    radial-gradient(circle at 0% 0%, rgba(10, 132, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 100% 0%, rgba(255, 55, 95, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
 }
