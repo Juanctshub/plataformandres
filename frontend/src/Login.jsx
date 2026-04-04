@@ -165,7 +165,7 @@ const Login = ({ onLogin }) => {
                                 <div className="flex flex-col items-center text-center space-y-6">
                                     <motion.div 
                                        whileHover={{ scale: 1.05 }}
-                                       className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center shadow-2xl shadow-blue-500/10 overflow-hidden border border-white/10"
+                                       className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center shadow-2xl shadow-blue-500/10 overflow-hidden border border-white/10"
                                      >
                                          <img src={logo} className="w-full h-full object-cover scale-110" alt="Logo" />
                                      </motion.div>

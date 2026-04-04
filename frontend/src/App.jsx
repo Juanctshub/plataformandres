@@ -100,7 +100,7 @@ const SplashScreen = ({ isInitialized }) => (
       <img 
         src={logo} 
         alt="Logo Andrés Bello" 
-        className="w-28 h-28 rounded-[2.5rem] mb-10 relative z-10 shadow-2xl shadow-blue-500/20 border border-white/10" 
+        className="w-28 h-28 rounded-full mb-10 relative z-10 shadow-2xl shadow-blue-500/20 border border-white/10 object-cover" 
       />
       
       <motion.div 
@@ -292,7 +292,7 @@ const AndresBelloSuite = () => {
               >
                 <div className="flex items-center gap-8">
                   <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-                     <img src={logo} className="w-11 h-11 rounded-2xl shadow-lg border border-white/10 group-hover:scale-105 transition-transform" alt="Logo" />
+                     <img src={logo} className="w-11 h-11 rounded-full shadow-lg border border-white/10 group-hover:scale-105 transition-transform object-cover" alt="Logo" />
                      <div className="flex flex-col">
                         <h2 className="text-sm font-black tracking-tighter text-white leading-none uppercase italic">Andrés Bello</h2>
                         <span className="text-[9px] font-black tracking-[0.2em] text-[#86868b] uppercase mt-1">SaaS Suite v20.0</span>

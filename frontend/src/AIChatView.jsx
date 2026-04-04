@@ -192,7 +192,7 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
               className="mb-12 space-y-12 flex flex-col items-center text-center"
             >
               <div className="flex flex-col items-center gap-8">
-                 <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-600/30 overflow-hidden border border-white/10">
+                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-600/30 overflow-hidden border border-white/10">
                     <img src={logo} className="w-full h-full object-cover scale-110" alt="Logo" />
                  </div>
                  <div className="space-y-3">
