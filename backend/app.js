@@ -636,35 +636,42 @@ REGLAS:
             }
 
             if (studentsList.length > 0) {
-                // Insert all students directly
-                let successCount = 0;
-                let failCount = 0;
-                const registered = [];
-                const errors = [];
-                
-                for (const s of studentsList) {
-                    if (!s.nombre || !s.cedula) { 
-                        failCount++; 
-                        errors.push(`Sin nombre: ${s.cedula}`);
-                        continue; 
-                    }
+                // OPTIMIZED BULK INSERT: Single query instead of per-student calls
+                const validStudents = studentsList.filter(s => s.nombre && s.cedula);
+                if (validStudents.length === 0) {
+                    failCount = studentsList.length;
+                    errors.push("No se encontraron datos válidos");
+                } else {
                     try {
-                        // Check if already exists
-                        const existing = await db.query("SELECT id FROM estudiantes WHERE cedula = $1", [s.cedula]);
-                        if (existing.rows.length > 0) {
-                            failCount++;
-                            errors.push(`Duplicado: ${s.nombre} (${s.cedula})`);
-                            continue;
+                        // Construct bulk insert values
+                        const valuesParams = [];
+                        const queryValues = [];
+                        validStudents.forEach((s, idx) => {
+                            const offset = idx * 5;
+                            valuesParams.push(`($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, $${offset + 5})`);
+                            queryValues.push(s.cedula, s.nombre, s.seccion || 'Sin Sección', s.representante || '', s.contacto || '');
+                        });
+
+                        const bulkQuery = `
+                            INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto)
+                            VALUES ${valuesParams.join(', ')}
+                            ON CONFLICT (cedula) DO NOTHING
+                            RETURNING nombre
+                        `;
+
+                        const insertResult = await db.query(bulkQuery, queryValues);
+                        successCount = insertResult.rows.length;
+                        failCount = studentsList.length - successCount;
+                        
+                        insertResult.rows.forEach(row => registered.push(row.nombre));
+                        
+                        if (failCount > 0) {
+                            errors.push(`${failCount} omitted (duplicates or invalid data)`);
                         }
-                        await db.query(
-                            "INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto) VALUES ($1,$2,$3,$4,$5)",
-                            [s.cedula, s.nombre, s.seccion || 'Sin Sección', s.representante || '', s.contacto || '']
-                        );
-                        successCount++;
-                        registered.push(s.nombre);
                     } catch (e) {
-                        failCount++;
-                        errors.push(`Error BD: ${s.nombre} - ${e.message}`);
+                        console.error("[BULK INSERT ERROR]:", e);
+                        failCount = studentsList.length;
+                        errors.push(`Error crítico en base de datos: ${e.message}`);
                     }
                 }
 

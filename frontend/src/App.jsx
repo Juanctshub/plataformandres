@@ -257,10 +257,11 @@ const AndresBelloSuite = () => {
         fetch(`${baseUrl}/api/estudiantes`, { headers }),
         fetch(`${baseUrl}/api/ai/analytics`, { headers }),
         fetch(`${baseUrl}/api/justificaciones`, { headers }),
-        fetch(`${baseUrl}/api/personal`, { headers })
+        fetch(`${baseUrl}/api/personal`, { headers }),
+        fetch(`${baseUrl}/api/asistencia/stats`, { headers })
       ]);
 
-      const [resStd, resAi, resJust, resStaff] = responses.map(r => r.status === 'fulfilled' ? r.value : null);
+      const [resStd, resAi, resJust, resStaff, resAtt] = responses.map(r => r.status === 'fulfilled' ? r.value : null);
       const aiDataRes = responses[1];
 
       // Prepare Notifications based on AI data
@@ -294,14 +295,13 @@ const AndresBelloSuite = () => {
       });
       setAiData(ai);
       
-      // Fetch real attendance stats
-      try {
-        const resAtt = await fetch(`${baseUrl}/api/asistencia/stats`, { headers });
-        if (resAtt.ok) {
-          const attData = await resAtt.json();
-          setStats(prev => ({ ...prev, attendance: attData.percentage }));
-        }
-      } catch (e) { /* attendance stats optional */ }
+      if (resAtt && resAtt.ok) {
+        const attData = await resAtt.json();
+        setStats(prev => ({ 
+          ...prev, 
+          attendance: attData.stats?.globalAttendance || '0%' 
+        }));
+      }
       
       // Fetch Notifications
       const resNotif = await fetch(`${baseUrl}/api/notifications`, { headers });
