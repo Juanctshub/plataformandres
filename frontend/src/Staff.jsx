@@ -54,7 +54,7 @@ const Staff = () => {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-            setStaff(data);
+            setStaff(Array.isArray(data) ? data : []);
         } catch (e) {
             console.error('Error fetching staff:', e);
         } finally {

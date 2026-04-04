@@ -73,8 +73,10 @@ const Grades = () => {
                 fetch(`${baseUrl}/api/notas`, { headers }),
                 fetch(`${baseUrl}/api/estudiantes`, { headers })
             ]);
-            setGrades(await resG.json());
-            setStudents(await resS.json());
+            const gData = resG.ok ? await resG.json() : [];
+            const sData = resS.ok ? await resS.json() : [];
+            setGrades(Array.isArray(gData) ? gData : []);
+            setStudents(Array.isArray(sData) ? sData : []);
         } catch (e) {
             console.error('Error fetching grades:', e);
         } finally {

@@ -60,7 +60,7 @@ const SchedulesModule = () => {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-            setSessions(data);
+            setSessions(Array.isArray(data) ? data : []);
         } catch (e) {
             console.error('Error fetching schedules:', e);
         } finally {

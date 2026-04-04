@@ -152,7 +152,7 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
            </div>
 
            <div className="space-y-6">
-              {aiData.alerts && aiData.alerts.length > 0 ? (
+              {(aiData?.alerts && Array.isArray(aiData.alerts) && aiData.alerts.length > 0) ? (
                 aiData.alerts.map((alert, i) => (
                    <div key={i} className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 flex items-center justify-between group hover:bg-white/[0.05] transition-all">
                       <div className="flex items-center gap-6">
@@ -185,9 +185,9 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
            </div>
 
            <div className="space-y-8">
-              {stats.recentActivity && stats.recentActivity.length > 0 ? (
+              {(stats?.recentActivity && Array.isArray(stats.recentActivity) && stats.recentActivity.length > 0) ? (
                 stats.recentActivity.map((log, i) => (
-                  <div key={i} className="flex gap-5 group">
+                   <div key={i} className="flex gap-5 group">
                      <div className="flex flex-col items-center gap-2 pt-1.5">
                         <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
                         <div className="w-[1.5px] h-full bg-white/5 rounded-full" />

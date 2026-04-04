@@ -47,10 +47,14 @@ const AttendanceSheet = () => {
 
       const stdData = await resStd.json();
       const justData = await resJust.json();
-      setJustifications(justData);
+      
+      const studentsArray = Array.isArray(stdData) ? stdData : [];
+      const justArray = Array.isArray(justData) ? justData : [];
+      
+      setJustifications(justArray);
 
-      const mappedStudents = stdData.map(s => {
-        const hasJustification = justData.find(j => 
+      const mappedStudents = studentsArray.map(s => {
+        const hasJustification = justArray.find(j => 
           j.estudiante_id === s.id && 
           j.fecha.startsWith(date) && 
           j.estado === 'aprobado'

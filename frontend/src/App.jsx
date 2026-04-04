@@ -158,6 +158,13 @@ const AndresBelloSuite = () => {
   });
   const [aiData, setAiData] = useState({ title: '', security: '', alerts: [] });
 
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setToken(null);
+    setUser(null);
+  }, []);
+
   const fetchData = useCallback(async (tokenValue) => {
     if (!tokenValue) {
       setIsInitializing(false);
@@ -167,49 +174,52 @@ const AndresBelloSuite = () => {
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
       const headers = { 'Authorization': `Bearer ${tokenValue}` };
       
-      const [resStd, resAi, resJust, resStaff] = await Promise.all([
+      const responses = await Promise.allSettled([
         fetch(`${baseUrl}/api/estudiantes`, { headers }),
         fetch(`${baseUrl}/api/ai/analytics`, { headers }),
         fetch(`${baseUrl}/api/justificaciones`, { headers }),
         fetch(`${baseUrl}/api/personal`, { headers })
       ]);
-      
-      if (resStd.ok && resAi.ok && resJust.ok && resStaff.ok) {
-          const stds = await resStd.json();
-          const ai = await resAi.json();
-          const justs = await resJust.json();
-          const staffArr = await resStaff.json();
 
-          setStats({
-            students: stds.length,
-            attendance: '98.5%',
-            risks: ai.alerts ? ai.alerts.filter(a => a.type === 'danger').length : 0,
-            justifications: justs.filter(j => j.estado === 'pendiente').length,
-            staffCount: staffArr.length,
-            recentActivity: justs.slice(0, 3).map(j => ({
-              time: j.fecha,
-              event: `Justificativo ${j.estado}: ${j.nombre}`
-            }))
-          });
-          setAiData(ai);
+      // Check for 403 Forbidden globally
+      const forbidden = responses.some(r => r.status === 'fulfilled' && r.value.status === 403);
+      if (forbidden) {
+        console.error("403 Forbidden: Redirigiendo a Login...");
+        handleLogout();
+        return;
       }
-      setTimeout(() => setIsInitializing(false), 1500);
+
+      const [resStd, resAi, resJust, resStaff] = responses.map(r => r.status === 'fulfilled' ? r.value : null);
+      
+      const stds = resStd && resStd.ok ? await resStd.json() : [];
+      const ai = resAi && resAi.ok ? await resAi.json() : { title: '', security: '', alerts: [] };
+      const justs = resJust && resJust.ok ? await resJust.json() : [];
+      const staffArr = resStaff && resStaff.ok ? await resStaff.json() : [];
+
+      setStats({
+        students: Array.isArray(stds) ? stds.length : 0,
+        attendance: '98.5%',
+        risks: (ai.alerts && Array.isArray(ai.alerts)) ? ai.alerts.filter(a => a.type === 'danger').length : 0,
+        justifications: Array.isArray(justs) ? justs.filter(j => j.estado === 'pendiente').length : 0,
+        staffCount: Array.isArray(staffArr) ? staffArr.length : 0,
+        recentActivity: Array.isArray(justs) ? justs.slice(0, 3).map(j => ({
+          time: j.fecha,
+          event: `Justificativo ${j.estado}: ${j.nombre}`
+        })) : []
+      });
+      setAiData(ai);
+      
+      setTimeout(() => setIsInitializing(false), 800);
     } catch (e) { 
+      console.error("Critical Fetch Error:", e);
       setIsInitializing(false);
     }
-  }, []);
+  }, [handleLogout]);
 
   useEffect(() => {
     if (token) fetchData(token);
     else setTimeout(() => setIsInitializing(false), 1500);
   }, [token, fetchData]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
-    setUser(null);
-  };
 
   const handleLogin = (data) => {
     localStorage.setItem('token', data.token);

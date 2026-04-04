@@ -55,7 +55,7 @@ const IAAnalytics = () => {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-            setAiData(data);
+            setAiData(data && typeof data === 'object' ? data : { alerts: [] });
         } catch (e) {
             console.error('IA Offline:', e);
         } finally {
@@ -117,7 +117,7 @@ const IAAnalytics = () => {
                 {[
                   { label: 'Riesgo Deserción', value: '4.2%', icon: Zap, color: 'text-amber-400', sub: 'Variación -0.8%' },
                   { label: 'Integridad Data', value: '99.9%', icon: ShieldCheck, color: 'text-emerald-400', sub: 'Protocolo AES-256' },
-                  { label: 'Patrones IA', value: aiData?.alerts.length || 0, icon: Sparkles, color: 'text-blue-400', sub: 'Alertas Detectadas' },
+                  { label: 'Patrones IA', value: aiData?.alerts?.length || 0, icon: Sparkles, color: 'text-blue-400', sub: 'Alertas Detectadas' },
                   { label: 'Análisis Batch', value: 'Active', icon: Cpu, color: 'text-indigo-400', sub: 'Kernel v15.0' },
                 ].map((stat, i) => (
                   <motion.div 
@@ -157,34 +157,39 @@ const IAAnalytics = () => {
                   </div>
 
                   <div className="space-y-6">
-                     {aiData?.alerts.map((alert, i) => (
-                        <div key={i} className={`p-8 rounded-[2rem] border transition-all flex flex-col md:flex-row md:items-center justify-between gap-8 group ${
-                           alert.type === 'danger' ? 'bg-red-500/5 border-red-500/10' : 'bg-amber-500/5 border-amber-500/10'
-                        }`}>
-                           <div className="flex items-center gap-6">
-                              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-md bg-white/5 ${
-                                 alert.type === 'danger' ? 'text-red-400' : 'text-amber-400'
-                              }`}>
-                                 {alert.type === 'danger' ? <AlertTriangle className="w-7 h-7" /> : <Bell className="w-7 h-7" />}
-                              </div>
-                              <div className="space-y-1">
-                                 <h4 className="text-lg font-semibold text-white tracking-tight group-hover:translate-x-1 transition-transform">{alert.msg}</h4>
-                                 <p className="text-xs text-[#86868b] font-medium italic">Evaluación crítica del núcleo neural</p>
-                              </div>
-                           </div>
-                           <Button 
-                              onClick={() => handleNotify(alert)}
-                              disabled={notifying === alert.student || alert.notified}
-                              className={`h-12 px-8 rounded-full font-bold text-xs transition-all ${
-                                 alert.notified ? 'bg-emerald-500/10 text-emerald-400 cursor-not-allowed' : 'bg-white text-black hover:bg-zinc-200'
-                              }`}
-                           >
-                              {notifying === alert.student ? <Loader2 className="w-4 h-4 animate-spin" /> : 
-                               alert.notified ? 'Notificado' : 'Enviar Alerta'}
-                           </Button>
+                      {(aiData?.alerts && Array.isArray(aiData.alerts) && aiData.alerts.length > 0) ? aiData.alerts.map((alert, i) => (
+                         <div key={i} className={`p-8 rounded-[2rem] border transition-all flex flex-col md:flex-row md:items-center justify-between gap-8 group ${
+                            alert.type === 'danger' ? 'bg-red-500/5 border-red-500/10' : 'bg-amber-500/5 border-amber-500/10'
+                         }`}>
+                            <div className="flex items-center gap-6">
+                               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-md bg-white/5 ${
+                                  alert.type === 'danger' ? 'text-red-400' : 'text-amber-400'
+                               }`}>
+                                  {alert.type === 'danger' ? <AlertTriangle className="w-7 h-7" /> : <Bell className="w-7 h-7" />}
+                               </div>
+                               <div className="space-y-1">
+                                  <h4 className="text-lg font-semibold text-white tracking-tight group-hover:translate-x-1 transition-transform">{alert.msg}</h4>
+                                  <p className="text-xs text-[#86868b] font-medium italic">Evaluación crítica del núcleo neural</p>
+                               </div>
+                            </div>
+                            <Button 
+                               onClick={() => handleNotify(alert)}
+                               disabled={notifying === alert.student || alert.notified}
+                               className={`h-12 px-8 rounded-full font-bold text-xs transition-all ${
+                                  alert.notified ? 'bg-emerald-500/10 text-emerald-400 cursor-not-allowed' : 'bg-white text-black hover:bg-zinc-200'
+                               }`}
+                            >
+                               {notifying === alert.student ? <Loader2 className="w-4 h-4 animate-spin" /> : 
+                                alert.notified ? 'Notificado' : 'Enviar Alerta'}
+                            </Button>
+                         </div>
+                      )) : (
+                        <div className="py-20 flex flex-col items-center justify-center opacity-20">
+                            <ShieldCheck className="w-12 h-12 mb-4" />
+                            <p className="text-xs font-bold uppercase tracking-widest text-center">Nodos en estado de reposo optimizado</p>
                         </div>
-                     ))}
-                  </div>
+                      )}
+                   </div>
                </motion.div>
 
                <motion.div 
