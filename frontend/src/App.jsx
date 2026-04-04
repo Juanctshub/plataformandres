@@ -29,8 +29,9 @@ import IAAnalytics from './IAAnalytics';
 import Grades from './Grades';
 import SchedulesModule from './Schedules';
 import Staff from './Staff';
-import InstitutionalSettings from './InstitutionalSettings';
 import AIChatView from './AIChatView';
+import { Badge } from "./components/ui/badge";
+import InstitutionalSettings from './InstitutionalSettings';
 
 // SplashScreen (Keeping the current one as requested)
 const SplashScreen = ({ isInitialized }) => (
@@ -269,9 +270,16 @@ const AndresBelloSuite = () => {
                  <Search className="w-3.5 h-3.5 text-[#86868b] group-focus-within:text-blue-400" />
                  <input 
                    type="text" 
-                   placeholder="Explorar sistema..." 
+                   placeholder="Explorar sistema... (Enter para buscar)" 
                    value={searchTerm}
                    onChange={(e) => setSearchTerm(e.target.value)}
+                   onKeyDown={(e) => {
+                     if (e.key === 'Enter') {
+                       if (searchTerm.trim()) {
+                         setActiveTab('aichat');
+                       }
+                     }
+                   }}
                    className="bg-transparent border-none outline-none text-[11px] font-medium text-white placeholder:text-[#86868b] w-48"
                  />
               </div>

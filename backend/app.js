@@ -87,10 +87,15 @@ app.post('/api/bio-auth', async (req, res) => {
 });
 
 // ESTUDIANTES (Gestión Institucional)
-app.get('/api/estudiantes', authenticateToken, async (req, res) => {
+    }
+});
+
+app.get('/api/estudiantes/:id', authenticateToken, async (req, res) => {
     try {
-        const result = await db.query("SELECT * FROM estudiantes ORDER BY seccion, nombre");
-        res.json(result.rows);
+        const { id } = req.params;
+        const result = await db.query("SELECT * FROM estudiantes WHERE id = $1", [id]);
+        if (result.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado" });
+        res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
