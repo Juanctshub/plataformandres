@@ -11,10 +11,12 @@ import {
   CheckCircle2,
   Building2,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Zap,
+  Globe,
+  Fingerprint
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
-
 
 const Login = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -26,25 +28,25 @@ const Login = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
 
   const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, scale: 0.95 },
     visible: { 
       opacity: 1, 
-      y: 0,
+      scale: 1,
       transition: { 
-        duration: 0.8, 
+        duration: 1.2, 
         ease: [0.22, 1, 0.36, 1],
-        staggerChildren: 0.08,
-        delayChildren: 0.2
+        staggerChildren: 0.1,
+        delayChildren: 0.3
       }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
+    hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
+      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
     }
   };
 
@@ -55,7 +57,7 @@ const Login = ({ onLogin }) => {
     setSuccess('');
 
     if (!isLogin && password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError('Discrepancia en el cifrado de datos');
       setLoading(false);
       return;
     }
@@ -77,7 +79,7 @@ const Login = ({ onLogin }) => {
           localStorage.setItem('user', JSON.stringify(data.user));
           onLogin(data);
         } else {
-          setSuccess('Registro completado. Iniciando sesión...');
+          setSuccess('Identidad Registrada. Sincronizando nucleo...');
           setTimeout(() => {
             setIsLogin(true);
             setSuccess('');
@@ -85,80 +87,85 @@ const Login = ({ onLogin }) => {
           }, 2000);
         }
       } else {
-        setError(data.error || 'Error de credenciales');
+        setError(data.error || 'Autenticación Fallida');
         setLoading(false);
       }
     } catch (err) {
-      setError('Error de conexión con el servidor.');
+      setError('Error de enlace con el servidor central');
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-zinc-50 p-6 font-sans relative overflow-hidden selection:bg-zinc-900 selection:text-white">
-      {/* Background Decorative Elements */}
+    <div className="min-h-screen w-full flex items-center justify-center bg-black p-8 font-sans relative overflow-hidden selection:bg-white selection:text-black">
+      {/* Dynamic Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-500/[0.03] blur-[150px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/[0.03] blur-[120px] rounded-full" />
+        <div className="absolute top-[-30%] right-[-10%] w-[80%] h-[80%] bg-[#0A84FF]/[0.05] blur-[180px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-20%] left-[-20%] w-[60%] h-[60%] bg-[#5E5CE6]/[0.05] blur-[150px] rounded-full" />
+        
+        {/* Grid Overlay */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 pointer-events-none" />
       </div>
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="w-full max-w-[480px] z-10"
+        className="w-full max-w-[540px] z-10"
       >
-        <div className="bg-white p-12 rounded-[3rem] shadow-[0_20px_80px_-15px_rgba(0,0,0,0.08)] border border-zinc-100 flex flex-col items-center">
+        <div className="apple-pro-card p-16 flex flex-col items-center bg-black/40 border-white/[0.03] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]">
           
           <motion.div 
              variants={itemVariants}
-             className="w-24 h-24 rounded-[2.5rem] bg-zinc-950 flex items-center justify-center mb-8 shadow-2xl shadow-zinc-900/10"
+             className="w-24 h-24 rounded-[2.5rem] bg-white flex items-center justify-center mb-12 shadow-[0_0_50px_rgba(255,255,255,0.15)] group relative overflow-hidden"
           >
-            <Building2 className="w-10 h-10 text-white" />
+            <Building2 className="w-10 h-10 text-black relative z-10" strokeWidth={1.5} />
+            <div className="absolute inset-0 bg-gradient-to-br from-white via-zinc-100 to-zinc-400 group-hover:scale-110 transition-transform duration-700" />
           </motion.div>
           
-          <div className="text-center mb-12">
+          <div className="text-center mb-16 space-y-4">
             <motion.h1 
               variants={itemVariants} 
-              className="text-4xl font-bold tracking-tight text-zinc-900 mb-2 uppercase"
+              className="text-5xl font-black tracking-tighter text-white leading-none italic uppercase"
             >
               Andrés Bello
             </motion.h1>
-            <motion.p 
-              variants={itemVariants} 
-              className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400"
-            >
-              {isLogin ? 'Acceso Administrativo' : 'Registro Institucional'}
-            </motion.p>
+            <motion.div variants={itemVariants} className="flex items-center justify-center gap-3">
+               <div className="h-[1px] w-8 bg-white/20" />
+               <p className="text-[10px] font-black uppercase tracking-[0.6em] text-[#0A84FF] italic">
+                  {isLogin ? 'Protocolo de Acceso v14.0' : 'Registro de Identidad Pro'}
+               </p>
+               <div className="h-[1px] w-8 bg-white/20" />
+            </motion.div>
           </div>
 
-          <form onSubmit={handleSubmit} className="w-full space-y-8">
-            <motion.div variants={itemVariants} className="space-y-5">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 pl-4">Identificación</label>
-                <div className="relative group">
-                  <User className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300 group-focus-within:text-zinc-900 transition-colors" />
+          <form onSubmit={handleSubmit} className="w-full space-y-12">
+            <motion.div variants={itemVariants} className="space-y-8">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 pl-4">Identificación de Usuario</label>
+                <div className="relative group/field">
+                  <User className="absolute left-7 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/10 group-focus-within/field:text-[#0A84FF] transition-colors" />
                   <input 
                     type="text"
-                    placeholder="Usuario institucional"
+                    placeholder="USUARIO INSTITUCIONAL"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full h-14 bg-zinc-50 border border-zinc-100 rounded-2xl pl-16 pr-6 text-sm font-semibold text-zinc-900 placeholder:text-zinc-300 outline-none focus:bg-white focus:ring-1 focus:ring-zinc-200 transition-all"
+                    className="w-full h-18 bg-black border border-white/5 rounded-2xl pl-18 pr-8 text-sm font-black text-white italic tracking-widest placeholder:text-white/5 outline-none focus:ring-1 focus:ring-[#0A84FF]/40 transition-all shadow-inner uppercase"
                     required 
                   />
                 </div>
               </div>
               
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 pl-4">Cifrado de Acceso</label>
-                <div className="relative group">
-                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300 group-focus-within:text-zinc-900 transition-colors" />
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 pl-4">Cifrado de Acceso (Token)</label>
+                <div className="relative group/field">
+                  <Fingerprint className="absolute left-7 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/10 group-focus-within/field:text-[#0A84FF] transition-colors" />
                   <input 
                     type="password"
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-14 bg-zinc-50 border border-zinc-100 rounded-2xl pl-16 pr-6 text-sm font-semibold text-zinc-900 placeholder:text-zinc-300 outline-none focus:bg-white focus:ring-1 focus:ring-zinc-200 transition-all"
+                    className="w-full h-18 bg-black border border-white/5 rounded-2xl pl-18 pr-8 text-sm font-black text-white tracking-[0.4em] placeholder:text-white/5 outline-none focus:ring-1 focus:ring-[#0A84FF]/40 transition-all shadow-inner"
                     required 
                   />
                 </div>
@@ -168,17 +175,17 @@ const Login = ({ onLogin }) => {
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
-                  className="space-y-3 pt-2"
+                  className="space-y-4 pt-2"
                 >
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 pl-4">Verificar Cifrado</label>
-                  <div className="relative group">
-                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300 group-focus-within:text-zinc-900 transition-colors" />
+                  <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 pl-4">Re-Validación de Cifrado</label>
+                  <div className="relative group/field">
+                    <Lock className="absolute left-7 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/10 group-focus-within/field:text-[#0A84FF] transition-colors" />
                     <input 
                       type="password"
                       placeholder="••••••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full h-14 bg-zinc-50 border border-zinc-100 rounded-2xl pl-16 pr-6 text-sm font-semibold text-zinc-900 placeholder:text-zinc-300 outline-none focus:bg-white focus:ring-1 focus:ring-zinc-200 transition-all"
+                      className="w-full h-18 bg-black border border-white/5 rounded-2xl pl-18 pr-8 text-sm font-black text-white tracking-[0.4em] placeholder:text-white/5 outline-none focus:ring-1 focus:ring-[#0A84FF]/40 transition-all shadow-inner"
                       required 
                     />
                   </div>
@@ -186,45 +193,82 @@ const Login = ({ onLogin }) => {
               )}
             </motion.div>
 
-            <motion.div variants={itemVariants} className="pt-2">
+            <AnimatePresence>
+                {(error || success) && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className={`p-6 rounded-2xl flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] border ${
+                            error ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                        }`}
+                    >
+                        {error ? <AlertCircle className="w-5 h-5" /> : <CheckCircle2 className="w-5 h-5" />}
+                        {error || success}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <motion.div variants={itemVariants} className="pt-4">
               <Button 
                 type="submit" 
-                className="w-full h-16 text-xs font-black uppercase tracking-widest bg-zinc-950 text-white hover:bg-zinc-800 rounded-2xl shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-4 group"
+                className="w-full h-20 text-[11px] font-black uppercase tracking-[0.5em] bg-white text-black hover:bg-zinc-200 rounded-[2rem] shadow-[0_20px_50px_rgba(255,255,255,0.1)] active:scale-[0.98] transition-all flex items-center justify-center gap-6 group"
                 disabled={loading}
               >
                 {loading ? (
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                    className="w-5 h-5 border-[2.5px] border-white/20 border-t-white rounded-full"
+                    className="w-6 h-6 border-[3px] border-black/10 border-t-black rounded-full"
                   />
                 ) : (
                   <>
-                    {isLogin ? 'Entrar al Núcleo' : 'Registrar Credenciales'}
-                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    {isLogin ? 'Sincronizar Acceso' : 'Registrar Identidad'}
+                    <ChevronRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" strokeWidth={3} />
                   </>
                 )}
               </Button>
             </motion.div>
           </form>
 
-          <motion.div variants={itemVariants} className="w-full mt-12 pt-10 border-t border-zinc-50 flex flex-col items-center">
+          <motion.div variants={itemVariants} className="w-full mt-16 pt-12 border-t border-white/5 flex flex-col items-center">
              <button 
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-3 active:scale-95"
+                className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 hover:text-white transition-all flex items-center gap-4 active:scale-95 group/sw"
               >
-                {isLogin ? '¿No tienes acceso? Solicitalo aqui' : 'Ya tengo credenciales registradas'}
+                {isLogin ? (
+                    <>
+                        <UserPlus className="w-4 h-4 group-hover/sw:text-[#0A84FF]" />
+                        Solicitar Acceso al Núcleo de Datos
+                    </>
+                ) : (
+                    <>
+                        <LogIn className="w-4 h-4 group-hover/sw:text-[#0A84FF]" />
+                        Volver al Portal de Identificación
+                    </>
+                )}
               </button>
           </motion.div>
         </div>
         
         <motion.div 
             variants={itemVariants}
-            className="mt-16 flex flex-col items-center gap-4 opacity-50 select-none"
+            className="mt-20 flex flex-col items-center gap-6 opacity-10 select-none pb-12"
         >
+            <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3">
+                    <ShieldCheck className="w-4 h-4 text-white" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.6em] text-white">Apple Pro Security</span>
+                </div>
+                <div className="w-2 h-2 rounded-full bg-white/20" />
+                <div className="flex items-center gap-3">
+                    <Globe className="w-4 h-4 text-white" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.6em] text-white">Andrés Bello Terminal v14.0</span>
+                </div>
+            </div>
             <div className="flex items-center gap-3">
-                <ShieldCheck className="w-3.5 h-3.5 text-zinc-300" />
-                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-300">Protocolo de Seguridad v10.0</span>
+               <Zap className="w-4 h-4 text-white" />
+               <span className="text-[8px] font-black uppercase tracking-[1em] text-white/50">High Performance Infrastructure</span>
             </div>
         </motion.div>
       </motion.div>
