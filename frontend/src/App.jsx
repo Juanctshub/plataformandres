@@ -189,7 +189,11 @@ const AndresBelloSuite = () => {
       // Check for 403 Forbidden globally
       const forbidden = responses.some(r => r.status === 'fulfilled' && r.value.status === 403);
       if (forbidden) {
-        console.error("403 Forbidden: Redirigiendo a Login...");
+        const forbiddenRes = responses.find(r => r.status === 'fulfilled' && r.value.status === 403);
+        const errData = await forbiddenRes.value.clone().json().catch(() => ({}));
+        console.error("403 Forbidden [NODO_MAESTRO]:", errData.error || "Sesión inválida");
+        
+        // Solo redirigir si el token realmente no es válido
         handleLogout();
         return;
       }
@@ -232,6 +236,10 @@ const AndresBelloSuite = () => {
   }, [token, fetchData]);
 
   const handleLogin = (data) => {
+    if (!data.token) {
+        console.error("Error: Token no recibido del Nodo Maestro");
+        return;
+    }
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     setToken(data.token);

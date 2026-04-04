@@ -4,7 +4,6 @@ import {
   Send, 
   Sparkles, 
   BrainCircuit, 
-  Bot, 
   User, 
   Loader2,
   ShieldCheck,
@@ -13,7 +12,11 @@ import {
   Database,
   Search,
   Command,
-  ArrowRight
+  ArrowRight,
+  GraduationCap,
+  Briefcase,
+  Plus,
+  Bot
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";
@@ -35,6 +38,18 @@ const AIChatView = ({ searchTerm }) => {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (searchTerm) {
+      setInput(searchTerm);
+    }
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (searchTerm) {
+      setInput(searchTerm);
+    }
+  }, [searchTerm]);
 
   const handleSend = async (e) => {
     if (e) e.preventDefault();

@@ -21,7 +21,9 @@ import {
   Activity,
   X,
   CreditCard,
-  History
+  History,
+  FileText,
+  AlertTriangle
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";

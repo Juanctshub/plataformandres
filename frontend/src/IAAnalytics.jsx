@@ -50,10 +50,18 @@ const IAAnalytics = () => {
     const fetchAiData = async () => {
         try {
             const token = localStorage.getItem('token');
+            if (!token) return; // Silent guard
+            
             const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
             const res = await fetch(`${baseUrl}/api/ai/analytics`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+
+            if (res.status === 403) {
+                console.warn("Sesión caducada en analíticas.");
+                return;
+            }
+
             const data = await res.json();
             setAiData(data && typeof data === 'object' ? data : { alerts: [] });
         } catch (e) {
@@ -201,8 +209,8 @@ const IAAnalytics = () => {
                >
                   <div className="apple-card p-10">
                      <h4 className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest mb-8 border-b border-white/5 pb-4">Actividad Neural</h4>
-                     <div className="h-[260px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
+                     <div className="h-[260px] w-full min-h-[260px]">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                            <AreaChart data={mockHistory}>
                               <defs>
                                  <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
@@ -212,6 +220,7 @@ const IAAnalytics = () => {
                               </defs>
                               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.02)" />
                               <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,0.2)' }} />
+                              <YAxis hide />
                               <Tooltip contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', borderRadius: '1rem', border: 'none', color: 'white' }} />
                               <Area type="monotone" dataKey="index" stroke="#007AFF" strokeWidth={3} fill="url(#areaGradient)" />
                            </AreaChart>
