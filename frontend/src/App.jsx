@@ -17,7 +17,10 @@ import {
   LogOut,
   ChevronRight,
   User as UserIcon,
-  X
+  X,
+  AlertCircle,
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 
 import Login from './Login';
@@ -33,66 +36,6 @@ import AIChatView from './AIChatView';
 import { Badge } from "./components/ui/badge";
 import InstitutionalSettings from './InstitutionalSettings';
 
-// SplashScreen (Keeping the current one as requested)
-const SplashScreen = ({ isInitialized }) => (
-  <motion.div 
-    key="splash-screen"
-    initial={{ opacity: 1 }}
-    exit={{ opacity: 0, transition: { duration: 1, ease: "easeInOut" } }}
-    className="fixed inset-0 bg-black z-[200] flex flex-col items-center justify-center select-none overflow-hidden"
-  >
-    <div className="relative flex flex-col items-center">
-      <div className="absolute inset-0 bg-white/5 blur-[120px] rounded-full scale-150 animate-pulse" />
-      <svg width="100" height="100" viewBox="0 0 100 100" className="mb-10 relative z-10">
-        <motion.path
-          d="M20,30 L50,15 L80,30 L50,45 Z"
-          fill="none"
-          stroke="white"
-          strokeWidth="1.5"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
-        />
-        <motion.path
-          d="M20,30 L20,60 C20,75 50,85 50,85 C50,85 80,75 80,60 L80,30"
-          fill="none"
-          stroke="white"
-          strokeWidth="1.5"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
-        />
-      </svg>
-      
-      <motion.div 
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.8 }}
-        className="text-center relative z-10"
-      >
-        <h1 className="text-3xl font-black tracking-tighter text-white uppercase italic leading-none">Andrés Bello</h1>
-        <div className="flex items-center justify-center gap-3 mt-4">
-           <div className="h-[1px] w-4 bg-white/10" />
-           <p className="text-[9px] font-black tracking-[0.4em] text-white/40 uppercase">Apple Glass v15.0 • Pro</p>
-           <div className="h-[1px] w-4 bg-white/10" />
-        </div>
-      </motion.div>
-
-      <div className="mt-12 w-32 h-[1px] bg-white/10 rounded-full overflow-hidden relative">
-        <motion.div 
-          initial={{ x: "-100%" }}
-          animate={{ x: isInitialized ? "0%" : "100%" }}
-          transition={{ 
-            duration: isInitialized ? 0.5 : 2.5, 
-            repeat: isInitialized ? 0 : Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute inset-0 bg-white"
-        />
-      </div>
-    </div>
-  </motion.div>
-);
 
 const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
   const menuItems = [
