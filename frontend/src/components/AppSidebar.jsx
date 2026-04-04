@@ -47,48 +47,45 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
   const groups = ['Núcleo', 'Gestión', 'Académico', 'Administración', 'Sistema'];
 
   return (
-    <Sidebar className="border-r border-zinc-200/50 bg-white">
-      <SidebarHeader className="p-12 pb-8">
-        <div className="flex items-center gap-6 group cursor-default">
-          <div className="w-14 h-14 rounded-full bg-black flex items-center justify-center shadow-2xl shadow-black/20 group-hover:rotate-12 transition-all duration-700">
-            <Building2 className="w-8 h-8 text-white" />
+    <Sidebar className="border-r border-zinc-100 bg-white shadow-sm">
+      <SidebarHeader className="p-8 pb-6">
+        <div className="flex items-center gap-4 group cursor-default">
+          <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-lg group-hover:scale-105 transition-all duration-500">
+            <Building2 className="w-5 h-5 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-black tracking-tighter text-black leading-none uppercase">Andrés Bello</span>
-            <span className="text-[10px] font-black text-zinc-300 mt-2 uppercase tracking-[0.5em] leading-none italic">
-             Suite v11.0
+            <span className="text-base font-black tracking-tighter text-zinc-950 leading-none uppercase italic">Andrés Bello</span>
+            <span className="text-[9px] font-black text-zinc-300 mt-1.5 uppercase tracking-widest leading-none">
+             Suite v12.0 • Lucid
             </span>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-6 space-y-4">
+      <SidebarContent className="px-4 space-y-2">
         {groups.map((group) => (
-          <SidebarGroup key={group}>
-            <SidebarGroupLabel className="text-[10px] font-black tracking-[0.6em] text-zinc-200 mb-6 px-6 uppercase italic opacity-40">
+          <SidebarGroup key={group} className="p-0">
+            <SidebarGroupLabel className="text-[8px] font-black tracking-[0.4em] text-zinc-400 mb-4 px-4 uppercase opacity-80 mt-6">
               {group}
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu className="gap-1">
+              <SidebarMenu className="gap-0.5">
                 {menuItems.filter(item => item.group === group).map((item) => (
                   <SidebarMenuItem key={item.id}>
                     <SidebarMenuButton 
                       onClick={() => onTabChange(item.id)}
                       isActive={activeTab === item.id}
-                      className={`py-8 px-6 rounded-[2rem] transition-all duration-700 overflow-hidden relative group/item ${
+                      className={`h-11 px-4 rounded-xl transition-all duration-300 relative group/item ${
                         activeTab === item.id 
-                          ? 'bg-black text-white shadow-2xl shadow-black/20 scale-105' 
-                          : 'text-zinc-400 hover:text-black hover:bg-zinc-50'
+                          ? 'bg-zinc-950 text-white shadow-md' 
+                          : 'text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50'
                       }`}
                     >
-                      <item.icon className={`mr-5 w-5 h-5 transition-transform duration-700 group-hover/item:scale-110 ${activeTab === item.id ? 'text-white' : 'text-zinc-300 group-hover/item:text-black'}`} />
-                      <span className="font-black text-[11px] uppercase tracking-[0.2em]">{item.label}</span>
+                      <item.icon className={`mr-3 w-4 h-4 transition-colors ${activeTab === item.id ? 'text-white' : 'text-zinc-400 group-hover/item:text-black'}`} />
+                      <span className="font-bold text-[10px] uppercase tracking-widest leading-none">{item.label}</span>
                       
                       {activeTab === item.id && (
-                        <motion.div 
-                          layoutId="activeTabGlow"
-                          className="absolute right-4 w-2 h-2 rounded-full bg-white animate-pulse" 
-                        />
+                        <div className="absolute right-3 w-1 h-1 rounded-full bg-white opacity-40" />
                       )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -99,29 +96,29 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
         ))}
       </SidebarContent>
 
-      <SidebarFooter className="p-8">
-        <div className="flex flex-col gap-4">
-          <div className="p-4 rounded-3xl bg-zinc-50 border border-zinc-100/50 group cursor-default transition-all hover:border-zinc-200">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-2xl bg-white border border-zinc-200 flex items-center justify-center shadow-sm">
-                <ShieldCheck className="w-5 h-5 text-zinc-400" />
+      <SidebarFooter className="p-6 border-t border-zinc-50">
+        <div className="flex flex-col gap-2">
+          <div className="p-4 rounded-2xl bg-zinc-50/50 border border-zinc-100 group cursor-default transition-all hover:bg-white">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-white border border-zinc-100 flex items-center justify-center shadow-sm">
+                <ShieldCheck className="w-4 h-4 text-zinc-400" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-zinc-900 leading-none mb-1.5 uppercase tracking-wide">Acceso Seguro</span>
-                <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-widest leading-none">Admin • Docente Guía</span>
+                <span className="text-[9px] font-black text-zinc-900 uppercase">Seguridad Activa</span>
+                <span className="text-[8px] font-bold text-zinc-400 uppercase mt-0.5 opacity-60">Terminal Estándar</span>
               </div>
             </div>
           </div>
           
           <button 
             onClick={() => { localStorage.clear(); window.location.reload(); }}
-            className="flex items-center justify-between py-4 px-6 rounded-2xl text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-all duration-300 group"
+            className="flex items-center justify-between h-10 px-4 rounded-xl text-zinc-400 hover:text-zinc-950 hover:bg-zinc-50 transition-all group"
           >
             <div className="flex items-center gap-3">
-              <LogOut className="w-4 h-4" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Logout</span>
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="text-[9px] font-black uppercase tracking-widest">Cerrar Sesión</span>
             </div>
-            <ChevronRight className="w-3 h-3 translate-x-1 opacity-0 group-hover:opacity-100 transition-all" />
+            <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
           </button>
         </div>
       </SidebarFooter>

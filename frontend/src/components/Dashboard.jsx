@@ -88,66 +88,62 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       className="space-y-12 pb-20 relative"
     >
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
-        <div className="space-y-6">
-          <div className="flex items-center gap-4">
-             <div className="w-12 h-12 rounded-[1.25rem] bg-zinc-950 flex items-center justify-center shadow-2xl">
-                <Building2 className="w-6 h-6 text-white" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-zinc-100 pb-12">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-lg">
+                <Building2 className="w-5 h-5 text-white" />
              </div>
-             <Badge className="bg-zinc-100 text-zinc-900 border-none rounded-full px-5 py-2 font-black text-[10px] uppercase tracking-[0.3em]">
-                Suite Profesional v10.0
+             <Badge className="bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full px-4 py-1 font-black text-[9px] uppercase tracking-widest">
+                Núcleo Administrativo v12.0
              </Badge>
           </div>
-          <div className="space-y-2">
-            <h2 className="text-6xl font-black tracking-tighter text-zinc-900 leading-none">Gestión Institucional</h2>
-            <p className="text-zinc-400 font-bold tracking-tight text-lg max-w-2xl">
-              Panel de control centralizado para el monitoreo de Media General y análisis de datos en tiempo real.
+          <div className="space-y-1">
+            <h2 className="text-4xl font-black tracking-tighter text-zinc-900 leading-none italic uppercase">Gestión Institucional</h2>
+            <p className="text-zinc-400 font-bold tracking-tight text-sm max-w-xl">
+              Sistema Central de Control y Monitoreo Académico • Unidad Educativa Andrés Bello.
             </p>
           </div>
         </div>
         
-        <div className="flex items-center gap-4 bg-white p-4 rounded-[2.5rem] border border-zinc-100 shadow-sm">
-            <div className="px-6 py-3 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center gap-5">
-                <div className="relative">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)] animate-pulse" />
-                </div>
+        <div className="flex items-center gap-4 bg-white p-3 rounded-2xl border border-zinc-100 shadow-sm">
+            <div className="px-5 py-2.5 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center gap-4">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-emerald-600 tracking-[0.2em] uppercase leading-none">Servidor Activo</span>
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mt-1.5">Sincronizado</span>
+                  <span className="text-[9px] font-black text-emerald-700 tracking-widest uppercase">Sistema Activo</span>
                 </div>
             </div>
-            <div className="h-10 w-[1px] bg-zinc-100 mx-2" />
-            <div className="px-4 pr-8 flex flex-col items-start translate-y-1">
-              <span className="text-[10px] font-black text-zinc-400 tracking-[0.3em] uppercase italic">Nucleo Andrés Bello</span>
-              <span className="text-[10px] font-bold text-zinc-900 uppercase tracking-widest mt-1.5 tracking-tighter">ID-2026-XN</span>
+            <div className="h-8 w-[1px] bg-zinc-100" />
+            <div className="px-4 pr-6 flex flex-col items-start translate-y-[1px]">
+              <span className="text-[9px] font-black text-zinc-300 tracking-widest uppercase">ID-Terminal</span>
+              <span className="text-[10px] font-bold text-zinc-900 uppercase mt-0.5 tracking-tighter">AB-2026-XN</span>
             </div>
         </div>
       </div>
 
       {/* Main Stats Grid */}
-      <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat, idx) => (
           <motion.div 
             key={stat.label} 
             variants={item} 
-            whileHover={{ y: -8, scale: 1.02 }}
-            className="bg-white border border-zinc-100/50 rounded-[4rem] p-12 relative overflow-hidden group cursor-default transition-all duration-1000 hover:shadow-2xl hover:border-black"
+            className="bg-white border border-zinc-100 rounded-[1.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500 relative group overflow-hidden"
           >
-            <div className="flex justify-between items-start mb-12">
-                <div className={`w-16 h-16 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center transition-all duration-700 group-hover:bg-black group-hover:text-white`}>
-                    <stat.icon className={`h-7 w-7`} />
+            <div className="flex justify-between items-start mb-8">
+                <div className="w-12 h-12 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center group-hover:bg-zinc-950 group-hover:text-white transition-all duration-300">
+                    <stat.icon className="h-5 w-5" />
                 </div>
-                <Badge className="bg-zinc-50 text-zinc-300 border-none font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-xl">
+                <Badge className="bg-zinc-50 text-zinc-400 border-none font-black text-[8px] uppercase tracking-widest px-3 py-1 rounded-lg">
                     {stat.trend}
                 </Badge>
             </div>
             
-            <div className="space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-300 mb-4">{stat.label}</p>
-                <div className="text-6xl font-black text-black tracking-tighter">
+            <div className="space-y-1">
+                <p className="text-[9px] font-black uppercase tracking-widest text-zinc-300 mb-2">{stat.label}</p>
+                <div className="text-4xl font-black text-zinc-950 tracking-tighter">
                     {stat.value}
                 </div>
-                <p className="text-[10px] font-bold text-zinc-400 mt-8 uppercase tracking-widest opacity-40 italic">
+                <p className="text-[9px] font-bold text-zinc-400 mt-4 uppercase tracking-widest opacity-60">
                     {stat.sub}
                 </p>
             </div>
@@ -156,155 +152,119 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       </div>
 
       {/* Analytics & Retention Summary */}
-      <div className="grid gap-10 lg:grid-cols-12 items-start">
-        <motion.div variants={item} className="lg:col-span-8 apple-card p-12">
-          <div className="flex flex-row items-center justify-between mb-12 border-b border-zinc-50 pb-10">
+        <motion.div variants={item} className="lg:col-span-12 apple-card p-10">
+          <div className="flex flex-row items-center justify-between mb-10 border-b border-zinc-50 pb-8">
             <div className="space-y-1">
-              <h3 className="text-3xl font-black text-zinc-900 flex items-center gap-4 italic uppercase tracking-tighter">
-                <Activity className="w-8 h-8 text-blue-500" />
-                Análisis Predictivo
+              <h3 className="text-2xl font-black text-zinc-900 flex items-center gap-4 italic uppercase tracking-tighter">
+                <Activity className="w-6 h-6 text-indigo-600" />
+                Vigilancia del Núcleo
               </h3>
-              <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest">
-                Detección de patrones de deserción mediante IA v10
+              <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                Análisis de integridad y actividad institucional en tiempo real
               </p>
             </div>
-            <Button 
-                onClick={() => onTabChange('analytics')}
-                variant="ghost" 
-                className="text-zinc-400 hover:text-zinc-900 text-xs font-black uppercase tracking-[0.2em] gap-3 px-6 rounded-2xl transition-all"
-            >
-                Detalles <ArrowUpRight className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-4">
+              <Button 
+                  onClick={() => onTabChange('analytics')}
+                  variant="outline" 
+                  className="border-zinc-100 text-zinc-500 hover:text-black text-[9px] font-black uppercase tracking-widest px-5 rounded-xl h-10 transition-all"
+              >
+                  Auditoría General
+              </Button>
+            </div>
           </div>
           
-          <div className="space-y-4">
-              {aiData.alerts && aiData.alerts.length > 0 ? aiData.alerts.map((alert, i) => (
-                <div 
-                  key={i}
-                  className={`p-8 rounded-[2rem] border transition-all duration-500 flex items-center justify-between group ${
-                    alert.type === 'danger' 
-                      ? 'bg-red-50/30 border-red-100' 
-                      : 'bg-amber-50/30 border-amber-100'
-                  }`}
-                >
-                  <div className="flex items-center gap-6">
-                    <div className={`p-4 rounded-2xl ${alert.type === 'danger' ? 'bg-red-100 text-red-500' : 'bg-amber-100 text-amber-500'}`}>
-                      {alert.type === 'danger' ? <XCircle className="w-6 h-6" /> : <AlertTriangle className="w-6 h-6" />}
-                    </div>
-                    <div>
-                        <h4 className="text-lg font-bold text-zinc-900 mb-1 tracking-tight">{alert.msg}</h4>
-                        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest italic">Protocolo Institucional activado • Prioridad Máxima</p>
-                    </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-4">
+                    <AlertTriangle className="w-3.5 h-3.5 text-zinc-300" />
+                    <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Alertas Académicas</span>
                   </div>
-                  <Button variant="ghost" className="rounded-full w-10 h-10 p-0 text-zinc-300 group-hover:text-zinc-900">
-                    <ChevronRight className="w-5 h-5" />
-                  </Button>
-                </div>
-              )) : (
-                <div className="flex flex-col items-center justify-center py-20 text-zinc-200 space-y-6">
-                  <LayoutGrid className="w-16 h-16 animate-pulse" />
-                  <p className="text-[10px] font-black uppercase tracking-[0.5em] italic">Procesando Núcleo de Datos...</p>
-                </div>
-              )}
-          </div>
-        </motion.div>
-
-        <motion.div variants={item} className="lg:col-span-4 apple-card p-12">
-          <div className="mb-12">
-            <h3 className="text-2xl font-black text-zinc-900 italic uppercase tracking-tighter mb-1.5 underline underline-offset-8 decoration-zinc-100 decoration-2">Retención</h3>
-            <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.3em] mt-4">Nivel de desempeño por grado</p>
-          </div>
-          
-          <div className="space-y-10">
-            {[
-              { label: '1er Año', val: 98, color: 'bg-emerald-400' },
-              { label: '2do Año', val: 94, color: 'bg-emerald-400' },
-              { label: '3er Año', val: 82, color: 'bg-amber-400' },
-              { label: '4to Año', val: 91, color: 'bg-blue-400' },
-              { label: '5to Año', val: 76, color: 'bg-red-400' },
-            ].map(row => (
-              <div key={row.label} className="space-y-4">
-                <div className="flex justify-between items-end">
-                  <span className="text-[11px] font-black text-zinc-900 uppercase tracking-widest">{row.label}</span>
-                  <span className="text-xs font-black text-zinc-400">{row.val}%</span>
-                </div>
-                <div className="h-1.5 w-full bg-zinc-50 rounded-full overflow-hidden border border-zinc-100/50">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${row.val}%` }}
-                    transition={{ duration: 2, ease: "circOut" }}
-                    className={`h-full ${row.color}`}
-                  />
-                </div>
+                  {aiData.alerts && aiData.alerts.length > 0 ? aiData.alerts.map((alert, i) => (
+                    <div 
+                      key={i}
+                      className="p-6 rounded-2xl border border-zinc-50 bg-zinc-50/30 flex items-center justify-between group hover:border-zinc-200 transition-all"
+                    >
+                      <div className="flex items-center gap-5">
+                        <div className={`p-3 rounded-xl ${alert.type === 'danger' ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-500'}`}>
+                          {alert.type === 'danger' ? <XCircle className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
+                        </div>
+                        <div>
+                            <h4 className="text-sm font-bold text-zinc-900 tracking-tight">{alert.msg}</h4>
+                            <p className="text-[8px] font-black text-zinc-400 uppercase tracking-[0.2em] mt-1 italic">Protocolo Institucional</p>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-zinc-200" />
+                    </div>
+                  )) : (
+                    <div className="flex flex-col items-center justify-center py-12 text-zinc-200 border-2 border-dashed border-zinc-100 rounded-3xl">
+                      <LayoutGrid className="w-8 h-8 mb-4 opacity-50" />
+                      <p className="text-[9px] font-black uppercase tracking-widest italic opacity-50">Sincronización Limpia</p>
+                    </div>
+                  )}
               </div>
-            ))}
-          </div>
 
-          <div className="mt-16 space-y-8">
-             <div className="flex items-center gap-3 px-2">
-                <Activity className="w-3.5 h-3.5 text-zinc-300" />
-                <h4 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em]">Actividad Reciente</h4>
-             </div>
-             {stats.recentActivity && stats.recentActivity.length > 0 ? stats.recentActivity.map((log, i) => (
-                <div key={i} className="flex gap-5 items-start pl-2">
-                   <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 mt-2 shrink-0" />
-                   <p className="text-[10px] text-zinc-500 font-bold tracking-tight leading-relaxed uppercase">{log.event}</p>
-                </div>
-             )) : (
-                <div className="py-12 flex flex-col items-center justify-center opacity-30 space-y-4">
-                    <Clock className="w-8 h-8 text-zinc-300" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-300">Monitoreo Pasivo</span>
-                </div>
-             )}
+              <div className="space-y-4 border-l border-zinc-50 pl-10">
+                 <div className="flex items-center gap-3 mb-4">
+                    <Clock className="w-3.5 h-3.5 text-zinc-300" />
+                    <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Actividad del Núcleo</span>
+                 </div>
+                 {stats.recentActivity && stats.recentActivity.length > 0 ? stats.recentActivity.map((log, i) => (
+                    <div key={i} className="flex gap-4 items-center p-3 rounded-xl hover:bg-zinc-50 transition-all border border-transparent hover:border-zinc-100">
+                       <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 shrink-0" />
+                       <p className="text-[9px] text-zinc-600 font-bold tracking-tight uppercase">{log.event}</p>
+                    </div>
+                 )) : (
+                    <div className="py-20 flex flex-col items-center justify-center opacity-20 space-y-4">
+                        <Activity className="w-8 h-8 text-zinc-300" />
+                        <span className="text-[9px] font-black uppercase tracking-widest">Sincronizado • Esperando Datos</span>
+                    </div>
+                 )}
+              </div>
           </div>
         </motion.div>
-      </div>
 
       {/* Action Suite (Signature Onyx Icons) */}
-      <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             { 
                 title: 'Reportes', 
-                desc: 'Exportación Mensual PDF', 
+                desc: 'Análisis Mensual', 
                 icon: Printer, 
                 action: generateAttendanceReport,
-                color: 'bg-black text-white'
+                color: 'bg-zinc-950 text-white'
             },
             { 
                 title: 'Matrícula', 
                 desc: 'Acreditación Directa', 
                 icon: UserPlus, 
                 action: () => onTabChange('students'),
-                color: 'bg-zinc-900 text-white'
+                color: 'bg-zinc-800 text-white'
             },
             { 
-                title: 'Núcleo', 
-                desc: 'Parámetros de Control', 
+                title: 'Institución', 
+                desc: 'Configuración', 
                 icon: SettingsIcon, 
                 action: () => onTabChange('settings'),
-                color: 'bg-zinc-800 text-white'
+                color: 'bg-zinc-700 text-white'
             }
           ].map((action, i) => (
             <motion.button
               key={i}
-              whileHover={{ y: -12, scale: 1.02 }}
+              whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
               onClick={action.action}
-              className="bg-white border border-zinc-100/50 rounded-[4rem] p-12 flex flex-col items-center justify-center text-center gap-8 group transition-all duration-1000 hover:shadow-2xl hover:border-black min-h-[320px]"
+              className="bg-white border border-zinc-100 rounded-[2rem] p-10 flex flex-col items-center justify-center text-center gap-6 group transition-all duration-500 hover:shadow-xl hover:border-zinc-200 min-h-[280px]"
             >
-              <div className={`w-24 h-24 rounded-full flex items-center justify-center shadow-2xl shadow-black/10 transition-all duration-700 group-hover:rotate-12 group-hover:scale-110 ${action.color}`}>
-                <action.icon className="w-10 h-10" />
+              <div className={`w-20 h-20 rounded-[1.5rem] flex items-center justify-center shadow-lg transition-all duration-500 group-hover:scale-110 ${action.color}`}>
+                <action.icon className="w-8 h-8" />
               </div>
               
-              <div className="space-y-3">
-                <h4 className="text-2xl font-black text-black tracking-tighter uppercase">{action.title}</h4>
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-300 group-hover:text-zinc-500 transition-colors">
+              <div className="space-y-1">
+                <h4 className="text-xl font-black text-black tracking-tighter uppercase italic">{action.title}</h4>
+                <p className="text-[9px] font-black uppercase tracking-widest text-zinc-300 group-hover:text-zinc-500 transition-colors">
                     {action.desc}
                 </p>
-              </div>
-              
-              <div className="w-12 h-12 rounded-full bg-zinc-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 mt-4">
-                 <Plus className="w-5 h-5 text-black" />
               </div>
             </motion.button>
           ))}
