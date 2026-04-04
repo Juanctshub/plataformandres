@@ -483,7 +483,7 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
 
   const statCards = [
     { label: 'Matrícula', value: stats.students || 0, sub: 'Estudiantes Registrados', icon: Users, color: 'bg-blue-500/10 text-blue-400' },
-    { label: 'Asistencia', value: stats.attendance || 'N/D', sub: 'Asistencia Global', icon: CheckCircle2, color: 'bg-emerald-500/10 text-emerald-400' },
+    { label: 'Asistencia', value: stats.attendance && stats.attendance !== 'Sin datos' ? stats.attendance : '0%', sub: 'Asistencia Global', icon: CheckCircle2, color: 'bg-emerald-500/10 text-emerald-400' },
     { label: 'IA Risks', value: stats.risks || 0, sub: 'Alertas Predictivas', icon: Sparkles, color: 'bg-indigo-500/10 text-indigo-400' },
     { label: 'Justificativos', value: stats.justifications || 0, sub: 'Pendientes por Validar', icon: Clock, color: 'bg-amber-500/10 text-amber-400' },
   ];

@@ -42,7 +42,7 @@ import AIChatView from './AIChatView';
 import { Badge } from "./components/ui/badge";
 import { Button } from "./components/ui/button";
 import InstitutionalSettings from './InstitutionalSettings';
-import logo from './assets/logo.jpg';
+import logo from './assets/logo.png';
 
 
 const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
@@ -284,7 +284,7 @@ const AndresBelloSuite = () => {
       setStats({
         students: Array.isArray(stds) ? stds.length : 0,
         attendance: 'Cargando...',
-        risks: (ai.alerts && Array.isArray(ai.alerts)) ? ai.alerts.filter(a => a.type === 'danger').length : 0,
+        risks: (ai.alerts && Array.isArray(ai.alerts)) ? ai.alerts.filter(a => a.type === 'danger' || a.type === 'warning').length : 0,
         justifications: Array.isArray(justs) ? justs.filter(j => j.estado === 'pendiente').length : 0,
         staffCount: Array.isArray(staffArr) ? staffArr.length : 0,
         recentActivity: Array.isArray(justs) ? justs.slice(0, 3).map(j => ({
@@ -516,7 +516,7 @@ const AndresBelloSuite = () => {
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-[1000] bg-black overflow-hidden"
               >
-                <AIChatView searchTerm={searchTerm} user={user} onClose={() => setActiveTab('dashboard')} />
+                <AIChatView searchTerm={searchTerm} user={user} onClose={() => setActiveTab('dashboard')} onRefresh={() => fetchData(token)} />
               </motion.div>
             )}
           </AnimatePresence>

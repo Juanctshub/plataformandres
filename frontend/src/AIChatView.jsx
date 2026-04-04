@@ -22,9 +22,9 @@ import {
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";
-import logo from './assets/logo.jpg';
+import logo from './assets/logo.png';
 
-const AIChatView = ({ searchTerm, user, onClose }) => {
+const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
   const [messages, setMessages] = useState([
     { 
       role: 'assistant', 
@@ -85,16 +85,17 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
             const hasProposals = data.proposals && data.proposals.length > 0;
 
             let content = data.content || '';
-            if (hasProposals) {
-                content += '\n\n🔔 He creado ' + data.proposals.length + ' propuesta(s) que requieren tu aprobación. Revisa el panel de notificaciones (🔔) para aprobar, rechazar o responder.';
-            }
-
             setMessages(prev => [...prev, { 
                 role: 'assistant', 
                 content: content,
                 timestamp: data.timestamp || new Date().toLocaleTimeString(),
                 proposals: data.proposals || []
             }]);
+
+            // If it was a bulk registration or some direct action, refresh the parent data
+            if (content.includes('Registro masivo completado') || content.includes('ACCIÓN EJECUTADA')) {
+                if (onRefresh) onRefresh();
+            }
         } else {
             throw new Error(data.error);
         }
@@ -150,6 +151,7 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
           const newMessages = [...prev];
           newMessages[msgIndex].actionExecuted = true;
           newMessages[msgIndex].content += "\n\n✅ ACCIÓN EJECUTADA EXITOSAMENTE.";
+          if (onRefresh) onRefresh();
           return newMessages;
         });
       } else {
