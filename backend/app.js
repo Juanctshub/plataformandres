@@ -595,35 +595,44 @@ REGLAS:
         }
 
         // If user is pasting a bulk list of students, handle it directly
-        if (looksLikeBulkStudents && (msgLower.includes('añade') || msgLower.includes('agrega') || msgLower.includes('registra') || msgLower.includes('inscrib') || msgLower.includes('lista'))) {
-            // Parse students directly from the message
-            const lines = message.split(/[\n,]+/).map(l => l.trim()).filter(l => l.length > 5);
+        if (looksLikeBulkStudents && (msgLower.includes('añade') || msgLower.includes('agrega') || msgLower.includes('registra') || msgLower.includes('inscrib') || msgLower.includes('lista') || msgLower.includes('estudiante'))) {
+            // ── ROBUST PARSER: Split by V- boundaries ──
+            // The user pastes: V-34.512.301,1er Año A,Santiago José Pérez Rivas,Carlos Pérez V-34.621.045,...
+            // We split at each V- to get individual records
             const studentsList = [];
             
-            for (const line of lines) {
-                const vMatch = line.match(/(V-[\d.]+)/i);
-                if (!vMatch) continue;
-                const cedula = vMatch[1];
-                // Try to extract: cedula, seccion, nombre, representante
-                const parts = line.split(/[,\t]+/).map(p => p.trim());
-                if (parts.length >= 3) {
+            // Method 1: Split by V- pattern to get each student record
+            const records = message.split(/(?=V-\d)/i);
+            
+            for (const record of records) {
+                const trimmed = record.trim();
+                if (!trimmed) continue;
+                
+                // Match: V-XX.XXX.XXX followed by comma-separated fields
+                const cedulaMatch = trimmed.match(/^(V-[\d.]+)/i);
+                if (!cedulaMatch) continue;
+                
+                const cedula = cedulaMatch[1];
+                const afterCedula = trimmed.substring(cedula.length);
+                
+                // Split remaining by comma or tab
+                const fields = afterCedula.split(/[,\t]+/).map(f => f.trim()).filter(f => f.length > 0);
+                
+                // fields[0] = seccion, fields[1] = nombre, fields[2] = representante
+                if (fields.length >= 2) {
                     studentsList.push({
-                        cedula: parts[0] || cedula,
-                        seccion: parts[1] || '',
-                        nombre: parts[2] || '',
-                        representante: parts[3] || ''
-                    });
-                } else {
-                    // Try extracting from the full line after the cedula
-                    const afterCedula = line.substring(line.indexOf(cedula) + cedula.length).trim();
-                    const segments = afterCedula.split(/[,\t]+/).map(s => s.trim());
-                    studentsList.push({
-                        cedula,
-                        seccion: segments[0] || '',
-                        nombre: segments[1] || '',
-                        representante: segments[2] || ''
+                        cedula: cedula,
+                        seccion: fields[0] || '',
+                        nombre: fields[1] || '',
+                        representante: fields[2] || '',
+                        contacto: fields[3] || ''
                     });
                 }
+            }
+            
+            console.log(`[BULK PARSE] Found ${studentsList.length} students from text`);
+            if (studentsList.length > 0) {
+                console.log("[BULK PARSE] First student:", JSON.stringify(studentsList[0]));
             }
 
             if (studentsList.length > 0) {
@@ -631,35 +640,88 @@ REGLAS:
                 let successCount = 0;
                 let failCount = 0;
                 const registered = [];
+                const errors = [];
                 
                 for (const s of studentsList) {
-                    if (!s.nombre || !s.cedula) { failCount++; continue; }
+                    if (!s.nombre || !s.cedula) { 
+                        failCount++; 
+                        errors.push(`Sin nombre: ${s.cedula}`);
+                        continue; 
+                    }
                     try {
+                        // Check if already exists
+                        const existing = await db.query("SELECT id FROM estudiantes WHERE cedula = $1", [s.cedula]);
+                        if (existing.rows.length > 0) {
+                            failCount++;
+                            errors.push(`Duplicado: ${s.nombre} (${s.cedula})`);
+                            continue;
+                        }
                         await db.query(
-                            "INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto) VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING",
-                            [s.cedula, s.nombre, s.seccion || 'Sin Sección', s.representante || '', '']
+                            "INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto) VALUES ($1,$2,$3,$4,$5)",
+                            [s.cedula, s.nombre, s.seccion || 'Sin Sección', s.representante || '', s.contacto || '']
                         );
                         successCount++;
                         registered.push(s.nombre);
                     } catch (e) {
                         failCount++;
+                        errors.push(`Error BD: ${s.nombre} - ${e.message}`);
                     }
                 }
 
-                // Also record as a completed proposal
+                // Record as a completed proposal
                 await db.query(
                     "INSERT INTO ai_proposals (type, title, description, payload, status, ai_reasoning, resolved_at) VALUES ($1,$2,$3,$4,'executed',$5,NOW())",
                     [
                         'BULK_CREATE_STUDENTS',
                         `Registro masivo: ${successCount} estudiantes`,
                         `Se registraron ${successCount} estudiantes de ${studentsList.length} proporcionados.`,
-                        JSON.stringify({ students: studentsList }),
+                        JSON.stringify({ students: studentsList.slice(0, 10) }),
                         `Carga directa desde el chat.`
                     ]
-                );
+                ).catch(() => {});
+
+                const namesList = registered.length <= 10 
+                    ? registered.join(', ') 
+                    : registered.slice(0, 10).join(', ') + ` y ${registered.length - 10} más`;
+
+                let resultMsg = `✅ **Registro masivo completado.**\n\n`;
+                resultMsg += `• **${successCount}** estudiantes registrados exitosamente\n`;
+                if (failCount > 0) resultMsg += `• **${failCount}** omitidos\n`;
+                resultMsg += `• **Total procesados:** ${studentsList.length}\n\n`;
+                if (registered.length > 0) resultMsg += `**Registrados:** ${namesList}\n\n`;
+                if (errors.length > 0 && errors.length <= 5) resultMsg += `**Detalles omitidos:** ${errors.join(', ')}\n\n`;
+                resultMsg += `Los estudiantes ya aparecen en el módulo de **Matrícula**.\n\n`;
+
+                // ─── AI ANALYSIS of the new data ───
+                if (groq && successCount > 0) {
+                    try {
+                        const sections = {};
+                        studentsList.forEach(s => { 
+                            if (s.seccion) sections[s.seccion] = (sections[s.seccion] || 0) + 1; 
+                        });
+                        const totalNow = stds.rows.length + successCount;
+                        
+                        const analysisPrompt = `Se acaban de registrar ${successCount} estudiantes nuevos. La institución ahora tiene ${totalNow} estudiantes en total. Distribución de los nuevos: ${JSON.stringify(sections)}. Da un análisis breve (3-4 oraciones) sobre: distribución por secciones, balance, y si detectas algo relevante. Sé profesional y directo. No uses PROPOSAL.`;
+                        
+                        const analysisCompletion = await groq.chat.completions.create({
+                            messages: [
+                                { role: "system", content: "Eres un analista educativo institucional. Responde breve y directo en español." },
+                                { role: "user", content: analysisPrompt }
+                            ],
+                            model: "llama-3.3-70b-versatile",
+                            temperature: 0.5,
+                            max_tokens: 300,
+                        });
+                        
+                        const analysis = analysisCompletion.choices[0].message.content;
+                        resultMsg += `---\n\n🧠 **Análisis del Núcleo IA:**\n${analysis}`;
+                    } catch (e) {
+                        // Analysis is optional, don't fail the whole response
+                    }
+                }
 
                 return res.json({
-                    content: `✅ **Registro masivo completado.**\n\n• **${successCount}** estudiantes registrados exitosamente\n• **${failCount}** omitidos (datos incompletos o duplicados)\n• **Total procesados:** ${studentsList.length}\n\n${registered.length <= 10 ? '**Registrados:** ' + registered.join(', ') : '**Primeros 10:** ' + registered.slice(0, 10).join(', ') + '...'}\n\nLos estudiantes ya aparecen en el módulo de Matrícula.`,
+                    content: resultMsg,
                     proposals: [],
                     timestamp: new Date().toLocaleTimeString()
                 });
