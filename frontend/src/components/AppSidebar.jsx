@@ -48,15 +48,15 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
 
   return (
     <Sidebar className="border-r border-zinc-200/50 bg-white">
-      <SidebarHeader className="p-10 pb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-[1.25rem] bg-zinc-950 flex items-center justify-center shadow-2xl shadow-zinc-900/20">
-            <Building2 className="w-6 h-6 text-white" />
+      <SidebarHeader className="p-12 pb-8">
+        <div className="flex items-center gap-6 group cursor-default">
+          <div className="w-14 h-14 rounded-full bg-black flex items-center justify-center shadow-2xl shadow-black/20 group-hover:rotate-12 transition-all duration-700">
+            <Building2 className="w-8 h-8 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="text-base font-bold tracking-tight text-zinc-900 leading-none">Andrés Bello</span>
-            <span className="text-[10px] font-black text-zinc-400 mt-2 uppercase tracking-[0.3em] leading-none">
-             Suite v10.0
+            <span className="text-xl font-black tracking-tighter text-black leading-none uppercase">Andrés Bello</span>
+            <span className="text-[10px] font-black text-zinc-300 mt-2 uppercase tracking-[0.5em] leading-none italic">
+             Suite v11.0
             </span>
           </div>
         </div>
@@ -65,7 +65,7 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
       <SidebarContent className="px-6 space-y-4">
         {groups.map((group) => (
           <SidebarGroup key={group}>
-            <SidebarGroupLabel className="text-[10px] font-black tracking-[0.4em] text-zinc-300 mb-4 px-4 uppercase italic">
+            <SidebarGroupLabel className="text-[10px] font-black tracking-[0.6em] text-zinc-200 mb-6 px-6 uppercase italic opacity-40">
               {group}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -75,19 +75,19 @@ const AppSidebar = ({ activeTab, onTabChange, userName }) => {
                     <SidebarMenuButton 
                       onClick={() => onTabChange(item.id)}
                       isActive={activeTab === item.id}
-                      className={`py-6 px-5 rounded-2xl transition-all duration-500 overflow-hidden relative group/item ${
+                      className={`py-8 px-6 rounded-[2rem] transition-all duration-700 overflow-hidden relative group/item ${
                         activeTab === item.id 
-                          ? 'bg-zinc-950 text-white shadow-xl shadow-zinc-900/10' 
-                          : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'
+                          ? 'bg-black text-white shadow-2xl shadow-black/20 scale-105' 
+                          : 'text-zinc-400 hover:text-black hover:bg-zinc-50'
                       }`}
                     >
-                      <item.icon className={`mr-4 w-4.5 h-4.5 transition-transform duration-500 group-hover/item:scale-110 ${activeTab === item.id ? 'text-white' : 'text-zinc-400 group-hover/item:text-zinc-900'}`} />
-                      <span className="font-bold text-xs uppercase tracking-widest">{item.label}</span>
+                      <item.icon className={`mr-5 w-5 h-5 transition-transform duration-700 group-hover/item:scale-110 ${activeTab === item.id ? 'text-white' : 'text-zinc-300 group-hover/item:text-black'}`} />
+                      <span className="font-black text-[11px] uppercase tracking-[0.2em]">{item.label}</span>
                       
                       {activeTab === item.id && (
                         <motion.div 
                           layoutId="activeTabGlow"
-                          className="absolute right-2 w-1.5 h-1.5 rounded-full bg-white/40" 
+                          className="absolute right-4 w-2 h-2 rounded-full bg-white animate-pulse" 
                         />
                       )}
                     </SidebarMenuButton>

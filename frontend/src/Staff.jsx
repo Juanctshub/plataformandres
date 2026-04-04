@@ -39,9 +39,9 @@ const StaffSkeleton = () => (
         </div>
         <Skeleton className="h-12 w-48 bg-zinc-100 rounded-2xl" />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {[1, 2, 3, 4].map(i => (
-          <Skeleton key={i} className="h-72 w-full bg-white border border-zinc-100 rounded-[3rem]" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        {[1, 2].map(i => (
+          <Skeleton key={i} className="h-80 w-full bg-zinc-50 border border-zinc-100 rounded-[4rem]" />
         ))}
       </div>
     </div>
@@ -115,38 +115,38 @@ const Staff = () => {
 
     return (
         <div className="space-y-12 pb-20 relative">
-            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10 relative z-10">
-                <div className="space-y-6">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-[1.25rem] bg-zinc-950 flex items-center justify-center shadow-xl">
-                            <Briefcase className="w-6 h-6 text-white" />
+            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-12 relative z-10">
+                <div className="space-y-8">
+                    <div className="flex items-center gap-6">
+                        <div className="w-14 h-14 rounded-[1.5rem] bg-black flex items-center justify-center shadow-2xl shadow-black/20">
+                            <Briefcase className="w-7 h-7 text-white" />
                         </div>
-                        <Badge className="bg-zinc-100 text-zinc-900 border-none rounded-full px-5 py-2 font-black text-[10px] uppercase tracking-[0.3em]">
+                        <Badge className="bg-zinc-50 text-zinc-400 border-none rounded-full px-6 py-2.5 font-black text-[10px] uppercase tracking-[0.4em]">
                             Nómina Verificada • 2026
                         </Badge>
                     </div>
-                    <div className="space-y-2">
-                        <h2 className="text-6xl font-black tracking-tighter text-zinc-900 leading-none italic uppercase underline decoration-zinc-100 decoration-8 underline-offset-8">Gestión Docente</h2>
-                        <p className="text-zinc-400 font-bold tracking-tight text-lg mt-4 max-w-2xl">
+                    <div className="space-y-4">
+                        <h2 className="text-7xl font-black tracking-tighter text-black leading-none uppercase">Gestión Docente</h2>
+                        <p className="text-zinc-400 font-bold tracking-tight text-xl max-w-2xl">
                             Directorio centralizado del capital humano y administración de roles pedagógicos institucionales.
                         </p>
                     </div>
                 </div>
                 
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center gap-6">
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-zinc-300 group-focus-within:text-zinc-900 transition-colors" />
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-300 group-focus-within:text-black transition-colors" />
                         <Input 
                             placeholder="Buscar docente o perfil..." 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-12 h-14 w-[340px] bg-white border-zinc-100 rounded-2xl shadow-sm focus:ring-1 focus:ring-zinc-200 placeholder:text-zinc-300 font-bold text-xs uppercase tracking-widest text-zinc-900"
+                            className="pl-14 h-16 w-[380px] bg-white border-zinc-100 rounded-[2rem] shadow-sm focus:ring-1 focus:ring-black placeholder:text-zinc-300 font-bold text-xs uppercase tracking-[0.2em] text-black"
                         />
                     </div>
                     
                     <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                         <DialogTrigger asChild>
-                            <Button className="h-14 px-8 bg-zinc-950 text-white hover:bg-zinc-800 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex gap-3 active:scale-95 shadow-xl shadow-zinc-900/10">
+                            <Button className="h-16 px-10 bg-black text-white hover:bg-zinc-800 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] transition-all flex gap-4 active:scale-95 shadow-2xl shadow-black/20">
                                 <Plus className="w-5 h-5" />
                                 Acreditar Personal
                             </Button>
@@ -212,72 +212,74 @@ const Staff = () => {
                 </div>
             </div>
 
-            <div className="grid gap-10 md:grid-cols-2">
+            <div className="grid gap-12 md:grid-cols-2">
                 <AnimatePresence mode="popLayout">
                     {filteredStaff.length > 0 ? filteredStaff.map((s, idx) => (
                         <motion.div 
                             key={s.id || idx}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: idx * 0.03 }}
-                            className="bg-white border border-zinc-100 rounded-[3rem] p-12 group hover:shadow-2xl hover:border-zinc-200 transition-all duration-700 relative overflow-hidden"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.05 }}
+                            className="bg-white border border-zinc-100/50 rounded-[4.5rem] p-12 group hover:shadow-2xl hover:border-black transition-all duration-1000 relative overflow-hidden"
                         >
-                            <div className="flex justify-between items-start mb-10">
-                                <div className="flex items-center gap-8">
-                                    <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center transition-all duration-700 shadow-sm relative overflow-hidden ${
-                                        s.rol === 'Directivo' ? 'bg-zinc-950 text-white' :
-                                        s.rol === 'Docente' ? 'bg-zinc-50 text-zinc-900 border border-zinc-100' :
-                                        'bg-zinc-50 text-zinc-400'
+                            <div className="flex justify-between items-start mb-12">
+                                <div className="flex items-center gap-10">
+                                    <div className={`w-28 h-28 rounded-full flex items-center justify-center transition-all duration-700 shadow-2xl relative overflow-hidden ${
+                                        s.rol === 'Directivo' ? 'bg-black text-white' :
+                                        'bg-zinc-50 text-black border border-zinc-100'
                                     }`}>
-                                         <Briefcase className="w-9 h-9" />
+                                         <User className="w-12 h-12" />
                                     </div>
-                                    <div className="space-y-1">
-                                        <h3 className="text-3xl font-black text-zinc-900 tracking-tighter uppercase group-hover:underline decoration-zinc-100 decoration-4 underline-offset-4">{s.nombre}</h3>
-                                        <div className="flex items-center gap-3">
-                                          <Badge className="bg-zinc-50 text-zinc-400 border-none font-black text-[9px] uppercase tracking-widest px-4 py-1.5 rounded-xl">{s.rol}</Badge>
-                                          <span className="text-[10px] font-black text-zinc-200 uppercase tracking-widest">• Staff ID {s.id}</span>
+                                    <div className="space-y-2">
+                                        <h3 className="text-4xl font-black text-black tracking-tighter uppercase group-hover:underline underline-offset-8 decoration-black/10">{s.nombre}</h3>
+                                        <div className="flex items-center gap-4">
+                                          <Badge className="bg-black text-white border-none font-black text-[10px] uppercase tracking-[0.3em] px-5 py-2.5 rounded-2xl">{s.rol}</Badge>
+                                          <span className="text-[11px] font-black text-zinc-300 uppercase tracking-widest">ID-N {s.id}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-1 bg-emerald-50 px-4 py-1.5 rounded-full">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                    <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest">Activo</span>
+                                <div className="flex items-center gap-2 bg-emerald-50 px-5 py-2.5 rounded-full border border-emerald-100 shadow-sm">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Activo</span>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-10 border-t border-zinc-50 mb-10">
-                                <div className="space-y-2">
-                                    <span className="text-[10px] font-black text-zinc-200 uppercase tracking-[0.3em]">Comunicación</span>
-                                    <div className="flex items-center gap-3 text-zinc-900 font-black text-xs lowercase">
-                                        <Mail className="w-4 h-4 text-zinc-200" />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-12 border-t border-zinc-50 mb-12">
+                                <div className="space-y-3">
+                                    <span className="text-[10px] font-black text-zinc-300 uppercase tracking-[0.4em]">Email Institucional</span>
+                                    <div className="flex items-center gap-4 text-black font-black text-xs lowercase">
+                                        <Mail className="w-5 h-5 text-zinc-200" />
                                         {s.email}
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <span className="text-[10px] font-black text-zinc-200 uppercase tracking-[0.4em]">Fase de Contacto</span>
-                                    <div className="flex items-center gap-3 text-zinc-900 font-black text-xs uppercase">
-                                        <Phone className="w-4 h-4 text-zinc-200" />
+                                <div className="space-y-3">
+                                    <span className="text-[10px] font-black text-zinc-300 uppercase tracking-[0.4em]">Contacto Primario</span>
+                                    <div className="flex items-center gap-4 text-black font-black text-xs uppercase">
+                                        <Phone className="w-5 h-5 text-zinc-200" />
                                         {s.contacto}
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3 bg-zinc-50 px-5 py-2.5 rounded-2xl group-hover:bg-zinc-950 group-hover:text-white transition-all duration-700">
-                                    <Award className="w-4.5 h-4.5 text-blue-500" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest italic">Personal Acreditado</span>
+                                <div className="flex items-center gap-4 bg-zinc-50 px-8 py-3.5 rounded-[2rem] group-hover:bg-black group-hover:text-white transition-all duration-1000 shadow-sm group-hover:shadow-2xl">
+                                    <ShieldCheck className="w-5 h-5 text-black group-hover:text-white" />
+                                    <span className="text-[11px] font-black uppercase tracking-[0.2em]">Personal Certificado</span>
                                 </div>
-                                <div className="w-12 h-12 rounded-full border border-zinc-50 flex items-center justify-center text-zinc-100 group-hover:text-zinc-950 transition-all duration-700">
-                                    <ChevronRight className="w-6 h-6" />
+                                <div className="w-16 h-16 rounded-full border border-zinc-50 flex items-center justify-center text-zinc-100 group-hover:bg-zinc-50 group-hover:text-black transition-all duration-1000">
+                                    <ChevronRight className="w-8 h-8" />
                                 </div>
                             </div>
                         </motion.div>
                     )) : (
-                        <div className="col-span-full py-40 flex flex-col items-center justify-center space-y-8 opacity-20 select-none">
-                            <div className="w-24 h-24 rounded-full border-4 border-dashed border-zinc-100 flex items-center justify-center">
-                              <User className="w-10 h-10" />
+                        <div className="col-span-full py-56 flex flex-col items-center justify-center space-y-12 opacity-20 select-none border-2 border-dashed border-zinc-100 rounded-[6rem]">
+                            <div className="w-36 h-36 rounded-full border-[3px] border-zinc-200 flex items-center justify-center">
+                              <User className="w-16 h-16 text-zinc-200" />
                             </div>
-                            <p className="text-[11px] font-black uppercase tracking-[0.6em] italic">No se registran integrantes en el directorio</p>
+                            <div className="text-center space-y-3">
+                                <p className="text-[12px] font-black uppercase tracking-[0.8em] italic">Directorio Desierto</p>
+                                <p className="text-[9px] font-bold text-zinc-300 uppercase tracking-[0.3em]">No hay registros certificados en el núcleo actual</p>
+                            </div>
                         </div>
                     )}
                 </AnimatePresence>

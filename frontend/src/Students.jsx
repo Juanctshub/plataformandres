@@ -46,9 +46,9 @@ const StudentsSkeleton = () => (
         <Skeleton className="h-12 w-40 bg-zinc-900 rounded-2xl" />
       </div>
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {[1, 2, 3, 4, 5, 6].map(i => (
-        <Skeleton key={i} className="h-[320px] w-full bg-white border border-zinc-100 rounded-[2.5rem]" />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+      {[1, 2, 3].map(i => (
+        <Skeleton key={i} className="h-[400px] w-full bg-zinc-50 border border-zinc-100 rounded-[3rem]" />
       ))}
     </div>
   </div>
@@ -352,56 +352,62 @@ const Students = () => {
       </AnimatePresence>
 
       {/* Students Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         {filteredStudents.length > 0 ? filteredStudents.map((student, idx) => (
           <motion.div 
             key={student.id || idx}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: idx * 0.03 }}
-            whileHover={{ y: -10 }}
-            className="apple-card p-12 group cursor-default"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05 }}
+            whileHover={{ y: -12, scale: 1.01 }}
+            className="bg-white border border-zinc-100/50 rounded-[4rem] p-12 group cursor-default transition-all duration-1000 hover:shadow-2xl hover:border-black"
           >
-            <div className="flex justify-between items-start mb-10">
-              <div className="w-16 h-16 rounded-3xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-300 group-hover:text-zinc-900 group-hover:bg-zinc-100 transition-all duration-700 shadow-sm">
-                <UserIcon className="w-8 h-8" />
+            <div className="flex justify-between items-start mb-12">
+              <div className="w-20 h-20 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-300 group-hover:bg-black group-hover:text-white transition-all duration-700 shadow-sm">
+                <UserIcon className="w-10 h-10" />
               </div>
-              <div className="flex flex-col items-end gap-2">
-                <Badge className="bg-zinc-950 text-white border-none font-black text-[9px] uppercase tracking-widest px-4 py-1.5 rounded-xl">
+              <div className="flex flex-col items-end gap-3">
+                <Badge className="bg-black text-white border-none font-black text-[10px] uppercase tracking-widest px-5 py-2 rounded-2xl">
                   {student.seccion}
                 </Badge>
-                <span className="text-[8px] font-black text-zinc-300 uppercase tracking-widest">Activo 2026</span>
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
             </div>
             
-            <div className="space-y-3 mb-12">
-              <h3 className="text-3xl font-black text-zinc-900 leading-tight tracking-tight uppercase group-hover:underline decoration-zinc-100 decoration-4 underline-offset-8 transition-all">{student.nombre}</h3>
-              <p className="text-[10px] font-black text-zinc-300 tracking-[0.3em] uppercase pl-1">CI: {student.cedula}</p>
+            <div className="space-y-4 mb-16">
+              <h3 className="text-4xl font-black text-black leading-tight tracking-tighter uppercase group-hover:underline underline-offset-8 decoration-black/10">{student.nombre}</h3>
+              <div className="flex items-center gap-4">
+                  <IdCard className="w-4 h-4 text-zinc-200" />
+                  <p className="text-xs font-black text-zinc-300 tracking-[0.2em] uppercase">CI: {student.cedula}</p>
+              </div>
             </div>
             
-            <div className="pt-10 border-t border-zinc-50 flex flex-col gap-6">
+            <div className="pt-12 border-t border-zinc-50 flex flex-col gap-8">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Building2 className="w-3.5 h-3.5 text-zinc-200" />
-                  <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Representante</span>
+                <div className="flex items-center gap-4">
+                  <Building2 className="w-4.5 h-4.5 text-zinc-200" />
+                  <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Representante</span>
                 </div>
-                <span className="text-xs font-black text-zinc-900 uppercase tracking-tighter">{student.representante || 'PENDIENTE'}</span>
+                <span className="text-xs font-black text-black uppercase tracking-tighter">{student.representante || 'PENDIENTE'}</span>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Phone className="w-3.5 h-3.5 text-zinc-200" />
-                  <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Contacto</span>
+                <div className="flex items-center gap-4">
+                  <Phone className="w-4.5 h-4.5 text-zinc-200" />
+                  <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Contacto</span>
                 </div>
-                <span className="text-xs font-black text-zinc-900">{student.contacto || 'N/A'}</span>
+                <span className="text-xs font-black text-black tracking-widest">{student.contacto || 'N/A'}</span>
               </div>
             </div>
           </motion.div>
         )) : (
-            <div className="col-span-full py-32 flex flex-col items-center justify-center space-y-8 opacity-20 select-none">
-                <div className="w-24 h-24 rounded-full border-[3px] border-dashed border-zinc-200 flex items-center justify-center">
-                  <Filter className="w-10 h-10 text-zinc-200" />
+            <div className="col-span-full py-48 flex flex-col items-center justify-center space-y-10 opacity-20 select-none border-2 border-dashed border-zinc-100 rounded-[5rem]">
+                <div className="w-32 h-32 rounded-full border-[2px] border-zinc-200 flex items-center justify-center">
+                  <Users className="w-12 h-12 text-zinc-200" />
                 </div>
-                <p className="text-xs font-black text-zinc-300 uppercase tracking-[0.4em]">No se identificaron registros en la sección actual</p>
+                <div className="text-center space-y-2">
+                  <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.6em] italic">Núcleo de Datos Vacío</p>
+                  <p className="text-[8px] font-bold text-zinc-300 uppercase tracking-[0.3em]">No se identificaron registros en la sección actual</p>
+                </div>
             </div>
         )}
       </div>

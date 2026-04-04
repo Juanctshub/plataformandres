@@ -125,29 +125,29 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       </div>
 
       {/* Main Stats Grid */}
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat, idx) => (
           <motion.div 
             key={stat.label} 
             variants={item} 
-            whileHover={{ y: -8 }}
-            className="apple-card p-10 relative overflow-hidden group cursor-default"
+            whileHover={{ y: -8, scale: 1.02 }}
+            className="bg-white border border-zinc-100/50 rounded-[4rem] p-12 relative overflow-hidden group cursor-default transition-all duration-1000 hover:shadow-2xl hover:border-black"
           >
-            <div className="flex justify-between items-start mb-10">
-                <div className={`w-14 h-14 rounded-2xl bg-zinc-50 border border-zinc-100/50 flex items-center justify-center transition-all duration-500 group-hover:scale-110`}>
-                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
+            <div className="flex justify-between items-start mb-12">
+                <div className={`w-16 h-16 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center transition-all duration-700 group-hover:bg-black group-hover:text-white`}>
+                    <stat.icon className={`h-7 w-7`} />
                 </div>
-                <Badge className="bg-zinc-50 text-zinc-400 border-none font-black text-[9px] uppercase tracking-widest px-3 py-1 mr-[-10px]">
+                <Badge className="bg-zinc-50 text-zinc-300 border-none font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-xl">
                     {stat.trend}
                 </Badge>
             </div>
             
-            <div className="space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-300 mb-3">{stat.label}</p>
-                <div className="text-5xl font-black text-zinc-900 tracking-tighter">
+            <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-300 mb-4">{stat.label}</p>
+                <div className="text-6xl font-black text-black tracking-tighter">
                     {stat.value}
                 </div>
-                <p className="text-[10px] font-bold text-zinc-400 mt-6 uppercase tracking-widest opacity-60 italic">
+                <p className="text-[10px] font-bold text-zinc-400 mt-8 uppercase tracking-widest opacity-40 italic">
                     {stat.sub}
                 </p>
             </div>
@@ -260,59 +260,51 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
         </motion.div>
       </div>
 
-      {/* Action Suite (Functional Buttons) */}
-      <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* Action Suite (Signature Onyx Icons) */}
+      <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {[
             { 
-                title: 'Emitir Reporte de Asistencia', 
-                desc: 'Generar PDF mensual por sección académica.', 
+                title: 'Reportes', 
+                desc: 'Exportación Mensual PDF', 
                 icon: Printer, 
                 action: generateAttendanceReport,
-                variant: 'primary'
+                color: 'bg-black text-white'
             },
             { 
-                title: 'Inscribir Nueva Matrícula', 
-                desc: 'Añadir estudiante al núcleo de datos.', 
+                title: 'Matrícula', 
+                desc: 'Acreditación Directa', 
                 icon: UserPlus, 
                 action: () => onTabChange('students'),
-                variant: 'secondary'
+                color: 'bg-zinc-900 text-white'
             },
             { 
-                title: 'Configurar Periodo Escolar', 
-                desc: 'Ajustar fechas y parámetros del año.', 
+                title: 'Núcleo', 
+                desc: 'Parámetros de Control', 
                 icon: SettingsIcon, 
                 action: () => onTabChange('settings'),
-                variant: 'secondary'
+                color: 'bg-zinc-800 text-white'
             }
           ].map((action, i) => (
             <motion.button
               key={i}
-              whileHover={{ y: -6, scale: 1.01 }}
+              whileHover={{ y: -12, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={action.action}
-              className={`p-10 rounded-[3rem] flex flex-col items-start justify-between group transition-all duration-700 h-[260px] text-left border ${
-                action.variant === 'primary' 
-                  ? 'bg-zinc-950 text-white border-zinc-900 shadow-2xl shadow-zinc-900/10' 
-                  : 'bg-white text-zinc-900 border-zinc-100 shadow-sm hover:shadow-xl hover:border-zinc-200'
-              }`}
+              className="bg-white border border-zinc-100/50 rounded-[4rem] p-12 flex flex-col items-center justify-center text-center gap-8 group transition-all duration-1000 hover:shadow-2xl hover:border-black min-h-[320px]"
             >
-              <div className={`w-16 h-16 rounded-3xl flex items-center justify-center mb-8 shadow-sm transition-all duration-700 group-hover:rotate-12 ${
-                action.variant === 'primary' ? 'bg-white/10 text-white' : 'bg-zinc-100 text-zinc-400 group-hover:text-zinc-900'
-              }`}>
-                <action.icon className="w-7 h-7" />
+              <div className={`w-24 h-24 rounded-full flex items-center justify-center shadow-2xl shadow-black/10 transition-all duration-700 group-hover:rotate-12 group-hover:scale-110 ${action.color}`}>
+                <action.icon className="w-10 h-10" />
               </div>
               
-              <div>
-                <h4 className="text-xl font-black mb-3 tracking-tighter uppercase">{action.title}</h4>
-                <p className={`text-[11px] font-bold uppercase tracking-widest ${action.variant === 'primary' ? 'text-zinc-500' : 'text-zinc-300 group-hover:text-zinc-400'}`}>
+              <div className="space-y-3">
+                <h4 className="text-2xl font-black text-black tracking-tighter uppercase">{action.title}</h4>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-300 group-hover:text-zinc-500 transition-colors">
                     {action.desc}
                 </p>
               </div>
-
-              <div className="w-full flex justify-end mt-4">
-                 <div className={`p-3 rounded-2xl ${action.variant === 'primary' ? 'bg-white text-zinc-950' : 'bg-zinc-950 text-white'} opacity-0 group-hover:opacity-100 transition-all duration-500`}>
-                    <Plus className="w-5 h-5" />
-                 </div>
+              
+              <div className="w-12 h-12 rounded-full bg-zinc-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 mt-4">
+                 <Plus className="w-5 h-5 text-black" />
               </div>
             </motion.button>
           ))}

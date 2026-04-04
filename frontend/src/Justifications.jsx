@@ -44,9 +44,9 @@ const JustificationsSkeleton = () => (
       </div>
       <Skeleton className="h-12 w-48 bg-zinc-100 rounded-2xl" />
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-      {[1, 2, 3, 4].map(i => (
-        <Skeleton key={i} className="h-72 w-full bg-white border border-zinc-100 rounded-[3rem]" />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+      {[1, 2].map(i => (
+        <Skeleton key={i} className="h-80 w-full bg-zinc-50 border border-zinc-100 rounded-[4rem]" />
       ))}
     </div>
   </div>
@@ -266,102 +266,102 @@ const Justifications = () => {
       </div>
 
       {/* List */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <AnimatePresence mode="popLayout">
           {filteredJustifications.length > 0 ? filteredJustifications.map((j, idx) => (
             <motion.div 
               key={j.id || idx}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.03 }}
-              className="bg-white border border-zinc-100 rounded-[3rem] p-12 group hover:shadow-2xl hover:border-zinc-200 transition-all duration-700 relative overflow-hidden"
+              transition={{ delay: idx * 0.05 }}
+              className="bg-white border border-zinc-100/50 rounded-[4.5rem] p-12 group hover:shadow-2xl hover:border-black transition-all duration-1000 relative overflow-hidden"
             >
               {j.estado === 'aprobado' && (
-                <div className="absolute -right-8 -top-8 w-40 h-40 bg-emerald-500/5 rotate-12 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                   <Stamp className="w-20 h-20 text-emerald-500/20" />
+                <div className="absolute -right-12 -top-12 w-48 h-48 bg-black/5 rotate-45 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-1000">
+                   <Stamp className="w-24 h-24 text-black/10" />
                 </div>
               )}
 
-              <div className="flex justify-between items-start mb-10">
-                <div className="flex items-center gap-8">
-                    <div className={`w-20 h-20 rounded-[1.75rem] flex items-center justify-center transition-all duration-700 shadow-sm overflow-hidden ${
-                    j.estado === 'aprobado' ? 'bg-emerald-50 text-emerald-500' : 
-                    j.estado === 'rechazado' ? 'bg-red-50 text-red-500' :
-                    'bg-amber-50 text-amber-500'
+              <div className="flex justify-between items-start mb-12">
+                <div className="flex items-center gap-10">
+                    <div className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-1000 shadow-2xl relative overflow-hidden ${
+                    j.estado === 'aprobado' ? 'bg-black text-white' : 
+                    j.estado === 'rechazado' ? 'bg-red-600 text-white' :
+                    'bg-amber-500 text-white'
                     }`}>
-                    {j.estado === 'aprobado' ? <CheckCircle2 className="w-9 h-9" /> : 
-                     j.estado === 'rechazado' ? <XCircle className="w-9 h-9" /> : 
-                     <Clock className="w-9 h-9 animate-pulse" />}
+                    {j.estado === 'aprobado' ? <CheckCircle2 className="w-12 h-12" /> : 
+                     j.estado === 'rechazado' ? <XCircle className="w-12 h-12" /> : 
+                     <Clock className="w-12 h-12 animate-pulse" />}
                     </div>
-                    <div>
-                        <h3 className="text-3xl font-black text-zinc-900 tracking-tighter uppercase mb-2 group-hover:underline decoration-zinc-100 decoration-4 underline-offset-4">{j.nombre}</h3>
-                        <Badge className="bg-zinc-100 text-zinc-400 border-none font-black text-[9px] uppercase tracking-widest px-4 py-1.5 rounded-full">Sección {j.seccion}</Badge>
+                    <div className="space-y-2">
+                        <h3 className="text-4xl font-black text-black tracking-tighter uppercase mb-2 group-hover:underline underline-offset-8 decoration-black/10">{j.nombre}</h3>
+                        <Badge className="bg-zinc-50 text-zinc-400 border-none font-black text-[10px] uppercase tracking-[0.3em] px-5 py-2 rounded-2xl">Sección {j.seccion}</Badge>
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-3">
-                  <Badge className={`rounded-full px-5 py-2 font-black text-[9px] uppercase tracking-widest border-none ${
-                      j.estado === 'aprobado' ? 'bg-emerald-500 text-white' : 
-                      j.estado === 'rechazado' ? 'bg-red-500 text-white' :
+                  <Badge className={`rounded-full px-6 py-2.5 font-black text-[10px] uppercase tracking-widest border-none ${
+                      j.estado === 'aprobado' ? 'bg-black text-white' : 
+                      j.estado === 'rechazado' ? 'bg-red-600 text-white' :
                       'bg-amber-500 text-white'
                   }`}>
                       {j.estado}
                   </Badge>
-                  <span className="text-[8px] font-black text-zinc-200 uppercase tracking-widest leading-none">Validación v10.0</span>
+                  <span className="text-[10px] font-black text-zinc-200 uppercase tracking-widest leading-none">Cert v11.0</span>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-10 mb-10 py-10 border-y border-zinc-50">
-                <div className="space-y-2">
-                    <span className="text-[10px] font-black text-zinc-200 uppercase tracking-[0.4em]">Cronología</span>
-                    <div className="flex items-center gap-3 text-zinc-900 font-black text-xs uppercase">
-                        <Calendar className="w-4 h-4 text-zinc-200" />
+              <div className="grid grid-cols-2 gap-12 mb-12 py-12 border-y border-zinc-50">
+                <div className="space-y-4">
+                    <span className="text-[10px] font-black text-zinc-300 uppercase tracking-[0.4em]">Cronología</span>
+                    <div className="flex items-center gap-4 text-black font-black text-xs uppercase">
+                        <Calendar className="w-5 h-5 text-zinc-200" />
                         {new Date(j.fecha).toLocaleDateString()}
                     </div>
                 </div>
-                <div className="space-y-2">
-                    <span className="text-[10px] font-black text-zinc-200 uppercase tracking-[0.4em]">Protocolo</span>
-                    <div className="flex items-center gap-3 text-zinc-900 font-black text-xs uppercase italic underline decoration-zinc-100 underline-offset-4">
-                        <FileText className="w-4 h-4 text-zinc-200" />
+                <div className="space-y-4">
+                    <span className="text-[10px] font-black text-zinc-300 uppercase tracking-[0.4em]">Protocolo</span>
+                    <div className="flex items-center gap-4 text-black font-black text-xs uppercase italic underline underline-offset-8 decoration-black/5">
+                        <FileText className="w-5 h-5 text-zinc-200" />
                         {j.motivo}
                     </div>
                 </div>
               </div>
 
-              <div className="space-y-8">
-                <div className="bg-zinc-50 rounded-3xl p-8 relative overflow-hidden group/box">
-                    <MessageSquare className="absolute -right-6 -bottom-6 w-24 h-24 text-zinc-100 group-hover/box:scale-110 transition-transform duration-1000" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-300 block mb-4">Declaración Oficial</span>
-                    <p className="text-zinc-900 text-sm font-black italic leading-relaxed tracking-tight group-hover:text-zinc-500 transition-colors uppercase">"{j.comentario || 'Pendiente de auditoría física'}"</p>
+              <div className="space-y-10">
+                <div className="bg-zinc-50 rounded-[2.5rem] p-10 relative overflow-hidden group/box">
+                    <MessageSquare className="absolute -right-8 -bottom-8 w-32 h-32 text-zinc-100/50 group-hover/box:scale-110 transition-transform duration-1000" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-300 block mb-6">Declaración del Representante</span>
+                    <p className="text-black text-sm font-bold italic leading-relaxed tracking-tight group-hover:text-zinc-500 transition-colors uppercase">"{j.comentario || 'Pendiente de auditoría física'}"</p>
                 </div>
                 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-6">
                     {j.estado === 'pendiente' ? (
                         <>
                             <Button 
                                 onClick={() => handleUpdateStatus(j.id, 'aprobado')}
-                                className="flex-1 h-16 bg-zinc-950 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest hover:bg-zinc-800 shadow-xl shadow-zinc-900/10 active:scale-95 transition-all flex gap-3"
+                                className="flex-1 h-20 bg-black text-white rounded-[2.5rem] font-black text-xs uppercase tracking-widest hover:bg-zinc-800 shadow-2xl shadow-black/20 active:scale-95 transition-all flex gap-4"
                             >
-                                <CheckCircle2 className="w-5 h-5" />
+                                <CheckCircle2 className="w-6 h-6" />
                                 Validar Digitalmente
                             </Button>
                             <Button 
                                 onClick={() => handleUpdateStatus(j.id, 'rechazado')}
-                                className="w-16 h-16 bg-white border border-zinc-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-50 transition-all active:scale-95 shadow-sm"
+                                className="w-20 h-20 bg-white border border-zinc-100 text-red-600 rounded-full flex items-center justify-center hover:bg-red-50 transition-all active:scale-95 shadow-sm hover:border-red-100"
                             >
-                                <XCircle className="w-6 h-6" />
+                                <XCircle className="w-8 h-8" />
                             </Button>
                         </>
                     ) : (
-                        <div className="flex w-full gap-4">
+                        <div className="flex w-full gap-6">
                             <Button 
                                 onClick={() => exportSinglePDF(j)}
-                                className="flex-1 h-16 bg-zinc-100 text-zinc-900 rounded-[2rem] font-black text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all flex gap-4"
+                                className="flex-1 h-20 bg-zinc-50 text-black border border-zinc-100 rounded-[2.5rem] font-black text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-700 flex gap-4 shadow-sm hover:shadow-2xl hover:border-black"
                             >
-                                <Printer className="w-5 h-5" />
-                                Certificado PDF
+                                <Printer className="w-6 h-6" />
+                                Generar Certificado PDF
                             </Button>
-                            <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-200">
-                                <ShieldCheck className="w-6 h-6" />
+                            <div className="w-20 h-20 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-200">
+                                <ShieldCheck className="w-8 h-8" />
                             </div>
                         </div>
                     )}
@@ -369,11 +369,14 @@ const Justifications = () => {
               </div>
             </motion.div>
           )) : (
-            <div className="col-span-full py-40 flex flex-col items-center justify-center space-y-8 opacity-20 select-none">
-              <div className="w-24 h-24 rounded-full border-4 border-dashed border-zinc-100 flex items-center justify-center">
-                <Stamp className="w-10 h-10" />
+            <div className="col-span-full py-56 flex flex-col items-center justify-center space-y-12 opacity-20 select-none border-2 border-dashed border-zinc-100 rounded-[6rem]">
+              <div className="w-36 h-36 rounded-full border-[3px] border-zinc-200 flex items-center justify-center">
+                <Stamp className="w-16 h-16 text-zinc-200" />
               </div>
-              <p className="text-[11px] font-black uppercase tracking-[0.6em] italic">No hay protocolos pendientes de auditoría</p>
+              <div className="text-center space-y-3">
+                 <p className="text-[12px] font-black uppercase tracking-[0.8em] italic">Auditoría Limpia</p>
+                 <p className="text-[9px] font-bold text-zinc-300 uppercase tracking-[0.3em]">No hay protocolos pendientes en la cola de validación</p>
+              </div>
             </div>
           )}
         </AnimatePresence>

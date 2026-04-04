@@ -5,25 +5,25 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --foreground: 0 0% 0%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 0%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 1.25rem;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 98%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 0%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 92%;
+    --input: 0 0% 92%;
+    --ring: 0 0% 0%;
+    --radius: 2rem;
   }
 }
 
@@ -56,27 +56,32 @@
   
   .apple-card {
     background-color: white;
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    border-radius: 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-    transition: all 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    border-radius: 3rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+    transition: all 800ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .apple-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-    border-color: rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px) scale(1.005);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.06);
   }
 
-  .apple-shadow-soft {
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+  .icon-signature {
+    @apply w-16 h-16 rounded-[2rem] bg-black text-white flex items-center justify-center shadow-2xl shadow-black/20 transition-all duration-700 hover:rotate-6 hover:scale-110 active:scale-95;
   }
 
-  .text-apple-gradient {
-    background-image: linear-gradient(to bottom right, #000000, #333333, #666666);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .icon-signature-light {
+    @apply w-12 h-12 rounded-[1.5rem] bg-zinc-50 border border-zinc-100 text-zinc-400 flex items-center justify-center transition-all duration-500 hover:bg-black hover:text-white hover:border-black;
+  }
+
+  .onyx-gradient {
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  }
+
+  .onyx-shadow {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
   
   .custom-scrollbar::-webkit-scrollbar {

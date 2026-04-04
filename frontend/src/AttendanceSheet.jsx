@@ -15,7 +15,9 @@ import {
   AlertCircle,
   FileText,
   Save,
-  Check
+  Check,
+  IdCard,
+  Loader2
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -202,72 +204,74 @@ const AttendanceSheet = () => {
       {/* Attendance List */}
       <div className="grid grid-cols-1 gap-6">
         <AnimatePresence mode="popLayout">
-          {filteredStudents.map((s, idx) => (
+          {filteredStudents.length > 0 ? filteredStudents.map((s, idx) => (
             <motion.div 
               key={s.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.02 }}
-              className="bg-white border border-zinc-100 rounded-[2.5rem] p-8 flex flex-col xl:flex-row xl:items-center justify-between gap-8 group hover:shadow-xl hover:border-zinc-200 transition-all duration-700"
+              transition={{ delay: idx * 0.05 }}
+              className="bg-white border border-zinc-100/50 rounded-[4rem] p-12 flex flex-col xl:flex-row xl:items-center justify-between gap-12 group hover:shadow-2xl hover:border-black transition-all duration-1000"
             >
-              <div className="flex items-center gap-8">
-                <div className={`w-20 h-20 rounded-[1.75rem] flex items-center justify-center transition-all duration-700 shadow-sm relative overflow-hidden ${
-                  s.status === 'presente' ? 'bg-emerald-50 text-emerald-500' : 
-                  s.status === 'ausente' ? 'bg-red-50 text-red-500' :
-                  s.status === 'justificado' ? 'bg-blue-50 text-blue-500' :
-                  'bg-amber-50 text-amber-500'
+              <div className="flex items-center gap-12">
+                <div className={`w-32 h-32 rounded-full flex items-center justify-center transition-all duration-700 shadow-2xl relative overflow-hidden ${
+                  s.status === 'presente' ? 'bg-black text-white' : 
+                  s.status === 'ausente' ? 'bg-red-600 text-white' :
+                  s.status === 'justificado' ? 'bg-zinc-400 text-white' :
+                  'bg-amber-500 text-white'
                 }`}>
-                  {s.status === 'presente' ? <CheckCircle2 className="w-9 h-9" /> : 
-                   s.status === 'ausente' ? <XCircle className="w-9 h-9" /> : 
-                   s.status === 'justificado' ? <FileText className="w-9 h-9" /> :
-                   <Clock className="w-9 h-9" />}
+                  {s.status === 'presente' ? <CheckCircle2 className="w-14 h-14" /> : 
+                   s.status === 'ausente' ? <XCircle className="w-14 h-14" /> : 
+                   s.status === 'justificado' ? <FileText className="w-14 h-14" /> :
+                   <Clock className="w-14 h-14" />}
                 </div>
                 
                 <div>
-                  <h3 className="text-3xl font-black text-zinc-900 tracking-tighter uppercase mb-2 group-hover:underline decoration-zinc-100 decoration-4 underline-offset-4">{s.nombre}</h3>
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-2">
-                      <IdCard className="w-3.5 h-3.5 text-zinc-200" />
-                      <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">{s.cedula}</span>
+                  <h3 className="text-4xl font-black text-black tracking-tighter uppercase mb-4">{s.nombre}</h3>
+                  <div className="flex items-center gap-12">
+                    <div className="flex items-center gap-3">
+                      <IdCard className="w-5 h-5 text-zinc-300" />
+                      <span className="text-xs font-black text-zinc-400 uppercase tracking-widest">{s.cedula}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Users className="w-3.5 h-3.5 text-zinc-200" />
-                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">SECCIÓN {s.seccion}</span>
+                    <div className="flex items-center gap-3">
+                        <Users className="w-5 h-5 text-zinc-300" />
+                        <span className="text-xs font-black text-zinc-500 uppercase tracking-widest">Sección {s.seccion}</span>
                     </div>
                     {s.isJustified && (
-                        <Badge className="bg-blue-500 text-white border-none rounded-full px-3 py-1 font-black text-[8px] uppercase tracking-widest">Justificación Vincunlada</Badge>
+                        <Badge className="bg-black text-white border-none rounded-full px-4 py-1.5 font-black text-[9px] uppercase tracking-widest">Validado</Badge>
                     )}
                   </div>
                 </div>
               </div>
               
-              <div className="flex flex-wrap items-center gap-4 bg-zinc-50/50 p-2 rounded-[2rem] border border-zinc-100">
+              <div className="flex flex-wrap items-center gap-4 bg-zinc-50 p-3 rounded-[3rem] border border-zinc-100">
                 {[
-                  { id: 'presente', icon: CheckCircle2, label: 'Asistió', color: 'emerald' },
-                  { id: 'ausente', icon: XCircle, label: 'Llamar Rep.', color: 'red' },
-                  { id: 'justificado', icon: FileText, label: 'Exento', color: 'blue' },
-                  { id: 'retraso', icon: Clock, label: 'Retraso', color: 'amber' }
+                  { id: 'presente', icon: CheckCircle2, label: 'Si', color: 'black' },
+                  { id: 'ausente', icon: XCircle, label: 'Llamar', color: 'red-600' },
+                  { id: 'justificado', icon: FileText, label: 'Exento', color: 'zinc-400' },
+                  { id: 'retraso', icon: Clock, label: 'Tarde', color: 'amber-500' }
                 ].map(opt => (
                   <button
                     key={opt.id}
                     disabled={s.status === 'justificado' && opt.id !== 'justificado'}
                     onClick={() => handleStatusChange(s.id, opt.id)}
-                    className={`h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-500 flex items-center gap-3 relative overflow-hidden ${
+                    className={`h-20 px-10 rounded-[2rem] font-black uppercase tracking-widest text-[11px] transition-all duration-700 flex items-center gap-4 ${
                       s.status === opt.id 
-                        ? `bg-white border-none text-zinc-900 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.1)] scale-105` 
-                        : 'bg-transparent text-zinc-300 hover:text-zinc-500'
-                    } ${s.status === 'justificado' && opt.id !== 'justificado' ? 'opacity-20 cursor-not-allowed shadow-none scale-100 bg-transparent' : ''}`}
+                        ? `bg-black text-white shadow-2xl scale-105` 
+                        : 'bg-transparent text-zinc-300 hover:text-black'
+                    }`}
                   >
-                    {s.status === opt.id && (
-                        <div className={`absolute left-0 top-0 bottom-0 w-1.5 bg-${opt.color}-500`} />
-                    )}
-                    <opt.icon className={`w-4 h-4 ${s.status === opt.id ? `text-${opt.color}-500` : ''}`} />
+                    <opt.icon className={`w-6 h-6`} />
                     {opt.label}
                   </button>
                 ))}
               </div>
             </motion.div>
-          ))}
+          )) : (
+            <div className="flex flex-col items-center justify-center py-40 border-2 border-dashed border-zinc-100 rounded-[5rem] space-y-8 opacity-20">
+               <Users className="w-24 h-24 text-zinc-300" />
+               <p className="text-xs font-black uppercase tracking-[0.5em] text-zinc-400">Sin registros en esta sección</p>
+            </div>
+          )}
         </AnimatePresence>
       </div>
 
