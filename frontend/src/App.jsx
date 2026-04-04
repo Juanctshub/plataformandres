@@ -143,6 +143,61 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
   );
 };
 
+// Sub-componentes Maestros
+const SplashScreen = ({ isInitialized }) => (
+  <motion.div 
+    initial={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="fixed inset-0 z-[1000] bg-black flex flex-col items-center justify-center overflow-hidden"
+  >
+    <div className="absolute inset-0">
+       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/20 blur-[150px] rounded-full animate-pulse" />
+    </div>
+    <motion.div 
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      className="relative flex flex-col items-center space-y-8"
+    >
+       <div className="w-24 h-24 rounded-[2.5rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/20">
+          <ShieldCheck className="w-12 h-12 text-white" />
+       </div>
+       <div className="flex flex-col items-center text-center">
+          <h1 className="text-3xl font-black tracking-tighter text-white">Andrés Bello</h1>
+          <span className="text-[11px] font-bold text-blue-400 uppercase tracking-[0.4em] mt-2">Nodo Maestro v19.1</span>
+       </div>
+    </motion.div>
+    <div className="absolute bottom-12 flex flex-col items-center space-y-2">
+       <div className="w-48 h-[2px] bg-white/5 rounded-full overflow-hidden">
+          <motion.div 
+            initial={{ x: '-100%' }}
+            animate={{ x: isInitialized ? '0%' : '100%' }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-full h-full bg-blue-500"
+          />
+       </div>
+       <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">Sincronizando registros estelares</span>
+    </div>
+  </motion.div>
+);
+
+const CriticalErrorScreen = ({ onRetry }) => (
+  <div className="fixed inset-0 z-[2000] bg-black flex flex-col items-center justify-center p-8">
+     <div className="w-20 h-20 rounded-3xl bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500 mb-8">
+        <AlertCircle className="w-10 h-10" />
+     </div>
+     <h2 className="text-3xl font-black text-white tracking-tighter text-center uppercase mb-4">Error Crítico de Núcleo</h2>
+     <p className="text-sm text-[#86868b] font-medium text-center max-w-sm mb-12 leading-relaxed">
+        El Nodo Maestro no ha respondido en el intervalo asignado. Verifique su red institucional o el estado del servidor.
+     </p>
+     <Button 
+       onClick={onRetry}
+       className="h-14 px-12 bg-white text-black hover:bg-zinc-200 rounded-2xl font-black text-xs tracking-widest uppercase transition-all active:scale-95 shadow-xl"
+     >
+        REINTENTAR ACCESO
+     </Button>
+  </div>
+);
+
 const AndresBelloSuite = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
@@ -186,6 +241,9 @@ const AndresBelloSuite = () => {
         fetch(`${baseUrl}/api/personal`, { headers })
       ]);
 
+      const [resStd, resAi, resJust, resStaff] = responses.map(r => r.status === 'fulfilled' ? r.value : null);
+      const aiDataRes = responses[1];
+
       // Prepare Notifications based on AI data
       if (aiDataRes.status === 'fulfilled' && aiDataRes.value.ok) {
         const aiJson = await aiDataRes.value.clone().json();
@@ -198,8 +256,6 @@ const AndresBelloSuite = () => {
           })));
         }
       }
-
-      const [resStd, resAi, resJust, resStaff] = responses.map(r => r.status === 'fulfilled' ? r.value : null);
       
       const stds = resStd && resStd.ok ? await resStd.json() : [];
       const ai = resAi && resAi.ok ? await resAi.json() : { title: '', security: '', alerts: [] };
