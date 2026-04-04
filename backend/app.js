@@ -99,11 +99,26 @@ app.get('/api/estudiantes', authenticateToken, async (req, res) => {
 app.get('/api/estudiantes/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
+        if (isNaN(parseInt(id))) return res.status(400).json({ error: "ID de estudiante inválido" });
+        
         const result = await db.query("SELECT * FROM estudiantes WHERE id = $1", [id]);
         if (result.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado" });
         res.json(result.rows[0]);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Fallo crítico en Nodo de Consulta: " + err.message });
+    }
+});
+
+app.delete('/api/estudiantes/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (isNaN(parseInt(id))) return res.status(400).json({ error: "ID de estudiante inválido para eliminación" });
+        
+        const result = await db.query("DELETE FROM estudiantes WHERE id = $1 RETURNING id", [id]);
+        if (result.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado para eliminación" });
+        res.json({ success: true, message: "Registro eliminado permanentemente del Nodo Maestro", id: result.rows[0].id });
+    } catch (err) {
+        res.status(500).json({ error: "Fallo en protocolo de eliminación: " + err.message });
     }
 });
 

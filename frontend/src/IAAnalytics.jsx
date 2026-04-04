@@ -44,6 +44,7 @@ import {
 const IAAnalytics = () => {
     const [aiData, setAiData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isReady, setIsReady] = useState(false);
     const [notifying, setNotifying] = useState(null);
     const [msg, setMsg] = useState({ text: '', type: '' });
 
@@ -73,6 +74,8 @@ const IAAnalytics = () => {
 
     useEffect(() => {
         fetchAiData();
+        const timer = setTimeout(() => setIsReady(true), 500); // Wait for transition
+        return () => clearTimeout(timer);
     }, []);
 
     const handleNotify = async (alert) => {
@@ -209,7 +212,8 @@ const IAAnalytics = () => {
                >
                   <div className="apple-card p-10">
                      <h4 className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest mb-8 border-b border-white/5 pb-4">Actividad Neural</h4>
-                     <div className="h-[260px] w-full min-h-[260px]">
+                     <div className="h-[260px] w-full min-h-[260px] flex items-center justify-center">
+                        {isReady ? (
                         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                            <AreaChart data={mockHistory}>
                               <defs>
@@ -225,6 +229,9 @@ const IAAnalytics = () => {
                               <Area type="monotone" dataKey="index" stroke="#007AFF" strokeWidth={3} fill="url(#areaGradient)" />
                            </AreaChart>
                         </ResponsiveContainer>
+                        ) : (
+                          <Loader2 className="w-6 h-6 text-blue-500/20 animate-spin" />
+                        )}
                      </div>
                   </div>
 

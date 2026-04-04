@@ -186,16 +186,17 @@ const AndresBelloSuite = () => {
         fetch(`${baseUrl}/api/personal`, { headers })
       ]);
 
-      // Check for 403 Forbidden globally
-      const forbidden = responses.some(r => r.status === 'fulfilled' && r.value.status === 403);
-      if (forbidden) {
-        const forbiddenRes = responses.find(r => r.status === 'fulfilled' && r.value.status === 403);
-        const errData = await forbiddenRes.value.clone().json().catch(() => ({}));
-        console.error("403 Forbidden [NODO_MAESTRO]:", errData.error || "Sesión inválida");
-        
-        // Solo redirigir si el token realmente no es válido
-        handleLogout();
-        return;
+      // Prepare Notifications based on AI data
+      if (aiDataRes.status === 'fulfilled' && aiDataRes.value.ok) {
+        const aiJson = await aiDataRes.value.clone().json();
+        if (aiJson && aiJson.alerts) {
+          setNotifications(aiJson.alerts.map((a, i) => ({
+            id: `ai-${i}`,
+            title: a.type === 'danger' ? 'ALERTA NEURAL CRÍTICA' : 'NOTIFICACIÓN IA',
+            msg: a.msg,
+            time: 'Ahora'
+          })));
+        }
       }
 
       const [resStd, resAi, resJust, resStaff] = responses.map(r => r.status === 'fulfilled' ? r.value : null);
@@ -260,97 +261,106 @@ const AndresBelloSuite = () => {
       ) : !token ? (
         <Login key="login" onLogin={handleLogin} />
       ) : (
-        <div key="app-root" className="min-h-screen bg-[#000000] selection:bg-blue-500/30 selection:text-white apple-bg-mesh pb-32">
-          {/* Top Bar Glass */}
-          <header className="sticky top-0 z-[80] w-full border-b border-white/[0.05] bg-[#000000]/60 backdrop-blur-xl px-12 h-20 flex items-center justify-between">
-            <div className="flex items-center gap-10">
-              <div className="flex items-center gap-4">
-                 <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
-                    <ShieldCheck className="w-6 h-6 text-white" />
-                 </div>
-                 <div className="flex flex-col">
-                    <h2 className="text-sm font-bold tracking-tight text-white leading-none">Andrés Bello</h2>
-                    <span className="text-[10px] font-medium text-[#86868b] tracking-wider uppercase mt-1">SaaS Suite v15.0</span>
-                 </div>
-              </div>
-              <div className="h-6 w-[1px] bg-white/10 hidden md:block" />
-              <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-5 py-2 active:scale-95 group focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">
-                 <Search className="w-3.5 h-3.5 text-[#86868b] group-focus-within:text-blue-400" />
-                 <input 
-                   type="text" 
-                   placeholder="Explorar sistema... (Enter para buscar)" 
-                   value={searchTerm}
-                   onChange={(e) => setSearchTerm(e.target.value)}
-                   onKeyDown={(e) => {
-                     if (e.key === 'Enter') {
-                       if (searchTerm.trim()) {
-                         setActiveTab('aichat');
-                       }
-                     }
-                   }}
-                   className="bg-transparent border-none outline-none text-[11px] font-medium text-white placeholder:text-[#86868b] w-48"
-                 />
-              </div>
-            </div>
+        <div key="app-root" className="min-h-screen bg-[#000000] text-white selection:bg-blue-500/30">
+          
+          <AnimatePresence>
+            {activeTab !== 'aichat' && (
+              <motion.header 
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -100, opacity: 0 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="h-24 apple-glass border-b border-white/5 px-8 flex items-center justify-between sticky top-0 z-[80]"
+              >
+                <div className="flex items-center gap-8">
+                  <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+                     <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
+                        <ShieldCheck className="w-6 h-6 text-white" />
+                     </div>
+                     <div className="flex flex-col">
+                        <h2 className="text-sm font-bold tracking-tight text-white leading-none">Andrés Bello</h2>
+                        <span className="text-[10px] font-medium text-[#86868b] tracking-wider uppercase mt-1">SaaS Suite v15.0</span>
+                     </div>
+                  </div>
+                  <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-5 py-2 active:scale-95 group focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">
+                     <Search className="w-3.5 h-3.5 text-[#86868b] group-focus-within:text-blue-400" />
+                     <input 
+                       type="text" 
+                       placeholder="Explorar sistema... (Enter para buscar)" 
+                       value={searchTerm}
+                       onChange={(e) => setSearchTerm(e.target.value)}
+                       onKeyDown={(e) => {
+                         if (e.key === 'Enter') {
+                           if (searchTerm.trim()) {
+                             setActiveTab('aichat');
+                           }
+                         }
+                       }}
+                       className="bg-transparent border-none outline-none text-[11px] font-medium text-white placeholder:text-[#86868b] w-48"
+                     />
+                  </div>
+                </div>
 
-            <div className="flex items-center gap-6">
-               <div className="relative">
-                  <button 
-                    onClick={() => setIsNotifOpen(!isNotifOpen)}
-                    className={`relative p-2.5 rounded-full hover:bg-white/5 transition-all ${isNotifOpen ? 'bg-white/10 text-white' : 'text-[#86868b]'}`}
-                  >
-                     <Bell className="w-5 h-5" />
-                     {notifications.length > 0 && (
-                        <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-blue-500 rounded-full border-2 border-black" />
-                     )}
-                  </button>
-                  
-                  <AnimatePresence>
-                    {isNotifOpen && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        className="absolute right-0 mt-4 w-80 apple-glass border border-white/10 rounded-[1.75rem] shadow-2xl p-6 z-[100]"
+                <div className="flex items-center gap-6">
+                   <div className="relative">
+                      <button 
+                        onClick={() => setIsNotifOpen(!isNotifOpen)}
+                        className={`relative p-2.5 rounded-full hover:bg-white/5 transition-all ${isNotifOpen ? 'bg-white/10 text-white' : 'text-[#86868b]'}`}
                       >
-                         <div className="flex items-center justify-between mb-6">
-                            <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">Notificaciones</h4>
-                            <Badge className="bg-blue-600/20 text-blue-400 border-none px-2 py-0.5 text-[8px]">{notifications.length}</Badge>
-                         </div>
-                         <div className="space-y-3 max-h-[300px] overflow-y-auto no-scrollbar">
-                            {notifications.map(n => (
-                              <div 
-                                key={n.id} 
-                                onClick={() => {
-                                  setActiveTab('aichat');
-                                  setIsNotifOpen(false);
-                                }}
-                                className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group"
-                              >
-                                 <div className="flex items-center gap-3 mb-1">
-                                    <Sparkles className="w-3 h-3 text-blue-400" />
-                                    <span className="text-[9px] font-bold text-white uppercase">{n.title}</span>
-                                 </div>
-                                 <p className="text-[11px] text-[#86868b] leading-tight group-hover:text-white/80 transition-colors">{n.msg}</p>
-                              </div>
-                            ))}
-                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-               </div>
-               <div className="h-8 w-[1px] bg-white/10" />
-               <div className="flex items-center gap-4 group cursor-pointer pr-2">
-                  <div className="flex flex-col items-end">
-                    <span className="text-[11px] font-bold text-white uppercase">{user?.username || 'Admin'}</span>
-                    <span className="text-[9px] font-medium text-blue-500 tracking-widest uppercase mt-0.5">Control Maestro</span>
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">
-                    {user?.username?.substring(0, 1).toUpperCase() || 'A'}
-                  </div>
-               </div>
-            </div>
-          </header>
+                         <Bell className="w-5 h-5" />
+                         {notifications.length > 0 && (
+                            <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-blue-500 rounded-full border-2 border-black" />
+                         )}
+                      </button>
+                      
+                      <AnimatePresence>
+                        {isNotifOpen && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="absolute right-0 mt-4 w-80 apple-glass border border-white/10 rounded-[1.75rem] shadow-2xl p-6 z-[100]"
+                          >
+                             <div className="flex items-center justify-between mb-6">
+                                <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">Notificaciones</h4>
+                                <Badge className="bg-blue-600/20 text-blue-400 border-none px-2 py-0.5 text-[8px]">{notifications.length}</Badge>
+                             </div>
+                             <div className="space-y-3 max-h-[300px] overflow-y-auto no-scrollbar">
+                                {notifications.map(n => (
+                                  <div 
+                                    key={n.id} 
+                                    onClick={() => {
+                                      setActiveTab('aichat');
+                                      setIsNotifOpen(false);
+                                    }}
+                                    className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group"
+                                  >
+                                     <div className="flex items-center gap-3 mb-1">
+                                        <Sparkles className="w-3 h-3 text-blue-400" />
+                                        <span className="text-[9px] font-bold text-white uppercase">{n.title}</span>
+                                     </div>
+                                     <p className="text-[11px] text-[#86868b] leading-tight group-hover:text-white/80 transition-colors">{n.msg}</p>
+                                  </div>
+                                ))}
+                             </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                   </div>
+                   <div className="h-8 w-[1px] bg-white/10" />
+                   <div className="flex items-center gap-4 group cursor-pointer pr-2">
+                      <div className="flex flex-col items-end">
+                        <span className="text-[11px] font-bold text-white uppercase">{user?.username || 'Admin'}</span>
+                        <span className="text-[9px] font-medium text-blue-500 tracking-widest uppercase mt-0.5">Control Maestro</span>
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">
+                        {user?.username?.substring(0, 1).toUpperCase() || 'A'}
+                      </div>
+                   </div>
+                </div>
+              </motion.header>
+            )}
+          </AnimatePresence>
 
           <main className="max-w-[1400px] mx-auto px-8 py-14">
             <AnimatePresence mode="wait">
@@ -370,29 +380,38 @@ const AndresBelloSuite = () => {
                 {activeTab === 'staff' && <Staff />}
                 {activeTab === 'analytics' && <IAAnalytics />}
                 {activeTab === 'settings' && <InstitutionalSettings />}
-                {activeTab === 'aichat' && <AIChatView searchTerm={searchTerm} />}
+                {activeTab === 'aichat' && <AIChatView searchTerm={searchTerm} user={user} onClose={() => setActiveTab('dashboard')} />}
               </motion.div>
             </AnimatePresence>
           </main>
 
-          <FloatingNav 
-            activeTab={activeTab} 
-            onTabChange={setActiveTab} 
-            userName={user?.username} 
-            onLogout={handleLogout}
-          />
+          <AnimatePresence>
+            {activeTab !== 'aichat' && (
+              <>
+                <FloatingNav 
+                  activeTab={activeTab} 
+                  onTabChange={setActiveTab} 
+                  userName={user?.username} 
+                  onLogout={handleLogout}
+                />
 
-          <motion.button
-            whileHover={{ scale: 1.1, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setActiveTab('aichat')}
-            className={`fixed bottom-24 right-10 w-16 h-16 apple-glass rounded-3xl flex items-center justify-center z-[90] group shadow-2xl transition-all ${activeTab === 'aichat' ? 'bg-blue-600 text-white' : 'text-blue-400'}`}
-          >
-             <Sparkles className="w-7 h-7" />
-             <div className="absolute -top-12 right-0 apple-glass px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none scale-90 group-hover:scale-100">
-               <span className="text-[11px] whitespace-nowrap font-semibold text-white/90">Asistente IA</span>
-            </div>
-          </motion.button>
+                <motion.button
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setActiveTab('aichat')}
+                  className="fixed bottom-24 right-10 w-16 h-16 apple-glass rounded-3xl flex items-center justify-center z-[90] group shadow-2xl transition-all text-blue-400"
+                >
+                   <Sparkles className="w-7 h-7" />
+                   <div className="absolute -top-12 right-0 apple-glass px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none scale-90 group-hover:scale-100">
+                     <span className="text-[11px] whitespace-nowrap font-semibold text-white/90">Asistente IA</span>
+                  </div>
+                </motion.button>
+              </>
+            )}
+          </AnimatePresence>
 
         </div>
       )}

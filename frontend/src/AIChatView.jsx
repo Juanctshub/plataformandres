@@ -16,12 +16,14 @@ import {
   GraduationCap,
   Briefcase,
   Plus,
-  Bot
+  Bot,
+  X,
+  ChevronLeft
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";
 
-const AIChatView = ({ searchTerm }) => {
+const AIChatView = ({ searchTerm, user, onClose }) => {
   const [messages, setMessages] = useState([
     { 
       role: 'assistant', 
@@ -144,41 +146,57 @@ const AIChatView = ({ searchTerm }) => {
         ref={scrollRef}
         className="flex-1 overflow-y-auto px-4 md:px-20 pt-10 pb-40 space-y-12 no-scrollbar"
       >
-        {messages.length === 1 && !isTyping && (
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-8"
-          >
-            <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-500/20">
-               <Sparkles className="w-12 h-12 text-white animate-pulse" />
-            </div>
-            <div className="space-y-4">
-              <h1 className="text-6xl md:text-7xl font-semibold tracking-tight text-white leading-tight">
-                Hola, <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Juan</span>
-              </h1>
-              <p className="text-3xl md:text-4xl font-medium text-[#86868b] tracking-tight">¿Por dónde empezamos hoy?</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl w-full mt-12">
-               {[
-                 { label: 'Analizar Deserción', icon: BrainCircuit, prompt: 'Realiza un análisis profundo de los estudiantes en riesgo de deserción' },
-                 { label: 'Resumen de Notas', icon: GraduationCap, prompt: 'Dame un resumen de las calificaciones del 1er Lapso' },
-                 { label: 'Estado del Personal', icon: Briefcase, prompt: '¿Cuál es el estado actual del personal docente?' },
-                 { label: 'Optimizar Asistencia', icon: Zap, prompt: 'Sugiere mejoras para la asistencia en la sección 3A' }
-               ].map((tool, i) => (
-                 <button 
-                   key={i}
-                   onClick={() => { setInput(tool.prompt); }}
-                   className="p-6 rounded-[2rem] bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all text-left group"
-                 >
-                   <tool.icon className="w-5 h-5 text-blue-400 mb-3 group-hover:scale-110 transition-transform" />
-                   <span className="text-sm font-semibold text-white/90">{tool.label}</span>
-                 </button>
-               ))}
-            </div>
-          </motion.div>
-        )}
+        <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col h-[85vh]">
+          
+        {/* Inmersive Exit Button */}
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          onClick={onClose}
+          className="absolute -top-16 right-0 p-3 rounded-2xl apple-glass text-white/40 hover:text-white hover:bg-white/10 transition-all group flex items-center gap-2"
+        >
+          <span className="text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">Salir del Núcleo</span>
+          <X className="w-5 h-5" />
+        </motion.button>
+
+          {messages.length === 1 && !isTyping && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-12 space-y-12"
+            >
+              <div className="flex items-center gap-6">
+                 <div className="w-16 h-16 rounded-[2rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/30">
+                    <Sparkles className="w-8 h-8 text-white" />
+                 </div>
+                 <div className="space-y-1">
+                    <h2 className="text-6xl font-black tracking-tighter text-white leading-none">
+                      ¡Hola!, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{user?.username || 'Admin'}</span>
+                    </h2>
+                    <p className="text-2xl text-[#86868b] font-medium tracking-tight">¿En qué auditoría procedemos hoy?</p>
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl w-full">
+                 {[
+                   { label: 'Analizar Deserción', icon: BrainCircuit, prompt: 'Realiza un análisis profundo de los estudiantes en riesgo de deserción' },
+                   { label: 'Resumen de Notas', icon: GraduationCap, prompt: 'Dame un resumen de las calificaciones del 1er Lapso' },
+                   { label: 'Estado del Personal', icon: Briefcase, prompt: '¿Cuál es el estado actual del personal docente?' },
+                   { label: 'Optimizar Asistencia', icon: Zap, prompt: 'Sugiere mejoras para la asistencia en la sección 3A' }
+                 ].map((tool, i) => (
+                   <button 
+                     key={i}
+                     onClick={() => { setInput(tool.prompt); }}
+                     className="p-8 rounded-[2.5rem] bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all text-left group"
+                   >
+                     <tool.icon className="w-6 h-6 text-blue-400 mb-4 group-hover:scale-110 transition-transform" />
+                     <span className="text-base font-bold text-white/90">{tool.label}</span>
+                   </button>
+                 ))}
+              </div>
+            </motion.div>
+          )}
+        </div>
 
         {/* Message Mapping */}
         {messages.filter((_, idx) => messages.length > 1 || idx > 0).map((m, i) => (

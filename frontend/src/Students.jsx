@@ -42,6 +42,8 @@ const Students = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('Todos');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [msg, setMsg] = useState({ text: '', type: '' });
@@ -104,7 +106,31 @@ const Students = () => {
       setMsg({ text: 'Error de sincronización con el servidor', type: 'error' });
     } finally {
       setSubmitting(false);
-      setTimeout(() => setMsg({ text: '', type: '' }), 4000);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!studentToDelete) return;
+    setSubmitting(true);
+    try {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+      const res = await fetch(`${baseUrl}/api/estudiantes/${studentToDelete.id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (res.ok) {
+        setMsg({ text: 'Estudiante eliminado del Nodo Maestro', type: 'success' });
+        setIsDeleteModalOpen(false);
+        setStudentToDelete(null);
+        fetchStudents();
+      } else {
+        const err = await res.json();
+        setMsg({ text: err.error || 'Fallo en la purga de registros', type: 'error' });
+      }
+    } catch (e) {
+      setMsg({ text: 'Error de conexión con el núcleo', type: 'error' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -361,8 +387,11 @@ const Students = () => {
                           <AlertCircle className="w-4 h-4" />
                        </button>
                        <button 
-                          onClick={() => handleDelete(student.id)}
-                          className="p-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                          onClick={() => {
+                             setStudentToDelete(student);
+                             setIsDeleteModalOpen(true);
+                          }}
+                          className="p-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-95"
                           title="Eliminar Registro"
                        >
                           <Trash2 className="w-4 h-4" />
@@ -407,6 +436,40 @@ const Students = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Institutional Delete Confirmation Modal */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent className="apple-glass-dark border-white/10 rounded-[2.5rem] p-10 max-w-md">
+           <div className="flex flex-col items-center text-center space-y-8">
+              <div className="w-20 h-20 rounded-[2rem] bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 animate-pulse">
+                 <AlertCircle className="w-10 h-10" />
+              </div>
+              <div className="space-y-4">
+                 <h2 className="text-2xl font-black text-white tracking-tighter uppercase">¿Confirmar Purga de Registro?</h2>
+                 <p className="text-xs text-[#86868b] font-bold uppercase tracking-widest leading-relaxed">
+                    Estás a punto de eliminar a <span className="text-white">{studentToDelete?.nombre}</span> del Nodo Maestro. 
+                    Esta acción es irreversible y afectará el historial académico.
+                 </p>
+              </div>
+              <div className="flex flex-col w-full gap-3">
+                 <Button 
+                   onClick={confirmDelete}
+                   disabled={submitting}
+                   className="h-14 w-full bg-red-600 hover:bg-red-500 text-white rounded-2xl font-black text-[11px] tracking-[0.2em] shadow-2xl shadow-red-600/20"
+                 >
+                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "ELIMINAR PERMANENTEMENTE"}
+                 </Button>
+                 <Button 
+                   variant="ghost"
+                   onClick={() => setIsDeleteModalOpen(false)}
+                   className="h-14 w-full text-[#86868b] hover:text-white hover:bg-white/5 rounded-2xl font-bold text-[10px] tracking-widest"
+                 >
+                    CANCELAR PROTOCOLO
+                 </Button>
+              </div>
+           </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
