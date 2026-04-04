@@ -48,6 +48,29 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+// RECUPERACIÓN (Protocolo de Sincronización)
+app.post('/api/recover', async (req, res) => {
+    const { email } = req.body;
+    console.log(`[RECOVERY] Solicitud para: ${email}`);
+    // Simulamos lógica de recuperación por ahora, pero con persistencia de logs
+    if (!email) return res.status(400).json({ error: "Email institucional requerido" });
+    
+    setTimeout(() => {
+        res.json({ success: true, message: "Código de sincronización enviado al correo institucional." });
+    }, 1500);
+});
+
+// BIO-AUTENTICACIÓN (Nodo de Validación)
+app.post('/api/bio-auth', async (req, res) => {
+    const { identityToken } = req.body;
+    console.log(`[BIO-AUTH] Validando identidad Maestra...`);
+    
+    setTimeout(() => {
+        // Simulamos validación positiva centralizada
+        res.json({ success: true, message: "Identidad Biométrica Validada por el Nodo Maestro" });
+    }, 2000);
+});
+
 // ESTUDIANTES (Gestión Institucional)
 app.get('/api/estudiantes', authenticateToken, async (req, res) => {
     try {

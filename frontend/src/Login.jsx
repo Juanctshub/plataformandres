@@ -23,6 +23,8 @@ import { Button } from "./components/ui/button";
 const Login = ({ onLogin }) => {
     const [view, setView] = useState('login'); // login, recovery, bio, signup
     const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const [signupData, setSignupData] = useState({ username: '', email: '', password: '' });
+    const [recoveryEmail, setRecoveryEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });
     const [bioStatus, setBioStatus] = useState('idle'); // idle, scanning, success
@@ -34,7 +36,7 @@ const Login = ({ onLogin }) => {
         
         try {
             const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
-            const res = await fetch(`${baseUrl}/api/auth/login`, {
+            const res = await fetch(`${baseUrl}/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(credentials)
@@ -54,16 +56,87 @@ const Login = ({ onLogin }) => {
         }
     };
 
-    const handleBioAuth = () => {
+    const handleBioAuth = async () => {
         setBioStatus('scanning');
-        setTimeout(() => {
-            setBioStatus('success');
-            setTimeout(() => {
-                // Mock success for UI demo
-                setMsg({ text: 'Identidad Biométrica Validada', type: 'success' });
-                setTimeout(() => setView('login'), 1000);
-            }, 1000);
-        }, 2000);
+        setMsg({ text: '', type: '' });
+        
+        try {
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+            // Petición real al nodo biométrico
+            const res = await fetch(`${baseUrl}/api/bio-auth`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identityToken: 'apple-biometric-v15' })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                setBioStatus('success');
+                setTimeout(() => {
+                    setMsg({ text: data.message || 'Identidad Biométrica Validada', type: 'success' });
+                    setTimeout(() => setView('login'), 1000);
+                }, 1000);
+            } else {
+                setBioStatus('idle');
+                setMsg({ text: 'Validación biométrica fallida', type: 'error' });
+            }
+        } catch (e) {
+            setBioStatus('idle');
+            setMsg({ text: 'Error de enlace con el sensor biométrico', type: 'error' });
+        }
+    };
+
+    const handleSignup = async (e) => {
+        if (e) e.preventDefault();
+        setLoading(true);
+        setMsg({ text: '', type: '' });
+        try {
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+            const res = await fetch(`${baseUrl}/api/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: signupData.username,
+                    password: signupData.password,
+                    role: 'docente' // Default role
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setMsg({ text: 'Registro exitoso. Ahora puedes iniciar sesión.', type: 'success' });
+                setView('login');
+            } else {
+                setMsg({ text: data.error || 'Error en el registro institucional', type: 'error' });
+            }
+        } catch (e) {
+            setMsg({ text: 'Fallo crítico de registro en el nodo maestro', type: 'error' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRecovery = async (e) => {
+        if (e) e.preventDefault();
+        setLoading(true);
+        setMsg({ text: '', type: '' });
+        try {
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+            const res = await fetch(`${baseUrl}/api/recover`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: recoveryEmail })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setMsg({ text: data.message, type: 'success' });
+            } else {
+                setMsg({ text: data.error || 'Error en la solicitud de recuperación', type: 'error' });
+            }
+        } catch (e) {
+            setMsg({ text: 'Error de comunicación persistente', type: 'error' });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -183,13 +256,21 @@ const Login = ({ onLogin }) => {
                                   <h3 className="text-3xl font-semibold text-white tracking-tight">Recuperar Acceso</h3>
                                   <p className="text-sm text-[#86868b] font-medium leading-relaxed">Ingresa tu correo institucional para recibir un código de sincronización temporal.</p>
                                </div>
-                               <div className="space-y-6">
-                                  <div className="relative group">
-                                     <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-[#86868b] w-5 h-5" />
-                                     <Input className="h-16 bg-white/5 border-white/5 rounded-2xl pl-16 text-white" placeholder="correo@institucion.edu" />
-                                  </div>
-                                  <Button className="w-full h-16 bg-blue-600 text-white hover:bg-blue-500 rounded-full font-bold">Enviar Código</Button>
-                               </div>
+                                <form onSubmit={handleRecovery} className="space-y-6">
+                                   <div className="relative group">
+                                      <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-[#86868b] w-5 h-5" />
+                                      <Input 
+                                         className="h-16 bg-white/5 border-white/5 rounded-2xl pl-16 text-white" 
+                                         placeholder="correo@institucion.edu" 
+                                         value={recoveryEmail}
+                                         onChange={(e) => setRecoveryEmail(e.target.value)}
+                                         required
+                                      />
+                                   </div>
+                                   <Button type="submit" disabled={loading} className="w-full h-16 bg-blue-600 text-white hover:bg-blue-500 rounded-full font-bold transition-all">
+                                      {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : "Enviar Código"}
+                                   </Button>
+                                </form>
                             </motion.div>
                         )}
 
@@ -253,21 +334,42 @@ const Login = ({ onLogin }) => {
                                   <h3 className="text-3xl font-semibold text-white tracking-tight">Crear Cuenta</h3>
                                   <p className="text-sm text-[#86868b] font-medium">Registro de nuevo nodo administrativo v15.0</p>
                                </div>
-                               <div className="space-y-4">
-                                  <div className="relative group">
-                                     <User className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 w-5 h-5" />
-                                     <Input className="h-16 bg-white/5 border-white/10 rounded-2xl pl-16 text-white" placeholder="Nombre completo" />
-                                  </div>
-                                  <div className="relative group">
-                                     <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 w-5 h-5" />
-                                     <Input className="h-16 bg-white/5 border-white/10 rounded-2xl pl-16 text-white" placeholder="Correo institucional" />
-                                  </div>
-                                  <div className="relative group">
-                                     <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 w-5 h-5" />
-                                     <Input type="password" className="h-16 bg-white/5 border-white/10 rounded-2xl pl-16 text-white" placeholder="Nueva contraseña maestra" />
-                                  </div>
-                                  <Button className="w-full h-16 bg-white text-black hover:bg-zinc-200 rounded-full font-bold mt-4">Solicitar Registro</Button>
-                               </div>
+                                <form onSubmit={handleSignup} className="space-y-4">
+                                   <div className="relative group">
+                                      <User className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 w-5 h-5" />
+                                      <Input 
+                                         className="h-16 bg-white/5 border-white/10 rounded-2xl pl-16 text-white" 
+                                         placeholder="Nombre de usuario institucional" 
+                                         value={signupData.username}
+                                         onChange={(e) => setSignupData({...signupData, username: e.target.value})}
+                                         required
+                                      />
+                                   </div>
+                                   <div className="relative group">
+                                      <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 w-5 h-5" />
+                                      <Input 
+                                         className="h-16 bg-white/5 border-white/10 rounded-2xl pl-16 text-white" 
+                                         placeholder="Correo oficial" 
+                                         value={signupData.email}
+                                         onChange={(e) => setSignupData({...signupData, email: e.target.value})}
+                                         required
+                                      />
+                                   </div>
+                                   <div className="relative group">
+                                      <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 w-5 h-5" />
+                                      <Input 
+                                         type="password" 
+                                         className="h-16 bg-white/5 border-white/10 rounded-2xl pl-16 text-white" 
+                                         placeholder="Nueva contraseña maestra" 
+                                         value={signupData.password}
+                                         onChange={(e) => setSignupData({...signupData, password: e.target.value})}
+                                         required
+                                      />
+                                   </div>
+                                   <Button type="submit" disabled={loading} className="w-full h-16 bg-white text-black hover:bg-zinc-200 rounded-full font-bold mt-4 transition-all">
+                                      {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : "Solicitar Registro"}
+                                   </Button>
+                                </form>
                             </motion.div>
                         )}
                     </AnimatePresence>
