@@ -162,18 +162,18 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex flex-col relative overflow-hidden">
+    <div className="fixed inset-0 min-h-screen flex flex-col bg-black overflow-hidden z-[1000]">
       {/* Dynamic Background Mesh */}
       <div className="absolute inset-0 -z-10 bg-black">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/5 blur-[120px] rounded-full animate-pulse" />
       </div>
 
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 md:px-20 pt-10 pb-[22rem] space-y-12 no-scrollbar"
+        className="flex-1 overflow-y-auto px-4 md:px-20 pt-24 pb-96 space-y-12 no-scrollbar scroll-smooth"
       >
-        <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col min-h-[60vh] justify-center">
+        <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col min-h-[50vh] justify-center">
           
         {/* Inmersive Exit Button (Favicon Style) */}
         <motion.button
@@ -230,76 +230,79 @@ const AIChatView = ({ searchTerm, user, onClose }) => {
           )}
         </div>
 
-        {/* Message Mapping */}
-        {messages.filter((_, idx) => messages.length > 1 || idx > 0).map((m, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className={`flex gap-6 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${
-                  m.role === 'user' ? 'bg-zinc-800 text-white' : 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white'
-               }`}>
-                 {m.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
-               </div>
-               <div className={`space-y-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
-                  <div className={`text-lg font-medium leading-relaxed tracking-tight text-white/90 whitespace-pre-wrap ${m.role === 'user' ? 'bg-white/5 px-8 py-4 rounded-[2rem]' : ''}`}>
-                    {m.content}
+        {/* Message Mapping Area */}
+        <div className="max-w-4xl mx-auto w-full space-y-12">
+          {messages.filter((_, idx) => messages.length > 1 || idx > 0).map((m, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`flex gap-6 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                 <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${
+                    m.role === 'user' ? 'bg-zinc-800 text-white' : 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white'
+                 }`}>
+                   {m.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
+                 </div>
+                 <div className={`space-y-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
+                    <div className={`text-lg font-medium leading-relaxed tracking-tight text-white/90 whitespace-pre-wrap ${m.role === 'user' ? 'bg-white/5 px-8 py-4 rounded-[2rem]' : ''}`}>
+                      {m.content}
+                    </div>
+                    
+                    {m.action && !m.actionExecuted && (
+                      <motion.div 
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="inline-flex flex-col p-6 rounded-[2rem] bg-blue-600/10 border border-blue-500/20 space-y-4"
+                      >
+                         <div className="flex items-center gap-2 text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">
+                            <Zap className="w-3 h-3" />
+                            Acción Recomendada
+                         </div>
+                         <div className="flex gap-3">
+                            <Button 
+                              onClick={() => handleExecuteAction(i, m.action)}
+                              className="bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold px-8 h-12 rounded-2xl shadow-xl shadow-blue-500/20"
+                            >
+                              EJECUTAR: {m.action.type}
+                            </Button>
+                            <Button 
+                              variant="ghost"
+                              onClick={() => {
+                                const nm = [...messages];
+                                nm[i].action = null;
+                                setMessages(nm);
+                              }}
+                              className="text-[#86868b] hover:text-white text-[11px] font-bold px-8 h-12 rounded-2xl"
+                            >
+                              DESCARTAR
+                            </Button>
+                         </div>
+                      </motion.div>
+                    )}
+                 </div>
+              </div>
+            </motion.div>
+          ))}
+
+          {isTyping && (
+            <div className="flex justify-start">
+               <div className="flex gap-6 items-center">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg">
+                     <Bot className="w-5 h-5" />
                   </div>
-                  
-                  {m.action && !m.actionExecuted && (
-                    <motion.div 
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="inline-flex flex-col p-6 rounded-[2rem] bg-blue-600/10 border border-blue-500/20 space-y-4"
-                    >
-                       <div className="flex items-center gap-2 text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">
-                          <Zap className="w-3 h-3" />
-                          Acción Recomendada
-                       </div>
-                       <div className="flex gap-3">
-                          <Button 
-                            onClick={() => handleExecuteAction(i + 1, m.action)}
-                            className="bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold px-8 h-12 rounded-2xl shadow-xl shadow-blue-500/20"
-                          >
-                            EJECUTAR: {m.action.type}
-                          </Button>
-                          <Button 
-                            variant="ghost"
-                            onClick={() => {
-                              const nm = [...messages];
-                              nm[i+1].action = null;
-                              setMessages(nm);
-                            }}
-                            className="text-[#86868b] hover:text-white text-[11px] font-bold px-8 h-12 rounded-2xl"
-                          >
-                            DESCARTAR
-                          </Button>
-                       </div>
-                    </motion.div>
-                  )}
+                  <div className="flex gap-1.5 p-4 rounded-3xl bg-white/5 items-center">
+                     <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
+                     <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
+                     <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
+                  </div>
                </div>
             </div>
-          </motion.div>
-        ))}
-
-        {isTyping && (
-          <div className="flex justify-start">
-             <div className="flex gap-6 items-center">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg">
-                   <Bot className="w-5 h-5" />
-                </div>
-                <div className="flex gap-1.5 p-4 rounded-3xl bg-white/5 items-center">
-                   <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
-                   <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
-                   <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
-                </div>
-             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
+
 
       {/* Floating Modern Input Bar */}
       <div className="fixed bottom-12 left-1/2 -translate-x-1/2 w-full max-w-4xl px-6 z-[110]">
