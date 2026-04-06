@@ -242,6 +242,17 @@ const Students = () => {
     reader.readAsBinaryString(file);
   };
 
+  const downloadTemplate = () => {
+    const csvContent = "data:text/csv;charset=utf-8,Cedula,Nombre_Completo,Seccion,Representante,Contacto\n";
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "Plantilla_Estudiantes.csv");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   if (loading) return (
     <div className="space-y-12">
         <div className="h-10 w-64 bg-white/5 rounded-full animate-pulse" />
@@ -291,6 +302,14 @@ const Students = () => {
           >
             {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSpreadsheet className="w-5 h-5" />}
             Importar Excel
+          </Button>
+          
+          <Button 
+            onClick={downloadTemplate}
+            className="h-14 px-8 apple-glass border border-white/5 text-white/80 hover:bg-white/10 hover:text-white rounded-2xl font-semibold text-xs flex gap-3 transition-all shrink-0"
+          >
+            <Download className="w-5 h-5" />
+            Plantilla
           </Button>
 
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>

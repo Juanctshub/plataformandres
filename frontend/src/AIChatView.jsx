@@ -168,28 +168,20 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
   };
 
   return (
-    <div className="fixed inset-0 min-h-screen flex flex-col bg-black overflow-hidden z-[1000]">
+    <div className="flex flex-col h-[calc(100vh-140px)] relative apple-glass rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
       {/* Dynamic Background Mesh */}
-      <div className="absolute inset-0 -z-10 bg-black">
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/5 blur-[120px] rounded-full animate-pulse" />
       </div>
 
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 md:px-20 pt-24 pb-96 space-y-12 no-scrollbar scroll-smooth"
+        className="flex-1 overflow-y-auto px-6 md:px-12 pt-12 pb-32 space-y-12 no-scrollbar scroll-smooth relative z-10"
       >
-        <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col min-h-[50vh] justify-center">
+        <div className="w-full max-w-4xl mx-auto flex flex-col justify-center">
           
-        {/* Inmersive Exit Button (Favicon Style) */}
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          onClick={onClose}
-          className="fixed top-12 right-12 p-4 rounded-[1.5rem] apple-glass text-white/40 hover:text-white hover:bg-white/10 transition-all border border-white/5 z-[100] shadow-2xl backdrop-blur-3xl group"
-        >
-          <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
-        </motion.button>
+
 
           {messages.length === 1 && !isTyping && (
             <motion.div 
@@ -310,47 +302,35 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
       </div>
 
 
-      {/* Floating Modern Input Bar */}
-      <div className="fixed bottom-12 left-1/2 -translate-x-1/2 w-full max-w-4xl px-6 z-[110]">
-         <motion.div 
-           initial={{ y: 100, opacity: 0 }}
-           animate={{ y: 0, opacity: 1 }}
-           className="relative group"
-         >
-            <div className="absolute inset-0 bg-blue-600/20 blur-3xl opacity-0 group-focus-within:opacity-100 transition-opacity rounded-full pointer-events-none" />
-            <form onSubmit={handleSend} className="relative flex items-center gap-4 p-3 apple-glass rounded-[2.5rem] border border-white/10 shadow-2xl">
-               <div className="flex items-center gap-1 pl-2">
-                  <button type="button" className="p-3 text-[#86868b] hover:text-white transition-colors hover:bg-white/5 rounded-full">
-                     <Plus className="w-5 h-5" />
-                  </button>
-                  <button type="button" className="p-3 text-[#86868b] hover:text-white transition-colors hover:bg-white/5 rounded-full">
-                     <Command className="w-5 h-5" />
-                  </button>
-               </div>
-               
-               <input 
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Pregúntale al Núcleo de Inferencia..."
-                  className="flex-1 bg-transparent border-none outline-none text-[15px] font-medium text-white placeholder:text-[#86868b] h-14"
-               />
-
-               <div className="flex items-center gap-2 pr-2">
-                  <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/5">
-                     <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                     <span className="text-[9px] font-bold text-[#86868b] uppercase tracking-wider">Modo Seguro</span>
-                  </div>
-                  <Button 
-                    type="submit"
-                    disabled={!input.trim() || isTyping}
-                    className="w-12 h-12 bg-white text-black hover:bg-zinc-200 rounded-full shadow-2xl transition-all active:scale-95 flex items-center justify-center p-0"
-                  >
-                    <Send className="w-5 h-5" />
-                  </Button>
-               </div>
-            </form>
-         </motion.div>
+      {/* Input Area */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 z-20 apple-glass border-t border-white/5">
+        <div className="max-w-4xl mx-auto">
+          <form onSubmit={handleSend} className="relative flex items-center">
+            <button type="button" className="absolute left-6 p-2 rounded-xl hover:bg-white/10 text-white/40 transition-colors">
+              <Plus className="w-5 h-5" />
+            </button>
+            <input 
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Pregúntale al Núcleo de Inferencia..."
+              className="w-full h-16 pl-20 pr-36 bg-black/40 border border-white/10 rounded-full text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-blue-500/50 shadow-inner"
+            />
+            <div className="absolute right-4 flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span className="text-[9px] font-bold tracking-widest uppercase">Modo Seguro</span>
+              </div>
+              <button 
+                type="submit"
+                disabled={!input.trim() || isTyping}
+                className="w-10 h-10 rounded-full bg-white text-black flex flex-col items-center justify-center hover:bg-zinc-200 disabled:opacity-50 transition-colors"
+              >
+                <Send className="w-4 h-4 ml-0.5" />
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -284,7 +284,7 @@ const AndresBelloSuite = () => {
 
       setStats({
         students: Array.isArray(stds) ? stds.length : 0,
-        attendance: 'Cargando...',
+        attendance: '0',
         risks: (ai.alerts && Array.isArray(ai.alerts)) ? ai.alerts.filter(a => a.type === 'danger' || a.type === 'warning').length : 0,
         justifications: Array.isArray(justs) ? justs.filter(j => j.estado === 'pendiente').length : 0,
         staffCount: Array.isArray(staffArr) ? staffArr.length : 0,
@@ -503,23 +503,10 @@ const AndresBelloSuite = () => {
                 {activeTab === 'staff' && <Staff />}
                 {activeTab === 'analytics' && <IAAnalytics />}
                 {activeTab === 'settings' && <InstitutionalSettings />}
+                {activeTab === 'aichat' && <AIChatView searchTerm={searchTerm} user={user} onClose={() => setActiveTab('dashboard')} onRefresh={() => fetchData(token)} />}
               </motion.div>
             </AnimatePresence>
           </main>
-
-          <AnimatePresence>
-            {activeTab === 'aichat' && (
-              <motion.div
-                key="aichat-immersive"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[1000] bg-black overflow-hidden"
-              >
-                <AIChatView searchTerm={searchTerm} user={user} onClose={() => setActiveTab('dashboard')} onRefresh={() => fetchData(token)} />
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           {/* ═══ AI PROPOSAL MODAL ═══ */}
           <AnimatePresence>
