@@ -503,10 +503,23 @@ const AndresBelloSuite = () => {
                 {activeTab === 'staff' && <Staff />}
                 {activeTab === 'analytics' && <IAAnalytics />}
                 {activeTab === 'settings' && <InstitutionalSettings />}
-                {activeTab === 'aichat' && <AIChatView searchTerm={searchTerm} user={user} onClose={() => setActiveTab('dashboard')} onRefresh={() => fetchData(token)} />}
               </motion.div>
             </AnimatePresence>
           </main>
+
+          <AnimatePresence>
+            {activeTab === 'aichat' && (
+              <motion.div
+                key="aichat-immersive"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[1000] bg-black overflow-hidden"
+              >
+                <AIChatView searchTerm={searchTerm} user={user} onClose={() => setActiveTab('dashboard')} onRefresh={() => fetchData(token)} />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* ═══ AI PROPOSAL MODAL ═══ */}
           <AnimatePresence>

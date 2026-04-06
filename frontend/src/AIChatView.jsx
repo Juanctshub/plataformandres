@@ -168,48 +168,80 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] relative apple-glass rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 min-h-screen flex flex-col bg-black overflow-hidden z-[1000]">
       {/* Dynamic Background Mesh */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/5 blur-[120px] rounded-full animate-pulse" />
+      <div className="absolute inset-0 -z-10 bg-black">
+        <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[140px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[140px] rounded-full animate-pulse" />
       </div>
+
+      {/* 🚀 NUEVA CABECERA IA SUPERIOR 🚀 */}
+      <motion.div 
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="w-full flex items-center justify-between px-12 py-8 z-[200] border-b border-white/5 bg-black/20 backdrop-blur-3xl"
+      >
+        <div className="flex items-center gap-6">
+           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-xl shadow-blue-600/30 overflow-hidden border border-white/10 group cursor-pointer hover:scale-105 transition-transform" onClick={onClose}>
+              <img src={logo} className="w-full h-full object-cover scale-110" alt="Logo" />
+           </div>
+           <div className="space-y-0.5">
+              <h2 className="text-3xl font-bold text-white tracking-tighter" style={{ fontFamily: "'Inter', sans-serif" }}>
+                 ¡Hola!, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-300 to-indigo-400">{user?.username || 'Admin'}</span>
+              </h2>
+              <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest leading-none">U.E. Andrés Bello • Núcleo de Inferencia v22.0</p>
+           </div>
+        </div>
+
+        <div className="flex items-center gap-6">
+           <div className="hidden md:flex flex-col items-end mr-4">
+              <span className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">Enlace Institucional</span>
+              <span className="text-[9px] text-emerald-400 font-bold flex items-center gap-1.5 mt-1">
+                 <div className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" /> PROXY ACTIVO
+              </span>
+           </div>
+           
+           <motion.button
+              whileHover={{ scale: 1.05, rotate: 90 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onClose}
+              className="w-12 h-12 rounded-2xl apple-glass border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-all shadow-xl group"
+           >
+              <X className="w-5 h-5 transition-transform group-hover:rotate-0" />
+           </motion.button>
+        </div>
+      </motion.div>
 
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-6 md:px-12 pt-12 pb-32 space-y-12 no-scrollbar scroll-smooth relative z-10"
+        className="flex-1 overflow-y-auto px-6 md:px-20 pt-16 pb-96 space-y-16 no-scrollbar scroll-smooth relative z-10"
       >
-        <div className="w-full max-w-4xl mx-auto flex flex-col justify-center">
+        <div className="w-full max-w-5xl mx-auto flex flex-col justify-center">
           
 
 
           {messages.length === 1 && !isTyping && (
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-12 space-y-12 flex flex-col items-center text-center"
+              className="mb-12 space-y-16 flex flex-col items-center"
             >
-              <div className="flex flex-col items-center gap-8">
-                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-600/30 overflow-hidden border border-white/10">
-                    <img src={logo} className="w-full h-full object-cover scale-110" alt="Logo" />
-                 </div>
-                 <div className="space-y-3">
-                    <h2 className="text-6xl md:text-7xl font-semibold text-white leading-none" style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif", letterSpacing: '-0.04em' }}>
-                      ¡Hola!, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-300 to-indigo-400">{user?.username || 'Admin'}</span>
-                    </h2>
-                    <p className="text-xl md:text-2xl text-[#86868b] font-medium" style={{ letterSpacing: '-0.02em' }}>¿En qué auditoría procedemos hoy?</p>
-                 </div>
+              <div className="text-center space-y-4 max-w-2xl">
+                 <h3 className="text-4xl font-semibold text-white/90 tracking-tight leading-none mb-4">¿En qué auditoría procedemos hoy?</h3>
+                 <p className="text-[#86868b] font-medium text-lg leading-relaxed px-4">El Núcleo de Inferencia está listo para escanear matriculas, detectar riesgos de deserción o asistir en decisiones administrativas críticas.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl w-full mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
                  {[
                    { label: 'Analizar Deserción', icon: BrainCircuit, prompt: 'Realiza un análisis profundo de los estudiantes en riesgo de deserción' },
                    { label: 'Resumen de Notas', icon: GraduationCap, prompt: 'Dame un resumen de las calificaciones del 1er Lapso' },
                    { label: 'Estado del Personal', icon: Briefcase, prompt: '¿Cuál es el estado actual del personal docente?' },
                    { label: 'Optimizar Asistencia', icon: Zap, prompt: 'Sugiere mejoras para la asistencia en la sección 3A' }
                  ].map((tool, i) => (
-                   <button 
+                   <motion.button 
                      key={i}
+                     whileHover={{ scale: 1.02, y: -4 }}
+                     whileTap={{ scale: 0.98 }}
                      onClick={() => {
                        setInput(tool.prompt);
                        setTimeout(() => {
@@ -217,11 +249,16 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                          handleSend(fakeEvent);
                        }, 100);
                      }}
-                     className="p-6 md:p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/10 transition-all duration-500 text-left group"
+                     className="p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/5 hover:bg-white/[0.07] hover:border-blue-500/30 transition-all duration-300 text-left group shadow-2xl relative overflow-hidden"
                    >
-                     <tool.icon className="w-5 h-5 text-blue-400 mb-3 group-hover:scale-110 transition-transform" />
-                     <span className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors">{tool.label}</span>
-                   </button>
+                     <div className="absolute top-0 right-0 p-16 bg-blue-500/5 blur-[50px] rounded-full group-hover:bg-blue-400/10 transition-colors" />
+                     <div className="relative z-10">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform shadow-inner">
+                           <tool.icon className="w-6 h-6" />
+                        </div>
+                        <span className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{tool.label}</span>
+                     </div>
+                   </motion.button>
                  ))}
               </div>
             </motion.div>
@@ -302,34 +339,41 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
       </div>
 
 
-      {/* Input Area */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 z-20 apple-glass border-t border-white/5">
+      {/* 📥 ÁREA DE INPUT FLOTANTE IA 📥 */}
+      <div className="fixed bottom-0 left-0 right-0 p-12 z-[300]">
         <div className="max-w-4xl mx-auto">
-          <form onSubmit={handleSend} className="relative flex items-center">
-            <button type="button" className="absolute left-6 p-2 rounded-xl hover:bg-white/10 text-white/40 transition-colors">
-              <Plus className="w-5 h-5" />
+          <motion.form 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            onSubmit={handleSend} 
+            className="relative flex items-center group shadow-2xl"
+          >
+            <div className="absolute inset-0 bg-blue-600/10 blur-[60px] opacity-0 group-focus-within:opacity-100 transition-opacity rounded-full pointer-events-none" />
+            <button type="button" className="absolute left-8 p-3 rounded-2xl hover:bg-white/10 text-white/40 transition-colors z-20">
+              <Plus className="w-6 h-6" />
             </button>
             <input 
               type="text"
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder="Pregúntale al Núcleo de Inferencia..."
-              className="w-full h-16 pl-20 pr-36 bg-black/40 border border-white/10 rounded-full text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-blue-500/50 shadow-inner"
+              className="w-full h-20 pl-24 pr-44 bg-zinc-900/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] text-lg text-white placeholder:text-white/30 focus:outline-none focus:border-blue-500/40 focus:ring-4 focus:ring-blue-500/5 shadow-2xl transition-all relative z-10"
             />
-            <div className="absolute right-4 flex items-center gap-3">
-              <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span className="text-[9px] font-bold tracking-widest uppercase">Modo Seguro</span>
+            <div className="absolute right-5 flex items-center gap-4 z-20">
+              <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                <ShieldCheck className="w-4 h-4" />
+                <span className="text-[10px] font-black tracking-widest uppercase">Nodo Seguro</span>
               </div>
               <button 
                 type="submit"
                 disabled={!input.trim() || isTyping}
-                className="w-10 h-10 rounded-full bg-white text-black flex flex-col items-center justify-center hover:bg-zinc-200 disabled:opacity-50 transition-colors"
+                className="w-14 h-14 rounded-2xl bg-white text-black flex flex-col items-center justify-center hover:bg-zinc-200 disabled:opacity-50 transition-all active:scale-95 shadow-xl"
               >
-                <Send className="w-4 h-4 ml-0.5" />
+                {isTyping ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-6 h-6 ml-0.5" />}
               </button>
             </div>
-          </form>
+          </motion.form>
+          <p className="text-center mt-6 text-[10px] text-white/20 font-bold uppercase tracking-[0.2em] pointer-events-none">Tecnología Llama-3 de Groq • U.E. Andrés Bello</p>
         </div>
       </div>
     </div>
