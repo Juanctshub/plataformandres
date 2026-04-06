@@ -696,7 +696,11 @@ app.get('/api/reports/pro', authenticateToken, async (req, res) => {
 
         res.json({ success: true, markdown: completion.choices[0].message.content });
     } catch (e) {
-        res.status(500).json({ error: e.message });
+        let errorMsg = e.message;
+        if (e.status === 401 || e.message.includes('401')) {
+            errorMsg = "Token de Groq inválido o expirado. Por favor actualice su GROQ_API_KEY en las variables de entorno.";
+        }
+        res.status(500).json({ error: errorMsg });
     }
 });
 
