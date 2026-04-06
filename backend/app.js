@@ -9,18 +9,31 @@ const db = require('./db');
 const { authenticateToken, JWT_SECRET } = require('./auth');
 
 let groq;
-try {
+const initGroq = () => {
     if (process.env.GROQ_API_KEY) {
         groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
         console.log("Nucleo Groq Llama 3 Sincronizado.");
-    } else {
-        console.warn("ADVERTENCIA: GROQ_API_KEY no detectada. El asistente IA operara en modo diagnostico.");
+        return true;
     }
-} catch (e) {
-    console.error("Fallo en inicializacion de Nucleo Groq:", e.message);
-}
+    return false;
+};
+initGroq();
 
 const app = express();
+
+// AI HEALTH CHECK (Diagnóstico de Enlace)
+app.get('/api/ai/health', (req, res) => {
+    const isInit = !!groq;
+    const keyExists = !!process.env.GROQ_API_KEY;
+    const keySnippet = keyExists ? `${process.env.GROQ_API_KEY.substring(0, 7)}...` : 'No detectada';
+    
+    res.json({
+        status: isInit ? 'CONECTADO' : 'DESCONECTADO',
+        env_detectada: keyExists,
+        prefijo_clave: keySnippet,
+        mensaje: isInit ? 'El Núcleo Groq está listo.' : 'Error: No se detecta la GROQ_API_KEY en el entorno.'
+    });
+});
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
