@@ -70,14 +70,27 @@ const InstitutionalSettings = () => {
     const [historial, setHistorial] = useState([]);
     const [histLoading, setHistLoading] = useState(false);
 
-    // Load saved config from localStorage on mount
+    // Load saved config from API on mount
     useEffect(() => {
-      const saved = localStorage.getItem('instConfig');
-      if (saved) setInstConfig(JSON.parse(saved));
-      const savedSec = localStorage.getItem('securityConfig');
-      if (savedSec) setSecurityConfig(JSON.parse(savedSec));
-      const savedNotif = localStorage.getItem('notifConfig');
-      if (savedNotif) setNotifConfig(JSON.parse(savedNotif));
+      const loadConfig = async () => {
+        try {
+          const token = localStorage.getItem('token');
+          const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+          const res = await fetch(`${baseUrl}/api/config`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const data = await res.json();
+          if (data.instConfig) setInstConfig(data.instConfig);
+          if (data.securityConfig) setSecurityConfig(data.securityConfig);
+          if (data.notifConfig) setNotifConfig(data.notifConfig);
+        } catch (e) {
+          console.error("Error loading config:", e);
+          // Fallback to local
+          const saved = localStorage.getItem('instConfig');
+          if (saved) setInstConfig(JSON.parse(saved));
+        }
+      };
+      loadConfig();
     }, []);
 
     // Fetch real historial data
@@ -139,17 +152,35 @@ const InstitutionalSettings = () => {
       setSaving(true);
       setSaveMsg('');
       try {
+        const token = localStorage.getItem('token');
+        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+        let category = '';
+        let data = {};
+        
         if (activeSection === 'Institución') {
-          localStorage.setItem('instConfig', JSON.stringify(instConfig));
+          category = 'instConfig';
+          data = instConfig;
         } else if (activeSection === 'Seguridad') {
-          localStorage.setItem('securityConfig', JSON.stringify(securityConfig));
+          category = 'securityConfig';
+          data = securityConfig;
         } else if (activeSection === 'Notificaciones') {
-          localStorage.setItem('notifConfig', JSON.stringify(notifConfig));
+          category = 'notifConfig';
+          data = notifConfig;
         }
+
+        if (category) {
+            await fetch(`${baseUrl}/api/config`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ category, data })
+            });
+            localStorage.setItem(category, JSON.stringify(data)); // Sync local cache too
+        }
+
         setSaveMsg('Configuración guardada exitosamente');
         setTimeout(() => setSaveMsg(''), 3000);
       } catch (e) {
-        setSaveMsg('Error al guardar');
+        setSaveMsg('Error al guardar en el servidor');
       } finally {
         setSaving(false);
       }

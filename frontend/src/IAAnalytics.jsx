@@ -46,6 +46,7 @@ const IAAnalytics = () => {
     const [loading, setLoading] = useState(true);
     const [isReady, setIsReady] = useState(false);
     const [notifying, setNotifying] = useState(null);
+    const [downloadingReport, setDownloadingReport] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });
 
     const fetchAiData = async () => {
@@ -106,6 +107,36 @@ const IAAnalytics = () => {
         }
     };
 
+    const handleDownloadProReport = async () => {
+        setDownloadingReport(true);
+        try {
+            const token = localStorage.getItem('token');
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+            const res = await fetch(`${baseUrl}/api/reports/pro`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.markdown) {
+                const blob = new Blob([data.markdown], { type: 'text/markdown;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `Reporte_Ejecutivo_Andres_Bello_${new Date().toISOString().split('T')[0]}.md`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setMsg({ text: 'Reporte Pro descargado exitosamente', type: 'success' });
+            } else {
+                setMsg({ text: 'Error: No se pudo enlazar cognitivamente con la IA', type: 'error' });
+            }
+        } catch(e) {
+            setMsg({ text: 'Error al generar reporte Pro', type: 'error' });
+        } finally {
+            setDownloadingReport(false);
+            setTimeout(() => setMsg({ text: '', type: '' }), 4000);
+        }
+    };
+
     const mockHistory = [
         { name: 'Lun', index: 12 }, { name: 'Mar', index: 15 }, { name: 'Mie', index: 8 },
         { name: 'Jue', index: 22 }, { name: 'Vie', index: 14 }, { name: 'Sab', index: 4 }, { name: 'Dom', index: 2 },
@@ -123,6 +154,41 @@ const IAAnalytics = () => {
 
     return (
         <div className="space-y-12">
+            
+            {/* Header con Reporte Pro */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/[0.02] border border-white/5 p-8 rounded-[2.5rem] apple-glass relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-32 bg-blue-500/5 blur-[100px] rounded-full pointer-events-none" />
+                
+                <div className="relative z-10">
+                   <h2 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                     <BrainCircuit className="w-8 h-8 text-blue-400" />
+                     Núcleo de Analíticas IA
+                   </h2>
+                   <p className="text-[#86868b] mt-2 font-medium">Motor Cognitivo Inferencia Preventiva. Diagnósticos Profesionales en Tiempo Real.</p>
+                </div>
+                
+                <div className="relative z-10 flex gap-4">
+                   <Button 
+                      onClick={handleDownloadProReport}
+                      disabled={downloadingReport}
+                      className="h-14 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-bold text-sm shadow-xl shadow-blue-500/20 active:scale-95 transition-all flex items-center gap-3 group"
+                   >
+                      {downloadingReport ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />}
+                      {downloadingReport ? 'Sintetizando Datos...' : 'Descargar Reporte Pro'}
+                   </Button>
+                </div>
+            </div>
+
+            {/* Notifications */}
+            <AnimatePresence>
+                {msg.text && (
+                    <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                        className={`p-4 rounded-xl shadow-lg border ${msg.type === 'error' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
+                        {msg.text}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Predictions Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[

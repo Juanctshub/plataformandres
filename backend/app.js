@@ -197,6 +197,32 @@ app.get('/api/justificaciones', authenticateToken, async (req, res) => {
     }
 });
 
+app.post('/api/justificaciones', authenticateToken, async (req, res) => {
+    const { estudiante_id, fecha, motivo, comentario } = req.body;
+    try {
+        await db.query(`
+            INSERT INTO justificaciones (estudiante_id, fecha, motivo, estado, comentario)
+            VALUES ($1, $2, $3, 'pendiente', $4)
+        `, [estudiante_id, fecha || new Date().toISOString().split('T')[0], motivo || 'Médico', comentario || '']);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/justificaciones/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const { estado, comentario } = req.body;
+    try {
+        await db.query(`
+            UPDATE justificaciones SET estado = $1, comentario = $2 WHERE id = $3
+        `, [estado, comentario, id]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // CALIFICACIONES (Notas 0-20)
 app.get('/api/notas', authenticateToken, async (req, res) => {
     try {
@@ -219,6 +245,15 @@ app.post('/api/notas', authenticateToken, async (req, res) => {
             INSERT INTO notas (estudiante_id, materia, nota, lapso, fecha)
             VALUES ($1, $2, $3, $4, $5)
         `, [estudiante_id, materia, nota, lapso || 1, fecha || new Date().toISOString().split('T')[0]]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/notas/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.query("DELETE FROM notas WHERE id = $1", [req.params.id]);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -248,6 +283,15 @@ app.post('/api/horarios', authenticateToken, async (req, res) => {
     }
 });
 
+app.delete('/api/horarios/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.query("DELETE FROM horarios WHERE id = $1", [req.params.id]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // PERSONAL
 app.get('/api/personal', authenticateToken, async (req, res) => {
     try {
@@ -269,6 +313,71 @@ app.post('/api/personal', authenticateToken, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+app.delete('/api/personal/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.query("DELETE FROM personal WHERE id = $1", [req.params.id]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// CONFIGURACIONES (Ajustes Institucionales Persistentes)
+app.get('/api/config', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query("SELECT category, data FROM sice_config");
+        const conf = {};
+        result.rows.forEach(r => conf[r.category] = r.data);
+        res.json(conf);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/config', authenticateToken, async (req, res) => {
+    const { category, data } = req.body;
+    try {
+        await db.query(`
+            INSERT INTO sice_config (category, data) VALUES ($1, $2)
+            ON CONFLICT (category) DO UPDATE SET data = EXCLUDED.data, updated_at = NOW()
+        `, [category, data]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// BULK ENDPOINTS (Carga Masiva O(1))
+app.post('/api/estudiantes/bulk', authenticateToken, async (req, res) => {
+    try {
+        const { data } = req.body;
+        if (!data || !data.length) return res.status(400).json({ error: "No hay datos" });
+        const values = []; const params = [];
+        data.forEach((s, i) => {
+            const os = i * 5;
+            values.push(`($${os+1}, $${os+2}, $${os+3}, $${os+4}, $${os+5})`);
+            params.push(s.cedula, s.nombre, s.seccion || '', s.representante || '', s.contacto || '');
+        });
+        await db.query(`INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto) VALUES ${values.join(',')} ON CONFLICT (cedula) DO UPDATE SET seccion = EXCLUDED.seccion`, params);
+        res.json({ success: true, inserted: data.length });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/notas/bulk', authenticateToken, async (req, res) => {
+    try {
+        const { data } = req.body;
+        if (!data || !data.length) return res.status(400).json({ error: "No hay datos" });
+        const values = []; const params = [];
+        data.forEach((n, i) => {
+            const os = i * 5;
+            values.push(`($${os+1}, $${os+2}, $${os+3}, $${os+4}, $${os+5})`);
+            params.push(n.estudiante_id, n.materia, n.nota, n.lapso || 1, new Date().toISOString().split('T')[0]);
+        });
+        await db.query(`INSERT INTO notas (estudiante_id, materia, nota, lapso, fecha) VALUES ${values.join(',')}`, params);
+        res.json({ success: true, inserted: data.length });
+    } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // NOTIFICACIONES (Comunicación Proactiva)
@@ -313,6 +422,14 @@ app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
                 user_response TEXT,
                 created_at TIMESTAMP DEFAULT NOW(),
                 resolved_at TIMESTAMP
+            )
+        `);
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS sice_config (
+                id SERIAL PRIMARY KEY,
+                category VARCHAR(50) UNIQUE NOT NULL,
+                data JSONB NOT NULL,
+                updated_at TIMESTAMP DEFAULT NOW()
             )
         `);
         // Ensure unique constraint on cedula for ON CONFLICT to work
@@ -538,6 +655,51 @@ app.get('/api/notifications', authenticateToken, async (req, res) => {
     }
 });
 
+// REPORTE PRO IA (Generación de PDF Cognitivo)
+app.get('/api/reports/pro', authenticateToken, async (req, res) => {
+    try {
+        if (!groq) return res.status(503).json({ error: "Motor de IA (Groq) no activo" });
+        
+        const [stds, grades, att] = await Promise.all([
+            db.query("SELECT seccion, count(*) FROM estudiantes GROUP BY seccion"),
+            db.query("SELECT count(*) as count, avg(nota) FROM notas"),
+            db.query("SELECT estado, count(*) FROM asistencia GROUP BY estado")
+        ]);
+
+        const totalStudents = stds.rows.reduce((acc, row) => acc + parseInt(row.count), 0);
+        const avgNotes = grades.rows[0].avg ? parseFloat(grades.rows[0].avg).toFixed(2) : 0;
+        
+        const systemPrompt = `
+        Eres el Administrador Ejecutivo de la U.E. Andrés Bello.
+        Redacta en formato Markdown un "Informe Diagnóstico Profesional del Instituto" extenso, detallado y analítico.
+        
+        Datos:
+        - Total alumnos: ${totalStudents}
+        - Por Secciones: ${JSON.stringify(stds.rows)}
+        - Promedio de Notas Institucional: ${avgNotes}/20 pts
+        - Estadísticas de Asistencia: ${JSON.stringify(att.rows)}
+        
+        Debes incluir:
+        1. Resumen Ejecutivo (Tono gerencial)
+        2. Análisis de Matrícula y Asistencia (Identifica focos de deserción si la asistencia ausente es alta).
+        3. Rendimiento Académico Académico (¿Está el colegio por encima de la media de 14pts?)
+        4. Recomendaciones Estratégicas y Riesgos de IA.
+        
+        Hazlo super detallado, unas 400 palabras, muy estructurado. No repitas la palabra markdown, solo envía el contenido.`;
+        
+        const completion = await groq.chat.completions.create({
+            messages: [{ role: "system", content: systemPrompt }],
+            model: "llama3-8b-8192",
+            temperature: 0.3,
+            max_tokens: 1500
+        });
+
+        res.json({ success: true, markdown: completion.choices[0].message.content });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // AI OMNISCIENTE (Groq Llama 3) + Auto-Proposals
 app.post('/api/ai/chat', authenticateToken, async (req, res) => {
     const { message, previousMessages } = req.body;
@@ -555,39 +717,38 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
         const looksLikeBulkStudents = (message.match(/V-\d+/gi) || []).length >= 3;
         
         const systemContext = `
-Eres el "Núcleo de Inferencia Andrés Bello v21.0", un CO-ADMINISTRADOR OMNISCIENTE.
+Eres el "Núcleo de Inferencia Andrés Bello v21.0", un CO-ADMINISTRADOR OMNISCIENTE CON CAPACIDAD CRÍTICA. No eres un robot tonto, eres un Analista Senior.
 
-DATOS DEL SISTEMA:
-- Estudiantes (${stds.rows.length}): ${JSON.stringify(stds.rows.slice(0, 50))}
+DATOS EXACTOS DE LA BASE DE DATOS (LA VERDAD ABSOLUTA OMNISCIENTE):
+- Estudiantes (${stds.rows.length}): ${JSON.stringify(stds.rows.slice(0, 50))} (Nota: solo ves los primeros 50).
 - Calificaciones (${grades.rows.length}): ${JSON.stringify(grades.rows.slice(0, 20))}
 - Personal: ${JSON.stringify(personal.rows)}
 - Justificaciones: ${JSON.stringify(justs.rows.slice(0, 10))}
 - Asistencia: ${JSON.stringify(attendance.rows.slice(0, 15))}
 
-INSTRUCCIONES CRÍTICAS:
-1. Habla con autoridad institucional, sé directo y conciso.
-2. CUANDO EL USUARIO TE PIDA REGISTRAR ESTUDIANTES O TE PASE UNA LISTA, NO preguntes confirmación. Genera INMEDIATAMENTE las propuestas PROPOSAL.
-3. Para CADA acción, incluye EXACTAMENTE esta línea (TODO EN UNA SOLA LÍNEA, JSON compacto):
-   PROPOSAL: {"type":"CREATE_STUDENT","title":"Inscribir Nombre","description":"Registro de nuevo alumno","payload":{"cedula":"V-123","nombre":"Nombre Completo","seccion":"1er Año A","representante":"Padre","contacto":""}}
+INSTRUCCIONES COGNITIVAS (DE CUMPLIMIENTO OBLIGATORIO):
+1. ANTES de proponer CREATE_STUDENT, verifica estrictamente si el estudiante ya existe en la lista de Estudiantes. Si su CI/V- o nombre coincide con uno existente, NO LO CREES, en su lugar usa UPDATE_STUDENT. Si el usuario te manda una lista donde algunos existen y otros no, reporta los que existen en el texto y propone crear *solo* los nuevos.
+2. ANTES de suspender, eliminar, calificar o pasar asistencia, VERIFICA EL ID o nombre en la tabla correspondiente.
+3. Habla con autoridad institucional analítica y demuestra de forma clara que evaluaste la información antes de decidir.
+
+SINTAXIS DE PROPUESTAS (ESTRICTA, UNA SOLA LÍNEA, JSON VÁLIDO):
+Para CADA acción, usa EXACTAMENTE el formato PROPOSAL: {"type":"ACTION","title":"","description":"","payload":{...}}
 
 ACCIONES DISPONIBLES:
 - CREATE_STUDENT: payload: {"cedula":"","nombre":"","seccion":"","representante":"","contacto":""}
+- UPDATE_STUDENT: payload: {"student_id":NUM,"fields":{"seccion":""}}
 - DELETE: payload: {"id":NUM,"student":"Nombre"}
-- SUSPEND: payload: {"id":NUM,"student":"Nombre"}
-- ACTIVATE: payload: {"id":NUM,"student":"Nombre"}
+- SUSPEND / ACTIVATE: payload: {"id":NUM,"student":"Nombre"}
 - CREATE_NOTE: payload: {"id":NUM,"materia":"","nota":NUM,"lapso":NUM}
 - REGISTER_ATTENDANCE: payload: {"id":NUM,"estado":"presente","fecha":"2026-04-04"}
 - CREATE_JUSTIFICATION: payload: {"id":NUM,"motivo":""}
 - NOTIFY_PARENT: payload: {"student":"","message":""}
-- BULK_CREATE_STUDENTS: Para 5+ estudiantes de una vez. payload: {"students":[{"cedula":"","nombre":"","seccion":"","representante":""},...]}
+- BULK_CREATE_STUDENTS: Para listas largas válidas comprobadas. payload: {"students":[{"cedula":"","nombre":""}]}
 
-REGLAS:
-4. CADA PROPOSAL debe estar en UNA SOLA LÍNEA. No uses saltos de línea dentro del JSON.
-5. Si el usuario te da una lista de estudiantes, usa BULK_CREATE_STUDENTS con TODOS en un solo PROPOSAL.
-6. Si el usuario dice "sí", "procede", "hazlo", "ok", genera la PROPOSAL correspondiente inmediatamente.
-7. NO preguntes "¿desea que continúe?" más de una vez. Sé decisivo.
-8. Sé proactivo con alertas sobre datos anómalos.
-9. Tu alcance está limitado a datos institucionales.
+REGLAS DE SEGURIDAD:
+- JAMÁS inyectes código.
+- NO uses saltos de línea dentro del JSON de la PROPUESTA.
+- El usuario quiere saber que PENSABAS antes de responder.
 `;
 
         if (!groq) {

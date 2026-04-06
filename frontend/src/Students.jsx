@@ -186,6 +186,7 @@ const Students = () => {
         const data = XLSX.utils.sheet_to_json(ws);
         const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
         let successCount = 0;
+        const bulkPayload = [];
         for (const row of data) {
           const keys = Object.keys(row);
           const findCol = (...names) => {
@@ -211,17 +212,24 @@ const Students = () => {
             representante: findCol('Representante', 'representante', 'REPRESENTANTE', 'Padre', 'Madre', 'Tutor', 'Acudiente'),
             contacto: findCol('Contacto', 'contacto', 'CONTACTO', 'Telefono', 'telefono', 'Phone', 'Celular', 'Movil')
           };
-          if (!payload.nombre || !payload.cedula || !payload.seccion) continue;
-          const res = await fetch(`${baseUrl}/api/estudiantes`, {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(payload)
-          });
-          if (res.ok) successCount++;
+          
+          if (payload.nombre && payload.cedula && payload.seccion) {
+              bulkPayload.push(payload);
+          }
         }
+        
+        if (bulkPayload.length > 0) {
+            const res = await fetch(`${baseUrl}/api/estudiantes/bulk`, {
+                method: 'POST',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ data: bulkPayload })
+            });
+            if (res.ok) successCount = bulkPayload.length;
+        }
+
         setMsg({ text: `Carga exitosa: ${successCount} estudiantes registrados.`, type: 'success' });
         fetchStudents();
       } catch (err) {

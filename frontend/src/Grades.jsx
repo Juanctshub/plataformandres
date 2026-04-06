@@ -138,6 +138,7 @@ const Grades = () => {
                 const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
                 const token = localStorage.getItem('token');
                 let successCount = 0;
+                const bulkPayload = [];
 
                 for (const row of data) {
                     const student = students.find(s => 
@@ -147,19 +148,21 @@ const Grades = () => {
                     
                     if (!student) continue;
 
-                    const payload = {
+                    bulkPayload.push({
                         estudiante_id: student.id,
                         materia: row.Materia || row.Subject || 'Sin Asignar',
                         nota: parseFloat(row.Nota || row.Grade || 0),
                         lapso: String(row.Lapso || row.Period || '1')
-                    };
+                    });
+                }
 
-                    await fetch(`${baseUrl}/api/notas`, {
+                if (bulkPayload.length > 0) {
+                    const res = await fetch(`${baseUrl}/api/notas/bulk`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({ data: bulkPayload })
                     });
-                    successCount++;
+                    if (res.ok) successCount = bulkPayload.length;
                 }
 
                 setMsg({ text: `Carga exitosa: ${successCount} registros sincronizados.`, type: 'success' });
