@@ -8,11 +8,10 @@ const jwt = require('jsonwebtoken');
 const db = require('./db');
 const { authenticateToken, JWT_SECRET } = require('./auth');
 
-let groq;
 const initGroq = () => {
     if (process.env.GROQ_API_KEY) {
-        groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-        console.log("Nucleo Groq Llama 3 Sincronizado.");
+        groq = new Groq({ apiKey: process.env.GROQ_API_KEY.trim() });
+        console.log("Nucleo Groq Llama 3.3 Sincronizado.");
         return true;
     }
     return false;
@@ -25,7 +24,7 @@ const app = express();
 app.get('/api/ai/health', (req, res) => {
     const isInit = !!groq;
     const keyExists = !!process.env.GROQ_API_KEY;
-    const keySnippet = keyExists ? `${process.env.GROQ_API_KEY.substring(0, 7)}...` : 'No detectada';
+    const keySnippet = keyExists ? `${process.env.GROQ_API_KEY.trim().substring(0, 7)}...` : 'No detectada';
     
     res.json({
         status: isInit ? 'CONECTADO' : 'DESCONECTADO',
@@ -702,7 +701,7 @@ app.get('/api/reports/pro', authenticateToken, async (req, res) => {
         
         const completion = await groq.chat.completions.create({
             messages: [{ role: "system", content: systemPrompt }],
-            model: "llama3-8b-8192",
+            model: "llama-3.1-8b-instant",
             temperature: 0.3,
             max_tokens: 1500
         });
@@ -913,18 +912,18 @@ REGLAS DE SEGURIDAD:
             }
         }
 
-        const chatCompletion = await groq.chat.completions.create({
+        const completion = await groq.chat.completions.create({
             messages: [
                 { role: "system", content: systemContext },
-                ...(previousMessages || []).map(m => ({ role: m.role, content: m.content })),
+                ...previousMessages.map(m => ({ role: m.role, content: m.content.trim() })),
                 { role: "user", content: message }
             ],
-            model: "llama-3.3-70b-versatile",
-            temperature: 0.6,
-            max_tokens: 2500,
+            model: "llama-3.1-8b-instant",
+            temperature: 0.5,
+            max_tokens: 2000
         });
 
-        let aiContent = chatCompletion.choices[0].message.content;
+        let aiContent = completion.choices[0].message.content;
         console.log("[AI RAW]:", aiContent.substring(0, 500));
         
         // ─── ROBUST PROPOSAL EXTRACTION ───
