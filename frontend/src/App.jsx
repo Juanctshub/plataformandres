@@ -51,9 +51,12 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
     { id: 'students', icon: Users, label: 'Matrícula' },
     { id: 'attendance', icon: ClipboardCheck, label: 'Asistencia' },
     { id: 'grades', icon: GraduationCap, label: 'Notas' },
-    { id: 'schedules', icon: CalendarRange, label: 'Horarios' },
-    { id: 'analytics', icon: Cpu, label: 'IA Analytics' },
-    { id: 'settings', icon: SettingsIcon, label: 'Ajustes' },
+    ...(userName === 'admin' || localStorage.getItem('user')?.includes('admin') ? [
+      { id: 'schedules', icon: CalendarRange, label: 'Horarios' },
+      { id: 'staff', icon: Briefcase, label: 'Personal' },
+      { id: 'analytics', icon: Cpu, label: 'IA Analytics' },
+      { id: 'settings', icon: SettingsIcon, label: 'Ajustes' }
+    ] : [])
   ];
 
   return (
@@ -499,10 +502,16 @@ const AndresBelloSuite = () => {
                 {activeTab === 'attendance' && <AttendanceSheet />}
                 {activeTab === 'justifications' && <Justifications />}
                 {activeTab === 'grades' && <Grades />}
-                {activeTab === 'schedules' && <SchedulesModule />}
-                {activeTab === 'staff' && <Staff />}
-                {activeTab === 'analytics' && <IAAnalytics />}
-                {activeTab === 'settings' && <InstitutionalSettings />}
+                {(activeTab === 'schedules' && user?.role === 'admin') && <SchedulesModule />}
+                {(activeTab === 'staff' && user?.role === 'admin') && <Staff />}
+                {(activeTab === 'analytics' && user?.role === 'admin') && <IAAnalytics />}
+                {(activeTab === 'settings' && user?.role === 'admin') && <InstitutionalSettings />}
+                {(['schedules', 'staff', 'analytics', 'settings'].includes(activeTab) && user?.role !== 'admin') && (
+                  <div className="flex flex-col items-center justify-center h-96 space-y-4 opacity-50">
+                    <ShieldCheck className="w-16 h-16" />
+                    <p className="font-bold tracking-widest uppercase text-xs">Acceso Restringido para Docentes</p>
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
           </main>

@@ -177,6 +177,25 @@ const Grades = () => {
         reader.readAsBinaryString(file);
     };
 
+    const exportToExcel = () => {
+        const dataToExport = grades.map(g => {
+            const student = students.find(s => s.id === g.estudiante_id);
+            return {
+                Alumno: student?.nombre || 'Desconocido',
+                Cedula: student?.cedula || 'N/A',
+                Materia: g.materia,
+                Nota: g.nota,
+                Lapso: g.lapso,
+                Fecha: g.fecha
+            };
+        });
+        
+        const ws = XLSX.utils.json_to_sheet(dataToExport);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Calificaciones");
+        XLSX.writeFile(wb, "Acta_Notas_Andres_Bello.xlsx");
+    };
+
     const filteredGrades = grades.filter(g => {
         const matchesSearch = g.student.toLowerCase().includes(searchTerm.toLowerCase()) || g.subject.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesYear = yearFilter === 'Todos' || g.seccion.includes(yearFilter);
@@ -237,6 +256,14 @@ const Grades = () => {
                     {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSpreadsheet className="w-5 h-5" />}
                     Carga Masiva
                   </Button>
+                  <Button 
+                        onClick={exportToExcel}
+                        variant="outline"
+                        className="h-14 px-8 apple-glass border-white/10 text-white/50 hover:text-white hover:bg-white/5 rounded-2xl font-semibold text-xs flex gap-3 transition-all bg-transparent"
+                    >
+                        <Download className="w-5 h-5" />
+                        Descargar Acta
+                    </Button>
 
                   <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                     <DialogTrigger asChild>

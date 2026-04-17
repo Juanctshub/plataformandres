@@ -175,50 +175,37 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
         <div className="absolute bottom-[-15%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[140px] rounded-full animate-pulse" />
       </div>
 
-      {/* 🚀 NUEVA CABECERA IA SUPERIOR 🚀 */}
-      <motion.div 
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="w-full flex items-center justify-between px-12 py-8 z-[200] border-b border-white/5 bg-black/20 backdrop-blur-3xl"
+      {/* 🛠️ BOTÓN DE CIERRE FLOTANTE 🛠️ */}
+      <motion.button
+         initial={{ opacity: 0, scale: 0.8 }}
+         animate={{ opacity: 1, scale: 1 }}
+         whileHover={{ scale: 1.1, rotate: 90 }}
+         whileTap={{ scale: 0.9 }}
+         onClick={onClose}
+         className="fixed top-12 right-12 w-14 h-14 rounded-full apple-glass border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-all shadow-2xl z-[500] group"
       >
-        <div className="flex items-center gap-6">
-           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-xl shadow-blue-600/30 overflow-hidden border border-white/10 group cursor-pointer hover:scale-105 transition-transform" onClick={onClose}>
-              <img src={logo} className="w-full h-full object-cover scale-110" alt="Logo" />
-           </div>
-           <div className="space-y-0.5">
-              <h2 className="text-3xl font-bold text-white tracking-tighter" style={{ fontFamily: "'Inter', sans-serif" }}>
-                 ¡Hola!, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-300 to-indigo-400">{user?.username || 'Admin'}</span>
-              </h2>
-              <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest leading-none">U.E. Andrés Bello • Núcleo de Inferencia v22.0</p>
-           </div>
-        </div>
-
-        <div className="flex items-center gap-6">
-           <div className="hidden md:flex flex-col items-end mr-4">
-              <span className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">Enlace Institucional</span>
-              <span className="text-[9px] text-emerald-400 font-bold flex items-center gap-1.5 mt-1">
-                 <div className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" /> PROXY ACTIVO
-              </span>
-           </div>
-           
-           <motion.button
-              whileHover={{ scale: 1.05, rotate: 90 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onClose}
-              className="w-12 h-12 rounded-2xl apple-glass border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-all shadow-xl group"
-           >
-              <X className="w-5 h-5 transition-transform group-hover:rotate-0" />
-           </motion.button>
-        </div>
-      </motion.div>
+         <X className="w-6 h-6 transition-transform group-hover:rotate-0" />
+      </motion.button>
 
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-6 md:px-20 pt-16 pb-96 space-y-16 no-scrollbar scroll-smooth relative z-10"
+        className="flex-1 overflow-y-auto px-6 md:px-20 pt-40 pb-96 space-y-16 no-scrollbar scroll-smooth relative z-10"
       >
-        <div className="w-full max-w-5xl mx-auto flex flex-col justify-center">
-          
-
+        <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
+            {/* 🤖 LOGO CENTRAL INMERSIVO 🤖 */}
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.9, y: 30 }}
+               animate={{ opacity: 1, scale: 1, y: 0 }}
+               className="mb-12 flex flex-col items-center"
+            >
+               <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-indigo-600 p-1 flex items-center justify-center shadow-2xl shadow-blue-600/20 mb-8 border border-white/10 group cursor-pointer" onClick={onClose}>
+                  <img src={logo} className="w-full h-full object-cover rounded-[2.2rem] scale-110" alt="Logo" />
+               </div>
+               <div className="text-center space-y-2">
+                  <h2 className="text-xl font-black text-white tracking-[0.3em] uppercase opacity-40">Núcleo de Inferencia</h2>
+                  <p className="text-[10px] font-bold text-blue-500 tracking-[0.5em] uppercase">Andrés Bello v25.0 Platinum</p>
+               </div>
+            </motion.div>
 
           {messages.length === 1 && !isTyping && (
             <motion.div 

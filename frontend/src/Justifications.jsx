@@ -49,7 +49,8 @@ const Justifications = () => {
     estudiante_id: '', 
     fecha: new Date().toISOString().split('T')[0], 
     motivo: 'Médico', 
-    comentario: '' 
+    comentario: '',
+    evidencia_url: ''
   });
   const [msg, setMsg] = useState({ text: '', type: '' });
 
@@ -222,6 +223,15 @@ const Justifications = () => {
                    </div>
                 </div>
                 <div className="space-y-3">
+                   <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Link de Evidencia (Opcional)</label>
+                   <Input 
+                      placeholder="https://imgur.com/foto-reposo"
+                      className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
+                      value={newJustification.evidencia_url}
+                      onChange={(e) => setNewJustification({...newJustification, evidencia_url: e.target.value})}
+                   />
+                </div>
+                <div className="space-y-3">
                    <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Observación</label>
                    <textarea 
                       className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-white text-sm outline-none focus:ring-1 focus:ring-blue-500/50 min-h-[120px]"
@@ -279,6 +289,16 @@ const Justifications = () => {
                       <p className="text-sm font-medium text-white/70 italic leading-relaxed">
                          "{j.comentario || 'Evaluación de sistema pendiente.'}"
                       </p>
+                      {j.evidencia_url && (
+                        <a 
+                            href={j.evidencia_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="mt-4 flex items-center gap-2 text-[10px] font-bold text-blue-400 hover:text-blue-300 transition-colors uppercase tracking-widest"
+                        >
+                            <Download className="w-3 h-3" /> Ver Evidencia Adjunta
+                        </a>
+                      )}
                    </div>
                    <MessageSquare className="absolute -right-8 -top-8 w-32 h-32 text-white/[0.02]" />
                 </div>

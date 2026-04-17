@@ -129,9 +129,26 @@ const Students = () => {
       }
     } catch (e) {
       setMsg({ text: 'Error de conexión con el núcleo', type: 'error' });
-    } finally {
-      setSubmitting(false);
+    } finally { 
+        setSubmitting(false);
+        setTimeout(() => setMsg({ text: '', type: '' }), 4000);
     }
+  };
+
+  const exportToExcel = () => {
+    const dataToExport = filteredStudents.map(s => ({
+      Cedula: s.cedula,
+      Nombre: s.nombre,
+      Seccion: s.seccion,
+      Representante: s.representante,
+      Contacto: s.contacto,
+      Estado: s.estado
+    }));
+    
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Matricula");
+    XLSX.writeFile(wb, "Matricula_Andres_Bello.xlsx");
   };
 
   const handleStatusToggle = async (student) => {
@@ -312,66 +329,77 @@ const Students = () => {
             Plantilla
           </Button>
 
-          <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-            <DialogTrigger asChild>
-              <Button className="h-14 px-10 bg-blue-600 text-white hover:bg-blue-500 rounded-2xl font-semibold text-xs flex gap-3 shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
-                <UserPlus className="w-5 h-5" />
-                Matricular Alumno
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="apple-glass border-white/10 p-16 rounded-[3rem] max-w-xl">
-               <DialogHeader className="mb-10">
-                  <DialogTitle className="text-3xl font-semibold text-white tracking-tight">Nueva Matrícula</DialogTitle>
-                  <DialogDescription className="text-[#86868b] font-medium mt-3">Registro de estudiante en el Periodo 2026</DialogDescription>
-               </DialogHeader>
-               <form onSubmit={handleSubmit} className="space-y-8">
-                  <div className="grid grid-cols-2 gap-6">
+          <div className="flex items-center gap-3">
+             <Button 
+                onClick={exportToExcel}
+                variant="outline"
+                className="h-14 px-8 apple-glass border-white/10 text-white/60 hover:text-white hover:bg-white/5 rounded-2xl font-semibold text-xs flex gap-3 transition-all bg-transparent"
+             >
+                <Download className="w-5 h-5" />
+                Exportar XLSX
+             </Button>
+             
+             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+               <DialogTrigger asChild>
+                 <Button className="h-14 px-10 bg-blue-600 text-white hover:bg-blue-500 rounded-2xl font-semibold text-xs flex gap-3 shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
+                   <UserPlus className="w-5 h-5" />
+                   Matricular Alumno
+                 </Button>
+               </DialogTrigger>
+               <DialogContent className="apple-glass border-white/10 p-16 rounded-[3rem] max-w-xl">
+                  <DialogHeader className="mb-10">
+                     <DialogTitle className="text-3xl font-semibold text-white tracking-tight">Nueva Matrícula</DialogTitle>
+                     <DialogDescription className="text-[#86868b] font-medium mt-3">Registro de estudiante en el Periodo 2026</DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleSubmit} className="space-y-8">
+                     <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-3">
+                           <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Identidad</label>
+                           <Input 
+                              placeholder="V-000.000"
+                              className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
+                              value={newStudent.cedula}
+                              onChange={(e) => setNewStudent({...newStudent, cedula: e.target.value})}
+                              required
+                           />
+                        </div>
+                        <div className="space-y-3">
+                           <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Sección</label>
+                           <Input 
+                              placeholder="Ej: 5A"
+                              className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
+                              value={newStudent.seccion}
+                              onChange={(e) => setNewStudent({...newStudent, seccion: e.target.value})}
+                              required
+                           />
+                        </div>
+                     </div>
                      <div className="space-y-3">
-                        <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Identidad</label>
+                        <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Nombre Completo</label>
                         <Input 
-                           placeholder="V-000.000"
+                           placeholder="Nombres y Apellidos"
                            className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
-                           value={newStudent.cedula}
-                           onChange={(e) => setNewStudent({...newStudent, cedula: e.target.value})}
+                           value={newStudent.nombre}
+                           onChange={(e) => setNewStudent({...newStudent, nombre: e.target.value})}
                            required
                         />
                      </div>
                      <div className="space-y-3">
-                        <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Sección</label>
+                        <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Representante</label>
                         <Input 
-                           placeholder="Ej: 5A"
+                           placeholder="Nombre del Padre/Madre"
                            className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
-                           value={newStudent.seccion}
-                           onChange={(e) => setNewStudent({...newStudent, seccion: e.target.value})}
-                           required
+                           value={newStudent.representante}
+                           onChange={(e) => setNewStudent({...newStudent, representante: e.target.value})}
                         />
                      </div>
-                  </div>
-                  <div className="space-y-3">
-                     <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Nombre Completo</label>
-                     <Input 
-                        placeholder="Nombres y Apellidos"
-                        className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
-                        value={newStudent.nombre}
-                        onChange={(e) => setNewStudent({...newStudent, nombre: e.target.value})}
-                        required
-                     />
-                  </div>
-                  <div className="space-y-3">
-                     <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Representante</label>
-                     <Input 
-                        placeholder="Nombre del Padre/Madre"
-                        className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
-                        value={newStudent.representante}
-                        onChange={(e) => setNewStudent({...newStudent, representante: e.target.value})}
-                     />
-                  </div>
-                  <Button type="submit" disabled={submitting} className="w-full h-16 bg-white text-black hover:bg-zinc-200 rounded-full font-bold transition-all shadow-2xl">
-                     {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Confirmar Inscripción"}
-                  </Button>
-               </form>
-            </DialogContent>
-          </Dialog>
+                     <Button type="submit" disabled={submitting} className="w-full h-16 bg-white text-black hover:bg-zinc-200 rounded-full font-bold transition-all shadow-2xl">
+                        {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Confirmar Inscripción"}
+                     </Button>
+                  </form>
+               </DialogContent>
+             </Dialog>
+           </div>
         </div>
       </div>
 

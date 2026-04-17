@@ -9,14 +9,27 @@ const db = require('./db');
 const { authenticateToken, JWT_SECRET } = require('./auth');
 
 const initGroq = () => {
-    if (process.env.GROQ_API_KEY) {
-        groq = new Groq({ apiKey: process.env.GROQ_API_KEY.trim() });
-        console.log("Nucleo Groq Llama 3.3 Sincronizado.");
+    let key = process.env.GROQ_API_KEY || process.env.GROQ_API_TOKEN;
+    if (key) {
+        // Aggressive cleaning: trim, remove quotes, and visible weirdness
+        key = key.trim().replace(/^["']|["']$/g, '').trim();
+        groq = new Groq({ apiKey: key });
+        console.log("Nucleo Groq Llama 3.3 Sincronizado (Token Sanitizado).");
         return true;
     }
     return false;
 };
 initGroq();
+
+// AUDIT HELPER
+const logAudit = async (user_id, action, details) => {
+    try {
+        await db.query(
+            "INSERT INTO audit_logs (user_id, action, details) VALUES ($1, $2, $3)",
+            [user_id || 0, action, JSON.stringify(details)]
+        );
+    } catch (e) { console.error("Audit log failed:", e.message); }
+};
 
 const app = express();
 
@@ -51,6 +64,7 @@ app.post('/api/login', async (req, res) => {
         if (!validPass) return res.status(401).json({ error: "Contraseña incorrecta" });
 
         const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '8h' });
+        await logAudit(user.id, "LOGIN", { username: user.username, ip: req.ip });
         res.json({ token, user: { username: user.username, role: user.role } });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -145,10 +159,11 @@ app.post('/api/estudiantes', authenticateToken, async (req, res) => {
         return res.status(400).json({ error: "Faltan datos obligatorios (Cédula, Nombre, Sección)" });
     }
     try {
-        await db.query(
-            "INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto) VALUES ($1, $2, $3, $4, $5)",
+        const result = await db.query(
+            "INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto) VALUES ($1, $2, $3, $4, $5) RETURNING id",
             [cedula, nombre, seccion, representante, contacto]
         );
+        await logAudit(req.user.id, "CREATE_STUDENT", { id: result.rows[0].id, nombre, seccion });
         res.json({ success: true, message: "Estudiante inscrito correctamente" });
     } catch (err) {
         if (err.message.includes('unique')) return res.status(400).json({ error: "La cédula ya está registrada" });
@@ -253,10 +268,11 @@ app.get('/api/notas', authenticateToken, async (req, res) => {
 app.post('/api/notas', authenticateToken, async (req, res) => {
     const { estudiante_id, materia, nota, lapso, fecha } = req.body;
     try {
-        await db.query(`
+        const result = await db.query(`
             INSERT INTO notas (estudiante_id, materia, nota, lapso, fecha)
-            VALUES ($1, $2, $3, $4, $5)
+            VALUES ($1, $2, $3, $4, $5) RETURNING id
         `, [estudiante_id, materia, nota, lapso || 1, fecha || new Date().toISOString().split('T')[0]]);
+        await logAudit(req.user.id, "CREATE_NOTE", { student_id: estudiante_id, materia, nota });
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -415,13 +431,21 @@ app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
     }
 });
 
-// ══════════════════════════════════════════════════════════
 // IA ADMINISTRADORA — SISTEMA DE PROPUESTAS
 // ══════════════════════════════════════════════════════════
 
-// Auto-create ai_proposals table on startup
+// Auto-create tables on startup
 (async () => {
     try {
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS audit_logs (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER,
+                action VARCHAR(100),
+                details JSONB,
+                created_at TIMESTAMP DEFAULT NOW()
+            )
+        `);
         await db.query(`
             CREATE TABLE IF NOT EXISTS ai_proposals (
                 id SERIAL PRIMARY KEY,
@@ -444,11 +468,13 @@ app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
                 updated_at TIMESTAMP DEFAULT NOW()
             )
         `);
+        // Ensure evidence_url exists in justificaciones
+        await db.query(`ALTER TABLE justificaciones ADD COLUMN IF NOT EXISTS evidencia_url TEXT`).catch(() => {});
         // Ensure unique constraint on cedula for ON CONFLICT to work
         await db.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_estudiantes_cedula ON estudiantes(cedula)`).catch(() => {});
-        console.log("[IA ADMIN] Tabla ai_proposals sincronizada.");
+        console.log("[SISTEMA] Tablas y esquemas sincronizados v25.0.");
     } catch (e) {
-        console.error("[IA ADMIN] Error creando tabla:", e.message);
+        console.error("[SISTEMA] Error en sincronización:", e.message);
     }
 })();
 
