@@ -94,6 +94,29 @@ const Staff = () => {
         }
     };
 
+    const handleDelete = async (id) => {
+        if (!window.confirm('¿Estás seguro de eliminar a este miembro del personal? Esta acción quedará registrada en la bitácora.')) return;
+        try {
+            const token = localStorage.getItem('token');
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+            const res = await fetch(`${baseUrl}/api/personal/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setMsg({ text: 'Registro eliminado del Nodo Staff', type: 'success' });
+                fetchStaff();
+            } else {
+                const data = await res.json();
+                setMsg({ text: data.error || 'No sepuede eliminar', type: 'error' });
+            }
+        } catch (e) {
+            setMsg({ text: 'Error fatal en nodo de eliminación', type: 'error' });
+        } finally {
+            setTimeout(() => setMsg({ text: '', type: '' }), 4000);
+        }
+    };
+
     const filteredStaff = staff.filter(s => 
         (s.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
          s.rol.toLowerCase().includes(searchTerm.toLowerCase())) &&
@@ -242,11 +265,19 @@ const Staff = () => {
                             </div>
                          </div>
 
-                         <div className="mt-8 flex justify-end">
+                          <div className="mt-8 flex justify-between items-center">
+                            {(localStorage.getItem('user')?.includes('admin')) && (
+                                <button 
+                                    onClick={() => handleDelete(s.id)}
+                                    className="p-2.5 rounded-full bg-red-500/5 text-red-500/20 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                            )}
                             <div className="p-2.5 rounded-full bg-white/5 text-white/10 group-hover:text-white group-hover:bg-white/10 transition-all cursor-pointer">
                                <ArrowRight className="w-5 h-5" />
                             </div>
-                         </div>
+                          </div>
                       </motion.div>
                     ))
                   ) : (

@@ -151,6 +151,10 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
           const newMessages = [...prev];
           newMessages[msgIndex].actionExecuted = true;
           newMessages[msgIndex].content += "\n\n✅ ACCIÓN EJECUTADA EXITOSAMENTE.";
+          
+          // Dispatch global refresh event
+          window.dispatchEvent(new CustomEvent('refresh-dashboard'));
+          
           if (onRefresh) onRefresh();
           return newMessages;
         });

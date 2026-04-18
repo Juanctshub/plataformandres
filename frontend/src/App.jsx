@@ -319,7 +319,17 @@ const AndresBelloSuite = () => {
   }, [handleLogout]);
 
   useEffect(() => {
-    if (token) fetchData(token);
+    if (token) {
+      fetchData(token);
+      
+      const handleRefresh = () => {
+        console.log("Evento refresh-dashboard detectado. Sincronizando datos...");
+        fetchData(token);
+      };
+      
+      window.addEventListener('refresh-dashboard', handleRefresh);
+      return () => window.removeEventListener('refresh-dashboard', handleRefresh);
+    }
     else setTimeout(() => setIsInitializing(false), 1500);
   }, [token, fetchData]);
 

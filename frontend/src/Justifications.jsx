@@ -294,9 +294,15 @@ const Justifications = () => {
                             href={j.evidencia_url} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="mt-4 flex items-center gap-2 text-[10px] font-bold text-blue-400 hover:text-blue-300 transition-colors uppercase tracking-widest"
+                            className="mt-6 flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-all group/link"
                         >
-                            <Download className="w-3 h-3" /> Ver Evidencia Adjunta
+                            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover/link:bg-blue-600 group-hover/link:text-white transition-all">
+                                <Download className="w-4 h-4" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-bold text-white uppercase tracking-widest">Soporte Médico</span>
+                                <span className="text-[9px] text-[#86868b] font-medium">Click para visualizar documento</span>
+                            </div>
                         </a>
                       )}
                    </div>

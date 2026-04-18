@@ -78,8 +78,9 @@ app.post('/api/register', async (req, res) => {
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        await db.query("INSERT INTO usuarios (username, password, role) VALUES ($1, $2, $3)", 
+        const result = await db.query("INSERT INTO usuarios (username, password, role) VALUES ($1, $2, $3) RETURNING id", 
                       [username, hashedPassword, role || 'docente']);
+        await logAudit(result.rows[0].id, "USER_REGISTERED", { username, role: role || 'docente' });
         res.json({ success: true });
     } catch (err) {
         if (err.message.includes('unique')) return res.status(400).json({ error: "Usuario ya existe" });
@@ -136,18 +137,19 @@ app.get('/api/estudiantes/:id', authenticateToken, async (req, res) => {
 });
 
 app.delete('/api/estudiantes/:id', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Acceso denegado: Se requiere rango Administrador" });
     try {
-        const { id } = req.params;
-        if (isNaN(parseInt(id))) return res.status(400).json({ error: "ID de estudiante inválido para eliminación" });
         
-        // Cascading delete: purge all dependent records first
+        // Cascading delete
         await db.query("DELETE FROM asistencia WHERE estudiante_id = $1", [id]);
         await db.query("DELETE FROM notas WHERE estudiante_id = $1", [id]);
         await db.query("DELETE FROM justificaciones WHERE estudiante_id = $1", [id]);
         
         const result = await db.query("DELETE FROM estudiantes WHERE id = $1 RETURNING id, nombre", [id]);
         if (result.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado para eliminación" });
-        res.json({ success: true, message: `${result.rows[0].nombre} eliminado permanentemente del Nodo Maestro`, id: result.rows[0].id });
+        
+        await logAudit(req.user.id, "DELETE_STUDENT", { id: result.rows[0].id, nombre: result.rows[0].nombre });
+        res.json({ success: true, message: `${result.rows[0].nombre} eliminado permanentemente` });
     } catch (err) {
         res.status(500).json({ error: "Fallo en protocolo de eliminación: " + err.message });
     }
@@ -225,12 +227,14 @@ app.get('/api/justificaciones', authenticateToken, async (req, res) => {
 });
 
 app.post('/api/justificaciones', authenticateToken, async (req, res) => {
-    const { estudiante_id, fecha, motivo, comentario } = req.body;
+    const { estudiante_id, fecha, motivo, comentario, evidencia_url } = req.body;
     try {
         await db.query(`
-            INSERT INTO justificaciones (estudiante_id, fecha, motivo, estado, comentario)
-            VALUES ($1, $2, $3, 'pendiente', $4)
-        `, [estudiante_id, fecha || new Date().toISOString().split('T')[0], motivo || 'Médico', comentario || '']);
+            INSERT INTO justificaciones (estudiante_id, fecha, motivo, estado, comentario, evidencia_url)
+            VALUES ($1, $2, $3, 'pendiente', $4, $5)
+        `, [estudiante_id, fecha || new Date().toISOString().split('T')[0], motivo || 'Médico', comentario || '', evidencia_url || '']);
+        
+        await logAudit(req.user.id, "CREATE_JUSTIFICATION", { student_id: estudiante_id, motivo });
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -299,6 +303,7 @@ app.get('/api/horarios', authenticateToken, async (req, res) => {
 });
 
 app.post('/api/horarios', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Acceso denegado: Se requiere rango Administrador" });
     const { seccion, dia, materia, bloque } = req.body;
     try {
         await db.query(`
@@ -312,6 +317,7 @@ app.post('/api/horarios', authenticateToken, async (req, res) => {
 });
 
 app.delete('/api/horarios/:id', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Acceso denegado: Se requiere rango Administrador" });
     try {
         await db.query("DELETE FROM horarios WHERE id = $1", [req.params.id]);
         res.json({ success: true });
@@ -331,12 +337,14 @@ app.get('/api/personal', authenticateToken, async (req, res) => {
 });
 
 app.post('/api/personal', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Acceso denegado: Se requiere rango Administrador" });
     const { nombre, rol, email, contacto } = req.body;
     try {
-        await db.query(`
+        const result = await db.query(`
             INSERT INTO personal (nombre, rol, email, contacto)
-            VALUES ($1, $2, $3, $4)
+            VALUES ($1, $2, $3, $4) RETURNING id
         `, [nombre, rol, email, contacto]);
+        await logAudit(req.user.id, "REGISTER_STAFF", { id: result.rows[0].id, nombre, rol });
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -344,8 +352,12 @@ app.post('/api/personal', authenticateToken, async (req, res) => {
 });
 
 app.delete('/api/personal/:id', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Acceso denegado: Se requiere rango Administrador" });
     try {
-        await db.query("DELETE FROM personal WHERE id = $1", [req.params.id]);
+        const result = await db.query("DELETE FROM personal WHERE id = $1 RETURNING nombre", [req.params.id]);
+        if (result.rows.length > 0) {
+            await logAudit(req.user.id, "DELETE_STAFF", { id: req.params.id, nombre: result.rows[0].nombre });
+        }
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -365,6 +377,7 @@ app.get('/api/config', authenticateToken, async (req, res) => {
 });
 
 app.post('/api/config', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Acceso denegado: Se requiere rango Administrador" });
     const { category, data } = req.body;
     try {
         await db.query(`
@@ -389,6 +402,7 @@ app.post('/api/estudiantes/bulk', authenticateToken, async (req, res) => {
             params.push(s.cedula, s.nombre, s.seccion || '', s.representante || '', s.contacto || '');
         });
         await db.query(`INSERT INTO estudiantes (cedula, nombre, seccion, representante, contacto) VALUES ${values.join(',')} ON CONFLICT (cedula) DO UPDATE SET seccion = EXCLUDED.seccion`, params);
+        await logAudit(req.user.id, "BULK_IMPORT_STUDENTS", { count: data.length });
         res.json({ success: true, inserted: data.length });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -404,6 +418,7 @@ app.post('/api/notas/bulk', authenticateToken, async (req, res) => {
             params.push(n.estudiante_id, n.materia, n.nota, n.lapso || 1, new Date().toISOString().split('T')[0]);
         });
         await db.query(`INSERT INTO notas (estudiante_id, materia, nota, lapso, fecha) VALUES ${values.join(',')}`, params);
+        await logAudit(req.user.id, "BULK_IMPORT_NOTES", { count: data.length });
         res.json({ success: true, inserted: data.length });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -412,6 +427,7 @@ app.post('/api/notas/bulk', authenticateToken, async (req, res) => {
 app.post('/api/notify', authenticateToken, async (req, res) => {
     const { student, msg, contact } = req.body;
     console.log(`[ALERTA INSTITUCIONAL] Enviando a ${contact}: ${msg}`);
+    await logAudit(req.user.id, "SENT_NOTIFICATION", { student, contact });
     setTimeout(() => {
         res.json({ success: true, message: `Notificación enviada a representante de ${student}` });
     }, 1000);
