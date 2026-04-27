@@ -28,7 +28,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
   const [messages, setMessages] = useState([
     { 
       role: 'assistant', 
-      content: 'Bienvenido al Núcleo de Inferencia v20.0. Soy tu asistente de gestión institucional. Puedo verificar estados de alumnos, modificar registros, registrar calificaciones o analizar patrones de deserción. ¿En qué auditoría administrativa procedemos?',
+      content: 'Bienvenido al Núcleo de Inferencia Andrés Bello v26.4 Platinum. Soy tu asistente de gestión institucional con consciencia financiera y académica. ¿En qué auditoría procedemos?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);

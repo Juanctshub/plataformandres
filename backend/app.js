@@ -116,7 +116,12 @@ app.post('/api/bio-auth', async (req, res) => {
 // ESTUDIANTES (Gestión Institucional)
 app.get('/api/estudiantes', authenticateToken, async (req, res) => {
     try {
-        const result = await db.query("SELECT * FROM estudiantes ORDER BY seccion, nombre");
+        const result = await db.query(`
+            SELECT e.*, 
+            EXISTS(SELECT 1 FROM pagos p WHERE p.estudiante_id = e.id AND p.mes_correspondiente = 'Mayo') as solvente
+            FROM estudiantes e 
+            ORDER BY e.seccion, e.nombre
+        `);
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -138,12 +143,13 @@ app.get('/api/estudiantes/:id', authenticateToken, async (req, res) => {
 
 app.delete('/api/estudiantes/:id', authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Acceso denegado: Se requiere rango Administrador" });
+    const { id } = req.params;
     try {
-        
         // Cascading delete
         await db.query("DELETE FROM asistencia WHERE estudiante_id = $1", [id]);
         await db.query("DELETE FROM notas WHERE estudiante_id = $1", [id]);
         await db.query("DELETE FROM justificaciones WHERE estudiante_id = $1", [id]);
+        await db.query("DELETE FROM pagos WHERE estudiante_id = $1", [id]);
         
         const result = await db.query("DELETE FROM estudiantes WHERE id = $1 RETURNING id, nombre", [id]);
         if (result.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado para eliminación" });
@@ -465,6 +471,31 @@ app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
         const presentCount = parseInt(present.rows[0].count);
         const percentage = totalCount > 0 ? ((presentCount / totalCount) * 100).toFixed(1) + '%' : 'Sin datos';
         res.json({ percentage, total: totalCount, present: presentCount });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// FINANZAS STATS (Recaudación Real)
+app.get('/api/finanzas/stats', authenticateToken, async (req, res) => {
+    try {
+        const totalResult = await db.query("SELECT SUM(monto) as total FROM pagos");
+        const monthResult = await db.query("SELECT SUM(monto) as total FROM pagos WHERE mes_correspondiente = 'Mayo'"); // Ejemplo para mes actual
+        const studentsCount = await db.query("SELECT COUNT(*) as count FROM estudiantes");
+        const solventCount = await db.query("SELECT COUNT(DISTINCT estudiante_id) as count FROM pagos WHERE mes_correspondiente = 'Mayo'");
+
+        const total = parseFloat(totalResult.rows[0].total || 0);
+        const monthly = parseFloat(monthResult.rows[0].total || 0);
+        const stdCount = parseInt(studentsCount.rows[0].count || 0);
+        const slvCount = parseInt(solventCount.rows[0].count || 0);
+        
+        res.json({ 
+            total_revenue: total, 
+            monthly_revenue: monthly, 
+            solvency_rate: stdCount > 0 ? ((slvCount / stdCount) * 100).toFixed(1) + '%' : '0%',
+            solvent_students: slvCount,
+            total_students: stdCount
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -851,7 +882,7 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
         const looksLikeBulkStudents = (message.match(/V-\d+/gi) || []).length >= 3;
         
         const systemContext = `
-Eres el "Núcleo de Inferencia Andrés Bello v26.0", un CO-ADMINISTRADOR OMNISCIENTE CON CAPACIDAD CRÍTICA Y AUTORIDAD FINANCIERA.
+Eres el "Núcleo de Inferencia Andrés Bello v26.4 Platinum", un CO-ADMINISTRADOR OMNISCIENTE CON CAPACIDAD CRÍTICA Y AUTORIDAD FINANCIERA.
 
 DATOS EXACTOS (LA VERDAD ABSOLUTA OMNISCIENTE):
 - Estudiantes (${stds.rows.length}): ${JSON.stringify(stds.rows.slice(0, 50))}
@@ -861,6 +892,8 @@ DATOS EXACTOS (LA VERDAD ABSOLUTA OMNISCIENTE):
 - Asistencia: ${JSON.stringify(attendance.rows.slice(0, 15))}
 - Finanzas (Recientes): ${JSON.stringify(payments.rows)}
 - Estado de Lapsos: ${JSON.stringify(periods.rows)}
+- RECAUDACIÓN TOTAL: $${payments.rows.reduce((acc, curr) => acc + parseFloat(curr.monto), 0)}
+- SOLVENCIA ACTUAL: ${stds.rows.length > 0 ? ((payments.rows.filter(p => p.mes_correspondiente === 'Mayo').length / stds.rows.length) * 100).toFixed(1) + '%' : '0%'}
 
 INSTRUCCIONES COGNITIVAS:
 1. ANTES de proponer CREATE_STUDENT, verifica si ya existe.

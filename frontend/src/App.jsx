@@ -384,7 +384,7 @@ const AndresBelloSuite = () => {
                      <img src={logo} className="w-11 h-11 rounded-full shadow-lg border border-white/10 group-hover:scale-105 transition-transform object-cover" alt="Logo" />
                      <div className="flex flex-col">
                         <h2 className="text-sm font-black tracking-tighter text-white leading-none uppercase italic">Andrés Bello</h2>
-                        <span className="text-[9px] font-black tracking-[0.2em] text-[#86868b] uppercase mt-1">SaaS Suite v20.0</span>
+                        <span className="text-[9px] font-black tracking-[0.2em] text-[#86868b] uppercase mt-1">v26.4 Platinum Edition</span>
                      </div>
                   </div>
                   <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-5 py-2 active:scale-95 group focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">

@@ -210,13 +210,21 @@ const AttendanceSheet = () => {
                        <Clock className="w-7 h-7" />}
                    </div>
                    <div className="space-y-1">
-                      <div className="flex items-center gap-3">
-                         <h4 className="text-lg font-semibold text-white tracking-tight">{s.nombre}</h4>
-                         {s.isJustified && (
-                            <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full px-3 py-0.5 text-[9px] font-bold uppercase tracking-widest italic">Pase Justificado</Badge>
-                         )}
-                      </div>
-                      <p className="text-xs text-[#86868b] font-medium tracking-wide">CI {s.cedula} • Sección {s.seccion}</p>
+                       <div className="flex items-center gap-3">
+                          <h4 className="text-lg font-semibold text-white tracking-tight">{s.nombre}</h4>
+                          {s.isJustified && (
+                             <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full px-3 py-0.5 text-[9px] font-bold uppercase tracking-widest italic">Pase Justificado</Badge>
+                          )}
+                       </div>
+                       <div className="flex items-center gap-4">
+                          <p className="text-xs text-[#86868b] font-medium tracking-wide">CI {s.cedula} • Sección {s.seccion}</p>
+                          <div className="h-3 w-[1px] bg-white/10" />
+                          {s.solvente ? (
+                             <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Solvente</span>
+                          ) : (
+                             <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">Deuda Pendiente</span>
+                          )}
+                       </div>
                    </div>
                 </div>
 

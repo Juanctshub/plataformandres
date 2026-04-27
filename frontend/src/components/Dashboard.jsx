@@ -82,11 +82,14 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       // Ask AI for analysis summary
       let aiSummary = '';
       try {
+        const financeRes = await fetch(`${baseUrl}/api/finanzas/stats`, { headers });
+        const fin = financeRes.ok ? await financeRes.json() : {};
+        
         const aiRes = await fetch(`${baseUrl}/api/ai/chat`, {
           method: 'POST',
           headers: { ...headers, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            message: `Genera un análisis ejecutivo breve (máximo 5 oraciones) del estado de la institución con estos datos: ${students.length} estudiantes, ${personal.length} personal, asistencia global ${attStats.percentage}, ${justificaciones.filter(j => j.estado === 'pendiente').length} justificativos pendientes, ${students.filter(s => s.estado === 'suspendido').length} suspendidos. Sé directo y profesional.`,
+            message: `Genera un análisis ejecutivo breve (máximo 5 oraciones) del estado de la institución con estos datos: ${students.length} estudiantes, ${personal.length} personal, asistencia global ${attStats.percentage}, recaudación total $${fin.total_revenue}, tasa de solvencia ${fin.solvency_rate}. Sé directo, profesional y destaca si hay riesgos financieros o de ausentismo.`,
             previousMessages: []
           })
         });
@@ -481,11 +484,30 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
     }
   };
 
+  const [financeStats, setFinanceStats] = useState({ total_revenue: 0, solvency_rate: '0%' });
+
+  useEffect(() => {
+    const fetchFinance = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (user.role !== 'admin') return;
+        
+        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
+        const res = await fetch(`${baseUrl}/api/finanzas/stats`, { 
+          headers: { 'Authorization': `Bearer ${token}` } 
+        });
+        if (res.ok) setFinanceStats(await res.json());
+      } catch (e) { console.error("Finance fetch failed", e); }
+    };
+    fetchFinance();
+  }, []);
+
   const statCards = [
-    { label: 'Matrícula', value: stats.students || 0, sub: 'Estudiantes Registrados', icon: Users, color: 'bg-blue-500/10 text-blue-400' },
-    { label: 'Asistencia', value: stats.attendance && stats.attendance !== 'Sin datos' ? stats.attendance : '0%', sub: 'Asistencia Global', icon: CheckCircle2, color: 'bg-emerald-500/10 text-emerald-400' },
-    { label: 'IA Risks', value: stats.risks || 0, sub: 'Alertas Predictivas', icon: Sparkles, color: 'bg-indigo-500/10 text-indigo-400' },
-    { label: 'Justificativos', value: stats.justifications || 0, sub: 'Pendientes por Validar', icon: Clock, color: 'bg-amber-500/10 text-amber-400' },
+    { label: 'Matrícula', value: stats.students || 0, sub: 'Estudiantes Activos', icon: Users, color: 'bg-blue-500/10 text-blue-400' },
+    { label: 'Asistencia', value: stats.attendance && stats.attendance !== 'Sin datos' ? stats.attendance : '0%', sub: 'Presencialidad Promedio', icon: CheckCircle2, color: 'bg-emerald-500/10 text-emerald-400' },
+    { label: 'Recaudación', value: `$${financeStats.total_revenue?.toLocaleString()}`, sub: `Solvencia: ${financeStats.solvency_rate}`, icon: TrendingUp, color: 'bg-amber-500/10 text-amber-400' },
+    { label: 'Justificativos', value: stats.justifications || 0, sub: 'Pendientes de Firma', icon: Clock, color: 'bg-indigo-500/10 text-indigo-400' },
   ];
 
   return (
