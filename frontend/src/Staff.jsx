@@ -136,8 +136,8 @@ const Staff = () => {
                     <div className="relative flex-1 max-w-lg group">
                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
                        <Input 
-                        placeholder="Buscar por Estudiante o Asignatura..." 
-                        className="pl-16 h-14 bg-white/5 border-white/5 rounded-2xl text-white text-sm font-medium focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-[#86868b]/40"
+                        placeholder="Buscar por Nombre o Cargo..." 
+                        className="pl-16 h-16 bg-white/[0.03] border-white/5 rounded-[1.8rem] text-white text-base font-medium focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-[#86868b]/40"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                      />
@@ -243,11 +243,11 @@ const Staff = () => {
 
             {/* Staff Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-12">
-               <AnimatePresence mode="popLayout">
+               <AnimatePresence>
                   {filteredStaff.length > 0 ? (
                     filteredStaff.map((s, i) => (
                       <motion.div
-                        key={s.id || i}
+                        key={s?.id || `staff-${i}`}
                         layout
                         initial={{ opacity: 0, y: 30, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}

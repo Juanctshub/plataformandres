@@ -80,9 +80,65 @@ const LapseControl = () => {
                 >
                     <Calendar className="w-12 h-12" />
                 </motion.div>
-                <div className="space-y-2">
+                <div className="space-y-4">
                     <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">Control de Ciclos Académicos</h2>
-                    <p className="text-[11px] text-[#86868b] font-black uppercase tracking-[0.4em]">Núcleo de Gestión Institucional v26.6</p>
+                    <p className="text-[11px] text-[#86868b] font-black uppercase tracking-[0.4em]">Núcleo de Gestión Institucional v27.4</p>
+                    <div className="flex justify-center gap-6 mt-8">
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                            <Unlock className="w-3 h-3 text-emerald-400" />
+                            <span className="text-[8px] font-black text-emerald-400 uppercase tracking-widest italic">Abierto: Edición Habilitada</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20">
+                            <Lock className="w-3 h-3 text-red-400" />
+                            <span className="text-[8px] font-black text-red-400 uppercase tracking-widest italic">Cerrado: Registros Congelados</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Academic Roadmap Simulator */}
+            <div className="bg-white/[0.02] border border-white/5 p-12 rounded-[3.5rem] apple-glass shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <History className="w-32 h-32" />
+                </div>
+                <div className="relative z-10 space-y-10">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div>
+                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">Hoja de Ruta Académica</h3>
+                            <p className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest mt-2">Simulación de Progreso Anual Institucional</p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                           <Clock className="w-5 h-5 text-blue-500 animate-pulse" />
+                           <span className="text-xl font-bold text-white tabular-nums">{new Date().toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div className="relative h-4 bg-white/5 rounded-full overflow-hidden border border-white/5 p-1">
+                        <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(periods.filter(p => p.estado === 'cerrado').length / 3) * 100}%` }}
+                            className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)]"
+                        />
+                        {/* Markers */}
+                        <div className="absolute inset-0 flex justify-between px-10 items-center pointer-events-none">
+                            <div className="w-1 h-1 bg-white/20 rounded-full" />
+                            <div className="w-1 h-1 bg-white/20 rounded-full" />
+                            <div className="w-1 h-1 bg-white/20 rounded-full" />
+                        </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {['Planificación', 'Ejecución', 'Auditoría'].map((step, idx) => (
+                            <div key={idx} className="flex items-center gap-4">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-[10px] ${
+                                    (periods.filter(p => p.estado === 'cerrado').length > idx) ? 'bg-blue-500 text-white' : 'bg-white/5 text-[#86868b]'
+                                }`}>
+                                    {idx + 1}
+                                </div>
+                                <span className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.2em]">{step}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -149,6 +205,25 @@ const LapseControl = () => {
                                     <span>{p.estado === 'abierto' ? 'Finalizar Ciclo' : 'Habilitar Edición'}</span>
                                 )}
                             </Button>
+
+                            {p.estado === 'cerrado' && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                >
+                                    <Button 
+                                        variant="ghost" 
+                                        className="w-full h-12 rounded-xl text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 font-bold text-[9px] uppercase tracking-widest flex gap-2"
+                                        onClick={() => {
+                                            const doc = `--- REPORTE DE CIERRE: LAPSO ${p.lapso} ---\nEstado: PROTEGIDO\nFecha: ${new Date().toLocaleString()}\nRegistros: Matrícula e Historial Académico Congelados.`;
+                                            alert(doc);
+                                        }}
+                                    >
+                                        <History className="w-4 h-4" />
+                                        Ver Reporte de Cierre
+                                    </Button>
+                                </motion.div>
+                            )}
                         </div>
 
                         {/* Background Decoration */}
