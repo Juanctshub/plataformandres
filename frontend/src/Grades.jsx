@@ -354,60 +354,73 @@ const Grades = () => {
                     <DialogContent className="apple-glass border-white/10 p-16 rounded-[3rem] max-w-xl">
                        <DialogHeader className="mb-10">
                           <DialogTitle className="text-3xl font-semibold text-white tracking-tight">Consolidación de Nota</DialogTitle>
-                          <DialogDescription className="text-[#86868b] font-medium mt-3">Registro académico v15.0</DialogDescription>
+                          <DialogDescription className="text-[#86868b] font-medium mt-3">Registro académico v15.0 Platinum</DialogDescription>
                        </DialogHeader>
-                       <form onSubmit={handleSubmit} className="space-y-6">
-                          <div className="space-y-3">
-                             <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Estudiante</label>
-                             <select 
-                               className="w-full bg-white/5 border border-white/10 rounded-xl h-14 px-6 text-sm text-white outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none"
-                               value={newGrade.estudiante_id}
-                               onChange={(e) => setNewGrade({...newGrade, estudiante_id: e.target.value})}
-                               required
-                             >
-                                <option value="" className="text-black">Seleccionar alumno...</option>
-                                {students.map(s => <option key={s.id} value={s.id} className="text-black">{s.nombre} ({s.seccion})</option>)}
-                             </select>
+                       <form onSubmit={handleSubmit} className="space-y-8">
+                          <div className="space-y-4">
+                             <label className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em] pl-2 block">Estudiante Vinculado</label>
+                             <div className="relative group">
+                               <select 
+                                 className="w-full bg-zinc-900/50 border border-white/20 rounded-2xl h-16 px-8 text-base text-white outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none transition-all group-hover:border-white/30"
+                                 value={newGrade.estudiante_id}
+                                 onChange={(e) => setNewGrade({...newGrade, estudiante_id: e.target.value})}
+                                 required
+                               >
+                                  <option value="" className="text-black">Seleccionar alumno...</option>
+                                  {students.map(s => <option key={s.id} value={s.id} className="text-black">{s.nombre} ({s.seccion})</option>)}
+                               </select>
+                               <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[#86868b]">
+                                  <ChevronRight className="w-5 h-5 rotate-90" />
+                               </div>
+                             </div>
                           </div>
-                          <div className="space-y-3">
-                             <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Materia</label>
+                          
+                          <div className="space-y-4">
+                             <label className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em] pl-2 block">Cátedra / Materia</label>
                              <Input 
-                                placeholder="Ej: Castellano"
-                                className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
+                                placeholder="Ej: Castellano y Literatura"
+                                className="h-16 bg-zinc-900/50 border-white/20 rounded-2xl text-white font-semibold text-lg px-8 focus:ring-2 focus:ring-blue-500/50"
                                 value={newGrade.materia}
                                 onChange={(e) => setNewGrade({...newGrade, materia: e.target.value})}
                                 required
                              />
                           </div>
-                          <div className="grid grid-cols-2 gap-6">
-                             <div className="space-y-3">
-                                <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Nota (0-20)</label>
+
+                          <div className="grid grid-cols-2 gap-8">
+                             <div className="space-y-4">
+                                <label className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em] pl-2 block">Nota Final (0-20)</label>
                                 <Input 
                                    type="number"
                                    min="0"
                                    max="20"
                                    placeholder="20"
-                                   className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium text-center text-xl"
+                                   className="h-16 bg-zinc-900/50 border-white/20 rounded-2xl text-white font-black text-center text-2xl focus:ring-2 focus:ring-blue-500/50"
                                    value={newGrade.nota}
                                    onChange={(e) => setNewGrade({...newGrade, nota: e.target.value})}
                                    required
                                 />
                              </div>
-                             <div className="space-y-3">
-                                <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Momento</label>
-                                <select 
-                                   className="w-full bg-white/5 border border-white/10 rounded-xl h-14 px-6 text-sm text-white outline-none appearance-none"
-                                   value={newGrade.lapso}
-                                   onChange={(e) => setNewGrade({...newGrade, lapso: e.target.value})}
-                                >
-                                   <option value="1" className="text-black">1er Lapso</option>
-                                   <option value="2" className="text-black">2do Lapso</option>
-                                   <option value="3" className="text-black">3er Lapso</option>
-                                </select>
+                             <div className="space-y-4">
+                                <label className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em] pl-2 block">Ciclo Académico</label>
+                                <div className="relative group">
+                                   <select 
+                                      className="w-full bg-zinc-900/50 border border-white/20 rounded-2xl h-16 px-8 text-base text-white outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none transition-all group-hover:border-white/30"
+                                      value={newGrade.lapso}
+                                      onChange={(e) => setNewGrade({...newGrade, lapso: e.target.value})}
+                                   >
+                                      <option value="1" className="text-black">1er Lapso</option>
+                                      <option value="2" className="text-black">2do Lapso</option>
+                                      <option value="3" className="text-black">3er Lapso</option>
+                                   </select>
+                                   <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[#86868b]">
+                                      <ChevronRight className="w-5 h-5 rotate-90" />
+                                   </div>
+                                </div>
                              </div>
                           </div>
-                          <Button type="submit" disabled={submitting} className="w-full h-16 bg-white text-black hover:bg-zinc-200 rounded-full font-bold transition-all shadow-2xl">
-                             {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Guardar Calificación"}
+                          
+                          <Button type="submit" disabled={submitting} className="w-full h-20 bg-white text-black hover:bg-blue-600 hover:text-white rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all shadow-2xl active:scale-95">
+                             {submitting ? <Loader2 className="w-7 h-7 animate-spin" /> : "Sincronizar Calificación"}
                           </Button>
                        </form>
                     </DialogContent>

@@ -222,36 +222,46 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                  <p className="text-[#86868b] font-medium text-lg leading-relaxed px-4">El Núcleo de Inferencia está listo para escanear matriculas, detectar riesgos de deserción o asistir en decisiones administrativas críticas.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
-                 {[
-                   { label: 'Analizar Deserción', icon: BrainCircuit, prompt: 'Realiza un análisis profundo de los estudiantes en riesgo de deserción' },
-                   { label: 'Resumen de Notas', icon: GraduationCap, prompt: 'Dame un resumen de las calificaciones del 1er Lapso' },
-                   { label: 'Estado del Personal', icon: Briefcase, prompt: '¿Cuál es el estado actual del personal docente?' },
-                   { label: 'Optimizar Asistencia', icon: Zap, prompt: 'Sugiere mejoras para la asistencia en la sección 3A' }
-                 ].map((tool, i) => (
-                   <motion.button 
-                     key={i}
-                     whileHover={{ scale: 1.02, y: -4 }}
-                     whileTap={{ scale: 0.98 }}
-                     onClick={() => {
-                       setInput(tool.prompt);
-                       setTimeout(() => {
-                         const fakeEvent = { preventDefault: () => {} };
-                         handleSend(fakeEvent);
-                       }, 100);
-                     }}
-                     className="p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/5 hover:bg-white/[0.07] hover:border-blue-500/30 transition-all duration-300 text-left group shadow-2xl relative overflow-hidden"
-                   >
-                     <div className="absolute top-0 right-0 p-16 bg-blue-500/5 blur-[50px] rounded-full group-hover:bg-blue-400/10 transition-colors" />
-                     <div className="relative z-10">
-                        <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform shadow-inner">
-                           <tool.icon className="w-6 h-6" />
-                        </div>
-                        <span className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{tool.label}</span>
-                     </div>
-                   </motion.button>
-                 ))}
-              </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+                  {[
+                    { label: 'Analizar Deserción', icon: BrainCircuit, prompt: 'Realiza un análisis profundo de los estudiantes en riesgo de deserción', desc: 'Identifica patrones de riesgo académico' },
+                    { label: 'Resumen de Notas', icon: GraduationCap, prompt: 'Dame un resumen de las calificaciones del 1er Lapso', desc: 'Visualiza el rendimiento por sección' },
+                    { label: 'Estado del Personal', icon: Briefcase, prompt: '¿Cuál es el estado actual del personal docente?', desc: 'Auditoría de asistencia y cargos' },
+                    { label: 'Optimizar Asistencia', icon: Zap, prompt: 'Sugiere mejoras para la asistencia en la sección 3A', desc: 'Estrategias de retención inmediata' }
+                  ].map((tool, i) => (
+                    <motion.button 
+                      key={i}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.1 * i }}
+                      whileHover={{ scale: 1.02, y: -8 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        setInput(tool.prompt);
+                        setTimeout(() => {
+                          const fakeEvent = { preventDefault: () => {} };
+                          handleSend(fakeEvent);
+                        }, 100);
+                      }}
+                      className="p-12 rounded-[3rem] bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 hover:border-blue-500/30 transition-all duration-500 text-left group shadow-2xl relative overflow-hidden backdrop-blur-xl"
+                    >
+                      <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/5 transition-colors duration-500" />
+                      <div className="absolute top-0 right-0 p-20 bg-blue-500/10 blur-[60px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                      
+                      <div className="relative z-10">
+                         <div className="w-16 h-16 rounded-[1.5rem] bg-blue-600/10 flex items-center justify-center text-blue-400 mb-8 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-xl group-hover:shadow-blue-600/20">
+                            <tool.icon className="w-8 h-8" />
+                         </div>
+                         <h4 className="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{tool.label}</h4>
+                         <p className="text-xs font-medium text-[#86868b] tracking-wide leading-relaxed">{tool.desc}</p>
+                      </div>
+                      
+                      <div className="absolute bottom-10 right-10 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+                         <ArrowRight className="w-6 h-6 text-blue-500" />
+                      </div>
+                    </motion.button>
+                  ))}
+               </div>
             </motion.div>
           )}
         </div>
