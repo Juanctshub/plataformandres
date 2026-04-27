@@ -874,12 +874,11 @@ PROPOSAL: {"type":"ACTION","title":"","description":"","payload":{...}}
 ACCIONES DISPONIBLES:
 - CREATE_STUDENT / UPDATE_STUDENT / DELETE / SUSPEND / ACTIVATE
 - CREATE_NOTE: payload: {"id":NUM,"materia":"","nota":NUM,"lapso":NUM}
-- REGISTER_ATTENDANCE / CREATE_JUSTIFICATION / NOTIFY_PARENT
+- REGISTER_ATTENDANCE: payload: {"id":NUM,"estado":"presente"}
+- CREATE_JUSTIFICATION: payload: {"id":NUM,"motivo":""}
+- NOTIFY_PARENT: payload: {"student":"","message":""}
 - REGISTER_PAYMENT: payload: {"student_id":NUM,"monto":NUM,"concepto":"Mensualidad","mes":"Abril"}
 - CLOSE_LAPSE: payload: {"lapso":NUM}
-- BULK_CREATE_STUDENTS
-`;"id":NUM,"motivo":""}
-- NOTIFY_PARENT: payload: {"student":"","message":""}
 - BULK_CREATE_STUDENTS: Para listas largas válidas comprobadas. payload: {"students":[{"cedula":"","nombre":""}]}
 
 REGLAS DE SEGURIDAD:
