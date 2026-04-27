@@ -35,13 +35,15 @@ import Students from './Students';
 import AttendanceSheet from './AttendanceSheet';
 import Justifications from './Justifications';
 import IAAnalytics from './IAAnalytics';
-import Grades from './Grades';
-import SchedulesModule from './Schedules';
 import Staff from './Staff';
 import AIChatView from './AIChatView';
 import { Badge } from "./components/ui/badge";
 import { Button } from "./components/ui/button";
 import InstitutionalSettings from './InstitutionalSettings';
+import Finance from './Finance';
+import LapseControl from './LapseControl';
+import VisionAttendance from './VisionAttendance';
+import RepresentativeView from './RepresentativeView';
 import logo from './assets/logo.png';
 
 
@@ -52,9 +54,10 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
     { id: 'attendance', icon: ClipboardCheck, label: 'Asistencia' },
     { id: 'grades', icon: GraduationCap, label: 'Notas' },
     ...(userName === 'admin' || localStorage.getItem('user')?.includes('admin') ? [
-      { id: 'schedules', icon: CalendarRange, label: 'Horarios' },
+      { id: 'finance', icon: Briefcase, label: 'Finanzas' },
+      { id: 'vision', icon: Scan, label: 'Visión IA' },
+      { id: 'lapses', icon: CalendarRange, label: 'Lapsos' },
       { id: 'staff', icon: Briefcase, label: 'Personal' },
-      { id: 'analytics', icon: Cpu, label: 'IA Analytics' },
       { id: 'settings', icon: SettingsIcon, label: 'Ajustes' }
     ] : [])
   ];
@@ -345,6 +348,10 @@ const AndresBelloSuite = () => {
     setIsInitializing(true);
   };
 
+  if (window.location.search.includes('portal=representative')) {
+    return <RepresentativeView />;
+  }
+
   return (
     <AnimatePresence mode="wait">
       {hasCriticalError ? (
@@ -512,11 +519,12 @@ const AndresBelloSuite = () => {
                 {activeTab === 'attendance' && <AttendanceSheet />}
                 {activeTab === 'justifications' && <Justifications />}
                 {activeTab === 'grades' && <Grades />}
-                {(activeTab === 'schedules' && user?.role === 'admin') && <SchedulesModule />}
+                {(activeTab === 'finance' && user?.role === 'admin') && <Finance />}
+                {(activeTab === 'vision' && user?.role === 'admin') && <VisionAttendance onComplete={() => setActiveTab('attendance')} />}
+                {(activeTab === 'lapses' && user?.role === 'admin') && <LapseControl />}
                 {(activeTab === 'staff' && user?.role === 'admin') && <Staff />}
-                {(activeTab === 'analytics' && user?.role === 'admin') && <IAAnalytics />}
                 {(activeTab === 'settings' && user?.role === 'admin') && <InstitutionalSettings />}
-                {(['schedules', 'staff', 'analytics', 'settings'].includes(activeTab) && user?.role !== 'admin') && (
+                {(['finance', 'vision', 'lapses', 'staff', 'settings'].includes(activeTab) && user?.role !== 'admin') && (
                   <div className="flex flex-col items-center justify-center h-96 space-y-4 opacity-50">
                     <ShieldCheck className="w-16 h-16" />
                     <p className="font-bold tracking-widest uppercase text-xs">Acceso Restringido para Docentes</p>

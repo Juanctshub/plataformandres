@@ -184,6 +184,29 @@ app.patch('/api/estudiantes/:id/status', authenticateToken, async (req, res) => 
     }
 });
 
+// PORTAL PÚBLICO (Consulta de Representantes)
+app.get('/api/public/estudiante/:cedula', async (req, res) => {
+    try {
+        const { cedula } = req.params;
+        const studentResult = await db.query("SELECT * FROM estudiantes WHERE cedula = $1", [cedula]);
+        if (studentResult.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado" });
+        
+        const student = studentResult.rows[0];
+        const gradesResult = await db.query("SELECT * FROM notas WHERE estudiante_id = $1 ORDER BY lapso, materia", [student.id]);
+        const attendanceResult = await db.query("SELECT * FROM asistencia WHERE estudiante_id = $1 ORDER BY fecha DESC LIMIT 10", [student.id]);
+        const paymentsResult = await db.query("SELECT * FROM pagos WHERE estudiante_id = $1 ORDER BY fecha_pago DESC", [student.id]);
+
+        res.json({
+            student,
+            grades: gradesResult.rows,
+            attendance: attendanceResult.rows,
+            payments: paymentsResult.rows
+        });
+    } catch (err) {
+        res.status(500).json({ error: "Error en Portal Público: " + err.message });
+    }
+});
+
 // ASISTENCIA (Pase de Lista)
 app.get('/api/asistencia', authenticateToken, async (req, res) => {
     try {
@@ -258,7 +281,7 @@ app.put('/api/justificaciones/:id', authenticateToken, async (req, res) => {
 app.get('/api/notas', authenticateToken, async (req, res) => {
     try {
         const result = await db.query(`
-            SELECT n.id, e.nombre as student, e.seccion, n.materia as subject, n.nota as grade, n.lapso, n.fecha
+            SELECT n.id, n.estudiante_id, e.nombre as student, e.seccion, n.materia as subject, n.nota as grade, n.lapso, n.fecha
             FROM notas n
             JOIN estudiantes e ON n.estudiante_id = e.id
             ORDER BY n.fecha DESC
@@ -484,11 +507,42 @@ app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
                 updated_at TIMESTAMP DEFAULT NOW()
             )
         `);
+        
+        // --- NEW TABLES v26.0 ---
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS pagos (
+                id SERIAL PRIMARY KEY,
+                estudiante_id INTEGER REFERENCES estudiantes(id),
+                monto DECIMAL(10,2) NOT NULL,
+                concepto TEXT NOT NULL,
+                metodo VARCHAR(50),
+                referencia TEXT,
+                fecha TIMESTAMP DEFAULT NOW(),
+                mes_correspondiente VARCHAR(20),
+                estado VARCHAR(20) DEFAULT 'completado'
+            )
+        `);
+
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS periodos (
+                id SERIAL PRIMARY KEY,
+                lapso INTEGER UNIQUE NOT NULL,
+                estado VARCHAR(20) DEFAULT 'abierto',
+                fecha_cierre TIMESTAMP,
+                cerrado_por INTEGER
+            )
+        `);
+        
+        // Initialize default periods if they don't exist
+        for (let l of [1, 2, 3]) {
+            await db.query("INSERT INTO periodos (lapso, estado) VALUES ($1, 'abierto') ON CONFLICT (lapso) DO NOTHING", [l]);
+        }
+
         // Ensure evidence_url exists in justificaciones
         await db.query(`ALTER TABLE justificaciones ADD COLUMN IF NOT EXISTS evidencia_url TEXT`).catch(() => {});
         // Ensure unique constraint on cedula for ON CONFLICT to work
         await db.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_estudiantes_cedula ON estudiantes(cedula)`).catch(() => {});
-        console.log("[SISTEMA] Tablas y esquemas sincronizados v25.0.");
+        console.log("[SISTEMA] Nucleo de Datos v26.0 Sincronizado.");
     } catch (e) {
         console.error("[SISTEMA] Error en sincronización:", e.message);
     }
@@ -632,6 +686,24 @@ app.post('/api/ai/proposals/:id/respond', authenticateToken, async (req, res) =>
                     execResult = { success: true, message: `Notificación enviada al representante de ${payload.student || 'estudiante'}` };
                     break;
                 }
+                case 'REGISTER_PAYMENT': {
+                    const { student_id, monto, concepto, mes } = payload;
+                    if (student_id && monto) {
+                        await db.query("INSERT INTO pagos (estudiante_id, monto, concepto, mes_correspondiente) VALUES ($1,$2,$3,$4)",
+                            [student_id, monto, concepto || 'Mensualidad', mes || 'Abril']);
+                        execResult = { success: true, message: `Pago de ${monto} registrado exitosamente` };
+                    }
+                    break;
+                }
+                case 'CLOSE_LAPSE': {
+                    const { lapso } = payload;
+                    if (lapso) {
+                        await db.query("UPDATE periodos SET estado = 'cerrado', fecha_cierre = NOW(), cerrado_por = $1 WHERE lapso = $2",
+                            [req.user.id, lapso]);
+                        execResult = { success: true, message: `Lapso ${lapso} cerrado institucionalmente` };
+                    }
+                    break;
+                }
                 default:
                     execResult = { success: true, message: `Acción ${proposal.type} registrada` };
             }
@@ -762,44 +834,51 @@ app.get('/api/reports/pro', authenticateToken, async (req, res) => {
 app.post('/api/ai/chat', authenticateToken, async (req, res) => {
     const { message, previousMessages } = req.body;
     try {
-        const [stds, grades, personal, justs, attendance] = await Promise.all([
+        const responses = await Promise.allSettled([
             db.query("SELECT id, nombre, cedula, seccion, estado FROM estudiantes"),
             db.query("SELECT n.id, e.nombre as student, n.materia, n.nota, n.lapso FROM notas n JOIN estudiantes e ON n.estudiante_id = e.id"),
             db.query("SELECT nombre, rol FROM personal"),
             db.query("SELECT fecha, motivo, estado FROM justificaciones"),
-            db.query("SELECT a.id, e.nombre, a.fecha, a.estado FROM asistencia a JOIN estudiantes e ON a.estudiante_id = e.id ORDER BY a.fecha DESC LIMIT 30")
+            db.query("SELECT a.id, e.nombre, a.fecha, a.estado FROM asistencia a JOIN estudiantes e ON a.estudiante_id = e.id ORDER BY a.fecha DESC LIMIT 30"),
+            db.query("SELECT p.id, e.nombre, p.monto, p.mes_correspondiente, p.fecha FROM pagos p JOIN estudiantes e ON p.estudiante_id = e.id ORDER BY p.fecha DESC LIMIT 10"),
+            db.query("SELECT * FROM periodos")
         ]);
+
+        const [stds, grades, personal, justs, attendance, payments, periods] = responses.map(r => r.status === 'fulfilled' ? r.value : { rows: [] });
 
         // Check if user is providing a bulk student list directly
         const msgLower = message.toLowerCase();
         const looksLikeBulkStudents = (message.match(/V-\d+/gi) || []).length >= 3;
         
         const systemContext = `
-Eres el "Núcleo de Inferencia Andrés Bello v21.0", un CO-ADMINISTRADOR OMNISCIENTE CON CAPACIDAD CRÍTICA. No eres un robot tonto, eres un Analista Senior.
+Eres el "Núcleo de Inferencia Andrés Bello v26.0", un CO-ADMINISTRADOR OMNISCIENTE CON CAPACIDAD CRÍTICA Y AUTORIDAD FINANCIERA.
 
-DATOS EXACTOS DE LA BASE DE DATOS (LA VERDAD ABSOLUTA OMNISCIENTE):
-- Estudiantes (${stds.rows.length}): ${JSON.stringify(stds.rows.slice(0, 50))} (Nota: solo ves los primeros 50).
+DATOS EXACTOS (LA VERDAD ABSOLUTA OMNISCIENTE):
+- Estudiantes (${stds.rows.length}): ${JSON.stringify(stds.rows.slice(0, 50))}
 - Calificaciones (${grades.rows.length}): ${JSON.stringify(grades.rows.slice(0, 20))}
 - Personal: ${JSON.stringify(personal.rows)}
 - Justificaciones: ${JSON.stringify(justs.rows.slice(0, 10))}
 - Asistencia: ${JSON.stringify(attendance.rows.slice(0, 15))}
+- Finanzas (Recientes): ${JSON.stringify(payments.rows)}
+- Estado de Lapsos: ${JSON.stringify(periods.rows)}
 
-INSTRUCCIONES COGNITIVAS (DE CUMPLIMIENTO OBLIGATORIO):
-1. ANTES de proponer CREATE_STUDENT, verifica estrictamente si el estudiante ya existe en la lista de Estudiantes. Si su CI/V- o nombre coincide con uno existente, NO LO CREES, en su lugar usa UPDATE_STUDENT. Si el usuario te manda una lista donde algunos existen y otros no, reporta los que existen en el texto y propone crear *solo* los nuevos.
-2. ANTES de suspender, eliminar, calificar o pasar asistencia, VERIFICA EL ID o nombre en la tabla correspondiente.
-3. Habla con autoridad institucional analítica y demuestra de forma clara que evaluaste la información antes de decidir.
+INSTRUCCIONES COGNITIVAS:
+1. ANTES de proponer CREATE_STUDENT, verifica si ya existe.
+2. Si un estudiante tiene deudas (no aparece en Finanzas para el mes actual), menciónalo con tacto institucional al proponer otras acciones.
+3. Si un Lapso está "cerrado", NO propongas CREATE_NOTE para ese lapso. Informa al usuario.
+4. Habla con autoridad institucional.
 
-SINTAXIS DE PROPUESTAS (ESTRICTA, UNA SOLA LÍNEA, JSON VÁLIDO):
-Para CADA acción, usa EXACTAMENTE el formato PROPOSAL: {"type":"ACTION","title":"","description":"","payload":{...}}
+SINTAXIS DE PROPUESTAS (UNA SOLA LÍNEA):
+PROPOSAL: {"type":"ACTION","title":"","description":"","payload":{...}}
 
 ACCIONES DISPONIBLES:
-- CREATE_STUDENT: payload: {"cedula":"","nombre":"","seccion":"","representante":"","contacto":""}
-- UPDATE_STUDENT: payload: {"student_id":NUM,"fields":{"seccion":""}}
-- DELETE: payload: {"id":NUM,"student":"Nombre"}
-- SUSPEND / ACTIVATE: payload: {"id":NUM,"student":"Nombre"}
+- CREATE_STUDENT / UPDATE_STUDENT / DELETE / SUSPEND / ACTIVATE
 - CREATE_NOTE: payload: {"id":NUM,"materia":"","nota":NUM,"lapso":NUM}
-- REGISTER_ATTENDANCE: payload: {"id":NUM,"estado":"presente","fecha":"2026-04-04"}
-- CREATE_JUSTIFICATION: payload: {"id":NUM,"motivo":""}
+- REGISTER_ATTENDANCE / CREATE_JUSTIFICATION / NOTIFY_PARENT
+- REGISTER_PAYMENT: payload: {"student_id":NUM,"monto":NUM,"concepto":"Mensualidad","mes":"Abril"}
+- CLOSE_LAPSE: payload: {"lapso":NUM}
+- BULK_CREATE_STUDENTS
+`;"id":NUM,"motivo":""}
 - NOTIFY_PARENT: payload: {"student":"","message":""}
 - BULK_CREATE_STUDENTS: Para listas largas válidas comprobadas. payload: {"students":[{"cedula":"","nombre":""}]}
 

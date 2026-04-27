@@ -49,6 +49,8 @@ import {
   Pie
 } from 'recharts';
 import * as XLSX from 'xlsx';
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 const Grades = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -177,14 +179,80 @@ const Grades = () => {
         reader.readAsBinaryString(file);
     };
 
+    const generateIndividualPDF = (studentId) => {
+        const student = students.find(s => s.id === studentId);
+        if (!student) return;
+        const studentGrades = grades.filter(g => g.estudiante_id === studentId);
+        
+        const doc = new jsPDF();
+        
+        // Institutional Header
+        doc.setFillColor(15, 23, 42);
+        doc.rect(0, 0, 210, 45, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont("helvetica", "bold");
+        doc.text("UNIDAD EDUCATIVA ANDRÉS BELLO", 20, 20);
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text("BOLETÍN OFICIAL DE RENDIMIENTO ACADÉMICO - V26.0 PLATINUM", 20, 32);
+        doc.text(`CÓDIGO INSTITUCIONAL: AB-2026-SAAS`, 20, 38);
+
+        // Student Banner
+        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(12);
+        doc.text(`ESTUDIANTE: ${student.nombre}`, 20, 60);
+        doc.text(`CÉDULA: ${student.cedula}`, 20, 68);
+        doc.text(`SECCIÓN: ${student.seccion}`, 20, 76);
+        doc.text(`FECHA DE EMISIÓN: ${new Date().toLocaleDateString()}`, 140, 60);
+
+        // Grades Table
+        doc.autoTable({
+            startY: 85,
+            head: [['Materia', 'Nota / Escala 20', 'Lapso', 'Estado']],
+            body: studentGrades.map(g => [
+                g.subject, 
+                g.grade, 
+                `Lapso ${g.lapso}`,
+                g.grade >= 10 ? 'Aprobado' : 'Reprobado'
+            ]),
+            theme: 'grid',
+            headStyles: { fillColor: [59, 130, 246] },
+            styles: { fontSize: 10 }
+        });
+
+        // Professional Stamp / Footer
+        const finalY = doc.lastAutoTable.finalY + 40;
+        
+        // Circular Stamp Representation
+        doc.setDrawColor(59, 130, 246);
+        doc.setLineWidth(1);
+        doc.circle(160, finalY - 10, 25);
+        doc.setFontSize(7);
+        doc.text("VALIDADO POR", 148, finalY - 15);
+        doc.text("NÚCLEO IA", 152, finalY - 10);
+        doc.text("ANDRÉS BELLO", 147, finalY - 5);
+        
+        doc.line(20, finalY + 10, 80, finalY + 10);
+        doc.setFontSize(8);
+        doc.text("FIRMA DE LA DIRECCIÓN", 30, finalY + 18);
+        
+        doc.setFontSize(7);
+        doc.setTextColor(100);
+        doc.text("Este documento es una representación digital válida de los registros académicos institucionales.", 20, 280);
+        doc.text("Verificable mediante Cédula de Identidad en el Portal del Representante.", 20, 285);
+
+        doc.save(`Boletin_${student.cedula}_${new Date().getTime()}.pdf`);
+    };
+
     const exportToExcel = () => {
         const dataToExport = grades.map(g => {
             const student = students.find(s => s.id === g.estudiante_id);
             return {
                 Alumno: student?.nombre || 'Desconocido',
                 Cedula: student?.cedula || 'N/A',
-                Materia: g.materia,
-                Nota: g.nota,
+                Materia: g.subject,
+                Nota: g.grade,
                 Lapso: g.lapso,
                 Fecha: g.fecha
             };
@@ -384,7 +452,7 @@ const Grades = () => {
                          </div>
 
                          <div className="flex items-center gap-8">
-                            <div className="flex flex-col items-end">
+                            <div className="flex flex-col items-end mr-4">
                                <div className={`text-3xl font-semibold tracking-tight ${
                                   parseFloat(g.grade) >= 18 ? 'text-blue-400' : 
                                   parseFloat(g.grade) >= 10 ? 'text-white' : 'text-red-400'
@@ -395,12 +463,20 @@ const Grades = () => {
                                   parseFloat(g.grade) >= 10 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
                                }`}>
                                   {parseFloat(g.grade) >= 10 ? 'Aprobado' : 'Reprobado'}
-                               </Badge>
-                            </div>
-                            <button className="p-2.5 rounded-full bg-white/5 text-white/10 group-hover:text-white transition-all">
-                               <ChevronRight className="w-5 h-5" />
-                            </button>
-                         </div>
+                                </Badge>
+                             </div>
+                             <div className="flex gap-2">
+                               <Button 
+                                 onClick={() => generateIndividualPDF(g.estudiante_id)}
+                                 className="w-10 h-10 rounded-xl bg-white/5 text-[#86868b] hover:text-white hover:bg-white/10 p-0"
+                               >
+                                 <FileText className="w-4 h-4" />
+                               </Button>
+                               <button className="p-2.5 rounded-full bg-white/5 text-white/10 group-hover:text-white transition-all">
+                                  <ChevronRight className="w-5 h-5" />
+                               </button>
+                             </div>
+                          </div>
                       </motion.div>
                     ))
                   ) : (
