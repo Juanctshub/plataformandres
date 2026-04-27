@@ -513,14 +513,14 @@ const AndresBelloSuite = () => {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -100, opacity: 0 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="h-24 apple-glass border-b border-white/5 px-8 flex items-center justify-between sticky top-0 z-[80]"
+                className="h-20 md:h-24 apple-glass border-b border-white/5 px-4 md:px-8 flex items-center justify-between sticky top-0 z-[80]"
               >
-                <div className="flex items-center gap-8">
-                  <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-                     <img src={logo} className="w-11 h-11 rounded-full shadow-lg border border-white/10 group-hover:scale-105 transition-transform object-cover" alt="Logo" />
+                <div className="flex items-center gap-4 md:gap-8">
+                  <div className="flex items-center gap-3 md:gap-4 group cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+                     <img src={logo} className="w-9 h-9 md:w-11 md:h-11 rounded-full shadow-lg border border-white/10 group-hover:scale-105 transition-transform object-cover" alt="Logo" />
                      <div className="flex flex-col">
-                        <h2 className="text-sm font-black tracking-tighter text-white leading-none uppercase italic">Andrés Bello</h2>
-                        <span className="text-[9px] font-black tracking-[0.2em] text-[#86868b] uppercase mt-1">v26.4 Platinum Edition</span>
+                        <h2 className="text-xs md:text-sm font-black tracking-tighter text-white leading-none uppercase italic">Andrés Bello</h2>
+                        <span className="hidden md:inline text-[9px] font-black tracking-[0.2em] text-[#86868b] uppercase mt-1">v26.4 Platinum Edition</span>
                      </div>
                   </div>
                   <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-5 py-2 active:scale-95 group focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">
@@ -542,7 +542,7 @@ const AndresBelloSuite = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3 md:gap-6">
                    <div className="relative">
                       <button 
                         onClick={() => setIsNotifOpen(!isNotifOpen)}
@@ -629,13 +629,13 @@ const AndresBelloSuite = () => {
                         )}
                       </AnimatePresence>
                    </div>
-                   <div className="h-8 w-[1px] bg-white/10" />
-                   <div className="flex items-center gap-4 group cursor-pointer pr-2">
-                      <div className="flex flex-col items-end">
+                   <div className="h-6 md:h-8 w-[1px] bg-white/10" />
+                   <div className="flex items-center gap-2 md:gap-4 group cursor-pointer pr-1 md:pr-2">
+                      <div className="hidden md:flex flex-col items-end">
                         <span className="text-[11px] font-bold text-white uppercase">{user?.username || 'Admin'}</span>
                         <span className="text-[9px] font-medium text-blue-500 tracking-widest uppercase mt-0.5">Control Maestro</span>
                       </div>
-                      <div className="w-10 h-10 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">
+                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs md:text-sm">
                         {user?.username?.substring(0, 1).toUpperCase() || 'A'}
                       </div>
                    </div>

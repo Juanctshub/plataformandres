@@ -329,243 +329,244 @@ const InstitutionalSettings = () => {
 
                          {/* ═══ INSTITUCIÓN ═══ */}
                          {activeSection === 'Institución' && (
-                            <div className="space-y-10">
-                               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                  <div className="space-y-3">
-                                     <label className="text-[11px] font-bold text-[#86868b] uppercase tracking-widest pl-2">Denominación</label>
+                            <div className="space-y-12">
+                               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                  <div className="space-y-4">
+                                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] pl-4">Denominación del Plantel</label>
                                      <input 
                                        value={instConfig.nombre} 
                                        onChange={e => setInstConfig({...instConfig, nombre: e.target.value})}
-                                       className="w-full h-14 bg-white/5 border border-white/5 rounded-xl px-6 text-white font-semibold focus:ring-1 focus:ring-blue-500/50 outline-none transition-all" 
+                                       className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-[1.8rem] px-8 text-white font-bold focus:ring-1 focus:ring-blue-500/50 outline-none transition-all text-lg" 
                                      />
                                   </div>
-                                  <div className="space-y-3">
-                                     <label className="text-[11px] font-bold text-[#86868b] uppercase tracking-widest pl-2">Código SICE</label>
+                                  <div className="space-y-4">
+                                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] pl-4">Código Maestro SICE</label>
                                      <input 
                                        value={instConfig.codigo}
                                        onChange={e => setInstConfig({...instConfig, codigo: e.target.value})}
-                                       className="w-full h-14 bg-white/5 border border-white/5 rounded-xl px-6 text-white font-semibold focus:ring-1 focus:ring-blue-500/50 outline-none transition-all" 
+                                       className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-[1.8rem] px-8 text-white font-bold focus:ring-1 focus:ring-blue-500/50 outline-none transition-all text-lg" 
                                      />
                                   </div>
-                                  <div className="space-y-3">
-                                     <label className="text-[11px] font-bold text-[#86868b] uppercase tracking-widest pl-2">Director(a)</label>
+                                  <div className="space-y-4">
+                                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] pl-4">Autoridad Directiva</label>
                                      <input 
                                        value={instConfig.director}
                                        onChange={e => setInstConfig({...instConfig, director: e.target.value})}
                                        placeholder="Nombre del director"
-                                       className="w-full h-14 bg-white/5 border border-white/5 rounded-xl px-6 text-white font-semibold placeholder:text-white/20 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all" 
+                                       className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-[1.8rem] px-8 text-white font-bold placeholder:text-white/10 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all text-lg" 
                                      />
                                   </div>
-                                  <div className="space-y-3">
-                                     <label className="text-[11px] font-bold text-[#86868b] uppercase tracking-widest pl-2">Email Institucional</label>
+                                  <div className="space-y-4">
+                                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] pl-4">Canal de Comunicación</label>
                                      <input 
                                        value={instConfig.email}
                                        onChange={e => setInstConfig({...instConfig, email: e.target.value})}
                                        placeholder="direccion@ejemplo.edu.ve"
-                                       className="w-full h-14 bg-white/5 border border-white/5 rounded-xl px-6 text-white font-semibold placeholder:text-white/20 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all" 
-                                     />
-                                  </div>
-                                  <div className="space-y-3">
-                                     <label className="text-[11px] font-bold text-[#86868b] uppercase tracking-widest pl-2">Teléfono</label>
-                                     <input 
-                                       value={instConfig.telefono}
-                                       onChange={e => setInstConfig({...instConfig, telefono: e.target.value})}
-                                       placeholder="+58 412 0000000"
-                                       className="w-full h-14 bg-white/5 border border-white/5 rounded-xl px-6 text-white font-semibold placeholder:text-white/20 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all" 
-                                     />
-                                  </div>
-                                  <div className="space-y-3">
-                                     <label className="text-[11px] font-bold text-[#86868b] uppercase tracking-widest pl-2">Dirección</label>
-                                     <input 
-                                       value={instConfig.direccion}
-                                       onChange={e => setInstConfig({...instConfig, direccion: e.target.value})}
-                                       placeholder="Av. Principal, Ciudad..."
-                                       className="w-full h-14 bg-white/5 border border-white/5 rounded-xl px-6 text-white font-semibold placeholder:text-white/20 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all" 
+                                       className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-[1.8rem] px-8 text-white font-bold placeholder:text-white/10 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all text-lg" 
                                      />
                                   </div>
                                </div>
 
-                               <div className="space-y-6">
-                                  <h4 className="text-xs font-black text-white uppercase tracking-[0.3em]">Nodos de Red Activos</h4>
-                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                     {[
-                                        { label: 'Cloud SQL', status: 'Sincronizado', icon: Cloud, color: 'text-blue-400' },
-                                        { label: 'Seguridad', status: 'SSL AES-256', icon: Lock, color: 'text-emerald-400' },
-                                        { label: 'IA Engine', status: 'Groq v20.0', icon: Cpu, color: 'text-purple-400' },
-                                     ].map((n, i) => (
-                                        <div key={i} className="p-6 rounded-[1.5rem] bg-white/[0.02] border border-white/5 flex flex-col gap-4 hover:bg-white/[0.05] transition-all">
-                                           <n.icon className={`w-7 h-7 ${n.color}`} />
-                                           <div className="flex flex-col">
-                                              <span className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">{n.label}</span>
-                                              <span className="text-sm font-black text-white mt-1">{n.status}</span>
-                                           </div>
-                                        </div>
-                                     ))}
-                                  </div>
-                               </div>
-
-                               <div className="p-8 rounded-[2rem] bg-gradient-to-tr from-blue-600/10 to-indigo-600/10 border border-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-6 group hover:from-blue-600/20 transition-all">
-                                  <div className="flex items-center gap-6">
-                                     <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-xl">
-                                        <Cloud className="w-8 h-8" />
+                               <div className="p-10 rounded-[3rem] bg-gradient-to-tr from-blue-600/10 to-transparent border border-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-8 group">
+                                  <div className="flex items-center gap-8">
+                                     <div className="w-16 h-16 rounded-[2.2rem] bg-blue-600 text-white flex items-center justify-center shadow-2xl shadow-blue-600/30">
+                                        <Cloud className="w-9 h-9" />
                                      </div>
                                      <div className="flex flex-col">
-                                        <h4 className="text-lg font-bold text-white tracking-tight">Copia de Seguridad</h4>
-                                        <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">Exportar datos completos</p>
+                                        <h4 className="text-xl font-black text-white italic uppercase tracking-tighter">Bóveda de Seguridad</h4>
+                                        <p className="text-[10px] text-blue-400 font-black uppercase tracking-widest mt-1">Exportar respaldo total del sistema</p>
                                      </div>
                                   </div>
                                   <Button 
                                     onClick={handleExportBackup}
-                                    className="bg-white text-black hover:bg-zinc-100 rounded-full px-10 text-[11px] font-black tracking-widest h-12 shadow-2xl"
+                                    className="bg-white text-black hover:bg-zinc-100 rounded-full px-12 text-[11px] font-black tracking-[0.2em] h-14 shadow-2xl transition-all active:scale-95"
                                   >
-                                     DESCARGAR BACKUP
+                                     GENERAR BACKUP
                                   </Button>
                                </div>
+
+                               <div className="space-y-8">
+                                  <h4 className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.4em] pl-4 italic">Arquitectura del Nodo</h4>
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                     {[
+                                        { label: 'Base de Datos', status: 'Sincronizado', icon: Database, color: 'text-emerald-400' },
+                                        { label: 'Seguridad', status: 'AES-256 Cloud', icon: ShieldCheck, color: 'text-blue-400' },
+                                        { label: 'IA Engine', status: 'Omniscience v30.0', icon: Bot, color: 'text-purple-400' },
+                                     ].map((n, i) => (
+                                        <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/5 flex flex-col gap-6 hover:bg-white/[0.03] transition-all group/node">
+                                           <n.icon className={`w-8 h-8 ${n.color} group-hover/node:scale-110 transition-transform`} />
+                                           <div className="flex flex-col">
+                                              <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">{n.label}</span>
+                                              <span className="text-sm font-black text-white mt-1 uppercase tracking-tight">{n.status}</span>
+                                           </div>
+                                        </div>
+                                     ))}
+                                  </div>
+                                </div>
                             </div>
                          )}
 
                          {/* ═══ SEGURIDAD ═══ */}
                          {activeSection === 'Seguridad' && (
                             <div className="space-y-12">
-                               <div className="space-y-6">
-                                  <h4 className="text-xs font-black text-white uppercase tracking-[0.3em]">Autenticación Avanzada</h4>
-                                  <div className="space-y-4">
+                               <div className="space-y-8">
+                                  <h4 className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.4em] pl-4 italic">Protocolos de Acceso</h4>
+                                  <div className="space-y-6">
                                      {[
-                                        { key: 'twoFactor', title: 'Doble Factor (2FA)', desc: 'Requiere código SMS para el Master Root', icon: Smartphone },
-                                        { key: 'bioAuth', title: 'Bio-Autenticación', desc: 'Permite acceso mediante sensores externos', icon: Fingerprint },
+                                        { key: 'twoFactor', title: 'Doble Factor (2FA)', desc: 'Validación biométrica o SMS obligatoria para Master Root.', icon: Smartphone },
+                                        { key: 'bioAuth', title: 'Inteligencia de Sesión', desc: 'Detección proactiva de accesos no autorizados mediante IA.', icon: Fingerprint },
                                      ].map((s, i) => (
-                                        <div key={i} className="flex items-center justify-between p-6 rounded-3xl bg-white/[0.03] border border-white/5">
-                                           <div className="flex gap-6 items-center">
-                                              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40">
-                                                 <s.icon className="w-6 h-6" />
+                                        <div key={i} className="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
+                                           <div className="flex gap-8 items-center">
+                                              <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-white/40">
+                                                 <s.icon className="w-7 h-7" />
                                               </div>
                                               <div>
-                                                 <h5 className="text-sm font-bold text-white">{s.title}</h5>
-                                                 <p className="text-xs text-[#86868b]">{s.desc}</p>
+                                                 <h5 className="text-md font-black text-white uppercase tracking-tight italic">{s.title}</h5>
+                                                 <p className="text-[11px] text-[#86868b] font-medium mt-1">{s.desc}</p>
                                               </div>
                                            </div>
                                            <button
                                              onClick={() => setSecurityConfig(prev => ({...prev, [s.key]: !prev[s.key]}))}
-                                             className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all ${securityConfig[s.key] ? 'bg-blue-600' : 'bg-white/10'}`}
+                                             className={`w-14 h-7 rounded-full p-1 cursor-pointer transition-all ${securityConfig[s.key] ? 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'bg-white/10'}`}
                                            >
-                                              <div className={`w-4 h-4 bg-white rounded-full transition-all ${securityConfig[s.key] ? 'translate-x-6' : ''}`} />
+                                              <div className={`w-5 h-5 bg-white rounded-full transition-all shadow-md ${securityConfig[s.key] ? 'translate-x-7' : ''}`} />
                                            </button>
                                         </div>
                                      ))}
                                   </div>
                                </div>
 
-                               <div className="grid grid-cols-2 gap-6">
-                                  <div className="space-y-3">
-                                     <label className="text-[11px] font-bold text-[#86868b] uppercase tracking-widest pl-2">Sesión Máxima (min)</label>
+                               <div className="grid grid-cols-2 gap-8">
+                                  <div className="space-y-4">
+                                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] pl-4">Expiración de Sesión (min)</label>
                                      <input 
                                        type="number"
                                        value={securityConfig.sessionTimeout}
                                        onChange={e => setSecurityConfig({...securityConfig, sessionTimeout: parseInt(e.target.value) || 480})}
-                                       className="w-full h-14 bg-white/5 border border-white/5 rounded-xl px-6 text-white font-semibold focus:ring-1 focus:ring-blue-500/50 outline-none transition-all" 
+                                       className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-[1.8rem] px-8 text-white font-bold focus:ring-1 focus:ring-blue-500/50 outline-none transition-all text-lg" 
                                      />
                                   </div>
-                                  <div className="space-y-3">
-                                     <label className="text-[11px] font-bold text-[#86868b] uppercase tracking-widest pl-2">Intentos Max. Antes de Bloqueo</label>
+                                  <div className="space-y-4">
+                                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] pl-4">Umbral de Bloqueo</label>
                                      <input 
                                        type="number"
                                        value={securityConfig.maxAttempts}
                                        onChange={e => setSecurityConfig({...securityConfig, maxAttempts: parseInt(e.target.value) || 5})}
-                                       className="w-full h-14 bg-white/5 border border-white/5 rounded-xl px-6 text-white font-semibold focus:ring-1 focus:ring-blue-500/50 outline-none transition-all" 
+                                       className="w-full h-16 bg-white/[0.02] border border-white/5 rounded-[1.8rem] px-8 text-white font-bold focus:ring-1 focus:ring-blue-500/50 outline-none transition-all text-lg" 
                                      />
                                   </div>
                                </div>
 
-                               <div className="p-8 rounded-[2rem] bg-red-600/5 border border-red-500/10 space-y-4">
-                                  <div className="flex items-center gap-3 text-red-400">
-                                     <AlertTriangle className="w-5 h-5" />
-                                     <h5 className="text-sm font-bold uppercase tracking-widest">Zona de Riesgo Master</h5>
+                               <div className="p-10 rounded-[3rem] bg-red-600/5 border border-red-500/10 space-y-6 relative overflow-hidden group">
+                                  <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                     <AlertTriangle className="w-32 h-32" />
                                   </div>
-                                  <p className="text-xs text-[#86868b] leading-relaxed">Si detectas una anomalía en el nodo principal, puedes revocar todos los tokens activos. Esto cerrará todas las sesiones abiertas inmediatamente.</p>
+                                  <div className="flex items-center gap-4 text-red-400 relative z-10">
+                                     <Zap className="w-6 h-6 animate-pulse" />
+                                     <h5 className="text-sm font-black uppercase tracking-[0.3em] italic">Procedimiento de Emergencia Master</h5>
+                                  </div>
+                                  <p className="text-[11px] text-[#86868b] font-bold leading-relaxed uppercase tracking-widest relative z-10">
+                                     Al ejecutar la revocación, se invalidarán todos los certificados de acceso activos en el NÚCLEO. Esta acción es inmediata e irreversible para la sesión actual.
+                                  </p>
                                   <Button 
                                     variant="ghost"
                                     onClick={() => {
                                       localStorage.removeItem('token');
                                       window.location.reload();
                                     }}
-                                    className="text-red-400 hover:bg-red-400/10 px-8 rounded-full text-[11px] font-black tracking-widest mt-4"
+                                    className="bg-red-600 text-white hover:bg-red-500 px-12 rounded-full text-[10px] font-black tracking-[0.2em] h-14 shadow-2xl relative z-10"
                                   >
-                                     REVOCAR ACCESOS
+                                     REVOCAR TODO EL SISTEMA
                                   </Button>
                                </div>
                             </div>
                          )}
 
-                         {/* ═══ NOTIFICACIONES ═══ */}
+                         {/* ═══ NOTIFICACIONES (AI Autonomy) ═══ */}
                          {activeSection === 'Notificaciones' && (
-                            <div className="space-y-8">
-                               {[
-                                 { key: 'emailAlerts', title: 'Alertas por Email', desc: 'Recibir en el correo institucional', icon: Globe },
-                                 { key: 'aiSuggestions', title: 'Sugerencias de IA', desc: 'El Núcleo de Inferencia envía recomendaciones proactivas', icon: Cpu },
-                                 { key: 'attendanceAlerts', title: 'Alertas de Asistencia', desc: 'Notificar cuando un alumno supere 3 faltas consecutivas', icon: AlertTriangle },
-                                 { key: 'gradeAlerts', title: 'Alertas de Calificaciones', desc: 'Notificar cuando un alumno repruebe una materia', icon: FileText },
-                                 { key: 'weeklyReport', title: 'Reporte Semanal', desc: 'Enviar resumen ejecutivo cada lunes a las 7:00 AM', icon: Activity },
-                               ].map((n, i) => (
-                                 <div key={i} className="flex items-center justify-between p-6 rounded-3xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.05] transition-all">
-                                    <div className="flex gap-5 items-center">
-                                       <div className="w-11 h-11 rounded-2xl bg-white/5 flex items-center justify-center text-white/30">
-                                          <n.icon className="w-5 h-5" />
+                            <div className="space-y-10">
+                               <div className="p-8 rounded-[2.5rem] bg-gradient-to-tr from-purple-600/10 to-transparent border border-purple-500/20 mb-10">
+                                  <div className="flex items-center gap-6">
+                                     <div className="w-16 h-16 rounded-3xl bg-purple-600 text-white flex items-center justify-center shadow-2xl shadow-purple-600/30">
+                                        <Bot className="w-10 h-10" />
+                                     </div>
+                                     <div>
+                                        <h4 className="text-xl font-black text-white italic uppercase tracking-tighter">Nivel de Autonomía IA</h4>
+                                        <p className="text-[10px] text-purple-400 font-black uppercase tracking-widest mt-1">Configuración del Cerebro Institucional</p>
+                                     </div>
+                                  </div>
+                               </div>
+
+                               <div className="space-y-6">
+                                  {[
+                                    { key: 'aiSuggestions', title: 'Gestión Proactiva', desc: 'La IA toma decisiones rutinarias automáticamente (Nivel 5).', icon: Sparkles },
+                                    { key: 'attendanceAlerts', title: 'Centinela de Asistencia', desc: 'Vigilancia constante sobre la deserción escolar.', icon: AlertTriangle },
+                                    { key: 'emailAlerts', title: 'Notificaciones Master', desc: 'Sincronización total con canales externos.', icon: Globe },
+                                    { key: 'weeklyReport', title: 'Briefing Ejecutivo', desc: 'Informes detallados generados por redes neuronales.', icon: FileText },
+                                  ].map((n, i) => (
+                                    <div key={i} className="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
+                                       <div className="flex gap-8 items-center">
+                                          <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-white/30">
+                                             <n.icon className="w-6 h-6" />
+                                          </div>
+                                          <div>
+                                             <h5 className="text-md font-black text-white uppercase tracking-tight italic">{n.title}</h5>
+                                             <p className="text-[11px] text-[#86868b] font-medium mt-1">{n.desc}</p>
+                                          </div>
                                        </div>
-                                       <div>
-                                          <h5 className="text-sm font-bold text-white">{n.title}</h5>
-                                          <p className="text-xs text-[#86868b] mt-0.5">{n.desc}</p>
-                                       </div>
+                                       <button
+                                         onClick={() => setNotifConfig(prev => ({...prev, [n.key]: !prev[n.key]}))}
+                                         className={`w-14 h-7 rounded-full p-1 cursor-pointer transition-all ${notifConfig[n.key] ? 'bg-purple-600 shadow-[0_0_15px_rgba(168,85,247,0.4)]' : 'bg-white/10'}`}
+                                       >
+                                          <div className={`w-5 h-5 bg-white rounded-full transition-all shadow-md ${notifConfig[n.key] ? 'translate-x-7' : ''}`} />
+                                       </button>
                                     </div>
-                                    <button
-                                      onClick={() => setNotifConfig(prev => ({...prev, [n.key]: !prev[n.key]}))}
-                                      className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all ${notifConfig[n.key] ? 'bg-blue-600' : 'bg-white/10'}`}
-                                    >
-                                       <div className={`w-4 h-4 bg-white rounded-full transition-all ${notifConfig[n.key] ? 'translate-x-6' : ''}`} />
-                                    </button>
-                                 </div>
-                               ))}
+                                  ))}
+                               </div>
                             </div>
                          )}
 
                          {/* ═══ PLAN DE PAGO ═══ */}
                          {activeSection === 'Plan de Pago' && (
                             <div className="space-y-12">
-                               <div className="apple-card bg-gradient-to-br from-zinc-900 to-black border-white/10 p-10 relative overflow-hidden">
-                                  <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[150%] bg-blue-600/10 blur-[80px] rounded-full rotate-12" />
-                                  <div className="relative z-10 space-y-8">
+                               <div className="apple-card bg-gradient-to-br from-zinc-900 to-black border border-white/10 p-12 relative overflow-hidden rounded-[4rem]">
+                                  <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[150%] bg-blue-600/10 blur-[100px] rounded-full rotate-12" />
+                                  <div className="relative z-10 space-y-12">
                                      <div className="flex justify-between items-start">
-                                        <div className="space-y-2">
-                                           <Badge className="bg-blue-600 text-white border-none px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">Premium Enterprise</Badge>
-                                           <h4 className="text-4xl font-black text-white">ACTIVO</h4>
-                                           <p className="text-xs text-[#86868b] font-medium">Plan educativo institucional sin costo adicional</p>
+                                        <div className="space-y-4">
+                                           <Badge className="bg-blue-600 text-white border-none px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em]">Premium Enterprise</Badge>
+                                           <h4 className="text-7xl font-black text-white italic tracking-tighter">ACTIVO</h4>
+                                           <p className="text-xs text-[#86868b] font-bold uppercase tracking-widest pl-1">Licencia de por vida — U.E. Andrés Bello</p>
                                         </div>
-                                        <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                                           <Globe className="w-8 h-8 text-white/20" />
+                                        <div className="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl">
+                                           <Globe className="w-10 h-10 text-white/20" />
                                         </div>
                                      </div>
-                                     <div className="space-y-3">
-                                        <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                                           <div className="h-full w-full bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.5)]" />
+                                     <div className="space-y-6">
+                                        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                                           <div className="h-full w-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_30px_rgba(37,99,235,0.6)]" />
                                         </div>
-                                        <p className="text-xs text-[#86868b] font-bold uppercase tracking-widest flex justify-between">
-                                           Licencia Permanente <span>Renovación Automática</span>
-                                        </p>
+                                        <div className="flex justify-between items-center text-[10px] font-black text-[#86868b] uppercase tracking-[0.4em]">
+                                           <span>Estado Permanente</span>
+                                           <span className="text-emerald-400 italic">Sincronización Vitalicia</span>
+                                        </div>
                                      </div>
                                   </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-6">
+                                <div className="grid grid-cols-2 gap-8">
                                    {[
-                                      { label: 'Tipo de Licencia', value: 'Enterprise Educativa', icon: CreditCard },
-                                      { label: 'Soporte', value: '24/7 Núcleo IA', icon: Cpu },
-                                      { label: 'Almacenamiento', value: 'Ilimitado (Neon)', icon: Database },
-                                      { label: 'Usuarios Max.', value: 'Sin límite', icon: User },
+                                      { label: 'Tipo de Licencia', value: 'Enterprise Global', icon: CreditCard },
+                                      { label: 'Soporte', value: 'Prioridad Nivel 1', icon: Cpu },
+                                      { label: 'Almacenamiento', value: 'Infinite Cloud', icon: Database },
+                                      { label: 'Usuarios', value: 'Ilimitados', icon: User },
                                    ].map((m, i) => (
-                                      <div key={i} className="p-6 rounded-[1.5rem] bg-white/[0.03] border border-white/5 flex flex-col gap-4 hover:bg-white/[0.05] transition-all">
-                                         <m.icon className="w-6 h-6 text-blue-400" />
+                                      <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 flex flex-col gap-6 hover:bg-white/[0.04] transition-all group/plan">
+                                         <m.icon className="w-8 h-8 text-blue-400 group-hover/plan:scale-110 transition-transform" />
                                          <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">{m.label}</span>
-                                            <span className="text-sm font-bold text-white mt-1">{m.value}</span>
+                                            <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">{m.label}</span>
+                                            <span className="text-md font-black text-white mt-1 uppercase italic">{m.value}</span>
                                          </div>
                                       </div>
                                    ))}
@@ -575,42 +576,50 @@ const InstitutionalSettings = () => {
 
                          {/* ═══ HISTORIAL ═══ */}
                          {activeSection === 'Historial' && (
-                            <div className="space-y-8">
+                            <div className="space-y-12">
                                {histLoading ? (
-                                 <div className="py-20 flex flex-col items-center justify-center gap-4">
-                                   <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
-                                   <span className="text-xs text-[#86868b] font-bold uppercase tracking-widest">Cargando datos reales...</span>
+                                 <div className="py-32 flex flex-col items-center justify-center gap-8">
+                                   <div className="relative">
+                                      <Loader2 className="w-16 h-16 text-blue-600 animate-spin" />
+                                      <div className="absolute inset-0 blur-2xl bg-blue-600/20 animate-pulse" />
+                                   </div>
+                                   <span className="text-[10px] text-[#86868b] font-black uppercase tracking-[0.6em] italic animate-pulse">Analizando Logs de Actividad...</span>
                                  </div>
                                ) : (
-                                 historial.map((log, i) => (
-                                    <div key={i} className="flex items-center justify-between p-6 rounded-3xl bg-white/[0.02] border-l-4 border-l-transparent hover:border-l-blue-600 hover:bg-white/5 transition-all group">
-                                       <div className="flex items-center gap-6">
-                                          <div className={`w-2 h-2 rounded-full ${log.color} shadow-lg`} />
-                                          <div className="flex flex-col">
-                                             <span className="text-sm font-bold text-white leading-none">{log.event}</span>
-                                             <span className="text-xs text-[#86868b] mt-1.5">{log.user}</span>
-                                          </div>
-                                       </div>
-                                       <div className="text-[10px] font-black text-[#86868b] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                                          {log.time}
-                                       </div>
-                                    </div>
-                                 ))
+                                 <div className="space-y-4">
+                                   {historial.map((log, i) => (
+                                      <div key={i} className="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/[0.01] border-l-4 border-l-transparent hover:border-l-blue-600 hover:bg-white/[0.03] transition-all group relative overflow-hidden">
+                                         <div className="flex items-center gap-8 relative z-10">
+                                            <div className={`w-3 h-3 rounded-full ${log.color} shadow-lg shadow-current/40`} />
+                                            <div className="flex flex-col">
+                                               <span className="text-md font-black text-white tracking-tight italic uppercase group-hover:text-blue-400 transition-colors">{log.event}</span>
+                                               <div className="flex items-center gap-3 mt-2">
+                                                  <User className="w-3 h-3 text-[#86868b]" />
+                                                  <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">{log.user}</span>
+                                               </div>
+                                            </div>
+                                         </div>
+                                         <div className="text-[10px] font-black text-[#86868b] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 relative z-10">
+                                            {log.time}
+                                         </div>
+                                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                      </div>
+                                   ))}
+                                 </div>
                                )}
-                               <div className="flex gap-4">
+                               <div className="flex gap-6">
                                  <Button 
                                    onClick={downloadHistorialPDF}
-                                   className="flex-1 text-blue-400 hover:bg-blue-400/5 rounded-2xl h-14 font-black tracking-widest uppercase text-xs border border-blue-500/20"
+                                   className="flex-1 h-16 bg-white text-black hover:bg-zinc-100 rounded-[2rem] font-black tracking-[0.2em] uppercase text-xs shadow-2xl transition-all active:scale-[0.98]"
                                  >
-                                    <Download className="w-4 h-4 mr-2" />
-                                    DESCARGAR LOG (PDF)
+                                    <Download className="w-5 h-5 mr-3" />
+                                    EXPORTAR LOG DE AUDITORÍA
                                  </Button>
                                  <Button 
                                    onClick={fetchHistorial}
-                                   variant="ghost"
-                                   className="text-[#86868b] hover:text-white rounded-2xl h-14 px-6"
+                                   className="w-16 h-16 rounded-[2rem] bg-white/5 text-white hover:bg-white/10 border border-white/5 transition-all active:rotate-180 duration-700"
                                  >
-                                    <RefreshCw className="w-4 h-4" />
+                                    <RefreshCw className="w-6 h-6" />
                                  </Button>
                                </div>
                             </div>

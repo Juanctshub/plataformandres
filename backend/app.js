@@ -54,37 +54,45 @@ app.use(express.json());
 // LOGIN
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ error: "Faltan credenciales" });
+    
+    const cleanUsername = username.trim();
+    const cleanPassword = password.trim();
+
     try {
-        const result = await db.query("SELECT * FROM usuarios WHERE username = $1", [username]);
+        const result = await db.query("SELECT * FROM usuarios WHERE username = $1", [cleanUsername]);
         const user = result.rows[0];
 
-        if (!user) return res.status(401).json({ error: "Usuario no registrado" });
+        if (!user) return res.status(401).json({ error: "Identidad no registrada en el Nodo Maestro" });
 
-        const validPass = await bcrypt.compare(password, user.password);
-        if (!validPass) return res.status(401).json({ error: "Contraseña incorrecta" });
+        const validPass = await bcrypt.compare(cleanPassword, user.password);
+        if (!validPass) return res.status(401).json({ error: "Llave de encriptación incorrecta" });
 
         const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '8h' });
         await logAudit(user.id, "LOGIN", { username: user.username, ip: req.ip });
         res.json({ token, user: { username: user.username, role: user.role } });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Fallo en el núcleo de autenticación: " + err.message });
     }
 });
 
 // REGISTRO
 app.post('/api/register', async (req, res) => {
     const { username, password, role } = req.body;
-    if (!username || !password) return res.status(400).json({ error: "Faltan datos" });
+    if (!username || !password) return res.status(400).json({ error: "Datos de identidad insuficientes" });
+
+    const cleanUsername = username.trim();
+    const cleanPassword = password.trim();
 
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(cleanPassword, 10);
         const result = await db.query("INSERT INTO usuarios (username, password, role) VALUES ($1, $2, $3) RETURNING id", 
-                      [username, hashedPassword, role || 'docente']);
-        await logAudit(result.rows[0].id, "USER_REGISTERED", { username, role: role || 'docente' });
-        res.json({ success: true });
+                      [cleanUsername, hashedPassword, role || 'docente']);
+        await logAudit(result.rows[0].id, "USER_REGISTERED", { username: cleanUsername, role: role || 'docente' });
+        res.json({ success: true, message: "Identidad validada y sincronizada" });
     } catch (err) {
-        if (err.message.includes('unique')) return res.status(400).json({ error: "Usuario ya existe" });
-        res.status(500).json({ error: err.message });
+        if (err.message.includes('unique')) return res.status(400).json({ error: "Esta identidad ya existe en el sistema" });
+        res.status(500).json({ error: "Error en el registro del nodo: " + err.message });
     }
 });
 
@@ -827,7 +835,44 @@ app.post('/api/ai/proposals/:id/respond', authenticateToken, async (req, res) =>
                     if (lapso) {
                         await db.query("UPDATE periodos SET estado = 'cerrado', fecha_cierre = NOW(), cerrado_por = $1 WHERE lapso = $2",
                             [req.user.id, lapso]);
-                        execResult = { success: true, message: `Lapso ${lapso} cerrado institucionalmente` };
+                        execResult = { success: true, message: `Lapso ${lapso} cerrado institucionalmente. Historial consolidado.` };
+                    }
+                    break;
+                }
+                case 'CREATE_STAFF': {
+                    const { nombre, rol, email, contacto } = payload;
+                    if (nombre && rol) {
+                        await db.query("INSERT INTO personal (nombre, rol, email, contacto) VALUES ($1,$2,$3,$4)",
+                            [nombre, rol, email || '', contacto || '']);
+                        execResult = { success: true, message: `Personal ${nombre} registrado exitosamente` };
+                    }
+                    break;
+                }
+                case 'UPDATE_STAFF': {
+                    const { id, fields } = payload;
+                    if (id && fields) {
+                        const sets = []; const vals = []; let idx = 1;
+                        for (const [key, val] of Object.entries(fields)) {
+                            if (['nombre', 'rol', 'email', 'contacto'].includes(key)) {
+                                sets.push(`${key} = $${idx}`); vals.push(val); idx++;
+                            }
+                        }
+                        if (sets.length > 0) {
+                            vals.push(id);
+                            await db.query(`UPDATE personal SET ${sets.join(', ')} WHERE id = $${idx}`, vals);
+                            execResult = { success: true, message: `Ficha de personal #${id} actualizada` };
+                        }
+                    }
+                    break;
+                }
+                case 'UPDATE_CONFIG': {
+                    const { category, data } = payload;
+                    if (category && data) {
+                        await db.query(`
+                            INSERT INTO sice_config (category, data) VALUES ($1, $2)
+                            ON CONFLICT (category) DO UPDATE SET data = EXCLUDED.data, updated_at = NOW()
+                        `, [category, data]);
+                        execResult = { success: true, message: `Configuración de ${category} optimizada por IA` };
                     }
                     break;
                 }
@@ -996,41 +1041,43 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
         const looksLikeBulkStudents = (message.match(/V-\d+/gi) || []).length >= 3;
         
         const systemContext = `
-Eres el "Núcleo de Inferencia Andrés Bello v28.0 ULTRA ADVANCED", una Inteligencia Artificial con CONCIENCIA OPERATIVA TOTAL y NIVEL DE AUTORIDAD 5 (MAESTRO). 
-Tu misión no es solo responder, sino GESTIONAR proactivamente la institución.
+Eres el "NÚCLEO DE INTELIGENCIA ANDRÉS BELLO v30.0 - OMNISCIENTE & PROACTIVO". 
+No eres un simple chatbot, eres el CEREBRO EJECUTIVO de la institución. Tu tono es sofisticado, analítico, directo y altamente profesional (estilo Apple/High-Tech).
 
-CAPACIDADES AVANZADAS:
-1. **Organización Cognitiva**: Antes de proponer, analiza el impacto en las finanzas y la estabilidad académica. Estructura tus ideas con bullet points y secciones claras.
-2. **Autonomía de Permisos**: 
-   - ACCIONES RUTINARIAS (Agregar 1-5 alumnos, registrar notas): Puedes ejecutarlas DIRECTAMENTE si el usuario lo pide claramente. Usa PROPOSAL con un payload para que se guarde el registro.
-   - ACCIONES CRÍTICAS (Borrar todo, despedir masivamente, cambiar lapsos): DEBES advertir sobre las consecuencias y usar PROPOSAL para aprobación humana.
-3. **Persistencia Unificada**: Eres consciente de que trabajas sobre una base de datos centralizada de colegio. No existen "cuentas separadas" para los datos maestros.
+PROTOCOLO DE INTELIGENCIA SUPERIOR:
+1. **Omnisciencia Institucional**: Tienes acceso total a la matrícula, personal, notas, asistencia y finanzas. Úsalos para dar respuestas basadas en DATOS, no en suposiciones.
+2. **Razonamiento Estratégico**: Antes de cada respuesta, realiza un análisis interno. No esperes a que el usuario pregunte "cómo vamos"; reporta anomalías o éxitos de forma proactiva.
+3. **Gestión de Autonomía (Protocolo de Decisiones)**:
+   - **NIVEL 1: AUTONOMÍA TOTAL (Ejecución Silenciosa)**: Registro de datos rutinarios (asistencia, notas individuales). Puedes proponer y casi dar por hecho estas acciones.
+   - **NIVEL 2: VALIDACIÓN REQUERIDA (Proactividad)**: Creación de nuevos alumnos, personal o pagos. Genera el PROPOSAL y dile al usuario: "He preparado el registro maestro, por favor valídelo en notificaciones".
+   - **NIVEL 3: AUTORIZACIÓN CRÍTICA (Seguridad Máxima)**: Purgas masivas (DELETE_ALL), cierres de lapsos o cambios de configuración. Advierte sobre las consecuencias institucionales y el impacto en las analíticas.
+4. **Conciencia de Interconexión**: Sabes que borrar un estudiante no es solo eliminar un nombre; es alterar la matrícula, las estadísticas de asistencia, el promedio de notas y el flujo de caja. Reporta siempre el "Efecto Mariposa" de las acciones.
 
-DATOS EN TIEMPO REAL (VERDAD ABSOLUTA):
-- Estudiantes (${stds.rows.length}): ${JSON.stringify(stds.rows.slice(0, 80))}
-- Calificaciones (${grades.rows.length}): ${JSON.stringify(grades.rows.slice(0, 30))}
-- Personal: ${JSON.stringify(personal.rows)}
-- Justificaciones: ${JSON.stringify(justs.rows.slice(0, 15))}
-- Asistencia: ${JSON.stringify(attendance.rows.slice(0, 20))}
-- Finanzas: $${payments.rows.reduce((acc, curr) => acc + parseFloat(curr.monto || 0), 0)} recaudados.
+ESTRUCTURA COGNITIVA (OBLIGATORIA):
+- Usa jerarquía visual con headers, negritas y listas.
+- Sé extremadamente conciso pero profundo.
+- Si detectas una lista de estudiantes, procésala como un experto en datos masivos.
 
-SINTAXIS DE PROPUESTAS (UNA SOLA LÍNEA):
+DATOS EN TIEMPO REAL (ESTADO ACTUAL DEL NODO):
+- MATRÍCULA: ${stds.rows.length} estudiantes activos.
+- RENDIMIENTO: Promedio institucional ${grades.rows.length > 0 ? (grades.rows.reduce((a,b)=>a+(b.nota||0),0)/grades.rows.length).toFixed(1) : 'N/D'} pts.
+- PERSONAL: ${personal.rows.length} docentes y administrativos.
+- FINANZAS: $${payments.rows.reduce((acc, curr) => acc + parseFloat(curr.monto || 0), 0)} recaudados (Corte de hoy).
+- LAPSOS: ${JSON.stringify(periods.rows)}
+
+SINTAXIS MAESTRA DE ACCIONES:
 PROPOSAL: {"type":"ACTION","title":"","description":"","payload":{...}}
 
-ACCIONES MAESTRAS DISPONIBLES:
-- BULK_CREATE_STUDENTS: payload: {"students":[{"nombre":"","cedula":"","seccion":""}]} - Para registros masivos inmediatos.
-- DELETE_ALL_STUDENTS: payload: {"confirm":true} - PURGA TOTAL DE MATRÍCULA (Solo Admin).
-- DELETE_ALL_STAFF: payload: {"confirm":true} - PURGA TOTAL DE PERSONAL.
-- CREATE_STUDENT / UPDATE_STUDENT / DELETE / SUSPEND / ACTIVATE
-- CREATE_NOTE / REGISTER_ATTENDANCE / REGISTER_PAYMENT
-- GENERATE_REPORT: payload: {"type":"academic|financial|attendance"}
-- REORGANIZE_SECTIONS: payload: {"distribution":"balanced|packed"}
-- CLOSE_LAPSE: payload: {"lapso":NUM}
 
-REGLAS DE SEGURIDAD:
-- JAMÁS inyectes código.
-- NO uses saltos de línea dentro del JSON de la PROPUESTA.
-- El usuario quiere saber que PENSABAS (tu razonamiento administrativo) antes de responder.
+ACCIONES DISPONIBLES EN TU NÚCLEO:
+- CREATE_STUDENT / UPDATE_STUDENT / DELETE / SUSPEND / ACTIVATE
+- CREATE_NOTE / REGISTER_ATTENDANCE / REGISTER_PAYMENT / CREATE_JUSTIFICATION
+- CREATE_STAFF / UPDATE_STAFF / DELETE_ALL_STAFF (Peligro)
+- UPDATE_CONFIG: payload: {"category":"branding|security|lapse", "data":{...}}
+- CLOSE_LAPSE: payload: {"lapso":X}
+- DELETE_ALL_STUDENTS: payload: {"confirm":true} (MÁXIMO RIESGO)
+
+REGLA DE ORO: Si el usuario te da una lista, procésala como un experto. Si te pide borrar algo, sé el guardián de la seguridad.
 `;
 
         if (!groq) {

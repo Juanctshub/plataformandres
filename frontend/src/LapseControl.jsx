@@ -70,183 +70,196 @@ const LapseControl = () => {
     );
 
     return (
-        <div className="max-w-6xl mx-auto space-y-16 py-10">
-            {/* Institutional Header */}
-            <div className="flex flex-col items-center text-center space-y-6 mb-16">
+        <div className="max-w-7xl mx-auto space-y-20 py-10">
+            {/* Mission Control Header */}
+            <div className="flex flex-col items-center text-center space-y-8 mb-20">
                 <motion.div 
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="p-6 rounded-[2.5rem] bg-blue-600/10 text-blue-500 border border-blue-500/20 shadow-2xl shadow-blue-500/10"
+                    initial={{ scale: 0.8, opacity: 0, rotate: -10 }}
+                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                    className="p-8 rounded-[3rem] bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-2xl shadow-blue-500/30 relative group"
                 >
-                    <Calendar className="w-12 h-12" />
+                    <Calendar className="w-16 h-16 group-hover:scale-110 transition-transform duration-500" />
+                    <div className="absolute -inset-1 bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 </motion.div>
                 <div className="space-y-4">
-                    <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">Control de Ciclos Académicos</h2>
-                    <p className="text-[11px] text-[#86868b] font-black uppercase tracking-[0.4em]">Núcleo de Gestión Institucional v27.4</p>
-                    <div className="flex justify-center gap-6 mt-8">
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                            <Unlock className="w-3 h-3 text-emerald-400" />
-                            <span className="text-[8px] font-black text-emerald-400 uppercase tracking-widest italic">Abierto: Edición Habilitada</span>
+                    <h2 className="text-6xl font-black text-white italic uppercase tracking-tighter">Mission Control</h2>
+                    <p className="text-[12px] text-blue-400 font-black uppercase tracking-[0.6em] italic">Centro de Sincronización Académica v30.0</p>
+                    
+                    <div className="flex flex-wrap justify-center gap-8 mt-12">
+                        <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-md">
+                            <Unlock className="w-4 h-4 text-emerald-400" />
+                            <div className="flex flex-col items-start">
+                                <span className="text-[9px] font-black text-white uppercase tracking-widest leading-none">Modo Operativo</span>
+                                <span className="text-[10px] font-bold text-emerald-400/80 mt-1 uppercase italic">Edición Habilitada</span>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20">
-                            <Lock className="w-3 h-3 text-red-400" />
-                            <span className="text-[8px] font-black text-red-400 uppercase tracking-widest italic">Cerrado: Registros Congelados</span>
+                        <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-md">
+                            <Lock className="w-4 h-4 text-red-400" />
+                            <div className="flex flex-col items-start">
+                                <span className="text-[9px] font-black text-white uppercase tracking-widest leading-none">Modo Blindado</span>
+                                <span className="text-[10px] font-bold text-red-400/80 mt-1 uppercase italic">Datos Congelados</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Academic Roadmap Simulator */}
-            <div className="bg-white/[0.02] border border-white/5 p-12 rounded-[3.5rem] apple-glass shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <History className="w-32 h-32" />
-                </div>
-                <div className="relative z-10 space-y-10">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div>
-                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">Hoja de Ruta Académica</h3>
-                            <p className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest mt-2">Simulación de Progreso Anual Institucional</p>
+            {/* Manual de Operación IA (Clarifies purpose) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <div className="lg:col-span-4 space-y-8">
+                    <div className="p-10 rounded-[3rem] bg-white/[0.02] border border-white/5 space-y-8 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <ShieldCheck className="w-24 h-24" />
                         </div>
-                        <div className="flex items-center gap-4">
-                           <Clock className="w-5 h-5 text-blue-500 animate-pulse" />
-                           <span className="text-xl font-bold text-white tabular-nums">{new Date().toLocaleDateString()}</span>
-                        </div>
-                    </div>
-                    
-                    <div className="relative h-4 bg-white/5 rounded-full overflow-hidden border border-white/5 p-1">
-                        <motion.div 
-                            initial={{ width: 0 }}
-                            animate={{ width: `${(periods.filter(p => p.estado === 'cerrado').length / 3) * 100}%` }}
-                            className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)]"
-                        />
-                        {/* Markers */}
-                        <div className="absolute inset-0 flex justify-between px-10 items-center pointer-events-none">
-                            <div className="w-1 h-1 bg-white/20 rounded-full" />
-                            <div className="w-1 h-1 bg-white/20 rounded-full" />
-                            <div className="w-1 h-1 bg-white/20 rounded-full" />
-                        </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {['Planificación', 'Ejecución', 'Auditoría'].map((step, idx) => (
-                            <div key={idx} className="flex items-center gap-4">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-[10px] ${
-                                    (periods.filter(p => p.estado === 'cerrado').length > idx) ? 'bg-blue-500 text-white' : 'bg-white/5 text-[#86868b]'
-                                }`}>
-                                    {idx + 1}
+                        <h3 className="text-xl font-black text-white italic uppercase tracking-tight">Protocolo Maestro</h3>
+                        <div className="space-y-6">
+                            {[
+                                { title: 'Fase de Registro', desc: 'Periodo de carga de notas y asistencias.', icon: Plus },
+                                { title: 'Consolidación', desc: 'La IA valida promedios y detecta anomalías.', icon: Sparkles },
+                                { title: 'Blindaje Total', desc: 'El cierre genera un registro histórico inmutable.', icon: Lock },
+                            ].map((step, idx) => (
+                                <div key={idx} className="flex gap-5">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-400 shrink-0">
+                                        <step.icon className="w-5 h-5" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h4 className="text-[11px] font-black text-white uppercase tracking-widest">{step.title}</h4>
+                                        <p className="text-[10px] text-[#86868b] font-medium leading-relaxed">{step.desc}</p>
+                                    </div>
                                 </div>
-                                <span className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.2em]">{step}</span>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="p-10 rounded-[3rem] bg-gradient-to-br from-indigo-600/10 to-transparent border border-indigo-500/10">
+                        <div className="flex items-center gap-4 mb-6">
+                            <AlertCircle className="w-6 h-6 text-indigo-400" />
+                            <h4 className="text-xs font-black text-white uppercase tracking-widest">Aviso de Integridad</h4>
+                        </div>
+                        <p className="text-[11px] text-[#86868b] font-medium leading-relaxed italic">
+                            "Al finalizar un ciclo, el sistema genera un sello digital que garantiza que las notas no fueron alteradas tras la evaluación final."
+                        </p>
+                    </div>
+                </div>
+
+                {/* RoadMap Center */}
+                <div className="lg:col-span-8 space-y-10">
+                    <div className="bg-white/[0.02] border border-white/5 p-12 rounded-[4rem] apple-glass shadow-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <History className="w-40 h-40" />
+                        </div>
+                        <div className="relative z-10 space-y-12">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                <div>
+                                    <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Hoja de Ruta Institucional</h3>
+                                    <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.4em] mt-4">Simulación de Progreso Académico 2026</p>
+                                </div>
+                                <div className="px-6 py-3 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-4">
+                                   <Clock className="w-5 h-5 text-blue-500" />
+                                   <span className="text-2xl font-black text-white tabular-nums tracking-tighter">{new Date().toLocaleDateString()}</span>
+                                </div>
                             </div>
+                            
+                            <div className="relative h-6 bg-white/5 rounded-full overflow-hidden border border-white/5 p-1.5">
+                                <motion.div 
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${(periods.filter(p => p.estado === 'cerrado').length / 3) * 100}%` }}
+                                    className="h-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-full shadow-[0_0_30px_rgba(59,130,246,0.4)]"
+                                />
+                                {/* Glow points */}
+                                <div className="absolute inset-0 flex justify-between px-12 items-center pointer-events-none">
+                                    <div className="w-2 h-2 bg-white/40 rounded-full shadow-lg" />
+                                    <div className="w-2 h-2 bg-white/40 rounded-full shadow-lg" />
+                                    <div className="w-2 h-2 bg-white/40 rounded-full shadow-lg" />
+                                </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-4">
+                                {['Planificación', 'Evaluación', 'Auditoría Final'].map((step, idx) => (
+                                    <div key={idx} className="space-y-4">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-xs ${
+                                                (periods.filter(p => p.estado === 'cerrado').length > idx) ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'bg-white/5 text-[#86868b]'
+                                            }`}>
+                                                {idx + 1}
+                                            </div>
+                                            <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">{step}</span>
+                                        </div>
+                                        <p className="text-[9px] text-[#86868b] font-bold leading-relaxed uppercase">
+                                            {idx === 0 ? 'Registro de objetivos' : idx === 1 ? 'Carga masiva de notas' : 'Cierre de actas finales'}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Lapse Mini Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {Array.isArray(periods) && periods.map((p, i) => (
+                            <motion.div 
+                                key={p.lapso}
+                                initial={{ y: 30, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: i * 0.1 }}
+                                className={`relative group overflow-hidden rounded-[3rem] p-8 border transition-all duration-700 ${
+                                    p.estado === 'abierto' 
+                                    ? 'bg-blue-600/5 border-blue-500/30 shadow-2xl' 
+                                    : 'bg-white/[0.02] border-white/5 opacity-60'
+                                }`}
+                            >
+                                <div className="flex flex-col h-full justify-between gap-10">
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-start">
+                                            <div className={`p-4 rounded-2xl ${p.estado === 'abierto' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-white/5 text-[#86868b]'}`}>
+                                                {p.estado === 'abierto' ? <Unlock className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+                                            </div>
+                                            <Badge className={`px-4 py-1.5 text-[8px] font-black uppercase tracking-widest ${
+                                                p.estado === 'abierto' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-white/10 text-[#86868b]'
+                                            }`}>
+                                                {p.estado === 'abierto' ? 'ACTIVO' : 'BLINDADO'}
+                                            </Badge>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter">Ciclo {p.lapso}</h3>
+                                            <p className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.3em] mt-2">Lapso Académico</p>
+                                        </div>
+                                    </div>
+
+                                    <Button 
+                                        onClick={() => togglePeriod(p.lapso, p.estado)}
+                                        disabled={updating === p.lapso}
+                                        className={`w-full h-14 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-2xl ${
+                                            p.estado === 'abierto' 
+                                            ? 'bg-white text-black hover:bg-zinc-200' 
+                                            : 'bg-white/5 text-white hover:bg-white/10 border border-white/10'
+                                        }`}
+                                    >
+                                        {updating === p.lapso ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                                            <span>{p.estado === 'abierto' ? 'Cerrar Ciclo' : 'Habilitar'}</span>
+                                        )}
+                                    </Button>
+                                </div>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
             </div>
 
-            {/* Lapse Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                {Array.isArray(periods) && periods.map((p, i) => (
-                    <motion.div 
-                        key={p.lapso}
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                        className={`relative group overflow-hidden rounded-[3.5rem] p-10 border transition-all duration-700 ${
-                            p.estado === 'abierto' 
-                            ? 'bg-blue-600/5 border-blue-500/30 shadow-[0_40px_80px_-20px_rgba(59,130,246,0.2)]' 
-                            : 'bg-white/[0.02] border-white/5 opacity-80'
-                        }`}
-                    >
-                        {/* Status Icon */}
-                        <div className="absolute top-10 right-10">
-                            <div className={`p-3 rounded-2xl ${p.estado === 'abierto' ? 'bg-blue-500/10 text-blue-400' : 'bg-white/5 text-[#86868b]'}`}>
-                                {p.estado === 'abierto' ? <Unlock className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
-                            </div>
-                        </div>
-
-                        <div className="relative z-10 space-y-10">
-                            <div className="space-y-4">
-                                <Badge className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-widest ${
-                                    p.estado === 'abierto' ? 'bg-blue-500 text-white' : 'bg-white/10 text-[#86868b]'
-                                }`}>
-                                    {p.estado === 'abierto' ? 'Ciclo Activo' : 'Ciclo Protegido'}
-                                </Badge>
-                                <div>
-                                    <h3 className="text-4xl font-black text-white italic uppercase tracking-tighter">Lapso {p.lapso}</h3>
-                                    <p className="text-[10px] font-bold text-[#86868b] uppercase tracking-[0.2em] mt-2">Sincronización Académica</p>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4 pt-6">
-                                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                                    <span className="text-[#86868b]">Permisos de Edición</span>
-                                    <span className={p.estado === 'abierto' ? 'text-emerald-400' : 'text-red-400'}>
-                                        {p.estado === 'abierto' ? 'CONCEDIDO' : 'DENEGADO'}
-                                    </span>
-                                </div>
-                                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <motion.div 
-                                        initial={{ width: 0 }}
-                                        animate={{ width: p.estado === 'abierto' ? '100%' : '0%' }}
-                                        className={`h-full ${p.estado === 'abierto' ? 'bg-blue-500' : 'bg-red-500'}`}
-                                    />
-                                </div>
-                            </div>
-
-                            <Button 
-                                onClick={() => togglePeriod(p.lapso, p.estado)}
-                                disabled={updating === p.lapso}
-                                className={`w-full h-16 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] transition-all active:scale-95 shadow-2xl ${
-                                    p.estado === 'abierto' 
-                                    ? 'bg-white text-black hover:bg-zinc-200' 
-                                    : 'bg-white/5 text-white hover:bg-white/10 border border-white/10'
-                                }`}
-                            >
-                                {updating === p.lapso ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                                    <span>{p.estado === 'abierto' ? 'Finalizar Ciclo' : 'Habilitar Edición'}</span>
-                                )}
-                            </Button>
-
-                            {p.estado === 'cerrado' && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                >
-                                    <Button 
-                                        variant="ghost" 
-                                        className="w-full h-12 rounded-xl text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 font-bold text-[9px] uppercase tracking-widest flex gap-2"
-                                        onClick={() => {
-                                            const doc = `--- REPORTE DE CIERRE: LAPSO ${p.lapso} ---\nEstado: PROTEGIDO\nFecha: ${new Date().toLocaleString()}\nRegistros: Matrícula e Historial Académico Congelados.`;
-                                            alert(doc);
-                                        }}
-                                    >
-                                        <History className="w-4 h-4" />
-                                        Ver Reporte de Cierre
-                                    </Button>
-                                </motion.div>
-                            )}
-                        </div>
-
-                        {/* Background Decoration */}
-                        <div className="absolute -right-12 -bottom-12 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-700">
-                            <Clock className="w-64 h-64 rotate-12" />
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Security Protocol Footer */}
+            {/* Integrity Protocol Footer */}
             <motion.div 
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-10 rounded-[3rem] bg-blue-600/5 border border-blue-500/10 flex flex-col md:flex-row items-center gap-10 max-w-4xl mx-auto"
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                className="p-12 rounded-[4rem] bg-gradient-to-tr from-blue-600/5 to-transparent border border-blue-500/10 flex flex-col md:flex-row items-center gap-12 max-w-5xl mx-auto backdrop-blur-xl"
             >
-                <div className="w-20 h-20 rounded-[1.8rem] bg-blue-500/10 flex items-center justify-center text-blue-400 flex-shrink-0">
-                    <ShieldCheck className="w-10 h-10" />
+                <div className="w-24 h-24 rounded-[2.2rem] bg-blue-600 text-white flex items-center justify-center shadow-2xl shadow-blue-600/20 shrink-0">
+                    <ShieldCheck className="w-12 h-12" />
                 </div>
-                <div className="space-y-3 text-center md:text-left">
-                    <h4 className="text-sm font-black text-white uppercase tracking-widest italic">Protocolo de Integridad de Datos</h4>
-                    <p className="text-xs text-[#86868b] font-medium leading-relaxed">
-                        El cierre de un lapso congela los registros de asistencia y calificaciones en la base de datos maestra. Cualquier modificación posterior requiere una llave de auditoría de Nivel Administrativo.
+                <div className="space-y-4 text-center md:text-left">
+                    <h4 className="text-lg font-black text-white uppercase tracking-widest italic">Protocolo de Integridad de Datos v30.0</h4>
+                    <p className="text-xs text-[#86868b] font-bold leading-relaxed uppercase tracking-wider">
+                        El cierre de un lapso congela los registros de asistencia y calificaciones en el NÚCLEO DE DATOS MAESTRO. Cualquier modificación posterior requiere un TOKEN DE AUDITORÍA NIVEL 5 generado por la Dirección.
                     </p>
                 </div>
             </motion.div>
