@@ -487,6 +487,13 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
   const [financeStats, setFinanceStats] = useState({ total_revenue: 0, solvency_rate: '0%' });
 
   useEffect(() => {
+    if (importMsg) {
+      const timer = setTimeout(() => setImportMsg(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [importMsg]);
+
+  useEffect(() => {
     const fetchFinance = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -605,9 +612,11 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
                    </div>
                 ))
               ) : (
-                <div className="py-20 flex flex-col items-center justify-center text-[#86868b] space-y-6 opacity-30 border-2 border-dashed border-white/5 rounded-[2.5rem]">
-                   <ShieldCheck className="w-12 h-12" />
-                   <p className="text-sm font-semibold tracking-widest uppercase">Sistema en Condiciones Óptimas</p>
+                <div className="py-20 flex flex-col items-center justify-center text-[#86868b] space-y-6 opacity-30 border-2 border-dashed border-white/5 rounded-[3rem] bg-white/[0.01]">
+                   <div className="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center">
+                      <ShieldCheck className="w-10 h-10" />
+                   </div>
+                   <p className="text-[10px] font-black tracking-[0.3em] uppercase">Sistema en Condiciones Óptimas</p>
                 </div>
               )}
            </div>
@@ -621,24 +630,26 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
               <h3 className="text-2xl font-semibold text-white tracking-tight">Actividad</h3>
            </div>
 
-           <div className="space-y-8">
+           <div className="space-y-8 max-h-[500px] overflow-y-auto scroll-thin pr-2">
               {(stats?.recentActivity && Array.isArray(stats.recentActivity) && stats.recentActivity.length > 0) ? (
                 stats.recentActivity.map((log, i) => (
                    <div key={i} className="flex gap-5 group">
                      <div className="flex flex-col items-center gap-2 pt-1.5">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-                        <div className="w-[1.5px] h-full bg-white/5 rounded-full" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] group-hover:scale-125 transition-transform" />
+                        <div className="w-[2px] h-full bg-blue-500/10 rounded-full" />
                      </div>
                      <div className="pb-8">
-                        <p className="text-sm font-medium text-white/90 leading-relaxed mb-1">{log.event}</p>
-                        <span className="text-[10px] font-semibold text-[#86868b] tracking-wider uppercase">{log.time}</span>
+                        <p className="text-sm font-semibold text-white/90 leading-relaxed mb-1 group-hover:text-blue-400 transition-colors">{log.event}</p>
+                        <span className="text-[10px] font-bold text-[#86868b] tracking-wider uppercase opacity-60">{log.time}</span>
                      </div>
                   </div>
                 ))
               ) : (
-                <div className="py-24 flex flex-col items-center justify-center text-[#86868b] space-y-4 opacity-10">
-                   <Activity className="w-12 h-12" />
-                   <span className="text-xs font-semibold tracking-widest uppercase">Sin Actividad Reciente</span>
+                <div className="py-24 flex flex-col items-center justify-center text-[#86868b] space-y-4 opacity-30">
+                   <div className="w-16 h-16 rounded-full border-2 border-dashed border-current flex items-center justify-center animate-pulse">
+                      <Clock className="w-8 h-8" />
+                   </div>
+                   <span className="text-[10px] font-black tracking-[0.3em] uppercase">Sin Actividad Reciente</span>
                 </div>
               )}
            </div>

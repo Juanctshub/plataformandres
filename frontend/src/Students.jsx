@@ -177,7 +177,23 @@ const Students = () => {
   );
 
   return (
-    <div className="space-y-16 py-6">
+    <div className="space-y-16 py-6 relative">
+      {/* 🛎️ NOTIFICACIÓN FLOTANTE (TOAST) 🛎️ */}
+      <AnimatePresence>
+        {msg.text && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: -20, x: '-50%' }}
+            className={`fixed top-32 left-1/2 z-[10000] px-10 py-5 rounded-[2rem] apple-glass border font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)] flex items-center gap-4 ${
+              msg.type === 'success' ? 'border-emerald-500/30 text-emerald-400' : 'border-red-500/30 text-red-400'
+            }`}
+          >
+            {msg.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+            {msg.text}
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Search and Action Bar */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-10 bg-white/[0.02] border border-white/5 p-10 rounded-[3.5rem] apple-glass shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]">
          <div className="flex flex-col md:flex-row items-center gap-8 flex-1">
@@ -241,7 +257,7 @@ const Students = () => {
                            <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Identidad (CI)</label>
                            <Input 
                               placeholder="V-00.000.000"
-                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
+                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
                               value={newStudent.cedula}
                               onChange={(e) => setNewStudent({...newStudent, cedula: e.target.value})}
                               required
@@ -251,7 +267,7 @@ const Students = () => {
                            <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Sección Académica</label>
                            <Input 
                               placeholder="Ej: 5to Año A"
-                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
+                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
                               value={newStudent.seccion}
                               onChange={(e) => setNewStudent({...newStudent, seccion: e.target.value})}
                               required
@@ -262,7 +278,7 @@ const Students = () => {
                         <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Nombre Completo del Estudiante</label>
                         <Input 
                            placeholder="Nombres y Apellidos del alumno"
-                           className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
+                           className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
                            value={newStudent.nombre}
                            onChange={(e) => setNewStudent({...newStudent, nombre: e.target.value})}
                            required
@@ -273,7 +289,7 @@ const Students = () => {
                            <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Representante Legal</label>
                            <Input 
                               placeholder="Nombre del Padre/Madre"
-                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
+                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
                               value={newStudent.representante}
                               onChange={(e) => setNewStudent({...newStudent, representante: e.target.value})}
                            />
@@ -282,7 +298,7 @@ const Students = () => {
                            <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Canal de Contacto</label>
                            <Input 
                               placeholder="+58 4XX..."
-                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
+                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
                               value={newStudent.contacto}
                               onChange={(e) => setNewStudent({...newStudent, contacto: e.target.value})}
                            />

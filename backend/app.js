@@ -418,6 +418,36 @@ app.put('/api/lapsos/:lapso', authenticateToken, async (req, res) => {
     }
 });
 
+// PAGOS (Gestión Financiera)
+app.get('/api/pagos', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT p.*, e.nombre as estudiante, e.cedula 
+            FROM pagos p 
+            JOIN estudiantes e ON p.estudiante_id = e.id 
+            ORDER BY p.fecha DESC
+        `);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/pagos', authenticateToken, async (req, res) => {
+    const { estudiante_id, monto, concepto, mes_correspondiente, metodo, referencia } = req.body;
+    try {
+        const result = await db.query(`
+            INSERT INTO pagos (estudiante_id, monto, concepto, mes_correspondiente, metodo, referencia)
+            VALUES ($1, $2, $3, $4, $5, $6) RETURNING id
+        `, [estudiante_id, monto, concepto, mes_correspondiente, metodo || 'Efectivo', referencia || '']);
+        
+        await logAudit(req.user.id, "REGISTER_PAYMENT", { student_id: estudiante_id, monto, mes: mes_correspondiente });
+        res.json({ success: true, id: result.rows[0].id });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // IA VISION (Procesamiento OCR)
 app.post('/api/ai/vision/attendance', authenticateToken, async (req, res) => {
     const { imageBase64 } = req.body;

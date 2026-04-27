@@ -202,12 +202,13 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                animate={{ opacity: 1, scale: 1, y: 0 }}
                className="mb-12 flex flex-col items-center"
             >
-               <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-indigo-600 p-1 flex items-center justify-center shadow-2xl shadow-blue-600/20 mb-8 border border-white/10 group cursor-pointer" onClick={onClose}>
-                  <img src={logo} className="w-full h-full object-cover rounded-[2.2rem] scale-110" alt="Logo" />
+               <div className="w-28 h-28 rounded-[3rem] bg-gradient-to-br from-blue-600 to-indigo-600 p-0.5 flex items-center justify-center shadow-2xl shadow-blue-600/30 mb-8 border border-white/20 group cursor-pointer relative" onClick={onClose}>
+                  <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <img src={logo} className="w-[90%] h-[90%] object-contain rounded-[2.5rem] relative z-10" alt="Logo" />
                </div>
                <div className="text-center space-y-2">
-                  <h2 className="text-xl font-black text-white tracking-[0.3em] uppercase opacity-40">Núcleo de Inferencia</h2>
-                  <p className="text-[10px] font-bold text-blue-500 tracking-[0.5em] uppercase">Andrés Bello v25.0 Platinum</p>
+                  <h2 className="text-2xl font-black text-white tracking-[0.3em] uppercase opacity-40 italic">Núcleo de Inferencia</h2>
+                  <p className="text-[10px] font-bold text-blue-500 tracking-[0.5em] uppercase">Andrés Bello Platinum Edition</p>
                </div>
             </motion.div>
 
@@ -276,13 +277,13 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
               className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`flex gap-6 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                 <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${
-                    m.role === 'user' ? 'bg-zinc-800 text-white' : 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white'
-                 }`}>
-                   {m.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
-                 </div>
-                 <div className={`space-y-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
-                    <div className={`text-lg font-medium leading-relaxed tracking-tight text-white/90 whitespace-pre-wrap ${m.role === 'user' ? 'bg-white/5 px-8 py-4 rounded-[2rem]' : ''}`}>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-xl ${
+                    m.role === 'user' ? 'bg-zinc-800 text-white font-bold' : 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white'
+                  }`}>
+                    {m.role === 'user' ? (user?.nombre ? user.nombre.substring(0, 2).toUpperCase() : <User className="w-6 h-6" />) : <Bot className="w-6 h-6" />}
+                  </div>
+                  <div className={`space-y-4 ${m.role === 'user' ? 'text-right flex flex-col items-end' : 'text-left'}`}>
+                    <div className={`text-base md:text-lg font-medium leading-relaxed tracking-tight text-white/90 whitespace-pre-wrap max-w-full ${m.role === 'user' ? 'bg-white/5 px-8 py-5 rounded-[2.5rem] rounded-tr-none border border-white/5' : 'bg-transparent'}`}>
                       {m.content}
                     </div>
                     
@@ -358,7 +359,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder="Pregúntale al Núcleo de Inferencia..."
-              className="w-full h-20 pl-24 pr-44 bg-zinc-900/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] text-lg text-white placeholder:text-white/30 focus:outline-none focus:border-blue-500/40 focus:ring-4 focus:ring-blue-500/5 shadow-2xl transition-all relative z-10"
+              className="w-full h-20 pl-24 pr-44 bg-zinc-950/80 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] text-lg text-white placeholder:text-white/20 focus:outline-none focus:border-blue-500/30 focus:ring-4 focus:ring-blue-500/5 shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] transition-all relative z-10"
             />
             <div className="absolute right-5 flex items-center gap-4 z-20">
               <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">

@@ -105,7 +105,23 @@ const Finance = () => {
     );
 
     return (
-        <div className="space-y-12">
+        <div className="space-y-12 relative">
+            {/* 🛎️ NOTIFICACIÓN FLOTANTE (TOAST) 🛎️ */}
+            <AnimatePresence>
+                {msg.text && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: -20, x: '-50%' }}
+                        animate={{ opacity: 1, y: 0, x: '-50%' }}
+                        exit={{ opacity: 0, y: -20, x: '-50%' }}
+                        className={`fixed top-32 left-1/2 z-[10000] px-10 py-5 rounded-[2rem] apple-glass border font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)] flex items-center gap-4 ${
+                            msg.type === 'success' ? 'border-emerald-500/30 text-emerald-400' : 'border-red-500/30 text-red-400'
+                        }`}
+                    >
+                        {msg.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                        {msg.text}
+                    </motion.div>
+                )}
+            </AnimatePresence>
             {/* Header / Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <motion.div 
@@ -184,7 +200,7 @@ const Finance = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsModalOpen(true)}
-                className="fixed bottom-32 right-10 w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-emerald-600/40 z-[60] lg:hidden"
+                className="fixed bottom-32 right-10 w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-blue-600/40 z-[60] lg:hidden"
             >
                 <Plus className="w-8 h-8" />
             </motion.button>
@@ -194,12 +210,12 @@ const Finance = () => {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-white/5">
-                            <th className="px-8 py-6 text-[10px] font-black text-[#86868b] uppercase tracking-widest">Estudiante</th>
-                            <th className="px-8 py-6 text-[10px] font-black text-[#86868b] uppercase tracking-widest">Mes</th>
-                            <th className="px-8 py-6 text-[10px] font-black text-[#86868b] uppercase tracking-widest">Monto</th>
-                            <th className="px-8 py-6 text-[10px] font-black text-[#86868b] uppercase tracking-widest">Método</th>
-                            <th className="px-8 py-6 text-[10px] font-black text-[#86868b] uppercase tracking-widest">Fecha</th>
-                            <th className="px-8 py-6 text-[10px] font-black text-[#86868b] uppercase tracking-widest">Acciones</th>
+                            <th className="px-8 py-6 text-[11px] font-bold text-[#86868b] uppercase tracking-[0.2em]">Estudiante</th>
+                            <th className="px-8 py-6 text-[11px] font-bold text-[#86868b] uppercase tracking-[0.2em]">Mes</th>
+                            <th className="px-8 py-6 text-[11px] font-bold text-[#86868b] uppercase tracking-[0.2em]">Monto</th>
+                            <th className="px-8 py-6 text-[11px] font-bold text-[#86868b] uppercase tracking-[0.2em]">Método</th>
+                            <th className="px-8 py-6 text-[11px] font-bold text-[#86868b] uppercase tracking-[0.2em]">Fecha</th>
+                            <th className="px-8 py-6 text-[11px] font-bold text-[#86868b] uppercase tracking-[0.2em]">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">

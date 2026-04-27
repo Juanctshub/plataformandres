@@ -102,8 +102,10 @@ const Staff = () => {
         }
     };
 
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [staffToDelete, setStaffToDelete] = useState(null);
+
     const handleDelete = async (id) => {
-        if (!window.confirm('¿Confirmar baja de personal? Esta acción quedará registrada.')) return;
         try {
             const token = localStorage.getItem('token');
             const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
@@ -134,11 +136,11 @@ const Staff = () => {
                     <div className="relative flex-1 max-w-lg group">
                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
                        <Input 
-                          placeholder="Buscar por Nombre o Cargo..." 
-                          className="pl-16 h-16 bg-white/[0.03] border-white/5 rounded-[1.8rem] text-white text-base font-medium focus:ring-1 focus:ring-blue-500/50 transition-all"
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                       />
+                        placeholder="Buscar por Estudiante o Asignatura..." 
+                        className="pl-16 h-14 bg-white/5 border-white/5 rounded-2xl text-white text-sm font-medium focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-[#86868b]/40"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                     />
                     </div>
                     
                     <div className="flex items-center gap-2 overflow-x-auto no-scrollbar bg-white/5 p-2 rounded-[1.5rem]">
@@ -282,13 +284,13 @@ const Staff = () => {
                          </div>
 
                           <div className="absolute bottom-6 right-10 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-3">
-                            <Button 
-                                onClick={() => handleDelete(s.id)}
-                                variant="ghost" 
-                                className="h-10 w-10 p-0 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white shadow-xl shadow-red-500/10 transition-all"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </Button>
+                             <Button 
+                                 onClick={() => { setStaffToDelete(s); setIsDeleteModalOpen(true); }}
+                                 variant="ghost" 
+                                 className="h-10 w-10 p-0 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white shadow-xl shadow-red-500/10 transition-all"
+                             >
+                                 <Trash2 className="w-4 h-4" />
+                             </Button>
                             <Button 
                                variant="ghost" 
                                className="h-10 px-6 rounded-xl bg-white/5 text-white hover:bg-white hover:text-black transition-all shadow-xl"
@@ -340,6 +342,27 @@ const Staff = () => {
                </motion.div>
                )}
             </AnimatePresence>
+            {/* Delete Confirmation Modal */}
+            <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+                <DialogContent className="apple-glass border-red-500/20 rounded-[3rem] p-10 max-w-md bg-black/90 shadow-[0_50px_100px_-20px_rgba(255,0,0,0.2)] z-[10000]">
+                  <DialogHeader className="text-center space-y-6">
+                      <div className="w-20 h-20 rounded-[2rem] bg-red-500/10 flex items-center justify-center text-red-500 mx-auto border border-red-500/20 animate-pulse">
+                          <AlertCircle className="w-10 h-10" />
+                      </div>
+                      <div>
+                         <DialogTitle className="text-3xl font-black text-white italic uppercase tracking-tighter">Baja de Personal</DialogTitle>
+                         <DialogDescription className="text-red-400/60 font-bold uppercase tracking-widest text-[9px] mt-3">Esta acción desactivará la identidad en el nodo maestro.</DialogDescription>
+                      </div>
+                  </DialogHeader>
+                  <div className="py-10 text-center">
+                      <p className="text-sm font-medium text-[#86868b]">¿Confirmar la desvinculación de <span className="text-white font-black">{staffToDelete?.nombre}</span>?</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                      <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="h-14 rounded-2xl font-black text-[10px] uppercase tracking-widest text-[#86868b] hover:text-white">Cancelar</Button>
+                      <Button onClick={() => { handleDelete(staffToDelete.id); setIsDeleteModalOpen(false); }} className="h-14 rounded-2xl bg-red-600 text-white hover:bg-red-500 font-black text-[10px] uppercase tracking-widest shadow-2xl">Confirmar Baja</Button>
+                  </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
