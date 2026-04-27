@@ -66,8 +66,8 @@ class ErrorBoundary extends React.Component {
               <AlertCircle className="w-12 h-12 text-blue-500" />
            </div>
            <div className="space-y-3">
-              <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">Sincronización Interrumpida</h3>
-              <p className="text-sm text-[#86868b] font-medium max-w-md mx-auto">El módulo ha experimentado una anomalía de renderizado. El Núcleo de Inteligencia está intentando restaurar la conexión.</p>
+              <h3 className="text-2xl font-bold text-white tracking-tight uppercase">Sincronización Interrumpida</h3>
+              <p className="text-sm text-[#86868b] font-medium max-w-md mx-auto">El módulo ha experimentado una anomalía de renderizado. El sistema está intentando restaurar la conexión.</p>
            </div>
            <Button 
              onClick={() => window.location.reload()} 
@@ -178,7 +178,7 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
             className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-xl p-10 flex flex-col justify-end pb-32"
           >
             <div className="space-y-6">
-               <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-10 italic">Opciones Maestras</h3>
+               <h3 className="text-2xl font-bold text-white uppercase tracking-tighter mb-10">Opciones Maestras</h3>
                <div className="grid grid-cols-2 gap-4">
                   {secondaryItems.map(item => (
                     <button
@@ -202,7 +202,7 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
                </div>
                <Button 
                  onClick={() => setShowMenu(false)}
-                 className="w-full h-16 rounded-[2rem] bg-white text-black font-black uppercase text-xs tracking-widest mt-10"
+                 className="w-full h-16 rounded-[2rem] bg-white text-black font-bold uppercase text-xs tracking-widest mt-10"
                >
                  Volver al Control
                </Button>
@@ -236,10 +236,10 @@ const SplashScreen = ({ isInitialized }) => (
         transition={{ delay: 0.8, duration: 0.8 }}
         className="text-center relative z-10"
       >
-        <h1 className="text-3xl font-black tracking-tighter text-white uppercase italic leading-none">Andrés Bello</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white uppercase leading-none">Andrés Bello</h1>
         <div className="flex items-center justify-center gap-3 mt-4">
            <div className="h-[1px] w-4 bg-white/10" />
-           <p className="text-[9px] font-black tracking-[0.4em] text-white/40 uppercase">Apple Glass v15.0 • Pro</p>
+           <p className="text-[10px] font-bold tracking-[0.4em] text-white/30 uppercase">Apple Glass Edition</p>
            <div className="h-[1px] w-4 bg-white/10" />
         </div>
       </motion.div>
@@ -265,13 +265,13 @@ const CriticalErrorScreen = ({ onRetry }) => (
      <div className="w-20 h-20 rounded-3xl bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500 mb-8">
         <AlertCircle className="w-10 h-10" />
      </div>
-     <h2 className="text-3xl font-black text-white tracking-tighter text-center uppercase mb-4">Error Crítico de Núcleo</h2>
+     <h2 className="text-3xl font-bold text-white tracking-tight text-center uppercase mb-4">Error Crítico de Núcleo</h2>
      <p className="text-sm text-[#86868b] font-medium text-center max-w-sm mb-12 leading-relaxed">
         El Nodo Maestro no ha respondido en el intervalo asignado. Verifique su red institucional o el estado del servidor.
      </p>
      <Button 
        onClick={onRetry}
-       className="h-14 px-12 bg-white text-black hover:bg-zinc-200 rounded-2xl font-black text-xs tracking-widest uppercase transition-all active:scale-95 shadow-xl"
+       className="h-14 px-12 bg-white text-black hover:bg-zinc-200 rounded-2xl font-bold text-xs tracking-widest uppercase transition-all active:scale-95 shadow-xl"
      >
         REINTENTAR ACCESO
      </Button>
@@ -519,8 +519,8 @@ const AndresBelloSuite = () => {
                   <div className="flex items-center gap-3 md:gap-4 group cursor-pointer" onClick={() => setActiveTab('dashboard')}>
                      <img src={logo} className="w-9 h-9 md:w-11 md:h-11 rounded-full shadow-lg border border-white/10 group-hover:scale-105 transition-transform object-cover" alt="Logo" />
                      <div className="flex flex-col">
-                        <h2 className="text-xs md:text-sm font-black tracking-tighter text-white leading-none uppercase italic">Andrés Bello</h2>
-                        <span className="hidden md:inline text-[9px] font-black tracking-[0.2em] text-[#86868b] uppercase mt-1">v26.4 Platinum Edition</span>
+                        <h2 className="text-xs md:text-sm font-bold tracking-tight text-white leading-none uppercase">Andrés Bello</h2>
+                        <span className="hidden md:inline text-[9px] font-bold tracking-[0.1em] text-[#86868b] uppercase mt-1">Platinum Edition</span>
                      </div>
                   </div>
                   <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-5 py-2 active:scale-95 group focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">

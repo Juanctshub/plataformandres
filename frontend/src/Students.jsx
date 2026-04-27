@@ -187,14 +187,14 @@ const Students = () => {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10">
                 <div className="space-y-4 sm:space-y-6">
                     <motion.div 
-                        initial={{ x: -30, opacity: 0 }}
+                        initial={{ x: -20, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
-                        className="flex items-center gap-6 group"
+                        className="flex items-center gap-5 group"
                     >
-                        <div className="w-2 h-12 bg-blue-600 rounded-full group-hover:h-16 transition-all duration-500 shadow-[0_0_20px_rgba(37,99,235,0.6)]" />
+                        <div className="w-1.5 h-10 bg-blue-600 rounded-full transition-all duration-500 shadow-[0_0_15px_rgba(37,99,235,0.4)]" />
                         <div>
-                            <h2 className="text-5xl sm:text-7xl font-black text-white italic uppercase tracking-tighter leading-none">Matrícula</h2>
-                            <p className="text-[10px] sm:text-[13px] text-blue-400 font-black uppercase tracking-[0.6em] mt-4 italic">Registro Maestro Institucional v30.0</p>
+                            <h2 className="text-4xl sm:text-6xl font-bold text-white tracking-tight leading-none">Matrícula</h2>
+                            <p className="text-[10px] sm:text-[11px] text-blue-400 font-semibold uppercase tracking-[0.4em] mt-3">Registro Maestro v30.0</p>
                         </div>
                     </motion.div>
                 </div>

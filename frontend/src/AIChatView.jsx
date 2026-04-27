@@ -207,8 +207,8 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                   <img src={logo} className="w-[90%] h-[90%] object-contain rounded-[2.5rem] relative z-10" alt="Logo" />
                </div>
                <div className="text-center space-y-2">
-                  <h2 className="text-2xl font-black text-white tracking-[0.3em] uppercase opacity-40 italic">Núcleo de Inferencia</h2>
-                  <p className="text-[10px] font-bold text-blue-500 tracking-[0.5em] uppercase">Andrés Bello Platinum Edition</p>
+                  <h2 className="text-2xl font-bold text-white tracking-[0.2em] uppercase opacity-40">Núcleo de Inferencia</h2>
+                  <p className="text-[10px] font-semibold text-blue-500 tracking-[0.4em] uppercase">Andrés Bello Platinum Edition</p>
                </div>
             </motion.div>
 

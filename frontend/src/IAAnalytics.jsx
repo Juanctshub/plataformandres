@@ -162,9 +162,9 @@ const IAAnalytics = () => {
                 <div className="relative z-10">
                    <h2 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
                      <BrainCircuit className="w-8 h-8 text-blue-400" />
-                     Núcleo de Analíticas IA
+                     Núcleo de Analíticas
                    </h2>
-                   <p className="text-[#86868b] mt-2 font-medium">Motor Cognitivo Inferencia Preventiva. Diagnósticos Profesionales en Tiempo Real.</p>
+                   <p className="text-[#86868b] mt-2 font-medium">Inferencia Preventiva y Diagnósticos en Tiempo Real.</p>
                 </div>
                 
                 <div className="relative z-10 flex gap-4">

@@ -163,13 +163,12 @@ const Justifications = () => {
         </div>
         
         <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
-            <div className="space-y-6">
-                <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
-                  Gestión de <br className="sm:hidden" />
-                  <span className="text-blue-500">Justificativos</span>
+            <div className="space-y-4">
+                <h2 className="text-4xl sm:text-6xl font-bold tracking-tight text-white leading-tight">
+                  Gestión de <span className="text-blue-500">Justificativos</span>
                 </h2>
-                <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
-                  Validación y certificación de inasistencias. Nodo de <span className="text-white">Protocolo Institucional</span>.
+                <p className="text-lg sm:text-xl text-[#86868b] font-medium max-w-2xl leading-relaxed">
+                  Validación y certificación de inasistencias bajo <span className="text-white">Protocolo Institucional</span>.
                 </p>
             </div>
 

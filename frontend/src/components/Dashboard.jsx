@@ -525,219 +525,210 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
     { label: 'Justificativos', value: stats?.justifications || 0, sub: 'Pendientes de Firma', icon: Clock, color: 'bg-indigo-500/10 text-indigo-400' },
   ];
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const getSafeUser = () => {
+    try {
+      const stored = localStorage.getItem('user');
+      if (!stored || stored === 'undefined') return { username: 'Control Maestro' };
+      return JSON.parse(stored);
+    } catch (e) {
+      return { username: 'Control Maestro' };
+    }
+  };
+
+  const user = getSafeUser();
 
   return (
     <motion.div 
       variants={container}
       initial="hidden"
       animate="show"
-      className="max-w-7xl mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6"
+      className="max-w-7xl mx-auto py-8 sm:py-20 space-y-16 sm:space-y-32 px-4 sm:px-6"
     >
-      {/* Welcome Header: Pure Apple Style */}
-      <motion.div variants={item} className="space-y-6 sm:space-y-8">
+      {/* Welcome Header: Refined Apple Style */}
+      <motion.div variants={item} className="space-y-4 sm:space-y-6">
         <div className="flex items-center gap-4">
-           <div className="w-1.5 h-8 bg-blue-600 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.6)]" />
-           <Badge className="bg-white/5 text-[#86868b] border border-white/5 rounded-full px-5 py-1.5 text-[9px] sm:text-[11px] font-black uppercase tracking-[0.3em]">
-              Sincronización Neural v30.0
+           <div className="w-1 h-6 bg-blue-600 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.4)]" />
+           <Badge className="bg-white/5 text-[#86868b] border border-white/5 rounded-full px-4 py-1 text-[10px] font-semibold uppercase tracking-widest">
+              Sincronización v30.0
            </Badge>
         </div>
         
-        <div className="space-y-4">
-            <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
-              Hola, <br className="sm:hidden" />
-              <span className="text-blue-500">{user?.username || 'Control Maestro'}</span>
+        <div className="space-y-2">
+            <h2 className="text-4xl sm:text-6xl font-bold tracking-tight text-white leading-tight">
+              Hola, <span className="text-blue-500">{user?.username}</span>
             </h2>
-            <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
-              Resumen estratégico del pulso académico institucional. El núcleo está <span className="text-emerald-400">totalmente operativo</span>.
+            <p className="text-lg sm:text-xl text-[#86868b] font-medium max-w-2xl leading-relaxed">
+              Resumen estratégico del pulso académico. El núcleo está <span className="text-emerald-400">totalmente operativo</span>.
             </p>
         </div>
       </motion.div>
 
-      {/* Stats Grid: Elegant and Spaced */}
-      <div className="grid gap-6 sm:gap-12 grid-cols-2 lg:grid-cols-4">
+      {/* Stats Grid */}
+      <div className="grid gap-6 sm:gap-10 grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
           <motion.div 
             key={stat.label} 
             variants={item} 
-            whileHover={{ y: -10, scale: 1.02 }}
-            className="group relative overflow-hidden rounded-[3rem] p-8 sm:p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-blue-500/30 transition-all duration-700 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]"
+            whileHover={{ y: -8, scale: 1.01 }}
+            className="group relative overflow-hidden rounded-[2.5rem] p-8 sm:p-10 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-blue-500/20 transition-all duration-500 shadow-xl"
           >
-            <div className="flex justify-between items-start mb-10 sm:mb-16">
-                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-[1.8rem] flex items-center justify-center transition-all duration-500 shadow-2xl ${stat.color} border border-white/5`}>
-                    <stat.icon className="h-6 w-6 sm:h-8 sm:w-8" strokeWidth={1.5} />
+            <div className="flex justify-between items-start mb-12 sm:mb-16">
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${stat.color} border border-white/5 shadow-lg`}>
+                    <stat.icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.5} />
                 </div>
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-xl">
-                   <ArrowUpRight className="w-5 h-5" />
+                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                   <ArrowUpRight className="w-4 h-4" />
                 </div>
             </div>
             
-            <div className="space-y-2">
-                <p className="text-[10px] sm:text-[12px] font-black uppercase tracking-[0.3em] text-[#86868b] mb-2 sm:mb-4 opacity-60">{stat.label}</p>
-                <div className="text-4xl sm:text-6xl font-black text-white italic leading-none tracking-tighter">
+            <div className="space-y-1">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#86868b] mb-2 opacity-60">{stat.label}</p>
+                <div className="text-3xl sm:text-5xl font-bold text-white tracking-tight">
                     {stat.value}
                 </div>
-                <div className="flex items-center gap-3 mt-6 sm:mt-10">
-                    <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                    <p className="text-[10px] sm:text-[11px] text-[#86868b] font-black uppercase tracking-widest italic">
+                <div className="flex items-center gap-2 mt-6 sm:mt-8">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                    <p className="text-[10px] text-[#86868b] font-medium uppercase tracking-wider">
                         {stat.sub}
                     </p>
                 </div>
             </div>
-
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           </motion.div>
         ))}
       </div>
 
-      {/* Main Content Area: Mission Control Style */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-16">
-        <motion.div variants={item} className="lg:col-span-8 rounded-[4rem] p-10 sm:p-16 bg-white/[0.02] border border-white/5 relative overflow-hidden group">
-           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-16 sm:mb-24 relative z-10">
-              <div className="flex items-center gap-6">
-                 <div className="w-16 h-16 rounded-3xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20 shadow-2xl">
-                    <Activity className="w-8 h-8" />
+      {/* Main Content Area */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12">
+        <motion.div variants={item} className="lg:col-span-8 rounded-[3.5rem] p-10 sm:p-14 bg-white/[0.02] border border-white/5 relative overflow-hidden">
+           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-16 relative z-10">
+              <div className="flex items-center gap-5">
+                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
+                    <Activity className="w-7 h-7" />
                  </div>
                  <div>
-                    <h3 className="text-3xl sm:text-5xl font-black text-white tracking-tighter italic uppercase leading-none">Monitoreo IA</h3>
-                    <p className="text-[10px] sm:text-xs text-indigo-400 font-black uppercase tracking-[0.4em] mt-3 italic">Análisis Predictivo en Tiempo Real</p>
+                    <h3 className="text-2xl sm:text-4xl font-bold text-white tracking-tight">Monitoreo IA</h3>
+                    <p className="text-[10px] text-indigo-400 font-semibold uppercase tracking-widest mt-1">Análisis Predictivo Activo</p>
                  </div>
               </div>
               <Button 
                 onClick={() => onTabChange('aianalytics')}
-                className="bg-white text-black hover:bg-zinc-200 rounded-full px-10 h-14 text-[10px] font-black uppercase tracking-widest transition-all shadow-2xl active:scale-95"
+                className="bg-white text-black hover:bg-zinc-200 rounded-full px-8 h-12 text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg"
               >
                  Ver Analíticas Completas
               </Button>
            </div>
 
-           <div className="space-y-8 relative z-10">
+           <div className="space-y-6 relative z-10">
               {(aiData?.alerts && Array.isArray(aiData.alerts) && aiData.alerts.length > 0) ? (
                 aiData.alerts.map((alert, i) => (
-                   <div key={i} className="p-8 sm:p-10 rounded-[3rem] bg-white/[0.03] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-8 group hover:bg-white/[0.06] hover:border-indigo-500/30 transition-all duration-500">
-                      <div className="flex items-center gap-8">
-                         <div className={`w-16 h-16 rounded-[2rem] flex items-center justify-center shadow-2xl ${alert.type === 'danger' ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
-                            {alert.type === 'danger' ? <XCircle className="w-8 h-8" /> : <AlertTriangle className="w-8 h-8" />}
+                   <div key={i} className="p-6 sm:p-8 rounded-[2.5rem] bg-white/[0.03] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-6 group hover:bg-white/[0.05] transition-all duration-300">
+                      <div className="flex items-center gap-6">
+                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${alert.type === 'danger' ? 'bg-red-500/10 text-red-500 border border-red-500/10' : 'bg-amber-500/10 text-amber-500 border border-amber-500/10'}`}>
+                            {alert.type === 'danger' ? <XCircle className="w-6 h-6" /> : <AlertTriangle className="w-6 h-6" />}
                          </div>
-                         <div className="space-y-2">
-                            <h4 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight">{alert.msg}</h4>
-                            <div className="flex items-center gap-3">
-                                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                                <p className="text-[10px] sm:text-[11px] text-[#86868b] font-black uppercase tracking-[0.2em] italic">Protocolo Sugerido por IA</p>
+                         <div className="space-y-1">
+                            <h4 className="text-lg font-bold text-white tracking-tight">{alert.msg}</h4>
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="w-3 h-3 text-indigo-400" />
+                                <p className="text-[10px] text-[#86868b] font-semibold uppercase tracking-widest">Recomendación IA</p>
                             </div>
                          </div>
                       </div>
-                      <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center text-white/10 group-hover:bg-indigo-500 group-hover:text-white transition-all shadow-xl self-end sm:self-auto">
-                        <ArrowRight className="w-6 h-6" />
+                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-hover:bg-indigo-500 group-hover:text-white transition-all shadow-md">
+                        <ArrowRight className="w-5 h-5" />
                       </div>
                    </div>
                 ))
               ) : (
-                <div className="py-24 flex flex-col items-center justify-center text-[#86868b] space-y-8 opacity-40 border-2 border-dashed border-white/10 rounded-[4rem] bg-white/[0.01]">
-                   <div className="w-24 h-24 rounded-[2.5rem] bg-white/5 flex items-center justify-center border border-white/5 shadow-inner">
-                      <ShieldCheck className="w-12 h-12" />
+                <div className="py-20 flex flex-col items-center justify-center text-[#86868b] space-y-6 opacity-60 border border-dashed border-white/10 rounded-[3rem] bg-white/[0.01]">
+                   <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+                      <ShieldCheck className="w-8 h-8" />
                    </div>
-                   <div className="text-center space-y-3">
-                      <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter">Núcleo Estable</h4>
-                      <p className="text-[10px] font-black tracking-[0.4em] uppercase">Sistema en Condiciones Óptimas de Seguridad</p>
+                   <div className="text-center space-y-2">
+                      <h4 className="text-xl font-bold text-white tracking-tight">Núcleo Estable</h4>
+                      <p className="text-[10px] font-semibold tracking-widest uppercase">Condiciones Óptimas de Operación</p>
                    </div>
                 </div>
               )}
            </div>
-
-           <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/5 blur-[120px] rounded-full pointer-events-none" />
         </motion.div>
 
-        <motion.div variants={item} className="lg:col-span-4 rounded-[4rem] p-10 sm:p-16 bg-white/[0.02] border border-white/5 relative overflow-hidden group">
-           <div className="flex items-center gap-6 mb-16 sm:mb-20 border-b border-white/5 pb-10">
-              <div className="w-16 h-16 rounded-3xl bg-orange-500/10 flex items-center justify-center text-orange-400 border border-orange-500/20 shadow-2xl">
-                 <Clock className="w-8 h-8" />
+        <motion.div variants={item} className="lg:col-span-4 rounded-[3.5rem] p-10 sm:p-14 bg-white/[0.02] border border-white/5 relative overflow-hidden">
+           <div className="flex items-center gap-5 mb-12 border-b border-white/5 pb-8">
+              <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-400 border border-orange-500/20">
+                 <Clock className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase leading-none">Actividad</h3>
-                <p className="text-[9px] text-orange-400 font-black uppercase tracking-[0.4em] mt-3 italic">Nodo Maestro de Logs</p>
+                <h3 className="text-2xl font-bold text-white tracking-tight uppercase">Actividad</h3>
+                <p className="text-[9px] text-orange-400 font-semibold uppercase tracking-widest mt-1">Logs Maestros</p>
               </div>
            </div>
 
-           <div className="space-y-10 max-h-[600px] overflow-y-auto no-scrollbar pr-2">
+           <div className="space-y-8 max-h-[500px] overflow-y-auto no-scrollbar pr-2">
               {(stats?.recentActivity && Array.isArray(stats.recentActivity) && stats.recentActivity.length > 0) ? (
                 stats.recentActivity.map((log, i) => (
-                    <div key={i} className="flex gap-8 group/item">
-                      <div className="flex flex-col items-center gap-3 pt-2">
-                         <div className={`w-3.5 h-3.5 rounded-full shadow-2xl transition-all duration-500 group-hover/item:scale-125 ${
-                            log.type === 'STUDENT_REG' ? 'bg-emerald-500 shadow-emerald-500/60' :
-                            log.type === 'JUSTIFICATION' ? 'bg-amber-500 shadow-amber-500/60' :
-                            log.type === 'GRADE' ? 'bg-indigo-500 shadow-indigo-500/60' :
-                            'bg-blue-500 shadow-blue-500/60'
+                    <div key={i} className="flex gap-6 group/item">
+                      <div className="flex flex-col items-center gap-2 pt-1.5">
+                         <div className={`w-2.5 h-2.5 rounded-full ${
+                            log.type === 'STUDENT_REG' ? 'bg-emerald-500 shadow-emerald-500/30' :
+                            log.type === 'JUSTIFICATION' ? 'bg-amber-500 shadow-amber-500/30' :
+                            log.type === 'GRADE' ? 'bg-indigo-500 shadow-indigo-500/30' :
+                            'bg-blue-500 shadow-blue-500/30'
                          }`} />
-                         <div className="w-[1.5px] h-full bg-white/5 rounded-full" />
+                         <div className="w-[1px] h-full bg-white/5" />
                       </div>
-                      <div className="pb-10 flex-1">
-                         <p className="text-lg font-bold text-white/90 leading-tight mb-2 group-hover/item:text-blue-400 transition-colors">{log.event}</p>
-                         <div className="flex items-center gap-3">
-                            <Clock className="w-3 h-3 text-[#86868b]/40" />
-                            <span className="text-[10px] font-black text-[#86868b] tracking-widest uppercase opacity-60 italic">{log.time}</span>
+                      <div className="pb-8 flex-1">
+                         <p className="text-sm font-semibold text-white/90 leading-tight mb-2 group-hover:text-blue-400 transition-colors">{log.event}</p>
+                         <div className="flex items-center gap-2 opacity-40">
+                            <Clock className="w-3 h-3" />
+                            <span className="text-[9px] font-bold uppercase tracking-widest">{log.time}</span>
                          </div>
                       </div>
                    </div>
                 ))
               ) : (
-                <div className="py-32 flex flex-col items-center justify-center text-[#86868b] space-y-6 opacity-30">
-                   <div className="w-20 h-20 rounded-full border-2 border-dashed border-current flex items-center justify-center animate-pulse">
-                      <Clock className="w-10 h-10" />
-                   </div>
-                   <span className="text-[11px] font-black tracking-[0.4em] uppercase text-center">Protocolo de Silencio:<br/>Sin Actividad Reciente</span>
+                <div className="py-24 flex flex-col items-center justify-center text-[#86868b] space-y-4 opacity-40">
+                   <Clock className="w-10 h-10 mb-2" />
+                   <span className="text-[10px] font-bold tracking-widest uppercase text-center">Sin Actividad Reciente</span>
                 </div>
               )}
            </div>
-
-           <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full pointer-events-none" />
         </motion.div>
       </div>
 
-      {/* Action Footnotes: Premium Row */}
-      <motion.div variants={item} className="flex flex-col xl:flex-row xl:items-center gap-6 sm:gap-8 pt-16 border-t border-white/5">
-         <div className="flex flex-wrap gap-4 sm:gap-6 flex-1">
+      {/* Action Row */}
+      <motion.div variants={item} className="flex flex-col xl:flex-row xl:items-center gap-6 pt-12 border-t border-white/5">
+         <div className="flex flex-wrap gap-4 flex-1">
              <Button 
                 onClick={generateProReport}
                 disabled={reportLoading}
-                className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl sm:rounded-3xl px-8 sm:px-10 h-16 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex gap-4 items-center shadow-xl disabled:opacity-50"
+                className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl px-8 h-14 text-[10px] font-bold uppercase tracking-wider transition-all flex gap-3 items-center"
              >
-                {reportLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Printer className="w-5 h-5 text-blue-500" />}
-                {reportLoading ? 'Procesando Inteligencia...' : 'Descargar Reporte Ejecutivo IA'}
+                {reportLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Printer className="w-4 h-4 text-blue-500" />}
+                Reporte Ejecutivo IA
              </Button>
              
              <Button 
                 onClick={() => onTabChange('students')}
-                className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl sm:rounded-3xl px-8 sm:px-10 h-16 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex gap-4 items-center shadow-xl"
+                className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl px-8 h-14 text-[10px] font-bold uppercase tracking-wider transition-all flex gap-3 items-center"
              >
-                <UserPlus className="w-5 h-5 text-emerald-500" />
-                Matriculación Instantánea
+                <UserPlus className="w-4 h-4 text-emerald-500" />
+                Nueva Admisión
              </Button>
 
              <label className="cursor-pointer">
                 <input type="file" className="hidden" accept=".xlsx,.xls,.csv" onChange={handleFileImport} disabled={importLoading} />
-                <div className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl sm:rounded-3xl px-8 sm:px-10 h-16 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex gap-4 items-center shadow-xl">
-                   {importLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5 text-amber-500" />}
-                   {importLoading ? 'Inyectando Datos...' : 'Carga Masiva (Excel/CSV)'}
+                <div className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl px-8 h-14 text-[10px] font-bold uppercase tracking-wider transition-all flex gap-3 items-center">
+                   {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4 text-amber-500" />}
+                   Importar Datos
                 </div>
              </label>
          </div>
 
-         {importMsg && (
-           <motion.div 
-             initial={{ opacity: 0, y: 10 }} 
-             animate={{ opacity: 1, y: 0 }} 
-             className="px-8 py-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-black text-emerald-400 uppercase tracking-widest italic"
-           >
-             {importMsg}
-           </motion.div>
-         )}
-
-         <div className="xl:ml-auto flex items-center gap-6 text-[#86868b] select-none opacity-40">
-            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
-            <Command className="w-5 h-5" />
-            <span className="text-[11px] font-black uppercase tracking-[0.4em] italic leading-none">Andrés Bello Kernel v30.0</span>
+         <div className="xl:ml-auto flex items-center gap-5 text-[#86868b] opacity-40">
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+            <Command className="w-4 h-4" />
+            <span className="text-[10px] font-bold uppercase tracking-widest">Andrés Bello Kernel v30.0</span>
          </div>
       </motion.div>
     </motion.div>
@@ -745,4 +736,3 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
 };
 
 export default Dashboard;
-
