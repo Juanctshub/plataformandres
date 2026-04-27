@@ -357,6 +357,7 @@ const Students = () => {
             </AnimatePresence>
         </div>
 
+
         {/* Inscription Modal (Remains as Dialog for focus) */}
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogContent className="apple-glass border-white/10 rounded-[3.5rem] p-12 max-w-2xl bg-black/95 backdrop-blur-[100px] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] z-[9999]">
@@ -428,7 +429,7 @@ const Students = () => {
                  </Button>
               </form>
             </DialogContent>
-        </div>
+        </Dialog>
 
         {/* Delete Confirmation Modal */}
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
@@ -453,7 +454,6 @@ const Students = () => {
               </div>
             </DialogContent>
         </Dialog>
-    </div>
     </div>
   );
 };

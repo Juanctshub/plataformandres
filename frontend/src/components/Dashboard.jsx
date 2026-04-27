@@ -741,11 +741,8 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
          </div>
       </motion.div>
     </motion.div>
-         <span className="text-[10px] font-semibold uppercase tracking-widest">Protocolo Andrés Bello 2026</span>
-         </div>
-      </motion.div>
-    </motion.div>
   );
 };
 
 export default Dashboard;
+
