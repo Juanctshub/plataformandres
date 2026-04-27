@@ -26,7 +26,9 @@ import {
   XCircle,
   Send,
   Zap,
-  MessageSquare
+  MessageSquare,
+  Scan,
+  TrendingUp
 } from 'lucide-react';
 
 import Login from './Login';
@@ -53,11 +55,11 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
     { id: 'students', icon: Users, label: 'Matrícula' },
     { id: 'attendance', icon: ClipboardCheck, label: 'Asistencia' },
     { id: 'grades', icon: GraduationCap, label: 'Notas' },
-    ...(userName === 'admin' || localStorage.getItem('user')?.includes('admin') ? [
-      { id: 'finance', icon: Briefcase, label: 'Finanzas' },
+    ...(userName === 'admin' || JSON.parse(localStorage.getItem('user'))?.role === 'admin' ? [
+      { id: 'finance', icon: TrendingUp, label: 'Finanzas' },
       { id: 'vision', icon: Scan, label: 'Visión IA' },
       { id: 'lapses', icon: CalendarRange, label: 'Lapsos' },
-      { id: 'staff', icon: Briefcase, label: 'Personal' },
+      { id: 'staff', icon: Users, label: 'Personal' },
       { id: 'settings', icon: SettingsIcon, label: 'Ajustes' }
     ] : [])
   ];
