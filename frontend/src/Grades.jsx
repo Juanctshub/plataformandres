@@ -265,11 +265,21 @@ const Grades = () => {
     };
 
     const filteredGrades = Array.isArray(grades) ? grades.filter(g => {
-        const matchesSearch = (g.student?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
-                             (g.subject?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-        const matchesYear = yearFilter === 'Todos' || (g.seccion || '').includes(yearFilter);
+        if (!g) return false;
+        const studentName = g.student || g.nombre || '';
+        const subjectName = g.subject || g.materia || '';
+        const sectionName = g.seccion || '';
+        
+        const matchesSearch = (studentName.toLowerCase()).includes(searchTerm.toLowerCase()) || 
+                             (subjectName.toLowerCase()).includes(searchTerm.toLowerCase());
+        const matchesYear = yearFilter === 'Todos' || sectionName.includes(yearFilter);
         return matchesSearch && matchesYear;
-    }) : [];
+    }).map(g => ({
+        ...g,
+        student: g.student || g.nombre || 'Estudiante',
+        subject: g.subject || g.materia || 'Materia',
+        grade: g.grade || g.nota || 0
+    })) : [];
 
     const years = ['Todos', '1ro', '2do', '3ro', '4to', '5to'];
 
@@ -409,7 +419,7 @@ const Grades = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
                   { label: 'Promedio Global', value: (filteredGrades.reduce((acc, c) => acc + (parseFloat(c.grade) || 0), 0) / (filteredGrades.length || 1)).toFixed(1), icon: Target, color: 'text-white' },
-                  { label: 'Aprobación', value: `${((filteredGrades.filter(g => parseFloat(g.grade) >= 10).length / (filteredGrades.length || 1)) * 100).toFixed(0)}%`, icon: TrendingUp, color: 'text-emerald-400' },
+                  { label: 'Aprobación', value: `${((filteredGrades.filter(g => (parseFloat(g.grade) || 0) >= 10).length / (filteredGrades.length || 1)) * 100).toFixed(0)}%`, icon: TrendingUp, color: 'text-emerald-400' },
                   { label: 'Total Registros', value: filteredGrades.length, icon: Database, color: 'text-blue-400' },
                 ].map((m, i) => (
                   <div key={i} className="apple-card p-8 flex items-center justify-between border-white/[0.03]">

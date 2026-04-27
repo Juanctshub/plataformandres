@@ -38,6 +38,7 @@ import AttendanceSheet from './AttendanceSheet';
 import Justifications from './Justifications';
 import IAAnalytics from './IAAnalytics';
 import Staff from './Staff';
+import Grades from './Grades';
 import AIChatView from './AIChatView';
 import { Badge } from "./components/ui/badge";
 import { Button } from "./components/ui/button";
