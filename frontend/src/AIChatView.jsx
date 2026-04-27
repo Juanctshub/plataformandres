@@ -37,7 +37,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && messages.length > 1) {
         scrollRef.current.scrollTo({
             top: scrollRef.current.scrollHeight,
             behavior: 'smooth'

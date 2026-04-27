@@ -89,6 +89,13 @@ const Finance = () => {
     ) : [];
 
     const totalRevenue = Array.isArray(payments) ? payments.reduce((acc, curr) => acc + (parseFloat(curr.monto) || 0), 0) : 0;
+    
+    // Dynamic Stats calculation
+    const totalStudentsCount = Array.isArray(students) ? students.length : 0;
+    const studentsWhoPaid = Array.isArray(payments) ? new Set(payments.map(p => p.estudiante_id)).size : 0;
+    
+    const solvencyRate = totalStudentsCount > 0 ? Math.round((studentsWhoPaid / totalStudentsCount) * 100) : 0;
+    const debtRate = 100 - solvencyRate;
 
     if (loading) return (
         <div className="flex items-center justify-center h-64">
@@ -119,7 +126,7 @@ const Finance = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="apple-card p-8 border border-white/5"
+                    className="apple-card p-8 border border-white/5 bg-gradient-to-br from-emerald-600/10 to-transparent"
                 >
                     <div className="flex justify-between items-start mb-6">
                         <div className="p-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-600/20">
@@ -127,15 +134,17 @@ const Finance = () => {
                         </div>
                         <Badge className="bg-emerald-600/10 text-emerald-400 border-none px-3 py-1 text-[8px] font-black uppercase">Solvencia Promedio</Badge>
                     </div>
-                    <h3 className="text-4xl font-black text-white">84%</h3>
-                    <p className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest mt-2">Institución Saludable</p>
+                    <h3 className="text-4xl font-black text-white">{solvencyRate}%</h3>
+                    <p className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest mt-2">
+                        {solvencyRate >= 70 ? 'Institución Saludable' : 'Riesgo Administrativo'}
+                    </p>
                 </motion.div>
 
                 <motion.div 
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="apple-card p-8 border border-white/5"
+                    className="apple-card p-8 border border-white/5 bg-gradient-to-br from-red-600/10 to-transparent"
                 >
                     <div className="flex justify-between items-start mb-6">
                         <div className="p-3 rounded-2xl bg-red-600 text-white shadow-xl shadow-red-600/20">
@@ -143,7 +152,7 @@ const Finance = () => {
                         </div>
                         <Badge className="bg-red-600/10 text-red-400 border-none px-3 py-1 text-[8px] font-black uppercase">Morosidad Crítica</Badge>
                     </div>
-                    <h3 className="text-4xl font-black text-white">16%</h3>
+                    <h3 className="text-4xl font-black text-white">{debtRate}%</h3>
                     <p className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest mt-2">Pendiente por Cobrar</p>
                 </motion.div>
             </div>
@@ -159,13 +168,25 @@ const Finance = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
+                
                 <Button 
                     onClick={() => setIsModalOpen(true)}
-                    className="h-14 px-8 bg-white text-black hover:bg-zinc-200 rounded-full font-black text-xs uppercase tracking-widest shadow-xl flex items-center gap-3"
+                    className="h-14 px-10 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-blue-600/20 active:scale-95 transition-all"
                 >
-                    <Plus className="w-5 h-5" /> Registrar Nuevo Pago
+                    <Plus className="w-4 h-4 mr-2" />
+                    Registrar Transacción
                 </Button>
             </div>
+
+            {/* Floating Action for Mobile/Premium feel */}
+            <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setIsModalOpen(true)}
+                className="fixed bottom-32 right-10 w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-emerald-600/40 z-[60] lg:hidden"
+            >
+                <Plus className="w-8 h-8" />
+            </motion.button>
 
             {/* Table */}
             <div className="apple-card border border-white/5 overflow-hidden">
@@ -229,7 +250,7 @@ const Finance = () => {
             {/* Modal */}
             <AnimatePresence>
                 {isModalOpen && (
-                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+                    <div className="fixed inset-0 z-[70] flex items-center justify-center p-6">
                         <motion.div 
                             initial={{ opacity: 0 }} 
                             animate={{ opacity: 1 }} 

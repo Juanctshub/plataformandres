@@ -393,6 +393,55 @@ app.delete('/api/personal/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// LAPSOS ACADÉMICOS (Control de Ciclos)
+app.get('/api/lapsos', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query("SELECT * FROM periodos ORDER BY lapso ASC");
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/lapsos/:lapso', authenticateToken, async (req, res) => {
+    const { lapso } = req.params;
+    const { estado } = req.body;
+    try {
+        const result = await db.query(
+            "UPDATE periodos SET estado = $1, fecha_cierre = CASE WHEN $1 = 'cerrado' THEN NOW() ELSE NULL END, cerrado_por = $2 WHERE lapso = $3",
+            [estado, req.user.id, lapso]
+        );
+        await logAudit(req.user.id, "UPDATE_LAPSO", { lapso, estado });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// IA VISION (Procesamiento OCR)
+app.post('/api/ai/vision/attendance', authenticateToken, async (req, res) => {
+    const { imageBase64 } = req.body;
+    if (!imageBase64) return res.status(400).json({ error: "No se recibió imagen" });
+
+    try {
+        // En un entorno de producción, aquí se usaría un OCR especializado o una API de Visión
+        // Simulamos el procesamiento IA de Groq/Vision
+        setTimeout(() => {
+            res.json({
+                result: {
+                    attendance: [
+                        { name: "Andrés Bello (Sincronizado)", status: "presente", confidence: "99%" },
+                        { name: "Samuel Portfolio", status: "presente", confidence: "98%" },
+                        { name: "Alumno de Prueba", status: "ausente", confidence: "95%" }
+                    ]
+                }
+            });
+        }, 2000);
+    } catch (err) {
+        res.status(500).json({ error: "Fallo en el núcleo de visión: " + err.message });
+    }
+});
+
 // CONFIGURACIONES (Ajustes Institucionales Persistentes)
 app.get('/api/config', authenticateToken, async (req, res) => {
     try {

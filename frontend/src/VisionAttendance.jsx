@@ -161,9 +161,12 @@ const VisionAttendance = ({ onComplete }) => {
                                         <div className={`w-2 h-2 rounded-full ${r.status === 'presente' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-red-500 shadow-[0_0_10px_#ef4444]'}`} />
                                         <span className="text-sm font-bold text-white uppercase tracking-tighter">{r.name}</span>
                                     </div>
-                                    <Badge className={r.status === 'presente' ? 'bg-emerald-500/10 text-emerald-500 border-none' : 'bg-red-500/10 text-red-500 border-none'}>
-                                        {r.status}
-                                    </Badge>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-[10px] font-black text-white/40">{r.confidence}</span>
+                                        <Badge className={r.status === 'presente' ? 'bg-emerald-500/10 text-emerald-500 border-none' : 'bg-red-500/10 text-red-500 border-none'}>
+                                            {r.status}
+                                        </Badge>
+                                    </div>
                                 </motion.div>
                             ))
                         ) : (
