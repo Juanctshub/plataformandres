@@ -230,8 +230,19 @@ const Staff = () => {
                  </Dialog>
             </div>
 
+            <div className="flex items-center gap-4 mb-8 px-6">
+               <h4 className="text-sm font-black text-white uppercase tracking-widest italic">Personal Sincronizado</h4>
+               <Badge className="bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 px-4 py-1 text-[10px] font-black uppercase">
+                  {filteredStaff.length} Miembros Activos
+               </Badge>
+               <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5">
+                  <Database className="w-3 h-3 text-indigo-400" />
+                  <span className="text-[8px] font-black text-indigo-400 uppercase tracking-widest">Base de Datos Institucional Unificada</span>
+               </div>
+            </div>
+
             {/* Staff Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-12">
                <AnimatePresence mode="popLayout">
                   {filteredStaff.length > 0 ? (
                     filteredStaff.map((s, i) => (
@@ -242,7 +253,7 @@ const Staff = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ delay: i * 0.03 }}
-                        className="group relative overflow-hidden rounded-[3.5rem] p-10 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-blue-500/30 transition-all duration-700"
+                        className="group relative overflow-hidden rounded-[3.5rem] p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-blue-500/30 transition-all duration-700 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)]"
                       >
                          <div className="flex justify-between items-start mb-10">
                             <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center transition-all bg-white/[0.03] border border-white/10 text-white/20 group-hover:bg-blue-600/10 group-hover:text-blue-500 group-hover:border-blue-500/20 shadow-2xl overflow-hidden relative`}>
@@ -265,7 +276,7 @@ const Staff = () => {
                                 </div>
                             </div>
                             
-                            <div className="space-y-4 pt-8 border-t border-white/5">
+                            <div className="space-y-6 pt-10 border-t border-white/5">
                                <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3">
                                      <Mail className="w-4 h-4 text-[#86868b]/40" />

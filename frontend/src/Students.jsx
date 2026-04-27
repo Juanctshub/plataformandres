@@ -320,6 +320,10 @@ const Students = () => {
             <Badge className="bg-blue-600/10 text-blue-400 border border-blue-500/20 px-4 py-1 text-[10px] font-black uppercase">
                {filteredStudents.length} Alumnos Sincronizados
             </Badge>
+            <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5">
+               <Database className="w-3 h-3 text-emerald-400" />
+               <span className="text-[8px] font-black text-emerald-400 uppercase tracking-widest">Base de Datos Unificada</span>
+            </div>
          </div>
          <div className="flex items-center gap-3">
             <Activity className="w-4 h-4 text-[#86868b]" />
@@ -328,7 +332,7 @@ const Students = () => {
       </div>
 
       {/* Grid of Results */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-12">
         <AnimatePresence mode="popLayout">
           {filteredStudents.length > 0 ? (
             filteredStudents.map((student, i) => (
@@ -339,7 +343,7 @@ const Students = () => {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
                 transition={{ delay: i * 0.03, type: 'spring', damping: 20, stiffness: 100 }}
-                className="group relative overflow-hidden rounded-[3.5rem] p-10 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-blue-500/30 transition-all duration-700 hover:shadow-[0_40px_80px_-20px_rgba(59,130,246,0.15)]"
+                className="group relative overflow-hidden rounded-[3.5rem] p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-blue-500/30 transition-all duration-700 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)]"
               >
                  {/* ID Badge Floating */}
                  <div className="absolute top-10 right-10">
@@ -366,8 +370,8 @@ const Students = () => {
                     </div>
                  </div>
 
-                <div className="space-y-6 mb-12">
-                   <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 group-hover:bg-white/5 transition-all">
+                <div className="space-y-8 mb-16">
+                   <div className="flex items-center justify-between p-5 rounded-[2rem] bg-white/[0.02] border border-white/5 group-hover:bg-white/5 transition-all">
                       <div className="flex items-center gap-4">
                          <IdCard className="w-5 h-5 text-blue-500/50" />
                          <span className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Identidad Central</span>
@@ -376,7 +380,7 @@ const Students = () => {
                    </div>
                 </div>
 
-                <div className="pt-10 border-t border-white/5 space-y-5">
+                <div className="pt-12 border-t border-white/5 space-y-6">
                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                          <Target className="w-4 h-4 text-white/20" />
@@ -387,7 +391,7 @@ const Students = () => {
                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                          <Phone className="w-4 h-4 text-white/20" />
-                         <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">Enlace de Red</span>
+                         <span className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Enlace de Red</span>
                       </div>
                       <span className="text-[11px] font-bold text-white/80 italic">{student.contacto || 'Pendiente'}</span>
                    </div>
