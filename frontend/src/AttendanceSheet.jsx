@@ -56,7 +56,7 @@ const AttendanceSheet = () => {
       const mappedStudents = studentsArray.map(s => {
         const hasJustification = justArray.find(j => 
           j.estudiante_id === s.id && 
-          j.fecha.startsWith(date) && 
+          (j.fecha || '').startsWith(date) && 
           j.estado === 'aprobado'
         );
         return { 

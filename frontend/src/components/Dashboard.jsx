@@ -490,24 +490,32 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
     const fetchFinance = async () => {
       try {
         const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        let user = {};
+        try {
+          const stored = localStorage.getItem('user');
+          user = stored && stored !== 'undefined' ? JSON.parse(stored) : {};
+        } catch (e) { user = {}; }
+        
         if (user.role !== 'admin') return;
         
         const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
         const res = await fetch(`${baseUrl}/api/finanzas/stats`, { 
           headers: { 'Authorization': `Bearer ${token}` } 
         });
-        if (res.ok) setFinanceStats(await res.json());
+        if (res.ok) {
+          const data = await res.json();
+          if (data) setFinanceStats(data);
+        }
       } catch (e) { console.error("Finance fetch failed", e); }
     };
     fetchFinance();
   }, []);
 
   const statCards = [
-    { label: 'Matrícula', value: stats.students || 0, sub: 'Estudiantes Activos', icon: Users, color: 'bg-blue-500/10 text-blue-400' },
-    { label: 'Asistencia', value: stats.attendance && stats.attendance !== 'Sin datos' ? stats.attendance : '0%', sub: 'Presencialidad Promedio', icon: CheckCircle2, color: 'bg-emerald-500/10 text-emerald-400' },
-    { label: 'Recaudación', value: `$${financeStats.total_revenue?.toLocaleString()}`, sub: `Solvencia: ${financeStats.solvency_rate}`, icon: TrendingUp, color: 'bg-amber-500/10 text-amber-400' },
-    { label: 'Justificativos', value: stats.justifications || 0, sub: 'Pendientes de Firma', icon: Clock, color: 'bg-indigo-500/10 text-indigo-400' },
+    { label: 'Matrícula', value: (stats?.students || stats?.totalStudents) || 0, sub: 'Estudiantes Activos', icon: Users, color: 'bg-blue-500/10 text-blue-400' },
+    { label: 'Asistencia', value: stats?.attendance && stats?.attendance !== 'Sin datos' ? stats.attendance : '0%', sub: 'Presencialidad Promedio', icon: CheckCircle2, color: 'bg-emerald-500/10 text-emerald-400' },
+    { label: 'Recaudación', value: `$${(financeStats?.total_revenue || 0).toLocaleString()}`, sub: `Solvencia: ${financeStats?.solvency_rate || '0%'}`, icon: TrendingUp, color: 'bg-amber-500/10 text-amber-400' },
+    { label: 'Justificativos', value: stats?.justifications || 0, sub: 'Pendientes de Firma', icon: Clock, color: 'bg-indigo-500/10 text-indigo-400' },
   ];
 
   return (

@@ -82,7 +82,14 @@ class ErrorBoundary extends React.Component {
 }
 
 const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
-  const userRole = JSON.parse(localStorage.getItem('user') || '{}')?.role;
+  const getSafeRole = () => {
+    try {
+      const stored = localStorage.getItem('user');
+      if (!stored || stored === 'undefined') return null;
+      return JSON.parse(stored)?.role;
+    } catch (e) { return null; }
+  };
+  const userRole = getSafeRole();
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Inicio' },
     { id: 'students', icon: Users, label: 'Matrícula' },
@@ -201,7 +208,18 @@ const CriticalErrorScreen = ({ onRetry }) => (
 
 const AndresBelloSuite = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+  
+  const getSafeUser = () => {
+    try {
+      const stored = localStorage.getItem('user');
+      if (!stored || stored === 'undefined') return null;
+      return JSON.parse(stored);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const [user, setUser] = useState(getSafeUser());
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isInitializing, setIsInitializing] = useState(true);
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);

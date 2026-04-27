@@ -88,7 +88,7 @@ const Finance = () => {
         (p.cedula?.toLowerCase() || '').includes(searchTerm.toLowerCase())
     ) : [];
 
-    const totalRevenue = payments.reduce((acc, curr) => acc + parseFloat(curr.monto), 0);
+    const totalRevenue = Array.isArray(payments) ? payments.reduce((acc, curr) => acc + (parseFloat(curr.monto) || 0), 0) : 0;
 
     if (loading) return (
         <div className="flex items-center justify-center h-64">
