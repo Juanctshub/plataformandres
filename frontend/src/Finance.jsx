@@ -14,7 +14,8 @@ import {
   CreditCard,
   History,
   Loader2,
-  Trash2
+  Trash2,
+  ChevronRight
 } from 'lucide-react';
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
@@ -310,15 +311,32 @@ const Finance = () => {
                                         <div className="relative">
                                             <select 
                                                 className="w-full h-16 bg-white/[0.03] border border-white/5 rounded-[1.5rem] px-8 text-sm text-white outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 appearance-none font-bold transition-all"
-                                                value={newPayment.mes}
-                                                onChange={(e) => setNewPayment({...newPayment, mes: e.target.value})}
+                                                value={newPayment.mes_correspondiente}
+                                                onChange={(e) => setNewPayment({...newPayment, mes_correspondiente: e.target.value})}
                                             >
                                                 {['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'].map(m => (
                                                     <option key={m} value={m} className="bg-black">{m}</option>
                                                 ))}
                                             </select>
-                                    </Button>
+                                            <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] rotate-90" />
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <div className="space-y-3 group">
+                                    <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-emerald-500 transition-colors">Concepto o Detalle</label>
+                                    <Input 
+                                        placeholder="Ej: Mensualidad, Inscripción, Carnet..."
+                                        className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all placeholder:text-white/10"
+                                        value={newPayment.concepto}
+                                        onChange={(e) => setNewPayment({...newPayment, concepto: e.target.value})}
+                                        required
+                                    />
+                                </div>
+
+                                <Button type="submit" disabled={submitting} className="w-full h-18 bg-white text-black hover:bg-zinc-200 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-[0.98] mt-4">
+                                    {submitting ? <Loader2 className="w-6 h-6 animate-spin text-black" /> : "Confirmar Transacción y Emitir Recibo"}
+                                </Button>
                             </form>
                         </motion.div>
                     </div>
