@@ -221,74 +221,75 @@ const Students = () => {
             
             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                 <DialogTrigger asChild>
-                  <Button className="h-16 px-10 rounded-[1.8rem] bg-white text-black hover:bg-zinc-200 shadow-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 gap-3">
+                  <Button className="h-16 px-10 rounded-[1.8rem] bg-blue-600 text-white hover:bg-blue-500 shadow-2xl shadow-blue-600/30 font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 gap-3 border border-blue-400/20">
                      <UserPlus className="w-5 h-5" />
                      Inscribir Alumno
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="apple-glass border-white/10 rounded-[3.5rem] p-12 max-w-2xl bg-black/90 backdrop-blur-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]">
-                  <DialogHeader className="mb-12">
-                     <div className="w-16 h-16 rounded-3xl bg-blue-500/10 flex items-center justify-center text-blue-500 mb-6 border border-blue-500/20">
+                <DialogContent className="apple-glass border-white/10 rounded-[3.5rem] p-12 max-w-2xl bg-black/95 backdrop-blur-[100px] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] z-[9999]">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent pointer-events-none rounded-[3.5rem]" />
+                  <DialogHeader className="mb-12 relative z-10">
+                     <div className="w-16 h-16 rounded-3xl bg-blue-600 text-white flex items-center justify-center shadow-2xl shadow-blue-600/40 mb-6">
                         <UserPlus className="w-8 h-8" />
                      </div>
-                     <DialogTitle className="text-4xl font-black text-white italic uppercase tracking-tighter">Nueva Matrícula</DialogTitle>
-                     <DialogDescription className="text-[#86868b] font-bold uppercase tracking-widest text-[9px] mt-2">Sincronización de Identidad Académica 2026</DialogDescription>
+                     <DialogTitle className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">Nueva Matrícula</DialogTitle>
+                     <DialogDescription className="text-blue-400/60 font-black uppercase tracking-[0.3em] text-[8px] mt-3">Protocolo de Identidad Institucional v27.2</DialogDescription>
                   </DialogHeader>
-                  <form onSubmit={handleSubmit} className="space-y-8">
+                  <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
                      <div className="grid grid-cols-2 gap-8">
-                        <div className="space-y-3">
-                           <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Identidad (CI)</label>
+                        <div className="space-y-3 group">
+                           <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Identidad (CI)</label>
                            <Input 
-                              placeholder="V-000.000"
-                              className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
+                              placeholder="V-00.000.000"
+                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
                               value={newStudent.cedula}
                               onChange={(e) => setNewStudent({...newStudent, cedula: e.target.value})}
                               required
                            />
                         </div>
-                        <div className="space-y-3">
-                           <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Sección Académica</label>
+                        <div className="space-y-3 group">
+                           <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Sección Académica</label>
                            <Input 
-                              placeholder="Ej: 5A"
-                              className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
+                              placeholder="Ej: 5to Año A"
+                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
                               value={newStudent.seccion}
                               onChange={(e) => setNewStudent({...newStudent, seccion: e.target.value})}
                               required
                            />
                         </div>
                      </div>
-                     <div className="space-y-3">
-                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Nombre Completo del Estudiante</label>
+                     <div className="space-y-3 group">
+                        <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Nombre Completo del Estudiante</label>
                         <Input 
-                           placeholder="Nombres y Apellidos"
-                           className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
+                           placeholder="Nombres y Apellidos del alumno"
+                           className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
                            value={newStudent.nombre}
                            onChange={(e) => setNewStudent({...newStudent, nombre: e.target.value})}
                            required
                         />
                      </div>
                      <div className="grid grid-cols-2 gap-8">
-                        <div className="space-y-3">
-                           <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Representante Legal</label>
+                        <div className="space-y-3 group">
+                           <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Representante Legal</label>
                            <Input 
-                              placeholder="Padre o Madre"
-                              className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
+                              placeholder="Nombre del Padre/Madre"
+                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
                               value={newStudent.representante}
                               onChange={(e) => setNewStudent({...newStudent, representante: e.target.value})}
                            />
                         </div>
-                        <div className="space-y-3">
-                           <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Canal de Contacto</label>
+                        <div className="space-y-3 group">
+                           <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Canal de Contacto</label>
                            <Input 
-                              placeholder="+58 412..."
-                              className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
+                              placeholder="+58 4XX..."
+                              className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/10"
                               value={newStudent.contacto}
                               onChange={(e) => setNewStudent({...newStudent, contacto: e.target.value})}
                            />
                         </div>
                      </div>
-                     <Button type="submit" disabled={submitting} className="w-full h-16 bg-white text-black hover:bg-zinc-200 rounded-[1.8rem] font-black text-xs uppercase tracking-widest transition-all shadow-2xl active:scale-[0.98]">
-                        {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Validar e Inscribir Estudiante"}
+                     <Button type="submit" disabled={submitting} className="w-full h-18 bg-white text-black hover:bg-zinc-200 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-[0.98] mt-4">
+                        {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Ejecutar Inscripción Institucional"}
                      </Button>
                   </form>
                 </DialogContent>

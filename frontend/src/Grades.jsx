@@ -343,43 +343,44 @@ const Grades = () => {
                         <Download className="w-5 h-5" />
                         Descargar Acta
                     </Button>
-
-                  <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+                    <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                     <DialogTrigger asChild>
-                      <Button className="h-14 px-10 bg-blue-600 text-white hover:bg-blue-500 rounded-2xl font-semibold text-xs flex gap-3 shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
+                      <Button className="h-16 px-10 bg-emerald-600 text-white hover:bg-emerald-500 rounded-[1.8rem] font-black text-[10px] uppercase tracking-widest flex gap-3 shadow-2xl shadow-emerald-600/30 active:scale-95 transition-all border border-emerald-400/20">
                         <Plus className="w-5 h-5" />
                         Registrar Nota
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="apple-glass border-white/10 p-16 rounded-[3rem] max-w-xl">
-                       <DialogHeader className="mb-10">
-                          <DialogTitle className="text-3xl font-semibold text-white tracking-tight">Consolidación de Nota</DialogTitle>
-                          <DialogDescription className="text-[#86868b] font-medium mt-3">Registro académico v15.0 Platinum</DialogDescription>
+                    <DialogContent className="apple-glass border-white/10 p-12 rounded-[3.5rem] max-w-2xl bg-black/95 backdrop-blur-[100px] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] z-[9999]">
+                       <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 to-transparent pointer-events-none rounded-[3.5rem]" />
+                       <DialogHeader className="mb-12 relative z-10">
+                          <div className="w-16 h-16 rounded-3xl bg-emerald-600 text-white flex items-center justify-center shadow-2xl shadow-emerald-600/40 mb-6">
+                             <GraduationCap className="w-8 h-8" />
+                          </div>
+                          <DialogTitle className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">Registro de Rendimiento</DialogTitle>
+                          <DialogDescription className="text-emerald-400/60 font-black uppercase tracking-[0.3em] text-[8px] mt-3">Protocolo de Evaluación Académica v27.2</DialogDescription>
                        </DialogHeader>
-                       <form onSubmit={handleSubmit} className="space-y-8">
-                          <div className="space-y-4">
-                             <label className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em] pl-2 block">Estudiante Vinculado</label>
-                             <div className="relative group">
-                               <select 
-                                 className="w-full bg-zinc-900/50 border border-white/20 rounded-2xl h-16 px-8 text-base text-white outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none transition-all group-hover:border-white/30"
-                                 value={newGrade.estudiante_id}
-                                 onChange={(e) => setNewGrade({...newGrade, estudiante_id: e.target.value})}
-                                 required
-                               >
-                                  <option value="" className="text-black">Seleccionar alumno...</option>
-                                  {students.map(s => <option key={s.id} value={s.id} className="text-black">{s.nombre} ({s.seccion})</option>)}
-                               </select>
-                               <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[#86868b]">
-                                  <ChevronRight className="w-5 h-5 rotate-90" />
-                               </div>
+                       <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+                          <div className="space-y-3 group">
+                             <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-emerald-500 transition-colors">Seleccionar Estudiante</label>
+                             <div className="relative">
+                                <select 
+                                   className="w-full bg-white/[0.03] border border-white/5 rounded-[1.5rem] h-16 px-6 text-sm text-white outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 appearance-none font-bold transition-all"
+                                   value={newGrade.estudiante_id}
+                                   onChange={(e) => setNewGrade({...newGrade, estudiante_id: e.target.value})}
+                                   required
+                                >
+                                   <option value="" className="bg-black text-white">--- Seleccione Estudiante ---</option>
+                                   {students.map(s => <option key={s.id} value={s.id} className="bg-black text-white">{s.nombre} ({s.cedula})</option>)}
+                                </select>
+                                <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] rotate-90" />
                              </div>
                           </div>
-                          
-                          <div className="space-y-4">
-                             <label className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em] pl-2 block">Cátedra / Materia</label>
+
+                          <div className="space-y-3 group">
+                             <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-emerald-500 transition-colors">Asignatura / Materia</label>
                              <Input 
-                                placeholder="Ej: Castellano y Literatura"
-                                className="h-16 bg-zinc-900/50 border-white/20 rounded-2xl text-white font-semibold text-lg px-8 focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="Ej: Matemáticas, Castellano..."
+                                className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all placeholder:text-white/10"
                                 value={newGrade.materia}
                                 onChange={(e) => setNewGrade({...newGrade, materia: e.target.value})}
                                 required
@@ -387,39 +388,37 @@ const Grades = () => {
                           </div>
 
                           <div className="grid grid-cols-2 gap-8">
-                             <div className="space-y-4">
-                                <label className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em] pl-2 block">Nota Final (0-20)</label>
+                             <div className="space-y-3 group">
+                                <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-emerald-500 transition-colors">Calificación (0-20)</label>
                                 <Input 
                                    type="number"
                                    min="0"
                                    max="20"
                                    placeholder="20"
-                                   className="h-16 bg-zinc-900/50 border-white/20 rounded-2xl text-white font-black text-center text-2xl focus:ring-2 focus:ring-blue-500/50"
+                                   className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all placeholder:text-white/10"
                                    value={newGrade.nota}
                                    onChange={(e) => setNewGrade({...newGrade, nota: e.target.value})}
                                    required
                                 />
                              </div>
-                             <div className="space-y-4">
-                                <label className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em] pl-2 block">Ciclo Académico</label>
-                                <div className="relative group">
+                             <div className="space-y-3 group">
+                                <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-emerald-500 transition-colors">Ciclo / Lapso</label>
+                                <div className="relative">
                                    <select 
-                                      className="w-full bg-zinc-900/50 border border-white/20 rounded-2xl h-16 px-8 text-base text-white outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none transition-all group-hover:border-white/30"
+                                      className="w-full bg-white/[0.03] border border-white/5 rounded-[1.5rem] h-16 px-6 text-sm text-white outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 appearance-none font-bold transition-all"
                                       value={newGrade.lapso}
                                       onChange={(e) => setNewGrade({...newGrade, lapso: e.target.value})}
                                    >
-                                      <option value="1" className="text-black">1er Lapso</option>
-                                      <option value="2" className="text-black">2do Lapso</option>
-                                      <option value="3" className="text-black">3er Lapso</option>
+                                      <option value="1" className="bg-black">1er Lapso</option>
+                                      <option value="2" className="bg-black">2do Lapso</option>
+                                      <option value="3" className="bg-black">3er Lapso</option>
                                    </select>
-                                   <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[#86868b]">
-                                      <ChevronRight className="w-5 h-5 rotate-90" />
-                                   </div>
+                                   <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] rotate-90" />
                                 </div>
                              </div>
                           </div>
                           
-                          <Button type="submit" disabled={submitting} className="w-full h-20 bg-white text-black hover:bg-blue-600 hover:text-white rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all shadow-2xl active:scale-95">
+                          <Button type="submit" disabled={submitting} className="w-full h-18 bg-white text-black hover:bg-zinc-200 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-[0.98] mt-4">
                              {submitting ? <Loader2 className="w-7 h-7 animate-spin" /> : "Sincronizar Calificación"}
                           </Button>
                        </form>

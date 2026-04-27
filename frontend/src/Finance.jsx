@@ -250,72 +250,73 @@ const Finance = () => {
             {/* Modal */}
             <AnimatePresence>
                 {isModalOpen && (
-                    <div className="fixed inset-0 z-[70] flex items-center justify-center p-6">
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6">
                         <motion.div 
                             initial={{ opacity: 0 }} 
                             animate={{ opacity: 1 }} 
                             exit={{ opacity: 0 }}
                             onClick={() => setIsModalOpen(false)}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            className="absolute inset-0 bg-black/95 backdrop-blur-[100px]"
                         />
                         <motion.div 
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="w-full max-w-xl apple-card p-10 border border-white/10 z-10 relative"
+                            initial={{ scale: 0.9, opacity: 0, y: 50, rotateX: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0, rotateX: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 50, rotateX: 20 }}
+                            className="w-full max-w-2xl apple-glass p-12 border border-white/10 z-10 relative overflow-hidden rounded-[3.5rem] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)]"
                         >
-                            <h2 className="text-3xl font-black text-white mb-8 italic uppercase italic tracking-tighter">Registrar Transacción</h2>
-                            <form onSubmit={handleRegister} className="space-y-6">
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Seleccionar Estudiante</label>
+                            <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-transparent pointer-events-none" />
+                            
+                            <div className="flex items-center gap-6 mb-12 relative z-10">
+                                <div className="w-16 h-16 rounded-3xl bg-emerald-600 text-white flex items-center justify-center shadow-2xl shadow-emerald-600/40">
+                                    <CreditCard className="w-8 h-8" />
+                                </div>
+                                <div>
+                                    <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">Registrar Transacción</h2>
+                                    <p className="text-emerald-400/60 font-black uppercase tracking-[0.3em] text-[8px] mt-3">Validación de Solvencia Institucional v27.2</p>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleRegister} className="space-y-8 relative z-10">
+                                <div className="space-y-3 group">
+                                    <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-emerald-500 transition-colors">Seleccionar Estudiante</label>
+                                    <div className="relative">
                                         <select 
-                                            className="w-full h-14 bg-white/5 border border-white/5 rounded-2xl px-6 text-white text-sm outline-none focus:border-blue-500/50"
+                                            className="w-full h-16 bg-white/[0.03] border border-white/5 rounded-[1.5rem] px-8 text-sm text-white outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 appearance-none font-bold transition-all"
                                             value={newPayment.estudiante_id}
                                             onChange={(e) => setNewPayment({...newPayment, estudiante_id: e.target.value})}
                                             required
                                         >
-                                            <option value="">Seleccione un alumno...</option>
-                                            {students.map(s => <option key={s.id} value={s.id}>{s.nombre} - {s.cedula}</option>)}
+                                            <option value="" className="bg-black">--- Seleccione Estudiante ---</option>
+                                            {students.map(s => <option key={s.id} value={s.id} className="bg-black">{s.nombre} ({s.cedula})</option>)}
                                         </select>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Monto ($)</label>
-                                            <Input 
-                                                type="number"
-                                                className="h-14 bg-white/5 border-white/5 rounded-2xl px-6"
-                                                placeholder="0.00"
-                                                value={newPayment.monto}
-                                                onChange={(e) => setNewPayment({...newPayment, monto: e.target.value})}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Mes</label>
-                                            <select 
-                                                className="w-full h-14 bg-white/5 border border-white/5 rounded-2xl px-6 text-white text-sm outline-none"
-                                                value={newPayment.mes_correspondiente}
-                                                onChange={(e) => setNewPayment({...newPayment, mes_correspondiente: e.target.value})}
-                                            >
-                                                {['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'].map(m => <option key={m} value={m}>{m}</option>)}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Concepto / Referencia</label>
-                                        <Input 
-                                            className="h-14 bg-white/5 border-white/5 rounded-2xl px-6"
-                                            placeholder="Ej: Mensualidad Mayo - Ref: 9283"
-                                            value={newPayment.referencia}
-                                            onChange={(e) => setNewPayment({...newPayment, referencia: e.target.value})}
-                                        />
+                                        <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] rotate-90" />
                                     </div>
                                 </div>
-                                <div className="flex gap-4 pt-6">
-                                    <Button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 h-14 bg-white/5 hover:bg-white/10 text-white rounded-full font-bold">Cancelar</Button>
-                                    <Button type="submit" disabled={submitting} className="flex-1 h-14 bg-white text-black hover:bg-zinc-200 rounded-full font-black text-xs uppercase tracking-widest">
-                                        {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Validar Cobro"}
+
+                                <div className="grid grid-cols-2 gap-8">
+                                    <div className="space-y-3 group">
+                                        <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-emerald-500 transition-colors">Monto en Divisas (USD)</label>
+                                        <Input 
+                                            type="number"
+                                            placeholder="0.00"
+                                            className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all placeholder:text-white/10"
+                                            value={newPayment.monto}
+                                            onChange={(e) => setNewPayment({...newPayment, monto: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-3 group">
+                                        <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-emerald-500 transition-colors">Mes Correspondiente</label>
+                                        <div className="relative">
+                                            <select 
+                                                className="w-full h-16 bg-white/[0.03] border border-white/5 rounded-[1.5rem] px-8 text-sm text-white outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 appearance-none font-bold transition-all"
+                                                value={newPayment.mes}
+                                                onChange={(e) => setNewPayment({...newPayment, mes: e.target.value})}
+                                            >
+                                                {['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'].map(m => (
+                                                    <option key={m} value={m} className="bg-black">{m}</option>
+                                                ))}
+                                            </select>
                                     </Button>
                                 </div>
                             </form>

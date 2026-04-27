@@ -159,71 +159,72 @@ const Staff = () => {
                  </div>
 
                  <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-                   <DialogTrigger asChild>
-                     <Button className="h-16 px-10 bg-white text-black hover:bg-zinc-200 rounded-[1.8rem] font-black text-[10px] uppercase tracking-widest flex gap-3 shadow-2xl active:scale-95 transition-all">
-                       <Plus className="w-5 h-5" />
-                       Registrar Staff
-                     </Button>
-                   </DialogTrigger>
-                   <DialogContent className="apple-glass border-white/10 p-12 rounded-[3.5rem] max-w-2xl bg-black/90 backdrop-blur-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]">
-                      <DialogHeader className="mb-10">
-                         <div className="w-16 h-16 rounded-[1.8rem] bg-blue-600/10 flex items-center justify-center text-blue-500 mb-6 border border-blue-500/20">
-                            <Plus className="w-8 h-8" />
-                         </div>
-                         <DialogTitle className="text-4xl font-black text-white italic uppercase tracking-tighter">Nuevo Staff Institucional</DialogTitle>
-                         <DialogDescription className="text-[#86868b] font-bold uppercase tracking-widest text-[9px] mt-2">Gestión de Talento Humano 2026</DialogDescription>
-                      </DialogHeader>
-                      <form onSubmit={handleSubmit} className="space-y-8">
-                         <div className="space-y-3">
-                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Nombre Completo</label>
-                            <Input 
-                               placeholder="Ej: Lic. Andrés Bello"
-                               className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
-                               value={newStaff.nombre}
-                               onChange={(e) => setNewStaff({...newStaff, nombre: e.target.value})}
-                               required
-                            />
-                         </div>
-                         <div className="space-y-3">
-                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Cargo o Función</label>
-                            <div className="relative">
-                                <select 
-                                    className="w-full bg-white/5 border border-white/10 rounded-[1.5rem] h-16 px-6 text-sm text-white outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none font-bold"
-                                    value={newStaff.rol}
-                                    onChange={(e) => setNewStaff({...newStaff, rol: e.target.value})}
-                                >
-                                    {roles.map(r => <option key={r} value={r} className="bg-[#1c1c1e] text-white">{r}</option>)}
-                                </select>
-                                <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] rotate-90" />
-                            </div>
-                         </div>
-                         <div className="grid grid-cols-2 gap-8">
-                            <div className="space-y-3">
-                               <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Correo Corporativo</label>
-                               <Input 
-                                  placeholder="correo@institucion.edu"
-                                  className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
-                                  value={newStaff.email}
-                                  onChange={(e) => setNewStaff({...newStaff, email: e.target.value})}
-                                  required
-                               />
-                            </div>
-                            <div className="space-y-3">
-                               <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Contacto Directo</label>
-                               <Input 
-                                  placeholder="04XX-XXXXXXX"
-                                  className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
-                                  value={newStaff.contacto}
-                                  onChange={(e) => setNewStaff({...newStaff, contacto: e.target.value})}
-                                  required
-                               />
-                            </div>
-                         </div>
-                         <Button type="submit" disabled={submitting} className="w-full h-16 bg-white text-black hover:bg-zinc-200 rounded-[1.8rem] font-black text-xs uppercase tracking-widest transition-all shadow-2xl active:scale-[0.98]">
-                            {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Validar e Integrar al Staff"}
-                         </Button>
-                      </form>
-                   </DialogContent>
+                    <DialogTrigger asChild>
+                      <Button className="h-16 px-10 bg-blue-600 text-white hover:bg-blue-500 rounded-[1.8rem] font-black text-[10px] uppercase tracking-widest flex gap-3 shadow-2xl shadow-blue-600/30 active:scale-95 transition-all border border-blue-400/20">
+                        <Plus className="w-5 h-5" />
+                        Registrar Staff
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="apple-glass border-white/10 p-12 rounded-[3.5rem] max-w-2xl bg-black/95 backdrop-blur-[100px] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] z-[9999]">
+                       <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/5 to-transparent pointer-events-none rounded-[3.5rem]" />
+                       <DialogHeader className="mb-12 relative z-10">
+                          <div className="w-16 h-16 rounded-3xl bg-indigo-600 text-white flex items-center justify-center shadow-2xl shadow-indigo-600/40 mb-6">
+                             <Plus className="w-8 h-8" />
+                          </div>
+                          <DialogTitle className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">Nuevo Staff Institucional</DialogTitle>
+                          <DialogDescription className="text-indigo-400/60 font-black uppercase tracking-[0.3em] text-[8px] mt-3">Gestión de Talento Humano 2026 v27.2</DialogDescription>
+                       </DialogHeader>
+                       <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+                          <div className="space-y-3 group">
+                             <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-indigo-500 transition-colors">Nombre Completo</label>
+                             <Input 
+                                placeholder="Ej: Lic. Andrés Bello"
+                                className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/10"
+                                value={newStaff.nombre}
+                                onChange={(e) => setNewStaff({...newStaff, nombre: e.target.value})}
+                                required
+                             />
+                          </div>
+                          <div className="space-y-3 group">
+                             <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-indigo-500 transition-colors">Cargo o Función</label>
+                             <div className="relative">
+                                 <select 
+                                     className="w-full bg-white/[0.03] border border-white/5 rounded-[1.5rem] h-16 px-6 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 appearance-none font-bold transition-all"
+                                     value={newStaff.rol}
+                                     onChange={(e) => setNewStaff({...newStaff, rol: e.target.value})}
+                                 >
+                                     {roles.map(r => <option key={r} value={r} className="bg-[#000000] text-white">{r}</option>)}
+                                 </select>
+                                 <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] rotate-90" />
+                             </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-8">
+                             <div className="space-y-3 group">
+                                <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-indigo-500 transition-colors">Correo Corporativo</label>
+                                <Input 
+                                   placeholder="correo@institucion.edu"
+                                   className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/10"
+                                   value={newStaff.email}
+                                   onChange={(e) => setNewStaff({...newStaff, email: e.target.value})}
+                                   required
+                                />
+                             </div>
+                             <div className="space-y-3 group">
+                                <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-indigo-500 transition-colors">Contacto Directo</label>
+                                <Input 
+                                   placeholder="04XX-XXXXXXX"
+                                   className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/10"
+                                   value={newStaff.contacto}
+                                   onChange={(e) => setNewStaff({...newStaff, contacto: e.target.value})}
+                                   required
+                                />
+                             </div>
+                          </div>
+                          <Button type="submit" disabled={submitting} className="w-full h-18 bg-white text-black hover:bg-zinc-200 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-[0.98] mt-4">
+                             {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Validar e Integrar al Staff"}
+                          </Button>
+                       </form>
+                    </DialogContent>
                  </Dialog>
             </div>
 

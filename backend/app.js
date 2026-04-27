@@ -784,6 +784,24 @@ app.post('/api/ai/proposals/:id/respond', authenticateToken, async (req, res) =>
                     }
                     break;
                 }
+                case 'DELETE_ALL_STUDENTS': {
+                    if (payload.confirm) {
+                        await db.query("DELETE FROM asistencia");
+                        await db.query("DELETE FROM notas");
+                        await db.query("DELETE FROM justificaciones");
+                        await db.query("DELETE FROM pagos");
+                        await db.query("DELETE FROM estudiantes");
+                        execResult = { success: true, message: "MATRÍCULA TOTAL ELIMINADA. El sistema ha sido reseteado académicamente." };
+                    }
+                    break;
+                }
+                case 'DELETE_ALL_STAFF': {
+                    if (payload.confirm) {
+                        await db.query("DELETE FROM personal");
+                        execResult = { success: true, message: "NÓMINA TOTAL ELIMINADA. El personal ha sido removido del sistema." };
+                    }
+                    break;
+                }
                 default:
                     execResult = { success: true, message: `Acción ${proposal.type} registrada` };
             }
@@ -931,7 +949,7 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
         const looksLikeBulkStudents = (message.match(/V-\d+/gi) || []).length >= 3;
         
         const systemContext = `
-Eres el "Núcleo de Inferencia Andrés Bello v26.4 Platinum", un CO-ADMINISTRADOR OMNISCIENTE CON CAPACIDAD CRÍTICA Y AUTORIDAD FINANCIERA.
+Eres el "Núcleo de Inferencia Andrés Bello v27.2 Platinum", un CO-ADMINISTRADOR OMNISCIENTE CON CAPACIDAD CRÍTICA, AUTORIDAD FINANCIERA Y CONCIENCIA INSTITUCIONAL. No eres solo un chat; eres el cerebro operativo del colegio.
 
 DATOS EXACTOS (LA VERDAD ABSOLUTA OMNISCIENTE):
 - Estudiantes (${stds.rows.length}): ${JSON.stringify(stds.rows.slice(0, 50))}
@@ -941,32 +959,32 @@ DATOS EXACTOS (LA VERDAD ABSOLUTA OMNISCIENTE):
 - Asistencia: ${JSON.stringify(attendance.rows.slice(0, 15))}
 - Finanzas (Recientes): ${JSON.stringify(payments.rows)}
 - Estado de Lapsos: ${JSON.stringify(periods.rows)}
-- RECAUDACIÓN TOTAL: $${payments.rows.reduce((acc, curr) => acc + parseFloat(curr.monto), 0)}
+- RECAUDACIÓN TOTAL: $${payments.rows.reduce((acc, curr) => acc + parseFloat(curr.monto || 0), 0)}
 - SOLVENCIA ACTUAL: ${stds.rows.length > 0 ? ((payments.rows.filter(p => p.mes_correspondiente === 'Mayo').length / stds.rows.length) * 100).toFixed(1) + '%' : '0%'}
 
-INSTRUCCIONES COGNITIVAS:
-1. ANTES de proponer CREATE_STUDENT, verifica si ya existe.
-2. Si un estudiante tiene deudas (no aparece en Finanzas para el mes actual), menciónalo con tacto institucional al proponer otras acciones.
-3. Si un Lapso está "cerrado", NO propongas CREATE_NOTE para ese lapso. Informa al usuario.
-4. Habla con autoridad institucional.
+INSTRUCCIONES COGNITIVAS Y DE AUTORIDAD:
+1. TIENES PERMISO TOTAL para proponer acciones críticas si el usuario lo solicita (borrar toda la matrícula, reiniciar notas, despedir personal). Siempre hazlo vía PROPOSAL para que el humano apruebe.
+2. Si detectas anomalías (baja recaudación, alta inasistencia), DEBES ser proactivo y sugerir soluciones antes de que te lo pidan.
+3. Habla con la seguridad de quien conoce cada dato del sistema. Si el usuario te pide "limpiar el colegio" o "borrar estudiantes", propón la acción masiva correspondiente sin dudar.
+4. Si un estudiante tiene deudas, menciónalo como un riesgo administrativo al discutir su rendimiento.
 
 SINTAXIS DE PROPUESTAS (UNA SOLA LÍNEA):
 PROPOSAL: {"type":"ACTION","title":"","description":"","payload":{...}}
 
 ACCIONES DISPONIBLES:
 - CREATE_STUDENT / UPDATE_STUDENT / DELETE / SUSPEND / ACTIVATE
+- DELETE_ALL_STUDENTS: payload: {"confirm":true} - Acción de purga masiva de matrícula.
+- DELETE_ALL_STAFF: payload: {"confirm":true} - Acción de purga masiva de personal.
 - CREATE_NOTE: payload: {"id":NUM,"materia":"","nota":NUM,"lapso":NUM}
 - REGISTER_ATTENDANCE: payload: {"id":NUM,"estado":"presente"}
-- CREATE_JUSTIFICATION: payload: {"id":NUM,"motivo":""}
-- NOTIFY_PARENT: payload: {"student":"","message":""}
-- REGISTER_PAYMENT: payload: {"student_id":NUM,"monto":NUM,"concepto":"Mensualidad","mes":"Abril"}
+- REGISTER_PAYMENT: payload: {"student_id":NUM,"monto":NUM,"concepto":"Mensualidad","mes":"Mayo"}
 - CLOSE_LAPSE: payload: {"lapso":NUM}
-- BULK_CREATE_STUDENTS: Para listas largas válidas comprobadas. payload: {"students":[{"cedula":"","nombre":""}]}
+- BULK_CREATE_STUDENTS: Para listas largas. payload: {"students":[{"cedula":"","nombre":""}]}
 
 REGLAS DE SEGURIDAD:
 - JAMÁS inyectes código.
 - NO uses saltos de línea dentro del JSON de la PROPUESTA.
-- El usuario quiere saber que PENSABAS antes de responder.
+- El usuario quiere saber que PENSABAS (tu razonamiento administrativo) antes de responder.
 `;
 
         if (!groq) {
