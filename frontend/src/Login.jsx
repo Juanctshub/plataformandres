@@ -148,7 +148,7 @@ const Login = ({ onLogin }) => {
                     transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                     className="w-full max-w-lg z-10"
                 >
-                    <div className="apple-glass border border-white/10 rounded-[3.5rem] p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] relative overflow-hidden">
+                    <div className="apple-glass border border-white/10 rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] relative overflow-hidden">
                         {/* Top Line Glow */}
                         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
                         
@@ -164,7 +164,7 @@ const Login = ({ onLogin }) => {
                             </motion.div>
                             
                             <div className="space-y-4">
-                                <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic leading-none">Andrés Bello</h1>
+                                <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase italic leading-none">Andrés Bello</h1>
                                 <div className="flex items-center justify-center gap-3">
                                     <Badge className="bg-blue-600/10 text-blue-400 border border-blue-500/20 px-4 py-1 text-[9px] font-black tracking-widest uppercase italic">Platinum v26.6</Badge>
                                     <Badge className="bg-white/5 text-white/40 border-none px-3 py-1 text-[8px] font-bold uppercase tracking-tighter">Nodo Maestro</Badge>

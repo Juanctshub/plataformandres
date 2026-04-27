@@ -129,13 +129,13 @@ const AttendanceSheet = () => {
       {/* Selection Header */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2.5rem] apple-glass">
         <div className="flex flex-col md:flex-row md:items-center gap-8">
-           <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-2xl px-6 py-3 transition-all group hover:bg-white/10">
+           <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-2xl px-4 md:px-6 py-3 transition-all group hover:bg-white/10 w-full md:w-auto">
               <CalendarIcon className="w-4.5 h-4.5 text-[#86868b] group-hover:text-blue-500 transition-colors" />
               <input 
                   type="date" 
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="bg-transparent border-none text-white font-semibold text-xs tracking-wider focus:ring-0 cursor-pointer"
+                  className="bg-transparent border-none text-white font-semibold text-xs tracking-wider focus:ring-0 cursor-pointer w-full"
               />
            </div>
 
@@ -161,7 +161,7 @@ const AttendanceSheet = () => {
         <Button 
           onClick={handleSave}
           disabled={saving}
-          className="h-14 px-10 bg-white text-black hover:bg-zinc-200 rounded-full font-bold text-xs transition-all flex gap-3 shadow-2xl active:scale-95"
+          className="h-14 px-10 bg-white text-black hover:bg-zinc-200 rounded-full font-bold text-xs transition-all flex gap-3 shadow-2xl active:scale-95 w-full md:w-auto"
         >
           {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
           Consolidar Registro
@@ -169,16 +169,16 @@ const AttendanceSheet = () => {
       </div>
 
       {/* Snapshot Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
          {[
            { label: 'Presentes', count: filteredStudents.filter(s => s.status === 'presente').length, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
            { label: 'Ausentes', count: filteredStudents.filter(s => s.status === 'ausente').length, color: 'text-red-400', bg: 'bg-red-500/10' },
            { label: 'Tardanzas', count: filteredStudents.filter(s => s.status === 'retraso').length, color: 'text-amber-400', bg: 'bg-amber-500/10' },
            { label: 'Justificados', count: filteredStudents.filter(s => s.status === 'justificado').length, color: 'text-blue-400', bg: 'bg-blue-500/10' },
          ].map(stat => (
-           <div key={stat.label} className="apple-card p-6 flex flex-row items-center justify-between border-white/[0.03] hover:translate-y-0 hover:border-white/10">
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-[#86868b]">{stat.label}</span>
-              <div className={`px-4 py-1.5 rounded-full ${stat.bg} ${stat.color} font-bold text-sm`}>
+           <div key={stat.label} className="apple-card p-4 md:p-6 flex flex-row items-center justify-between border-white/[0.03] hover:translate-y-0 hover:border-white/10">
+              <span className="text-[9px] md:text-[10px] font-semibold uppercase tracking-widest text-[#86868b]">{stat.label}</span>
+              <div className={`px-3 md:px-4 py-1 rounded-full ${stat.bg} ${stat.color} font-bold text-xs md:text-sm`}>
                 {stat.count}
               </div>
            </div>
@@ -229,23 +229,24 @@ const AttendanceSheet = () => {
                 </div>
 
                 <div className="flex items-center gap-2 bg-white/[0.03] p-1.5 rounded-full border border-white/5">
-                   {[
-                     { id: 'presente', label: 'Presente', color: 'hover:bg-emerald-500/10 hover:text-emerald-400' },
-                     { id: 'ausente', label: 'Ausente', color: 'hover:bg-red-500/10 hover:text-red-400' },
-                     { id: 'justificado', label: 'Justificado', color: 'hover:bg-blue-500/10 hover:text-blue-400' },
-                     { id: 'retraso', label: 'Tarde', color: 'hover:bg-amber-500/10 hover:text-amber-400' }
-                   ].map(opt => (
+                    {[
+                      { id: 'presente', label: 'P', full: 'Pres', color: 'hover:bg-emerald-500/10 hover:text-emerald-400' },
+                      { id: 'ausente', label: 'A', full: 'Aus', color: 'hover:bg-red-500/10 hover:text-red-400' },
+                      { id: 'justificado', label: 'J', full: 'Just', color: 'hover:bg-blue-500/10 hover:text-blue-400' },
+                      { id: 'retraso', label: 'T', full: 'Tarde', color: 'hover:bg-amber-500/10 hover:text-amber-400' }
+                    ].map(opt => (
                      <button
                         key={opt.id}
                         disabled={s.status === 'justificado' && opt.id !== 'justificado'}
                         onClick={() => handleStatusChange(s.id, opt.id)}
-                        className={`px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
+                        className={`px-4 md:px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all min-w-[40px] ${
                            s.status === opt.id 
                              ? 'bg-white text-black shadow-lg' 
                              : `text-[#86868b] ${opt.color} ${s.status === 'justificado' && opt.id !== 'justificado' ? 'opacity-10 cursor-not-allowed' : ''}`
                         }`}
                      >
-                        {opt.label}
+                        <span className="hidden md:inline">{opt.full}</span>
+                        <span className="md:hidden">{opt.label}</span>
                      </button>
                    ))}
                 </div>

@@ -83,6 +83,15 @@ class ErrorBoundary extends React.Component {
 }
 
 const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [showMenu, setShowMenu] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const getSafeRole = () => {
     try {
       const stored = localStorage.getItem('user');
@@ -93,53 +102,115 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
   const userRole = getSafeRole();
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Inicio' },
-    { id: 'students', icon: Users, label: 'Matrícula' },
-    { id: 'attendance', icon: ClipboardCheck, label: 'Asistencia' },
+    { id: 'attendance', icon: ClipboardCheck, label: 'Lista' },
+    { id: 'students', icon: Users, label: 'Alumnos' },
     { id: 'grades', icon: GraduationCap, label: 'Notas' },
     ...(userName === 'admin' || userRole === 'admin' ? [
       { id: 'finance', icon: TrendingUp, label: 'Finanzas' },
-      { id: 'vision', icon: Scan, label: 'Visión IA' },
-      { id: 'lapses', icon: CalendarRange, label: 'Lapsos' },
       { id: 'staff', icon: Users, label: 'Personal' },
+      { id: 'lapses', icon: CalendarRange, label: 'Lapsos' },
       { id: 'settings', icon: SettingsIcon, label: 'Ajustes' }
     ] : [])
   ];
 
+  // Most important items for mobile bottom bar
+  const primaryItems = menuItems.slice(0, isMobile ? 4 : menuItems.length);
+  const secondaryItems = isMobile ? menuItems.slice(4) : [];
+
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-fit">
-      <motion.div 
-        initial={{ y: 50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="apple-glass rounded-full px-4 py-2.5 flex items-center gap-2 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]"
-      >
-        {menuItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onTabChange(item.id)}
-            className={`p-3.5 rounded-full transition-all duration-300 relative group flex flex-col items-center ${
-              activeTab === item.id 
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' 
-                : 'text-[#86868b] hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <item.icon className="w-[20px] h-[20px]" strokeWidth={2} />
-            <div className="absolute -top-12 left-1/2 -translate-x-1/2 apple-glass px-4 py-1.5 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none scale-90 group-hover:scale-100">
-               <span className="text-[10px] whitespace-nowrap font-semibold text-white/90">{item.label}</span>
-            </div>
-            {activeTab === item.id && (
-              <motion.div layoutId="navGlow" className="absolute inset-0 bg-blue-400/20 blur-md rounded-full -z-10" />
-            )}
-          </button>
-        ))}
-        <div className="h-8 w-[1px] bg-white/10 mx-2" />
-        <button 
-          onClick={onLogout}
-          className="p-3.5 rounded-full text-[#86868b] hover:text-red-400 hover:bg-red-400/10 transition-all"
+    <>
+      <div className={`fixed ${isMobile ? 'bottom-0 left-0 right-0' : 'bottom-8 left-1/2 -translate-x-1/2'} z-[100] w-full md:w-fit px-4 pb-4 md:pb-0`}>
+        <motion.div 
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className={`apple-glass ${isMobile ? 'rounded-[2.5rem] py-2' : 'rounded-full py-2.5'} px-4 flex items-center justify-around md:justify-center gap-2 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]`}
         >
-          <LogOut className="w-[18px] h-[18px]" />
-        </button>
-      </motion.div>
-    </div>
+          {primaryItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => onTabChange(item.id)}
+              className={`p-3.5 rounded-full transition-all duration-300 relative group flex flex-col items-center ${
+                activeTab === item.id 
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110' 
+                  : 'text-[#86868b] hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <item.icon className={isMobile ? "w-[22px] h-[22px]" : "w-[20px] h-[20px]"} strokeWidth={2} />
+              {!isMobile && (
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 apple-glass px-4 py-1.5 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none scale-90 group-hover:scale-100">
+                   <span className="text-[10px] whitespace-nowrap font-semibold text-white/90">{item.label}</span>
+                </div>
+              )}
+              {activeTab === item.id && (
+                <motion.div layoutId="navGlow" className="absolute inset-0 bg-blue-400/20 blur-md rounded-full -z-10" />
+              )}
+            </button>
+          ))}
+          
+          {isMobile && secondaryItems.length > 0 && (
+            <button 
+              onClick={() => setShowMenu(!showMenu)}
+              className={`p-3.5 rounded-full text-[#86868b] transition-all ${showMenu ? 'bg-white/10 text-white' : ''}`}
+            >
+              <SettingsIcon className="w-[22px] h-[22px]" />
+            </button>
+          )}
+
+          {!isMobile && <div className="h-8 w-[1px] bg-white/10 mx-2" />}
+          {!isMobile && (
+            <button 
+              onClick={onLogout}
+              className="p-3.5 rounded-full text-[#86868b] hover:text-red-400 hover:bg-red-400/10 transition-all"
+            >
+              <LogOut className="w-[18px] h-[18px]" />
+            </button>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Mobile Secondary Menu */}
+      <AnimatePresence>
+        {isMobile && showMenu && (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-xl p-10 flex flex-col justify-end pb-32"
+          >
+            <div className="space-y-6">
+               <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-10 italic">Opciones Maestras</h3>
+               <div className="grid grid-cols-2 gap-4">
+                  {secondaryItems.map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => { onTabChange(item.id); setShowMenu(false); }}
+                      className="apple-card flex flex-col items-center gap-4 py-8 border-white/5"
+                    >
+                       <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-blue-400">
+                          <item.icon className="w-6 h-6" />
+                       </div>
+                       <span className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">{item.label}</span>
+                    </button>
+                  ))}
+                  <button
+                    onClick={onLogout}
+                    className="apple-card flex flex-col items-center gap-4 py-8 border-red-500/10 bg-red-500/5 col-span-2"
+                  >
+                     <LogOut className="w-6 h-6 text-red-500" />
+                     <span className="text-[10px] font-bold uppercase tracking-widest text-red-500/60">Cerrar Sesión Institucional</span>
+                  </button>
+               </div>
+               <Button 
+                 onClick={() => setShowMenu(false)}
+                 className="w-full h-16 rounded-[2rem] bg-white text-black font-black uppercase text-xs tracking-widest mt-10"
+               >
+                 Volver al Control
+               </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
@@ -237,6 +308,13 @@ const AndresBelloSuite = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [notifications, setNotifications] = useState([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // ═══ AI PROPOSALS STATE ═══
   const [proposals, setProposals] = useState([]);
@@ -566,7 +644,7 @@ const AndresBelloSuite = () => {
             )}
           </AnimatePresence>
 
-          <main className="max-w-[1400px] mx-auto px-8 py-14">
+          <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 md:py-14 pb-32 md:pb-14">
             <ErrorBoundary key={activeTab}>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -771,12 +849,14 @@ const AndresBelloSuite = () => {
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveTab('aichat')}
-                  className="fixed bottom-24 right-10 w-16 h-16 apple-glass rounded-3xl flex items-center justify-center z-[90] group shadow-2xl transition-all text-blue-400"
+                  className="fixed bottom-28 md:bottom-24 right-6 md:right-10 w-14 h-14 md:w-16 md:h-16 apple-glass rounded-3xl flex items-center justify-center z-[90] group shadow-2xl transition-all text-blue-400"
                 >
-                   <Sparkles className="w-7 h-7" />
-                   <div className="absolute -top-12 right-0 apple-glass px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none scale-90 group-hover:scale-100">
-                     <span className="text-[11px] whitespace-nowrap font-semibold text-white/90">Asistente IA</span>
-                  </div>
+                   <Sparkles className="w-6 h-6 md:w-7 md:h-7" />
+                   {!isMobile && (
+                     <div className="absolute -top-12 right-0 apple-glass px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none scale-90 group-hover:scale-100">
+                       <span className="text-[11px] whitespace-nowrap font-semibold text-white/90">Asistente IA</span>
+                     </div>
+                   )}
                 </motion.button>
               </>
             )}

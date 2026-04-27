@@ -539,25 +539,25 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
               Sesión Iniciada v20.0
            </Badge>
         </div>
-        <h2 className="text-6xl font-semibold tracking-tight text-white leading-tight">
+        <h2 className="text-4xl md:text-6xl font-semibold tracking-tight text-white leading-tight">
           Hola, <span className="text-[#86868b]">Control de Gestión</span>
         </h2>
-        <p className="text-xl text-[#86868b] font-medium max-w-2xl leading-relaxed">
+        <p className="text-lg md:text-xl text-[#86868b] font-medium max-w-2xl leading-relaxed">
           Bienvenido al centro operativo de la Unidad Educativa Andrés Bello. Aquí tienes un resumen del pulso académico institucional.
         </p>
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:gap-8 grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
           <motion.div 
             key={stat.label} 
             variants={item} 
             className="apple-card group"
           >
-            <div className="flex justify-between items-start mb-10">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-xl ${stat.color}`}>
-                    <stat.icon className="h-6 w-6" strokeWidth={1.5} />
+            <div className="flex justify-between items-start mb-6 md:mb-10">
+                <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-xl ${stat.color}`}>
+                    <stat.icon className="h-5 w-5 md:h-6 md:w-6" strokeWidth={1.5} />
                 </div>
                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-hover:bg-white/10 group-hover:text-white transition-all">
                    <ArrowUpRight className="w-4 h-4" />
@@ -565,11 +565,11 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
             </div>
             
             <div className="space-y-1">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#86868b] mb-2">{stat.label}</p>
-                <div className="text-4xl font-semibold text-white tracking-tight">
+                <p className="text-[9px] md:text-[11px] font-semibold uppercase tracking-widest text-[#86868b] mb-1 md:mb-2">{stat.label}</p>
+                <div className="text-2xl md:text-4xl font-semibold text-white tracking-tight">
                     {stat.value}
                 </div>
-                <p className="text-xs text-[#86868b] mt-4 font-medium">
+                <p className="text-[10px] md:text-xs text-[#86868b] mt-3 md:mt-4 font-medium">
                     {stat.sub}
                 </p>
             </div>
@@ -662,18 +662,18 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       </div>
 
       {/* Action Footnotes */}
-      <motion.div variants={item} className="flex flex-wrap items-center gap-6 pt-10">
+      <motion.div variants={item} className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 pt-10">
          <Button 
             onClick={generateProReport}
             disabled={reportLoading}
-            className="apple-glass hover:bg-white/5 text-white/80 rounded-full px-8 h-12 flex gap-3 text-xs font-semibold transition-all border border-white/5 disabled:opacity-50"
+            className="apple-glass hover:bg-white/5 text-white/80 rounded-full px-8 h-14 md:h-12 flex gap-3 text-xs font-semibold transition-all border border-white/5 disabled:opacity-50 w-full md:w-auto justify-center"
          >
             {reportLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Printer className="w-4 h-4" />}
             {reportLoading ? 'Generando con IA...' : 'Descargar Reporte Pro'}
          </Button>
          <Button 
             onClick={() => onTabChange('students')}
-            className="apple-glass hover:bg-white/5 text-white/80 rounded-full px-8 h-12 flex gap-3 text-xs font-semibold transition-all border border-white/5"
+            className="apple-glass hover:bg-white/5 text-white/80 rounded-full px-8 h-14 md:h-12 flex gap-3 text-xs font-semibold transition-all border border-white/5 w-full md:w-auto justify-center"
          >
             <UserPlus className="w-4 h-4" />
             Nuevo Registro Estudiantil
