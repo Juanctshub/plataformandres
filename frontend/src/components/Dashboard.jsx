@@ -588,7 +588,7 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
                  <h3 className="text-2xl font-semibold text-white tracking-tight">Monitoreo IA</h3>
               </div>
               <Button 
-                onClick={() => onTabChange('analytics')}
+                onClick={() => onTabChange('aianalytics')}
                 className="bg-white/5 hover:bg-white/10 text-white rounded-full px-6 py-2 text-xs font-semibold transition-all"
               >
                  Ver Analíticas Completas
@@ -633,16 +633,21 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
            <div className="space-y-8 max-h-[500px] overflow-y-auto scroll-thin pr-2">
               {(stats?.recentActivity && Array.isArray(stats.recentActivity) && stats.recentActivity.length > 0) ? (
                 stats.recentActivity.map((log, i) => (
-                   <div key={i} className="flex gap-5 group">
-                     <div className="flex flex-col items-center gap-2 pt-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] group-hover:scale-125 transition-transform" />
-                        <div className="w-[2px] h-full bg-blue-500/10 rounded-full" />
-                     </div>
-                     <div className="pb-8">
-                        <p className="text-sm font-semibold text-white/90 leading-relaxed mb-1 group-hover:text-blue-400 transition-colors">{log.event}</p>
-                        <span className="text-[10px] font-bold text-[#86868b] tracking-wider uppercase opacity-60">{log.time}</span>
-                     </div>
-                  </div>
+                    <div key={i} className="flex gap-5 group">
+                      <div className="flex flex-col items-center gap-2 pt-1.5">
+                         <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)] group-hover:scale-125 transition-transform ${
+                            log.type === 'STUDENT_REG' ? 'bg-emerald-500 shadow-emerald-500/60' :
+                            log.type === 'JUSTIFICATION' ? 'bg-amber-500 shadow-amber-500/60' :
+                            log.type === 'GRADE' ? 'bg-indigo-500 shadow-indigo-500/60' :
+                            'bg-blue-500 shadow-blue-500/60'
+                         }`} />
+                         <div className="w-[px] h-full bg-white/5 rounded-full" />
+                      </div>
+                      <div className="pb-8 border-l border-white/5 pl-5 -ml-[13px]">
+                         <p className="text-sm font-semibold text-white/90 leading-relaxed mb-1 group-hover:text-blue-400 transition-colors">{log.event}</p>
+                         <span className="text-[10px] font-bold text-[#86868b] tracking-wider uppercase opacity-60">{log.time}</span>
+                      </div>
+                   </div>
                 ))
               ) : (
                 <div className="py-24 flex flex-col items-center justify-center text-[#86868b] space-y-4 opacity-30">

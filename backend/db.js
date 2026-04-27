@@ -103,6 +103,43 @@ const initDB = async () => {
       )
     `);
 
+    // 9. Tabla de Auditoría (Logs)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS audit_logs (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        action TEXT NOT NULL,
+        details TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // 10. Tabla de Propuestas IA
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS ai_proposals (
+        id SERIAL PRIMARY KEY,
+        type TEXT NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        data TEXT,
+        status TEXT DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // 11. Tabla de Lapsos
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS lapsos (
+        lapso INTEGER PRIMARY KEY,
+        estado TEXT NOT NULL DEFAULT 'abierto'
+      )
+    `);
+    
+    // Inicializar lapsos
+    for (let l of [1, 2, 3]) {
+      await client.query("INSERT INTO lapsos (lapso, estado) VALUES ($1, 'abierto') ON CONFLICT DO NOTHING", [l]);
+    }
+
     console.log('Connected to Neon Postgres and all professional tables initialized.');
   } catch (err) {
     console.error('Error initializing Postgres:', err.message);

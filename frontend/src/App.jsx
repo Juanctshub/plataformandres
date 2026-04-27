@@ -362,6 +362,13 @@ const AndresBelloSuite = () => {
           attendance: attData.stats?.globalAttendance || '0%' 
         }));
       }
+
+      // Fetch Dashboard Activity
+      const resActivity = await fetch(`${baseUrl}/api/dashboard/activity`, { headers });
+      if (resActivity.ok) {
+        const actData = await resActivity.json();
+        setStats(prev => ({ ...prev, recentActivity: actData }));
+      }
       
       // Fetch Notifications
       const resNotif = await fetch(`${baseUrl}/api/notifications`, { headers });
@@ -579,6 +586,7 @@ const AndresBelloSuite = () => {
                   {(activeTab === 'lapses' && user?.role === 'admin') && <LapseControl />}
                   {(activeTab === 'staff' && user?.role === 'admin') && <Staff />}
                   {(activeTab === 'settings' && user?.role === 'admin') && <InstitutionalSettings />}
+                  {activeTab === 'aianalytics' && <IAAnalytics />}
                   
                   {/* Fallback for unauthorized or missing content */}
                   {(['finance', 'vision', 'lapses', 'staff', 'settings'].includes(activeTab) && user?.role !== 'admin') && (
