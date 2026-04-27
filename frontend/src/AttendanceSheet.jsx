@@ -113,7 +113,7 @@ const AttendanceSheet = () => {
   };
 
   const sections = ['Todas', ...new Set(students.map(s => s.seccion))];
-  const filteredStudents = students.filter(s => filterSection === 'Todas' || s.seccion === filterSection);
+  const filteredStudents = students.filter(s => filterSection === 'Todas' || s.seccion?.includes(filterSection));
 
   if (loading) return (
     <div className="space-y-12">
@@ -128,7 +128,7 @@ const AttendanceSheet = () => {
     <div className="space-y-12">
       {/* Selection Header */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2.5rem] apple-glass">
-        <div className="flex flex-wrap items-center gap-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-8">
            <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-2xl px-6 py-3 transition-all group hover:bg-white/10">
               <CalendarIcon className="w-4.5 h-4.5 text-[#86868b] group-hover:text-blue-500 transition-colors" />
               <input 
@@ -142,17 +142,17 @@ const AttendanceSheet = () => {
            <div className="h-10 w-[1px] bg-white/10 hidden md:block" />
 
            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-              {sections.map((sec) => (
+              {['Todas', '1ro', '2do', '3ro', '4to', '5to'].map((y) => (
                 <button
-                  key={sec}
-                  onClick={() => setFilterSection(sec)}
+                  key={y}
+                  onClick={() => setFilterSection(y)}
                   className={`px-6 py-2.5 rounded-full text-[11px] font-semibold transition-all whitespace-nowrap ${
-                    filterSection === sec 
+                    filterSection === y 
                       ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
                       : 'text-[#86868b] hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  {sec}
+                  {y} {y !== 'Todas' && 'Año'}
                 </button>
               ))}
            </div>

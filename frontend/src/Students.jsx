@@ -301,7 +301,7 @@ const Students = () => {
                   onClick={() => setActiveFilter(f)}
                   className={`px-6 py-2.5 rounded-full text-[11px] font-semibold transition-all whitespace-nowrap ${
                     activeFilter === f 
-                      ? 'bg-white text-black shadow-lg' 
+                      ? 'bg-white text-black shadow-lg shadow-white/10' 
                       : 'text-[#86868b] hover:text-white hover:bg-white/5'
                   }`}
                 >

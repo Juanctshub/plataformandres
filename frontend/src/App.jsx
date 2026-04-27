@@ -50,12 +50,13 @@ import logo from './assets/logo.png';
 
 
 const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
+  const userRole = JSON.parse(localStorage.getItem('user') || '{}')?.role;
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Inicio' },
     { id: 'students', icon: Users, label: 'Matrícula' },
     { id: 'attendance', icon: ClipboardCheck, label: 'Asistencia' },
     { id: 'grades', icon: GraduationCap, label: 'Notas' },
-    ...(userName === 'admin' || JSON.parse(localStorage.getItem('user'))?.role === 'admin' ? [
+    ...(userName === 'admin' || userRole === 'admin' ? [
       { id: 'finance', icon: TrendingUp, label: 'Finanzas' },
       { id: 'vision', icon: Scan, label: 'Visión IA' },
       { id: 'lapses', icon: CalendarRange, label: 'Lapsos' },
@@ -65,7 +66,7 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
   ];
 
   return (
-    <div className="fixed bottom-8 left-1/2 -track-x-1/2 -translate-x-1/2 z-[100] w-fit">
+    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-fit">
       <motion.div 
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
