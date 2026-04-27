@@ -134,11 +134,11 @@ const Justifications = () => {
     doc.save(`Justificativo_${j.nombre}.pdf`);
   };
 
-  const filteredJustifications = justifications.filter(j => 
-    (j.nombre.toLowerCase().includes(searchTerm.toLowerCase()) || 
-     j.motivo.toLowerCase().includes(searchTerm.toLowerCase())) &&
+  const filteredJustifications = Array.isArray(justifications) ? justifications.filter(j => 
+    ((j.nombre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+     (j.motivo?.toLowerCase() || '').includes(searchTerm.toLowerCase())) &&
     (activeFilter === 'Todos' || j.estado === activeFilter.toLowerCase())
-  );
+  ) : [];
 
   if (loading) return <div className="h-80 apple-glass rounded-[2rem] animate-pulse" />;
 

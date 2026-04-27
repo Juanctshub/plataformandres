@@ -83,10 +83,10 @@ const Finance = () => {
         }
     };
 
-    const filteredPayments = payments.filter(p => 
-        p.estudiante.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        p.cedula.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredPayments = Array.isArray(payments) ? payments.filter(p => 
+        (p.estudiante?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+        (p.cedula?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+    ) : [];
 
     const totalRevenue = payments.reduce((acc, curr) => acc + parseFloat(curr.monto), 0);
 

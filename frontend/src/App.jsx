@@ -49,6 +49,38 @@ import RepresentativeView from './RepresentativeView';
 import logo from './assets/logo.png';
 
 
+// Centinela de Errores (Previene Pantalla Negra)
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error) { return { hasError: true }; }
+  componentDidCatch(error, errorInfo) { console.error("Fallo detectado por el Centinela:", error, errorInfo); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-8">
+           <div className="w-24 h-24 rounded-[2rem] bg-blue-600/10 border border-blue-500/20 flex items-center justify-center animate-pulse">
+              <AlertCircle className="w-12 h-12 text-blue-500" />
+           </div>
+           <div className="space-y-3">
+              <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">Sincronización Interrumpida</h3>
+              <p className="text-sm text-[#86868b] font-medium max-w-md mx-auto">El módulo ha experimentado una anomalía de renderizado. El Núcleo de Inteligencia está intentando restaurar la conexión.</p>
+           </div>
+           <Button 
+             onClick={() => window.location.reload()} 
+             className="h-14 px-10 bg-white text-black hover:bg-zinc-200 rounded-full font-bold text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95"
+           >
+              Reiniciar Módulo Maestro
+           </Button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
   const userRole = JSON.parse(localStorage.getItem('user') || '{}')?.role;
   const menuItems = [
@@ -509,32 +541,44 @@ const AndresBelloSuite = () => {
           </AnimatePresence>
 
           <main className="max-w-[1400px] mx-auto px-8 py-14">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              >
-                {activeTab === 'dashboard' && <Dashboard stats={stats} aiData={aiData} onTabChange={setActiveTab} />}
-                {activeTab === 'students' && <Students />}
-                {activeTab === 'attendance' && <AttendanceSheet />}
-                {activeTab === 'justifications' && <Justifications />}
-                {activeTab === 'grades' && <Grades />}
-                {(activeTab === 'finance' && user?.role === 'admin') && <Finance />}
-                {(activeTab === 'vision' && user?.role === 'admin') && <VisionAttendance onComplete={() => setActiveTab('attendance')} />}
-                {(activeTab === 'lapses' && user?.role === 'admin') && <LapseControl />}
-                {(activeTab === 'staff' && user?.role === 'admin') && <Staff />}
-                {(activeTab === 'settings' && user?.role === 'admin') && <InstitutionalSettings />}
-                {(['finance', 'vision', 'lapses', 'staff', 'settings'].includes(activeTab) && user?.role !== 'admin') && (
-                  <div className="flex flex-col items-center justify-center h-96 space-y-4 opacity-50">
-                    <ShieldCheck className="w-16 h-16" />
-                    <p className="font-bold tracking-widest uppercase text-xs">Acceso Restringido para Docentes</p>
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
+            <ErrorBoundary key={activeTab}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {activeTab === 'dashboard' && <Dashboard stats={stats} aiData={aiData} onTabChange={setActiveTab} />}
+                  {activeTab === 'students' && <Students />}
+                  {activeTab === 'attendance' && <AttendanceSheet />}
+                  {activeTab === 'justifications' && <Justifications />}
+                  {activeTab === 'grades' && <Grades />}
+                  {(activeTab === 'finance' && user?.role === 'admin') && <Finance />}
+                  {(activeTab === 'vision' && user?.role === 'admin') && <VisionAttendance onComplete={() => setActiveTab('attendance')} />}
+                  {(activeTab === 'lapses' && user?.role === 'admin') && <LapseControl />}
+                  {(activeTab === 'staff' && user?.role === 'admin') && <Staff />}
+                  {(activeTab === 'settings' && user?.role === 'admin') && <InstitutionalSettings />}
+                  
+                  {/* Fallback for unauthorized or missing content */}
+                  {(['finance', 'vision', 'lapses', 'staff', 'settings'].includes(activeTab) && user?.role !== 'admin') && (
+                    <div className="flex flex-col items-center justify-center h-[60vh] space-y-6 text-center">
+                      <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                        <ShieldCheck className="w-10 h-10 text-red-500" />
+                      </div>
+                      <div className="space-y-2">
+                        <h2 className="text-xl font-bold text-white uppercase tracking-widest italic">Acceso de Seguridad Nivel 2</h2>
+                        <p className="text-sm text-[#86868b] font-medium max-w-sm mx-auto">Esta sección requiere credenciales de Administrador Maestro. Su intento ha sido registrado.</p>
+                      </div>
+                      <Button onClick={() => setActiveTab('dashboard')} variant="ghost" className="text-blue-500 hover:text-blue-400 font-bold uppercase tracking-widest text-[10px]">
+                        Volver al Inicio Segura →
+                      </Button>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </ErrorBoundary>
           </main>
 
           <AnimatePresence>

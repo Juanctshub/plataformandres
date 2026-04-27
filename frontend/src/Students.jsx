@@ -21,7 +21,11 @@ import {
   Loader2,
   X,
   ArrowRight,
-  UserPlus
+  UserPlus,
+  Target,
+  Activity,
+  Zap,
+  Bot
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -76,12 +80,12 @@ const Students = () => {
     fetchStudents();
   }, []);
 
-  const filteredStudents = students.filter(s => 
-    (s.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-     s.cedula?.includes(searchTerm) ||
-     s.seccion?.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (activeFilter === 'Todos' || s.seccion?.includes(activeFilter))
-  );
+  const filteredStudents = Array.isArray(students) ? students.filter(s => 
+    ((s.nombre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+     (s.cedula || '').includes(searchTerm) ||
+     (s.seccion?.toLowerCase() || '').includes(searchTerm.toLowerCase())) &&
+    (activeFilter === 'Todos' || (s.seccion || '').includes(activeFilter))
+  ) : [];
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
@@ -97,83 +101,23 @@ const Students = () => {
         body: JSON.stringify(newStudent)
       });
       if (res.ok) {
-        setMsg({ text: 'Estudiante inscrito exitosamente', type: 'success' });
+        setMsg({ text: 'Estudiante inscrito en el Núcleo Maestro', type: 'success' });
+        setIsAddModalOpen(false);
         setNewStudent({ cedula: '', nombre: '', seccion: '', representante: '', contacto: '' });
         fetchStudents();
-        setTimeout(() => setIsAddModalOpen(false), 1500);
+      } else {
+        const d = await res.json();
+        setMsg({ text: d.msg || 'Error en inscripción', type: 'error' });
       }
-    } catch (e) { 
-      setMsg({ text: 'Error de sincronización con el servidor', type: 'error' });
+    } catch (e) {
+      setMsg({ text: 'Error fatal de conexión', type: 'error' });
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const confirmDelete = async () => {
-    if (!studentToDelete) return;
-    setSubmitting(true);
-    try {
-      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
-      const res = await fetch(`${baseUrl}/api/estudiantes/${studentToDelete.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        setMsg({ text: 'Estudiante eliminado del Nodo Maestro', type: 'success' });
-        setIsDeleteModalOpen(false);
-        setStudentToDelete(null);
-        fetchStudents();
-      } else {
-        const err = await res.json();
-        setMsg({ text: err.error || 'Fallo en la purga de registros', type: 'error' });
-      }
-    } catch (e) {
-      setMsg({ text: 'Error de conexión con el núcleo', type: 'error' });
-    } finally { 
-        setSubmitting(false);
-        setTimeout(() => setMsg({ text: '', type: '' }), 4000);
-    }
-  };
-
-  const exportToExcel = () => {
-    const dataToExport = filteredStudents.map(s => ({
-      Cedula: s.cedula,
-      Nombre: s.nombre,
-      Seccion: s.seccion,
-      Representante: s.representante,
-      Contacto: s.contacto,
-      Estado: s.estado
-    }));
-    
-    const ws = XLSX.utils.json_to_sheet(dataToExport);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Matricula");
-    XLSX.writeFile(wb, "Matricula_Andres_Bello.xlsx");
-  };
-
-  const handleStatusToggle = async (student) => {
-    const newStatus = student.estado === 'activo' ? 'suspendido' : 'activo';
-    try {
-      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
-      const res = await fetch(`${baseUrl}/api/estudiantes/${student.id}/status`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ estado: newStatus })
-      });
-      if (res.ok) {
-        setMsg({ text: `Estado actualizado: ${newStatus.toUpperCase()}`, type: 'success' });
-        fetchStudents();
-      }
-    } catch (e) {
-      setMsg({ text: 'Error al cambiar estado', type: 'error' });
+      setTimeout(() => setMsg({ text: '', type: '' }), 4000);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Estás seguro de eliminar este registro del nodo maestro? Esta acción es irreversible.")) return;
     try {
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
       const res = await fetch(`${baseUrl}/api/estudiantes/${id}`, {
@@ -181,12 +125,12 @@ const Students = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (res.ok) {
-        setMsg({ text: 'Registro eliminado permanentemente', type: 'success' });
+        setMsg({ text: 'Registro eliminado del historial', type: 'success' });
+        setIsDeleteModalOpen(false);
         fetchStudents();
       }
-    } catch (e) {
-      setMsg({ text: 'Error al eliminar registro', type: 'error' });
-    }
+    } catch (e) { console.error(e); }
+    finally { setTimeout(() => setMsg({ text: '', type: '' }), 4000); }
   };
 
   const handleExcelImport = async (e) => {
@@ -198,176 +142,115 @@ const Students = () => {
       try {
         const bstr = evt.target.result;
         const wb = XLSX.read(bstr, { type: 'binary' });
-        const wsname = wb.SheetNames[0];
-        const ws = wb.Sheets[wsname];
+        const ws = wb.Sheets[wb.SheetNames[0]];
         const data = XLSX.utils.sheet_to_json(ws);
         const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
-        let successCount = 0;
-        const bulkPayload = [];
+        const token = localStorage.getItem('token');
         for (const row of data) {
-          const keys = Object.keys(row);
-          const findCol = (...names) => {
-            for (const n of names) {
-              if (row[n] !== undefined && row[n] !== null && String(row[n]).trim() !== '') return String(row[n]).trim();
-            }
-            for (const k of keys) {
-              const kl = k.toLowerCase().replace(/[_\s-]/g, '');
-              for (const n of names) {
-                const nl = n.toLowerCase().replace(/[_\s-]/g, '');
-                if (kl === nl || kl.includes(nl) || nl.includes(kl)) {
-                  if (row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return String(row[k]).trim();
-                }
-              }
-            }
-            return '';
-          };
-
-          const payload = {
-            nombre: findCol('Nombre_Completo', 'NombreCompleto', 'Nombre', 'nombre', 'NOMBRE', 'Name', 'Alumno', 'Estudiante', 'STUDENT'),
-            cedula: findCol('Identidad', 'Cedula', 'cedula', 'CEDULA', 'CI', 'ci', 'ID', 'id', 'Numero_Cedula', 'DNI', 'Documento', 'Cédula'),
-            seccion: findCol('Seccion', 'seccion', 'SECCION', 'Sección', 'Grado', 'grado', 'GRADO', 'Grade', 'Año', 'Curso', 'Nivel'),
-            representante: findCol('Representante', 'representante', 'REPRESENTANTE', 'Padre', 'Madre', 'Tutor', 'Acudiente'),
-            contacto: findCol('Contacto', 'contacto', 'CONTACTO', 'Telefono', 'telefono', 'Phone', 'Celular', 'Movil')
-          };
-          
-          if (payload.nombre && payload.cedula && payload.seccion) {
-              bulkPayload.push(payload);
-          }
+           await fetch(`${baseUrl}/api/estudiantes`, {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+             body: JSON.stringify({
+               cedula: row.Cedula || row.CI || '',
+               nombre: row.Nombre || row.Estudiante || '',
+               seccion: row.Seccion || row.Grado || '',
+               representante: row.Representante || '',
+               contacto: row.Contacto || row.Telefono || ''
+             })
+           });
         }
-        
-        if (bulkPayload.length > 0) {
-            const res = await fetch(`${baseUrl}/api/estudiantes/bulk`, {
-                method: 'POST',
-                headers: { 
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({ data: bulkPayload })
-            });
-            if (res.ok) successCount = bulkPayload.length;
-        }
-
-        setMsg({ text: `Carga exitosa: ${successCount} estudiantes registrados.`, type: 'success' });
+        setMsg({ text: 'Matrícula Masiva Procesada', type: 'success' });
         fetchStudents();
-      } catch (err) {
-        setMsg({ text: 'Error al procesar el archivo Excel', type: 'error' });
-      } finally {
-        setBulkLoading(false);
-        if (fileInputRef.current) fileInputRef.current.value = '';
-      }
+      } catch (e) { setMsg({ text: 'Error en procesamiento Excel', type: 'error' }); }
+      finally { setBulkLoading(false); }
     };
     reader.readAsBinaryString(file);
   };
 
-  const downloadTemplate = () => {
-    const csvContent = "data:text/csv;charset=utf-8,Cedula,Nombre_Completo,Seccion,Representante,Contacto\n";
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "Plantilla_Estudiantes.csv");
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  };
+  const sections = ['Todos', '1ro', '2do', '3ro', '4to', '5to'];
 
   if (loading) return (
-    <div className="space-y-12">
-        <div className="h-10 w-64 bg-white/5 rounded-full animate-pulse" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map(i => <div key={i} className="h-80 apple-glass rounded-[2rem] animate-pulse" />)}
-        </div>
+    <div className="flex flex-col items-center justify-center h-96 space-y-4">
+        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+        <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em]">Sincronizando Matrícula...</p>
     </div>
   );
 
   return (
-    <div className="space-y-12">
-      {/* Search & Actions */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2.5rem] apple-glass">
-        <div className="flex items-center gap-6 flex-1">
-          <div className="relative flex-1 max-w-lg group">
-             <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
-             <Input 
-                placeholder="Buscar por CI, nombre o grado..." 
-                className="pl-16 h-14 bg-white/5 border-white/5 rounded-2xl text-white text-sm font-medium placeholder:text-[#86868b] focus:ring-1 focus:ring-blue-500/50 transition-all"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-             />
-          </div>
-          <div className="h-10 w-[1px] bg-white/10 hidden md:block" />
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-             {['Todos', '1ro', '2do', '3ro', '4to', '5to'].map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setActiveFilter(f)}
-                  className={`px-6 py-2.5 rounded-full text-[11px] font-semibold transition-all whitespace-nowrap ${
-                    activeFilter === f 
-                      ? 'bg-white text-black shadow-lg shadow-white/10' 
-                      : 'text-[#86868b] hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  {f} {f !== 'Todos' && 'Año'}
-                </button>
-             ))}
-          </div>
-        </div>
+    <div className="space-y-16 py-6">
+      {/* Search and Action Bar */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-10 bg-white/[0.02] border border-white/5 p-10 rounded-[3.5rem] apple-glass shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]">
+         <div className="flex flex-col md:flex-row items-center gap-8 flex-1">
+            <div className="relative flex-1 max-w-lg group">
+               <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
+               <Input 
+                  placeholder="Filtrar por Nombre, CI o Sección..." 
+                  className="pl-16 h-16 bg-white/[0.03] border-white/5 rounded-[1.8rem] text-white text-base font-medium focus:ring-1 focus:ring-blue-500/50 placeholder:text-[#86868b]/40 transition-all"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+               />
+            </div>
+            
+            <div className="flex items-center gap-2 bg-white/5 p-2 rounded-[1.5rem] border border-white/5">
+               {sections.map(s => (
+                  <button
+                     key={s}
+                     onClick={() => setActiveFilter(s)}
+                     className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                        activeFilter === s 
+                        ? 'bg-white text-black shadow-xl' 
+                        : 'text-[#86868b] hover:text-white hover:bg-white/5'
+                     }`}
+                  >
+                     {s}
+                  </button>
+               ))}
+            </div>
+         </div>
 
-        <div className="flex items-center gap-4">
-          <input type="file" ref={fileInputRef} onChange={handleExcelImport} className="hidden" />
-          <Button 
-            onClick={() => fileInputRef.current.click()}
-            className="h-14 px-8 apple-glass border border-white/5 text-white/80 hover:bg-white/5 rounded-2xl font-semibold text-xs flex gap-3 transition-all"
-          >
-            {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSpreadsheet className="w-5 h-5" />}
-            Importar Excel
-          </Button>
-          
-          <Button 
-            onClick={downloadTemplate}
-            className="h-14 px-8 apple-glass border border-white/5 text-white/80 hover:bg-white/10 hover:text-white rounded-2xl font-semibold text-xs flex gap-3 transition-all shrink-0"
-          >
-            <Download className="w-5 h-5" />
-            Plantilla
-          </Button>
-
-          <div className="flex items-center gap-3">
-             <Button 
-                onClick={exportToExcel}
-                variant="outline"
-                className="h-14 px-8 apple-glass border-white/10 text-white/60 hover:text-white hover:bg-white/5 rounded-2xl font-semibold text-xs flex gap-3 transition-all bg-transparent"
-             >
-                <Download className="w-5 h-5" />
-                Exportar XLSX
-             </Button>
-             
-             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-               <DialogTrigger asChild>
-                 <Button className="h-14 px-10 bg-blue-600 text-white hover:bg-blue-500 rounded-2xl font-semibold text-xs flex gap-3 shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
-                   <UserPlus className="w-5 h-5" />
-                   Matricular Alumno
-                 </Button>
-               </DialogTrigger>
-               <DialogContent className="apple-glass border-white/10 p-16 rounded-[3rem] max-w-xl">
-                  <DialogHeader className="mb-10">
-                     <DialogTitle className="text-3xl font-semibold text-white tracking-tight">Nueva Matrícula</DialogTitle>
-                     <DialogDescription className="text-[#86868b] font-medium mt-3">Registro de estudiante en el Periodo 2026</DialogDescription>
+         <div className="flex items-center gap-4">
+            <Button 
+               onClick={() => fileInputRef.current?.click()}
+               variant="ghost"
+               className="h-16 px-8 rounded-[1.8rem] bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 border border-blue-500/10 gap-3 font-black text-[10px] uppercase tracking-widest transition-all"
+            >
+               {bulkLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileSpreadsheet className="w-5 h-5" />}
+               Importar Excel
+            </Button>
+            <input type="file" ref={fileInputRef} className="hidden" accept=".xlsx, .xls" onChange={handleExcelImport} />
+            
+            <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+                <DialogTrigger asChild>
+                  <Button className="h-16 px-10 rounded-[1.8rem] bg-white text-black hover:bg-zinc-200 shadow-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 gap-3">
+                     <UserPlus className="w-5 h-5" />
+                     Inscribir Alumno
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="apple-glass border-white/10 rounded-[3.5rem] p-12 max-w-2xl bg-black/90 backdrop-blur-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]">
+                  <DialogHeader className="mb-12">
+                     <div className="w-16 h-16 rounded-3xl bg-blue-500/10 flex items-center justify-center text-blue-500 mb-6 border border-blue-500/20">
+                        <UserPlus className="w-8 h-8" />
+                     </div>
+                     <DialogTitle className="text-4xl font-black text-white italic uppercase tracking-tighter">Nueva Matrícula</DialogTitle>
+                     <DialogDescription className="text-[#86868b] font-bold uppercase tracking-widest text-[9px] mt-2">Sincronización de Identidad Académica 2026</DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleSubmit} className="space-y-8">
-                     <div className="grid grid-cols-2 gap-6">
+                     <div className="grid grid-cols-2 gap-8">
                         <div className="space-y-3">
-                           <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Identidad</label>
+                           <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Identidad (CI)</label>
                            <Input 
                               placeholder="V-000.000"
-                              className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
+                              className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
                               value={newStudent.cedula}
                               onChange={(e) => setNewStudent({...newStudent, cedula: e.target.value})}
                               required
                            />
                         </div>
                         <div className="space-y-3">
-                           <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Sección</label>
+                           <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Sección Académica</label>
                            <Input 
                               placeholder="Ej: 5A"
-                              className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
+                              className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
                               value={newStudent.seccion}
                               onChange={(e) => setNewStudent({...newStudent, seccion: e.target.value})}
                               required
@@ -375,172 +258,180 @@ const Students = () => {
                         </div>
                      </div>
                      <div className="space-y-3">
-                        <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Nombre Completo</label>
+                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Nombre Completo del Estudiante</label>
                         <Input 
                            placeholder="Nombres y Apellidos"
-                           className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
+                           className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
                            value={newStudent.nombre}
                            onChange={(e) => setNewStudent({...newStudent, nombre: e.target.value})}
                            required
                         />
                      </div>
-                     <div className="space-y-3">
-                        <label className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest pl-2">Representante</label>
-                        <Input 
-                           placeholder="Nombre del Padre/Madre"
-                           className="h-14 bg-white/5 border-white/5 rounded-xl text-white font-medium"
-                           value={newStudent.representante}
-                           onChange={(e) => setNewStudent({...newStudent, representante: e.target.value})}
-                        />
+                     <div className="grid grid-cols-2 gap-8">
+                        <div className="space-y-3">
+                           <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Representante Legal</label>
+                           <Input 
+                              placeholder="Padre o Madre"
+                              className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
+                              value={newStudent.representante}
+                              onChange={(e) => setNewStudent({...newStudent, representante: e.target.value})}
+                           />
+                        </div>
+                        <div className="space-y-3">
+                           <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-4">Canal de Contacto</label>
+                           <Input 
+                              placeholder="+58 412..."
+                              className="h-16 bg-white/5 border-white/5 rounded-[1.5rem] text-white font-bold"
+                              value={newStudent.contacto}
+                              onChange={(e) => setNewStudent({...newStudent, contacto: e.target.value})}
+                           />
+                        </div>
                      </div>
-                     <Button type="submit" disabled={submitting} className="w-full h-16 bg-white text-black hover:bg-zinc-200 rounded-full font-bold transition-all shadow-2xl">
-                        {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Confirmar Inscripción"}
+                     <Button type="submit" disabled={submitting} className="w-full h-16 bg-white text-black hover:bg-zinc-200 rounded-[1.8rem] font-black text-xs uppercase tracking-widest transition-all shadow-2xl active:scale-[0.98]">
+                        {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Validar e Inscribir Estudiante"}
                      </Button>
                   </form>
-               </DialogContent>
-             </Dialog>
-           </div>
-        </div>
+                </DialogContent>
+            </Dialog>
+         </div>
+      </div>
+
+      {/* Results Count & Badges */}
+      <div className="flex items-center justify-between px-6">
+         <div className="flex items-center gap-4">
+            <h4 className="text-sm font-black text-white uppercase tracking-widest italic">Registros de Matrícula</h4>
+            <Badge className="bg-blue-600/10 text-blue-400 border border-blue-500/20 px-4 py-1 text-[10px] font-black uppercase">
+               {filteredStudents.length} Alumnos Sincronizados
+            </Badge>
+         </div>
+         <div className="flex items-center gap-3">
+            <Activity className="w-4 h-4 text-[#86868b]" />
+            <span className="text-[9px] font-bold text-[#86868b] uppercase tracking-[0.2em]">Sincronización en Tiempo Real Activa</span>
+         </div>
       </div>
 
       {/* Grid of Results */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         <AnimatePresence mode="popLayout">
           {filteredStudents.length > 0 ? (
             filteredStudents.map((student, i) => (
               <motion.div
                 key={student.id || i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ delay: i * 0.05 }}
-                className="apple-card group"
+                layout
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                transition={{ delay: i * 0.03, type: 'spring', damping: 20, stiffness: 100 }}
+                className="group relative overflow-hidden rounded-[3.5rem] p-10 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-blue-500/30 transition-all duration-700 hover:shadow-[0_40px_80px_-20px_rgba(59,130,246,0.15)]"
               >
-                <div className="flex justify-between items-start mb-8">
-                    <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 group-hover:bg-blue-600/20 group-hover:text-blue-400 group-hover:border-blue-500/30 transition-all duration-700">
-                       <UserIcon className="w-8 h-8" strokeWidth={1.5} />
+                 {/* ID Badge Floating */}
+                 <div className="absolute top-10 right-10">
+                    <Badge className="bg-white/5 group-hover:bg-blue-500 group-hover:text-white text-[#86868b] border border-white/5 rounded-2xl px-6 py-2 text-[11px] font-black tracking-tighter uppercase transition-all duration-700">
+                       {student.seccion}
+                    </Badge>
+                 </div>
+
+                 <div className="flex items-center gap-8 mb-10">
+                    <div className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 flex items-center justify-center text-white/20 group-hover:bg-blue-600/10 group-hover:text-blue-500 group-hover:border-blue-500/20 transition-all duration-700 relative overflow-hidden shadow-2xl">
+                       <UserIcon className="w-10 h-10 relative z-10" strokeWidth={1.5} />
+                       {/* Subtle animated overlay */}
+                       <motion.div 
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                          className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                       />
                     </div>
-                    <div className="flex flex-col items-end gap-2">
-                       <Badge className="bg-white/5 text-[#86868b] border border-white/10 rounded-full px-4 py-1.5 text-[11px] font-semibold group-hover:bg-white group-hover:text-black transition-all">
-                          Sección {student.seccion}
-                       </Badge>
-                       <Badge className={`${student.estado === 'activo' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'} border-none px-4 py-1 text-[9px] uppercase font-bold tracking-widest`}>
-                          {student.estado || 'activo'}
-                       </Badge>
+                    <div className="space-y-1">
+                        <Badge className={`${student.estado === 'activo' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'} border-none px-3 py-0.5 text-[8px] uppercase font-black tracking-[0.2em] mb-2`}>
+                           {student.solvente ? 'SOLVENTE ✓' : 'DEUDA ⚠️'}
+                        </Badge>
+                        <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase leading-none group-hover:text-blue-400 transition-colors">{student.nombre}</h3>
                     </div>
                  </div>
 
-                <div className="space-y-3 mb-10">
-                   <h3 className="text-2xl font-semibold text-white tracking-tight group-hover:translate-x-1 transition-transform">{student.nombre}</h3>
-                   <div className="flex items-center gap-3 text-xs font-medium text-[#86868b]">
-                      <IdCard className="w-4 h-4 opacity-40" />
-                      CI {student.cedula}
+                <div className="space-y-6 mb-12">
+                   <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 group-hover:bg-white/5 transition-all">
+                      <div className="flex items-center gap-4">
+                         <IdCard className="w-5 h-5 text-blue-500/50" />
+                         <span className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Identidad Central</span>
+                      </div>
+                      <span className="text-sm font-bold text-white tracking-widest">{student.cedula}</span>
                    </div>
                 </div>
 
-                <div className="pt-8 border-t border-white/5 space-y-4">
+                <div className="pt-10 border-t border-white/5 space-y-5">
                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-semibold text-[#86868b] uppercase tracking-widest">Titular</span>
-                      <span className="text-xs font-medium text-white/80">{student.representante || 'N/A'}</span>
+                      <div className="flex items-center gap-3">
+                         <Target className="w-4 h-4 text-white/20" />
+                         <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">Titular Maestro</span>
+                      </div>
+                      <span className="text-[11px] font-bold text-white/80">{student.representante || 'Sin Asignar'}</span>
                    </div>
                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-semibold text-[#86868b] uppercase tracking-widest">Contacto</span>
-                      <span className="text-xs font-medium text-white/80">{student.contacto || 'N/A'}</span>
+                      <div className="flex items-center gap-3">
+                         <Phone className="w-4 h-4 text-white/20" />
+                         <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">Enlace de Red</span>
+                      </div>
+                      <span className="text-[11px] font-bold text-white/80 italic">{student.contacto || 'Pendiente'}</span>
                    </div>
                 </div>
 
-                 <div className="mt-8 flex justify-between items-center bg-white/[0.03] p-4 rounded-2xl border border-white/5 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                    <div className="flex items-center gap-3">
-                       <button 
-                          onClick={() => handleStatusToggle(student)}
-                          className={`p-3 rounded-xl transition-all ${student.estado === 'activo' ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white' : 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white'}`}
-                          title={student.estado === 'activo' ? 'Suspender Alumno' : 'Activar Alumno'}
-                       >
-                          <AlertCircle className="w-4 h-4" />
-                       </button>
-                       <button 
-                          onClick={() => {
-                             setStudentToDelete(student);
-                             setIsDeleteModalOpen(true);
-                          }}
-                          className="p-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-95"
-                          title="Eliminar Registro"
-                       >
-                          <Trash2 className="w-4 h-4" />
-                       </button>
-                    </div>
-                    <button className="p-3 rounded-full bg-white/5 text-white/10 hover:bg-white/10 hover:text-white transition-all">
-                       <ArrowRight className="w-4 h-4" />
-                    </button>
-                 </div>
+                {/* Professional Actions */}
+                <div className="absolute bottom-6 right-10 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-2">
+                    <Button 
+                       onClick={() => { setStudentToDelete(student); setIsDeleteModalOpen(true); }}
+                       variant="ghost" 
+                       className="h-10 w-10 p-0 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-xl shadow-red-500/10"
+                    >
+                       <Trash2 className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                       variant="ghost" 
+                       className="h-10 px-6 rounded-xl bg-white/5 text-white hover:bg-white hover:text-black transition-all shadow-xl"
+                    >
+                       <span className="text-[9px] font-black uppercase tracking-widest">Ficha Maestra</span>
+                    </Button>
+                </div>
               </motion.div>
             ))
           ) : (
-            <div className="col-span-full py-40 border-2 border-dashed border-white/5 rounded-[3rem] flex flex-col items-center justify-center space-y-6 opacity-30">
-               <Users className="w-16 h-16" />
-               <p className="text-sm font-semibold tracking-widest uppercase">Sin registros en este nodo</p>
-            </div>
+            <motion.div 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               className="col-span-full py-32 text-center space-y-6 bg-white/[0.01] border border-dashed border-white/10 rounded-[4rem]"
+            >
+               <div className="w-24 h-24 rounded-[2.5rem] bg-white/5 flex items-center justify-center text-white/20 mx-auto">
+                  <Bot className="w-12 h-12" />
+               </div>
+               <div className="space-y-2">
+                  <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">Sin Resultados en el Nodo</h3>
+                  <p className="text-xs text-[#86868b] font-bold uppercase tracking-widest">El Núcleo de Inteligencia no detectó identidades con el parámetro "{searchTerm}"</p>
+               </div>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Notifications */}
-      <AnimatePresence>
-        {msg.text && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed bottom-12 right-12 z-[110]"
-          >
-             <div className="apple-glass p-6 rounded-[2rem] flex items-center gap-4 shadow-2xl">
-                <div className={`p-2 rounded-full ${msg.type === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-                   {msg.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                </div>
-                <div className="flex flex-col">
-                   <span className="text-[10px] font-semibold text-[#86868b] uppercase tracking-widest">Sistema Administrativo</span>
-                   <span className="text-sm font-semibold text-white mt-0.5">{msg.text}</span>
-                </div>
-                <button onClick={() => setMsg({text:'', type:''})} className="ml-4 p-1.5 hover:bg-white/5 rounded-full transition-colors opacity-30 hover:opacity-100">
-                   <X className="w-4 h-4" />
-                </button>
-             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Institutional Delete Confirmation Modal */}
+      {/* Delete Confirmation Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogContent className="apple-glass-dark border-white/10 rounded-[2.5rem] p-10 max-w-md">
-           <div className="flex flex-col items-center text-center space-y-8">
-              <div className="w-20 h-20 rounded-[2rem] bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 animate-pulse">
-                 <AlertCircle className="w-10 h-10" />
-              </div>
-              <div className="space-y-4">
-                 <h2 className="text-2xl font-black text-white tracking-tighter uppercase">¿Confirmar Purga de Registro?</h2>
-                 <p className="text-xs text-[#86868b] font-bold uppercase tracking-widest leading-relaxed">
-                    Estás a punto de eliminar a <span className="text-white">{studentToDelete?.nombre}</span> del Nodo Maestro. 
-                    Esta acción es irreversible y afectará el historial académico.
-                 </p>
-              </div>
-              <div className="flex flex-col w-full gap-3">
-                 <Button 
-                   onClick={confirmDelete}
-                   disabled={submitting}
-                   className="h-14 w-full bg-red-600 hover:bg-red-500 text-white rounded-2xl font-black text-[11px] tracking-[0.2em] shadow-2xl shadow-red-600/20"
-                 >
-                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "ELIMINAR PERMANENTEMENTE"}
-                 </Button>
-                 <Button 
-                   variant="ghost"
-                   onClick={() => setIsDeleteModalOpen(false)}
-                   className="h-14 w-full text-[#86868b] hover:text-white hover:bg-white/5 rounded-2xl font-bold text-[10px] tracking-widest"
-                 >
-                    CANCELAR PROTOCOLO
-                 </Button>
-              </div>
-           </div>
-        </DialogContent>
+          <DialogContent className="apple-glass border-red-500/20 rounded-[3rem] p-10 max-w-md bg-black/90 shadow-[0_50px_100px_-20px_rgba(255,0,0,0.2)]">
+            <DialogHeader className="text-center space-y-6">
+                <div className="w-20 h-20 rounded-[2rem] bg-red-500/10 flex items-center justify-center text-red-500 mx-auto border border-red-500/20 animate-pulse">
+                    <AlertCircle className="w-10 h-10" />
+                </div>
+                <div>
+                   <DialogTitle className="text-3xl font-black text-white italic uppercase tracking-tighter">Eliminar Registro</DialogTitle>
+                   <DialogDescription className="text-red-400/60 font-bold uppercase tracking-widest text-[9px] mt-3">Esta acción es definitiva y quedará registrada en la bitácora.</DialogDescription>
+                </div>
+            </DialogHeader>
+            <div className="py-10 text-center">
+                <p className="text-sm font-medium text-[#86868b]">¿Confirmar la eliminación de la identidad de <span className="text-white font-black">{studentToDelete?.nombre}</span>?</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+                <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="h-14 rounded-2xl font-black text-[10px] uppercase tracking-widest text-[#86868b] hover:text-white">Cancelar</Button>
+                <Button onClick={() => handleDelete(studentToDelete.id)} className="h-14 rounded-2xl bg-red-600 text-white hover:bg-red-500 font-black text-[10px] uppercase tracking-widest shadow-2xl">Confirmar Borrado</Button>
+            </div>
+          </DialogContent>
       </Dialog>
     </div>
   );

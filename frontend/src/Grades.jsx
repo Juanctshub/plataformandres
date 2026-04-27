@@ -264,11 +264,12 @@ const Grades = () => {
         XLSX.writeFile(wb, "Acta_Notas_Andres_Bello.xlsx");
     };
 
-    const filteredGrades = grades.filter(g => {
-        const matchesSearch = g.student.toLowerCase().includes(searchTerm.toLowerCase()) || g.subject.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesYear = yearFilter === 'Todos' || g.seccion.includes(yearFilter);
+    const filteredGrades = Array.isArray(grades) ? grades.filter(g => {
+        const matchesSearch = (g.student?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+                             (g.subject?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+        const matchesYear = yearFilter === 'Todos' || (g.seccion || '').includes(yearFilter);
         return matchesSearch && matchesYear;
-    });
+    }) : [];
 
     const years = ['Todos', '1ro', '2do', '3ro', '4to', '5to'];
 
