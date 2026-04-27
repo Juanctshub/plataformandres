@@ -106,6 +106,7 @@ const Students = () => {
         setIsAddModalOpen(false);
         setNewStudent({ cedula: '', nombre: '', seccion: '', representante: '', contacto: '' });
         fetchStudents();
+        window.dispatchEvent(new Event('refresh-dashboard'));
       } else {
         const d = await res.json();
         setMsg({ text: d.msg || 'Error en inscripción', type: 'error' });
@@ -129,6 +130,7 @@ const Students = () => {
         setMsg({ text: 'Registro eliminado del historial', type: 'success' });
         setIsDeleteModalOpen(false);
         fetchStudents();
+        window.dispatchEvent(new Event('refresh-dashboard'));
       }
     } catch (e) { console.error(e); }
     finally { setTimeout(() => setMsg({ text: '', type: '' }), 4000); }
@@ -162,6 +164,7 @@ const Students = () => {
         }
         setMsg({ text: 'Matrícula Masiva Procesada', type: 'success' });
         fetchStudents();
+        window.dispatchEvent(new Event('refresh-dashboard'));
       } catch (e) { setMsg({ text: 'Error en procesamiento Excel', type: 'error' }); }
       finally { setBulkLoading(false); }
     };

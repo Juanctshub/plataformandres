@@ -114,6 +114,7 @@ const Grades = () => {
                 setIsAddModalOpen(false);
                 setNewGrade({ estudiante_id: '', materia: '', nota: '', lapso: '1' });
                 fetchData();
+                window.dispatchEvent(new Event('refresh-dashboard'));
             }
         } catch (e) {
             setMsg({ text: 'Error al conectar con el servidor', type: 'error' });
@@ -167,8 +168,9 @@ const Grades = () => {
                     if (res.ok) successCount = bulkPayload.length;
                 }
 
-                setMsg({ text: `Carga exitosa: ${successCount} registros sincronizados.`, type: 'success' });
+                setMsg({ text: `Lote procesado: ${successCount} notas importadas`, type: 'success' });
                 fetchData();
+                window.dispatchEvent(new Event('refresh-dashboard'));
             } catch (err) {
                 setMsg({ text: 'Error al procesar archivo Excel', type: 'error' });
             } finally {

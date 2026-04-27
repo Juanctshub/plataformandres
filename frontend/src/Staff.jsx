@@ -93,6 +93,7 @@ const Staff = () => {
                 setIsAddModalOpen(false);
                 setNewStaff({ nombre: '', rol: 'Docente', email: '', contacto: '' });
                 fetchStaff();
+                window.dispatchEvent(new Event('refresh-dashboard'));
             }
         } catch (e) {
             setMsg({ text: 'Error al registrar personal', type: 'error' });
@@ -116,6 +117,7 @@ const Staff = () => {
             if (res.ok) {
                 setMsg({ text: 'Registro eliminado exitosamente', type: 'success' });
                 fetchStaff();
+                window.dispatchEvent(new Event('refresh-dashboard'));
             }
         } catch (e) { console.error(e); }
         finally { setTimeout(() => setMsg({ text: '', type: '' }), 4000); }
