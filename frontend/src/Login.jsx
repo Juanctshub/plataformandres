@@ -22,11 +22,10 @@ const Login = ({ onLogin }) => {
     const [view, setView] = useState('login'); // login, recovery, signup
     const [credentials, setCredentials] = useState({ username: '', password: '' });
     const [signupData, setSignupData] = useState({ username: '', email: '', password: '' });
-    const [recoveryData, setRecoveryData] = useState({ email: '', type: 'password' }); // type: password, username
+    const [recoveryData, setRecoveryData] = useState({ email: '', type: 'password' });
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });
 
-    // Validation Helpers
     const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     
     const handleSubmit = async (e) => {
@@ -120,89 +119,88 @@ const Login = ({ onLogin }) => {
     };
 
     return (
-        <div className="min-h-screen bg-[#f5f5f7] flex flex-col items-center justify-center p-4 relative font-sans">
-            
+        <div className="min-h-screen bg-[#000000] text-white flex items-center justify-center p-4 relative font-sans overflow-hidden">
+            {/* Minimal Ambient Glow */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full mix-blend-screen" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[120px] rounded-full mix-blend-screen" />
+            </div>
+
             <AnimatePresence mode="wait">
                 <motion.div
                     key={view}
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.02 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="w-full max-w-[640px] z-10"
+                    initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 1.02, y: -10 }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="w-full max-w-[480px] z-10"
                 >
-                    <div 
-                        className="bg-white rounded-[32px] p-10 sm:p-14 relative flex flex-col justify-center min-h-[610px]"
-                        style={{
-                            border: '1px solid #FFFFFF',
-                            boxShadow: '0px 12px 28px #C5CBD0'
-                        }}
-                    >
+                    <div className="apple-glass bg-[#1c1c1e]/40 backdrop-blur-2xl border border-white/[0.08] rounded-[2.5rem] p-10 sm:p-14 relative flex flex-col justify-center min-h-[580px] shadow-[0_0_80px_-20px_rgba(0,0,0,1)]">
                         
                         {/* Branding */}
-                        <div className="flex flex-col items-center text-center space-y-4 mb-10">
-                            <motion.div className="w-20 h-20 mb-2">
-                                <img src={logo} alt="Logo" className="w-full h-full object-contain drop-shadow-sm" />
+                        <div className="flex flex-col items-center text-center space-y-5 mb-10">
+                            <motion.div className="w-[72px] h-[72px]">
+                                <img src={logo} alt="Logo" className="w-full h-full object-contain filter brightness-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
                             </motion.div>
                             
-                            <div className="space-y-1">
-                                <h1 className="text-2xl font-semibold text-[#1d1d1f] tracking-tight">Iniciar Sesión</h1>
-                                <p className="text-[13px] text-[#86868b] font-medium">U.E. Andrés Bello</p>
+                            <div className="space-y-1.5">
+                                <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-white/95 leading-tight">Iniciar Sesión</h1>
+                                <p className="text-[13px] font-medium tracking-wide text-[#86868b]">U.E. Andrés Bello</p>
                             </div>
                         </div>
 
                         {/* Views Container */}
-                        <div className="flex-1 max-w-[320px] mx-auto w-full">
+                        <div className="flex-1 w-full">
                             {view === 'login' && (
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="space-y-4">
-                                        <div className="relative">
+                                        <div className="relative group">
                                             <Input
                                                 placeholder="Nombre de usuario"
                                                 value={credentials.username}
                                                 onChange={e => setCredentials({...credentials, username: e.target.value})}
-                                                className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                                className="h-14 bg-white/[0.04] border border-white/[0.08] rounded-[1rem] text-[15px] text-white font-medium transition-all focus:border-white/20 focus:ring-4 focus:ring-white/5 focus:bg-white/[0.06] px-5 placeholder:text-[#86868b] shadow-inner"
                                                 required
                                             />
                                         </div>
-                                        <div className="relative">
+                                        <div className="relative group">
                                             <Input
                                                 type="password"
                                                 placeholder="Contraseña"
                                                 value={credentials.password}
                                                 onChange={e => setCredentials({...credentials, password: e.target.value})}
-                                                className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                                className="h-14 bg-white/[0.04] border border-white/[0.08] rounded-[1rem] text-[15px] text-white font-medium transition-all focus:border-white/20 focus:ring-4 focus:ring-white/5 focus:bg-white/[0.06] px-5 placeholder:text-[#86868b] shadow-inner"
                                                 required
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-4 mt-8">
-                                        <div className="flex items-center justify-center gap-4 text-[13px] mb-4">
+                                    <div className="flex flex-col gap-6 mt-8">
+                                        <Button 
+                                            type="submit" 
+                                            disabled={loading}
+                                            className="h-[52px] w-full bg-white text-black hover:bg-zinc-200 rounded-full font-semibold text-[15px] tracking-wide transition-all active:scale-[0.98] shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] flex items-center justify-center gap-2"
+                                        >
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><ArrowRight className="w-5 h-5" /></>}
+                                        </Button>
+
+                                        <div className="flex items-center justify-center gap-4 text-[13px] font-medium pt-2">
                                             <button 
                                                 type="button"
                                                 onClick={() => setView('signup')}
-                                                className="text-[#0071e3] hover:underline"
+                                                className="text-[#2997ff] hover:text-[#41a1ff] transition-colors"
                                             >
                                                 Crear cuenta
                                             </button>
-                                            <span className="text-[#d2d2d7]">|</span>
+                                            <span className="text-white/20">|</span>
                                             <button 
                                                 type="button"
                                                 onClick={() => setView('recovery')}
-                                                className="text-[#0071e3] hover:underline"
+                                                className="text-[#2997ff] hover:text-[#41a1ff] transition-colors"
                                             >
                                                 ¿Olvidaste tu contraseña?
                                             </button>
                                         </div>
-
-                                        <Button 
-                                            type="submit" 
-                                            disabled={loading}
-                                            className="h-12 w-full bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full font-medium text-[15px] transition-all flex items-center justify-center gap-2"
-                                        >
-                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><ArrowRight className="w-5 h-5" /></>}
-                                        </Button>
                                     </div>
                                 </form>
                             )}
@@ -214,7 +212,7 @@ const Login = ({ onLogin }) => {
                                             placeholder="Nombre de usuario"
                                             value={signupData.username}
                                             onChange={e => setSignupData({...signupData, username: e.target.value})}
-                                            className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                            className="h-14 bg-white/[0.04] border border-white/[0.08] rounded-[1rem] text-[15px] text-white font-medium transition-all focus:border-white/20 focus:ring-4 focus:ring-white/5 px-5 placeholder:text-[#86868b]"
                                             required
                                         />
                                         <Input
@@ -222,7 +220,7 @@ const Login = ({ onLogin }) => {
                                             placeholder="Correo electrónico"
                                             value={signupData.email}
                                             onChange={e => setSignupData({...signupData, email: e.target.value})}
-                                            className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                            className="h-14 bg-white/[0.04] border border-white/[0.08] rounded-[1rem] text-[15px] text-white font-medium transition-all focus:border-white/20 focus:ring-4 focus:ring-white/5 px-5 placeholder:text-[#86868b]"
                                             required
                                         />
                                         <Input
@@ -230,23 +228,23 @@ const Login = ({ onLogin }) => {
                                             placeholder="Contraseña"
                                             value={signupData.password}
                                             onChange={e => setSignupData({...signupData, password: e.target.value})}
-                                            className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                            className="h-14 bg-white/[0.04] border border-white/[0.08] rounded-[1rem] text-[15px] text-white font-medium transition-all focus:border-white/20 focus:ring-4 focus:ring-white/5 px-5 placeholder:text-[#86868b]"
                                             required
                                         />
                                     </div>
 
-                                    <div className="flex flex-col gap-4 mt-8">
+                                    <div className="flex flex-col gap-5 mt-8">
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-12 w-full bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full font-medium text-[15px] transition-all flex items-center justify-center"
+                                            className="h-[52px] w-full bg-white text-black hover:bg-zinc-200 rounded-full font-semibold text-[15px] tracking-wide transition-all active:scale-[0.98] shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] flex items-center justify-center"
                                         >
                                             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Continuar'}
                                         </Button>
                                         <button 
                                             type="button" 
                                             onClick={() => setView('login')}
-                                            className="text-[13px] text-[#0071e3] hover:underline flex items-center justify-center gap-1"
+                                            className="text-[13px] font-medium text-[#86868b] hover:text-white transition-colors flex items-center justify-center gap-1"
                                         >
                                             <ChevronLeft className="w-4 h-4" /> Volver
                                         </button>
@@ -256,18 +254,18 @@ const Login = ({ onLogin }) => {
 
                             {view === 'recovery' && (
                                 <form onSubmit={handleRecovery} className="space-y-6">
-                                    <div className="flex bg-[#f5f5f7] p-1 rounded-[12px] mb-6">
+                                    <div className="flex bg-white/[0.04] border border-white/[0.05] p-1 rounded-[14px] mb-6">
                                         <button
                                             type="button"
                                             onClick={() => setRecoveryData({...recoveryData, type: 'password'})}
-                                            className={`flex-1 py-2 text-[13px] font-medium rounded-[8px] transition-all ${recoveryData.type === 'password' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b]'}`}
+                                            className={`flex-1 py-2.5 text-[13px] font-medium rounded-[10px] transition-all ${recoveryData.type === 'password' ? 'bg-white text-black shadow-md' : 'text-[#86868b] hover:text-white'}`}
                                         >
                                             Contraseña
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setRecoveryData({...recoveryData, type: 'username'})}
-                                            className={`flex-1 py-2 text-[13px] font-medium rounded-[8px] transition-all ${recoveryData.type === 'username' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b]'}`}
+                                            className={`flex-1 py-2.5 text-[13px] font-medium rounded-[10px] transition-all ${recoveryData.type === 'username' ? 'bg-white text-black shadow-md' : 'text-[#86868b] hover:text-white'}`}
                                         >
                                             Usuario
                                         </button>
@@ -278,22 +276,22 @@ const Login = ({ onLogin }) => {
                                         placeholder="Correo electrónico asociado"
                                         value={recoveryData.email}
                                         onChange={e => setRecoveryData({...recoveryData, email: e.target.value})}
-                                        className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                        className="h-14 bg-white/[0.04] border border-white/[0.08] rounded-[1rem] text-[15px] text-white font-medium transition-all focus:border-white/20 focus:ring-4 focus:ring-white/5 px-5 placeholder:text-[#86868b]"
                                         required
                                     />
 
-                                    <div className="flex flex-col gap-4 mt-8">
+                                    <div className="flex flex-col gap-5 mt-8">
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-12 w-full bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full font-medium text-[15px] transition-all flex items-center justify-center"
+                                            className="h-[52px] w-full bg-white text-black hover:bg-zinc-200 rounded-full font-semibold text-[15px] tracking-wide transition-all active:scale-[0.98] shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] flex items-center justify-center"
                                         >
                                             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Restablecer'}
                                         </Button>
                                         <button 
                                             type="button" 
                                             onClick={() => setView('login')}
-                                            className="text-[13px] text-[#0071e3] hover:underline flex items-center justify-center gap-1"
+                                            className="text-[13px] font-medium text-[#86868b] hover:text-white transition-colors flex items-center justify-center gap-1"
                                         >
                                             <ChevronLeft className="w-4 h-4" /> Cancelar
                                         </button>
@@ -302,9 +300,6 @@ const Login = ({ onLogin }) => {
                             )}
                         </div>
 
-                        {/* Divider Line near bottom */}
-                        <div className="absolute bottom-[80px] left-1/2 -translate-x-1/2 w-[302px] h-[1px] bg-[#d2d2d7]/50" />
-
                         {/* Status Message */}
                         <AnimatePresence>
                             {msg.text && (
@@ -312,9 +307,9 @@ const Login = ({ onLogin }) => {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.98 }}
-                                    className="absolute bottom-6 left-0 right-0 flex justify-center"
+                                    className="absolute bottom-8 left-0 right-0 flex justify-center"
                                 >
-                                    <div className={`px-4 py-2 rounded-full flex items-center gap-2 text-[13px] font-medium shadow-sm ${msg.type === 'success' ? 'bg-[#e3f5eb] text-[#1a7f37]' : 'bg-[#fce8e6] text-[#c92a2a]'}`}>
+                                    <div className={`px-5 py-2.5 rounded-full flex items-center gap-2 text-[13px] font-medium shadow-2xl backdrop-blur-md ${msg.type === 'success' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'}`}>
                                         {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
                                         {msg.text}
                                     </div>
@@ -325,11 +320,12 @@ const Login = ({ onLogin }) => {
                 </motion.div>
             </AnimatePresence>
 
-            {/* Footer Footer */}
-            <div className="absolute bottom-6 text-[#86868b] text-[12px] flex flex-col items-center gap-2">
-                <div className="flex gap-4">
-                    <span>Plataforma segura</span>
-                    <span>Ayuda</span>
+            {/* Footer */}
+            <div className="absolute bottom-8 text-[#86868b] text-[12px] font-medium flex flex-col items-center gap-3">
+                <div className="flex items-center gap-6">
+                    <span className="hover:text-white cursor-pointer transition-colors">Plataforma Segura</span>
+                    <span className="w-1 h-1 rounded-full bg-[#86868b]/30"></span>
+                    <span className="hover:text-white cursor-pointer transition-colors">Ayuda</span>
                 </div>
             </div>
         </div>
