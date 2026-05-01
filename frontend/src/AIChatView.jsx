@@ -206,9 +206,9 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                   <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   <img src={logo} className="w-[90%] h-[90%] object-contain rounded-[2.5rem] relative z-10" alt="Logo" />
                </div>
-               <div className="text-center space-y-2">
-                  <h2 className="text-2xl font-bold text-white tracking-[0.2em] uppercase opacity-40">Núcleo de Inferencia</h2>
-                  <p className="text-[10px] font-semibold text-blue-500 tracking-[0.4em] uppercase">Andrés Bello Platinum Edition</p>
+               <div className="space-y-2 text-center">
+                  <h1 className="text-3xl font-black text-white tracking-tighter italic uppercase leading-none">Núcleo de Inferencia</h1>
+                  <p className="text-[10px] text-blue-400 font-black uppercase tracking-[0.3em] italic">Asistente Institucional Platinum v30.0</p>
                </div>
             </motion.div>
 

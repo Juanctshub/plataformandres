@@ -163,8 +163,8 @@ const Staff = () => {
                                   <div className="w-16 h-16 rounded-3xl bg-indigo-600 text-white flex items-center justify-center shadow-2xl shadow-indigo-600/40 mb-6">
                                      <Plus className="w-8 h-8" />
                                   </div>
-                                   <DialogTitle className="text-3xl font-bold text-white tracking-tight uppercase">Nuevo Staff Institucional</DialogTitle>
-                                   <DialogDescription className="text-indigo-400/60 font-semibold uppercase tracking-widest text-[9px] mt-2">Gestión de Recursos Humanos v30.0</DialogDescription>
+                                   <DialogTitle className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">Nuevo Staff Institucional</DialogTitle>
+                                   <DialogDescription className="text-indigo-400/60 font-black uppercase tracking-[0.3em] text-[8px] mt-3">Gestión de Recursos Humanos v30.0</DialogDescription>
                                </DialogHeader>
                                <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
                                   <div className="space-y-3 group">

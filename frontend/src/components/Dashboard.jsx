@@ -544,23 +544,55 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       animate="show"
       className="max-w-7xl mx-auto py-8 sm:py-20 space-y-16 sm:space-y-32 px-4 sm:px-6"
     >
-      {/* Welcome Header: Refined Apple Style */}
-      <motion.div variants={item} className="space-y-4 sm:space-y-6">
+      {/* Welcome Header: Aggressive Apple Style Restoration */}
+      <motion.div variants={item} className="space-y-6 sm:space-y-10">
         <div className="flex items-center gap-4">
-           <div className="w-1 h-6 bg-blue-600 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.4)]" />
-           <Badge className="bg-white/5 text-[#86868b] border border-white/5 rounded-full px-4 py-1 text-[10px] font-semibold uppercase tracking-widest">
-              Sincronización v30.0
+           <div className="w-1.5 h-8 bg-blue-600 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.6)]" />
+           <Badge className="bg-white/5 text-[#86868b] border border-white/5 rounded-full px-5 py-1.5 text-[9px] sm:text-[11px] font-black uppercase tracking-[0.3em] italic">
+              Andrés Bello Platinum v30.0
            </Badge>
         </div>
         
-        <div className="space-y-2">
-            <h2 className="text-4xl sm:text-6xl font-bold tracking-tight text-white leading-tight">
-              Hola, <span className="text-blue-500">{user?.username}</span>
-            </h2>
-            <p className="text-lg sm:text-xl text-[#86868b] font-medium max-w-2xl leading-relaxed">
-              Resumen estratégico del pulso académico. El núcleo está <span className="text-emerald-400">totalmente operativo</span>.
-            </p>
+        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
+            <div className="space-y-6">
+                <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
+                  Hola, <br className="sm:hidden" />
+                  <span className="text-blue-500">{user?.username}</span>
+                </h2>
+                <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
+                  Resumen estratégico del <span className="text-white">Pulso Académico</span>. El núcleo de inferencia está <span className="text-emerald-400">Totalmente Operativo</span>.
+                </p>
+            </div>
+
+            {/* Strategic Hub (Moved New Features Here) */}
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 w-full xl:w-auto p-4 sm:p-6 bg-white/[0.02] border border-white/5 rounded-[3rem] apple-glass">
+                <Button 
+                   onClick={generateProReport}
+                   disabled={reportLoading}
+                   className="h-16 sm:h-20 px-8 sm:px-12 bg-blue-600 text-white hover:bg-blue-500 rounded-[2rem] font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] transition-all flex gap-4 shadow-2xl active:scale-95"
+                >
+                   {reportLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5" />}
+                   {reportLoading ? 'Generando...' : 'Reporte Pro'}
+                </Button>
+                
+                <div className="relative">
+                   <input type="file" onChange={handleFileImport} className="hidden" id="dash-import" />
+                   <Button 
+                      onClick={() => document.getElementById('dash-import').click()}
+                      disabled={importLoading}
+                      className="h-16 sm:h-20 px-8 sm:px-12 bg-white/5 text-white hover:bg-white/10 border border-white/10 rounded-[2rem] font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] transition-all flex gap-4 active:scale-95"
+                   >
+                      {importLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
+                      Sincronizar
+                   </Button>
+                </div>
+            </div>
         </div>
+        {importMsg && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-xs font-black uppercase text-blue-400 tracking-widest bg-blue-500/5 p-4 rounded-2xl border border-blue-500/20 inline-block">
+            {importMsg}
+          </motion.div>
+        )}
       </motion.div>
 
       {/* Stats Grid */}
@@ -582,8 +614,8 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
             </div>
             
             <div className="space-y-1">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#86868b] mb-2 opacity-60">{stat.label}</p>
-                <div className="text-3xl sm:text-5xl font-bold text-white tracking-tight">
+                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-[#86868b] mb-4 opacity-40 italic">{stat.label}</p>
+                <div className="text-4xl sm:text-6xl font-black text-white tracking-tighter italic uppercase leading-none">
                     {stat.value}
                 </div>
                 <div className="flex items-center gap-2 mt-6 sm:mt-8">

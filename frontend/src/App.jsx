@@ -54,27 +54,52 @@ import logo from './assets/logo.png';
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, errorMsg: '' };
   }
-  static getDerivedStateFromError(error) { return { hasError: true }; }
-  componentDidCatch(error, errorInfo) { console.error("Fallo detectado por el Centinela:", error, errorInfo); }
+  static getDerivedStateFromError(error) { 
+    return { hasError: true, errorMsg: error?.message || 'Error desconocido' }; 
+  }
+  componentDidCatch(error, errorInfo) { 
+    console.error("🔴 Centinela — Error capturado:", error?.message, "\n", errorInfo?.componentStack); 
+  }
+  componentDidUpdate(prevProps) {
+    // Auto-reset when navigating between tabs (key changes)
+    if (this.props.resetKey !== prevProps.resetKey && this.state.hasError) {
+      this.setState({ hasError: false, errorMsg: '' });
+    }
+  }
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-8">
-           <div className="w-24 h-24 rounded-[2rem] bg-blue-600/10 border border-blue-500/20 flex items-center justify-center animate-pulse">
+        <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-8 px-6">
+           <div className="w-24 h-24 rounded-[2rem] bg-blue-600/10 border border-blue-500/20 flex items-center justify-center">
               <AlertCircle className="w-12 h-12 text-blue-500" />
            </div>
            <div className="space-y-3">
-              <h3 className="text-2xl font-bold text-white tracking-tight uppercase">Sincronización Interrumpida</h3>
-              <p className="text-sm text-[#86868b] font-medium max-w-md mx-auto">El módulo ha experimentado una anomalía de renderizado. El sistema está intentando restaurar la conexión.</p>
+              <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic">Módulo en Pausa</h3>
+              <p className="text-sm text-[#86868b] font-medium max-w-md mx-auto leading-relaxed">
+                Este apartado tuvo un problema al renderizar. Puedes regresar al inicio o recargar la vista.
+              </p>
+              {this.state.errorMsg && (
+                <p className="text-[10px] text-red-400/60 font-mono bg-white/[0.03] p-3 rounded-xl border border-white/5 max-w-sm mx-auto mt-4 break-all">
+                  {this.state.errorMsg}
+                </p>
+              )}
            </div>
-           <Button 
-             onClick={() => window.location.reload()} 
-             className="h-14 px-10 bg-white text-black hover:bg-zinc-200 rounded-full font-bold text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95"
-           >
-              Reiniciar Módulo Maestro
-           </Button>
+           <div className="flex gap-4">
+             <Button 
+               onClick={() => this.setState({ hasError: false, errorMsg: '' })} 
+               className="h-14 px-10 bg-white/5 text-white hover:bg-white/10 rounded-full font-black text-[10px] uppercase tracking-widest border border-white/10 transition-all active:scale-95"
+             >
+                Reintentar
+             </Button>
+             <Button 
+               onClick={() => window.location.reload()} 
+               className="h-14 px-10 bg-white text-black hover:bg-zinc-200 rounded-full font-black text-[10px] uppercase tracking-widest shadow-2xl transition-all active:scale-95"
+             >
+                Recargar Página
+             </Button>
+           </div>
         </div>
       );
     }
@@ -645,7 +670,7 @@ const AndresBelloSuite = () => {
           </AnimatePresence>
 
           <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 md:py-14 pb-32 md:pb-14">
-            <ErrorBoundary key={activeTab}>
+            <ErrorBoundary key={activeTab} resetKey={activeTab}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}

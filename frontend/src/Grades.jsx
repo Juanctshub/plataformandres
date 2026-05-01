@@ -301,11 +301,12 @@ const Grades = () => {
                 </div>
                 
                 <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
-                    <div className="space-y-4">
-                        <h2 className="text-4xl sm:text-6xl font-bold tracking-tight text-white leading-tight">
-                          Rendimiento <span className="text-amber-500">Académico</span>
+                    <div className="space-y-6">
+                        <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
+                          Rendimiento <br className="sm:hidden" />
+                          <span className="text-amber-500">Académico</span>
                         </h2>
-                        <p className="text-lg sm:text-xl text-[#86868b] font-medium max-w-2xl leading-relaxed">
+                        <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
                           Analítica y registro de evaluación continua. Período <span className="text-white">Lectivo 2026</span>.
                         </p>
                     </div>

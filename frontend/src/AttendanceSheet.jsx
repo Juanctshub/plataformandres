@@ -128,27 +128,23 @@ const AttendanceSheet = () => {
     <motion.div 
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-7xl mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6"
+      className="max-w-[1600px] mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6"
     >
-      {/* Premium Header: Apple Style v30.0 */}
-      <motion.div className="space-y-8 sm:space-y-10">
-        <div className="flex items-center gap-4">
-           <div className="w-1.5 h-8 bg-emerald-600 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.6)]" />
-           <Badge className="bg-white/5 text-[#86868b] border border-white/5 rounded-full px-5 py-1.5 text-[9px] sm:text-[11px] font-black uppercase tracking-[0.3em]">
-              Módulo de Control de Presencia v30.0
-           </Badge>
-        </div>
-        
-        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
-            <div className="space-y-6">
-                <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
-                  Gestión de <br className="sm:hidden" />
-                  <span className="text-emerald-500">Asistencia</span>
-                </h2>
-                <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
-                  Registro en tiempo real del nodo estudiantil. Período <span className="text-white">Académico 2026</span>.
-                </p>
-            </div>
+      {/* Header: Tactical Operations */}
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-12 sm:gap-20">
+          <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                  <div className="w-1.5 h-8 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                  <Badge className="bg-white/5 text-[#86868b] border border-white/5 rounded-full px-5 py-1.5 text-[10px] font-black uppercase tracking-[0.3em] italic">Registro de Nodo Maestro v30.0</Badge>
+              </div>
+              <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
+                Control de <br className="sm:hidden" />
+                <span className="text-emerald-500">Asistencia</span>
+              </h2>
+              <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
+                Sincronización táctica de <span className="text-white">Presencialidad</span>. Protocolo de Validación en Tiempo Real.
+              </p>
+          </div>
 
             <Button 
               onClick={handleSave}
@@ -158,8 +154,7 @@ const AttendanceSheet = () => {
               {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />}
               {saving ? 'Sincronizando...' : 'Consolidar Registro Maestro'}
             </Button>
-        </div>
-      </motion.div>
+      </div>
 
       {/* Control Bar: Glassmorphism Selection */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/[0.02] border border-white/5 p-8 sm:p-12 rounded-[3rem] sm:rounded-[4rem] relative overflow-hidden group">

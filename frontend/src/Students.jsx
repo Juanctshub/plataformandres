@@ -181,7 +181,7 @@ const Students = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6">
+    <div className="max-w-[1600px] mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6">
         {/* Header: Institutional Command Center */}
         <div className="flex flex-col gap-10 sm:gap-16">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10">
@@ -192,9 +192,14 @@ const Students = () => {
                         className="flex items-center gap-5 group"
                     >
                         <div className="w-1.5 h-10 bg-blue-600 rounded-full transition-all duration-500 shadow-[0_0_15px_rgba(37,99,235,0.4)]" />
-                        <div>
-                            <h2 className="text-4xl sm:text-6xl font-bold text-white tracking-tight leading-none">Matrícula</h2>
-                            <p className="text-[10px] sm:text-[11px] text-blue-400 font-semibold uppercase tracking-[0.4em] mt-3">Registro Maestro v30.0</p>
+                        <div className="space-y-4">
+                            <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
+                              Gestión de <br className="sm:hidden" />
+                              <span className="text-blue-500">Matrícula</span>
+                            </h2>
+                            <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
+                              Control centralizado de <span className="text-white">Identidades Estudiantiles</span>. Nodo de Auditoría Activo.
+                            </p>
                         </div>
                     </motion.div>
                 </div>
@@ -265,8 +270,8 @@ const Students = () => {
             )}
         </AnimatePresence>
 
-        {/* Students Grid: Increased Gap for Elegance */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 sm:gap-20">
+        {/* Students Grid: Higher Density */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 sm:gap-10">
             <AnimatePresence>
               {filteredStudents.length > 0 ? (
                 filteredStudents.map((student, i) => (

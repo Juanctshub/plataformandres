@@ -230,7 +230,7 @@ const Finance = () => {
                                 <td className="px-8 py-6">
                                     <div className="flex items-center gap-4">
                                         <div className="w-10 h-10 rounded-full bg-blue-600/10 flex items-center justify-center text-blue-500 font-bold text-xs uppercase">
-                                            {p.estudiante.substring(0, 1)}
+                                            {(p.estudiante || '?').substring(0, 1)}
                                         </div>
                                         <div>
                                             <p className="text-sm font-bold text-white">{p.estudiante}</p>
