@@ -164,7 +164,7 @@ const Login = ({ onLogin }) => {
                     transition={{ duration: 0.4, ease: "easeOut" }}
                     className="w-full max-w-md z-10"
                 >
-                    <div className="bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 sm:p-10 shadow-2xl relative overflow-hidden">
+                    <div className="apple-glass border border-white/10 rounded-[3rem] p-10 sm:p-14 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] relative overflow-hidden group">
                         
                         {/* Branding */}
                         <div className="flex flex-col items-center text-center space-y-6 mb-8">
@@ -175,8 +175,8 @@ const Login = ({ onLogin }) => {
                             </motion.div>
                             
                             <div className="space-y-1.5">
-                                <h1 className="text-2xl font-semibold text-white tracking-tight">Andrés Bello</h1>
-                                <p className="text-sm text-muted-foreground">Plataforma Educativa</p>
+                                <h1 className="text-3xl font-bold text-white tracking-tight italic">Andrés Bello</h1>
+                                <p className="text-xs font-bold text-[#86868b] uppercase tracking-[0.2em]">Plataforma Educativa</p>
                             </div>
                         </div>
 
@@ -186,37 +186,37 @@ const Login = ({ onLogin }) => {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="space-y-4">
                                         <div className="space-y-2 relative">
-                                            <label className="text-xs font-medium text-muted-foreground ml-1">Usuario</label>
+                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Usuario</label>
                                             <div className="relative">
-                                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                                                 <Input
                                                     placeholder="Ingrese su usuario"
                                                     value={credentials.username}
                                                     onChange={e => setCredentials({...credentials, username: e.target.value})}
-                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm transition-all focus:ring-1 focus:ring-blue-500/50"
+                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                                                     required
                                                 />
                                             </div>
                                         </div>
                                         <div className="space-y-2 relative">
-                                            <div className="flex justify-between items-center ml-1">
-                                                <label className="text-xs font-medium text-muted-foreground">Contraseña</label>
+                                            <div className="flex justify-between items-center ml-2">
+                                                <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em]">Contraseña</label>
                                                 <button 
                                                     type="button"
                                                     onClick={() => setView('recovery')}
-                                                    className="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                                                    className="text-[10px] font-bold text-blue-400 hover:text-blue-300 transition-colors uppercase tracking-wider"
                                                 >
                                                     ¿Olvidó su clave?
                                                 </button>
                                             </div>
                                             <div className="relative">
-                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                                                 <Input
                                                     type="password"
                                                     placeholder="••••••••"
                                                     value={credentials.password}
                                                     onChange={e => setCredentials({...credentials, password: e.target.value})}
-                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm transition-all focus:ring-1 focus:ring-blue-500/50"
+                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                                                     required
                                                 />
                                             </div>
@@ -227,21 +227,21 @@ const Login = ({ onLogin }) => {
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-11 w-full bg-white text-black hover:bg-zinc-200 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 group"
+                                            className="h-14 w-full bg-white text-black hover:bg-zinc-200 rounded-[2rem] font-bold text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-3 group shadow-xl"
                                         >
-                                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                                                 <>
                                                     Iniciar sesión <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                                 </>
                                             )}
                                         </Button>
 
-                                        <div className="grid grid-cols-2 gap-3">
+                                        <div className="grid grid-cols-2 gap-4 mt-2">
                                             <Button 
                                                 type="button"
                                                 onClick={() => setView('bio')}
                                                 variant="outline"
-                                                className="h-10 bg-transparent hover:bg-white/[0.03] border-white/10 rounded-lg text-xs font-medium text-muted-foreground hover:text-white transition-all"
+                                                className="h-12 bg-transparent hover:bg-white/[0.05] border-white/10 rounded-[1.5rem] text-[10px] font-black text-[#86868b] hover:text-white transition-all uppercase tracking-widest shadow-lg"
                                             >
                                                 <Fingerprint className="w-4 h-4 mr-2" /> Biometría
                                             </Button>
@@ -249,7 +249,7 @@ const Login = ({ onLogin }) => {
                                                 type="button"
                                                 onClick={() => setView('signup')}
                                                 variant="outline"
-                                                className="h-10 bg-transparent hover:bg-white/[0.03] border-white/10 rounded-lg text-xs font-medium text-muted-foreground hover:text-white transition-all"
+                                                className="h-12 bg-transparent hover:bg-white/[0.05] border-white/10 rounded-[1.5rem] text-[10px] font-black text-[#86868b] hover:text-white transition-all uppercase tracking-widest shadow-lg"
                                             >
                                                 <UserPlus className="w-4 h-4 mr-2" /> Registrarse
                                             </Button>
@@ -262,42 +262,42 @@ const Login = ({ onLogin }) => {
                                 <form onSubmit={handleSignup} className="space-y-6">
                                     <div className="space-y-4">
                                         <div className="space-y-2">
-                                            <label className="text-xs font-medium text-muted-foreground ml-1">Usuario</label>
+                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Usuario</label>
                                             <div className="relative">
-                                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                                                 <Input
                                                     placeholder="Elegir usuario"
                                                     value={signupData.username}
                                                     onChange={e => setSignupData({...signupData, username: e.target.value})}
-                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm"
+                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                                                     required
                                                 />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-xs font-medium text-muted-foreground ml-1">Correo electrónico</label>
+                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Correo electrónico</label>
                                             <div className="relative">
-                                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                                                 <Input
                                                     type="email"
                                                     placeholder="ejemplo@correo.com"
                                                     value={signupData.email}
                                                     onChange={e => setSignupData({...signupData, email: e.target.value})}
-                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm"
+                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                                                     required
                                                 />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-xs font-medium text-muted-foreground ml-1">Contraseña</label>
+                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Contraseña</label>
                                             <div className="relative">
-                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                                                 <Input
                                                     type="password"
                                                     placeholder="••••••••"
                                                     value={signupData.password}
                                                     onChange={e => setSignupData({...signupData, password: e.target.value})}
-                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm"
+                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                                                     required
                                                 />
                                             </div>
@@ -308,14 +308,14 @@ const Login = ({ onLogin }) => {
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-11 w-full bg-white text-black hover:bg-zinc-200 rounded-lg font-medium text-sm transition-all"
+                                            className="h-14 w-full bg-white text-black hover:bg-zinc-200 rounded-[2rem] font-bold text-sm shadow-xl hover:shadow-white/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
                                         >
-                                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Crear cuenta'}
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Crear cuenta'}
                                         </Button>
                                         <Button 
                                             variant="ghost" 
                                             onClick={() => setView('login')}
-                                            className="h-10 text-xs font-medium text-muted-foreground hover:text-white"
+                                            className="h-12 text-[10px] font-black text-[#86868b] hover:text-white uppercase tracking-widest transition-all rounded-[1.5rem]"
                                         >
                                             <ChevronLeft className="w-4 h-4 mr-1" /> Volver a inicio
                                         </Button>
@@ -327,22 +327,22 @@ const Login = ({ onLogin }) => {
                                 <form onSubmit={handleRecovery} className="space-y-6">
                                     <div className="space-y-4 text-center">
                                         <div>
-                                            <h3 className="text-xl font-semibold text-white tracking-tight">Recuperar acceso</h3>
-                                            <p className="text-xs text-muted-foreground mt-1">Seleccione el método de recuperación.</p>
+                                            <h3 className="text-2xl font-bold text-white tracking-tight italic">Recuperar acceso</h3>
+                                            <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-1">Seleccione el método de recuperación</p>
                                         </div>
                                         
-                                        <div className="flex p-1 bg-white/[0.03] border border-white/10 rounded-lg">
+                                        <div className="flex p-1 bg-white/[0.03] border border-white/10 rounded-[1.5rem]">
                                             <button
                                                 type="button"
                                                 onClick={() => setRecoveryData({...recoveryData, type: 'password'})}
-                                                className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${recoveryData.type === 'password' ? 'bg-white text-black shadow-sm' : 'text-muted-foreground hover:text-white'}`}
+                                                className={`flex-1 py-3 rounded-[1.2rem] text-[10px] font-black uppercase tracking-widest transition-all ${recoveryData.type === 'password' ? 'bg-white text-black shadow-md' : 'text-[#86868b] hover:text-white'}`}
                                             >
                                                 Contraseña
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => setRecoveryData({...recoveryData, type: 'username'})}
-                                                className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${recoveryData.type === 'username' ? 'bg-white text-black shadow-sm' : 'text-muted-foreground hover:text-white'}`}
+                                                className={`flex-1 py-3 rounded-[1.2rem] text-[10px] font-black uppercase tracking-widest transition-all ${recoveryData.type === 'username' ? 'bg-white text-black shadow-md' : 'text-[#86868b] hover:text-white'}`}
                                             >
                                                 Usuario
                                             </button>
@@ -350,15 +350,15 @@ const Login = ({ onLogin }) => {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-xs font-medium text-muted-foreground ml-1">Correo asociado</label>
+                                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Correo asociado</label>
                                         <div className="relative">
-                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                                             <Input
                                                 type="email"
                                                 placeholder="Su correo registrado"
                                                 value={recoveryData.email}
                                                 onChange={e => setRecoveryData({...recoveryData, email: e.target.value})}
-                                                className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm"
+                                                className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                                                 required
                                             />
                                         </div>
@@ -368,14 +368,14 @@ const Login = ({ onLogin }) => {
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-11 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium text-sm transition-all"
+                                            className="h-14 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] font-bold text-sm shadow-xl hover:shadow-blue-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
                                         >
-                                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Enviar instrucciones'}
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Enviar instrucciones'}
                                         </Button>
                                         <Button 
                                             variant="ghost" 
                                             onClick={() => setView('login')}
-                                            className="h-10 text-xs font-medium text-muted-foreground hover:text-white"
+                                            className="h-12 text-[10px] font-black text-[#86868b] hover:text-white uppercase tracking-widest transition-all rounded-[1.5rem]"
                                         >
                                             <ChevronLeft className="w-4 h-4 mr-1" /> Recordé mis datos
                                         </Button>
@@ -424,14 +424,14 @@ const Login = ({ onLogin }) => {
                                         <Button 
                                             onClick={handleBioAuth}
                                             disabled={bioStatus === 'scanning' || bioStatus === 'success'}
-                                            className="h-11 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium text-sm transition-all"
+                                            className="h-14 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] font-bold text-sm shadow-xl hover:shadow-blue-500/20 transition-all active:scale-[0.98] uppercase tracking-widest"
                                         >
                                             {bioStatus === 'scanning' ? 'Analizando...' : bioStatus === 'success' ? 'Completado' : 'Escanear'}
                                         </Button>
                                         <Button 
                                             variant="ghost" 
                                             onClick={() => setView('login')}
-                                            className="h-10 text-xs font-medium text-muted-foreground hover:text-white"
+                                            className="h-12 text-[10px] font-black text-[#86868b] hover:text-white uppercase tracking-widest transition-all rounded-[1.5rem]"
                                         >
                                             Usar contraseña
                                         </Button>
