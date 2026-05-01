@@ -557,7 +557,27 @@ app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
         const totalCount = parseInt(total.rows[0].count);
         const presentCount = parseInt(present.rows[0].count);
         const percentage = totalCount > 0 ? ((presentCount / totalCount) * 100).toFixed(1) + '%' : 'Sin datos';
-        res.json({ percentage, total: totalCount, present: presentCount });
+        const weeklyData = await db.query(`
+            SELECT fecha, 
+                   COUNT(*) as total_dia, 
+                   SUM(CASE WHEN estado = 'presente' THEN 1 ELSE 0 END) as presentes 
+            FROM asistencia 
+            GROUP BY fecha 
+            ORDER BY fecha DESC 
+            LIMIT 5
+        `);
+        
+        const trend = weeklyData.rows.reverse().map(r => {
+            const d = new Date(r.fecha);
+            const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            const dayName = days[d.getUTCDay()];
+            return {
+                day: dayName,
+                value: r.total_dia > 0 ? Math.round((parseInt(r.presentes) / parseInt(r.total_dia)) * 100) : 0
+            };
+        });
+
+        res.json({ percentage, total: totalCount, present: presentCount, weeklyTrend: trend });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

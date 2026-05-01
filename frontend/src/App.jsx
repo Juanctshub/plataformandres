@@ -461,7 +461,8 @@ const AndresBelloSuite = () => {
         const attData = await resAtt.json();
         setStats(prev => ({ 
           ...prev, 
-          attendance: attData.stats?.globalAttendance || '0%' 
+          attendance: attData.percentage || '0%',
+          weeklyTrend: attData.weeklyTrend || []
         }));
       }
 

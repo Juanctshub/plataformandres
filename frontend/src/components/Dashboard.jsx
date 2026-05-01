@@ -609,28 +609,29 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
                 </Badge>
               </div>
               <div className="h-[220px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={[
-                    { day: 'Lun', value: 82 },
-                    { day: 'Mar', value: 91 },
-                    { day: 'Mié', value: 87 },
-                    { day: 'Jue', value: 94 },
-                    { day: 'Vie', value: 78 },
-                  ]}>
-                    <defs>
-                      <linearGradient id="colorAttendance" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#71717a', fontSize: 11 }} />
-                    <ReTooltip 
-                      contentStyle={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', fontSize: '12px', color: '#fff' }}
-                      labelStyle={{ color: '#a1a1aa' }}
-                    />
-                    <Area type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} fill="url(#colorAttendance)" />
-                  </AreaChart>
-                </ResponsiveContainer>
+                {stats?.weeklyTrend && stats.weeklyTrend.length > 0 && stats.weeklyTrend.some(d => d.value > 0) ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={stats.weeklyTrend}>
+                      <defs>
+                        <linearGradient id="colorAttendance" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#71717a', fontSize: 11 }} />
+                      <ReTooltip 
+                        contentStyle={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', fontSize: '12px', color: '#fff' }}
+                        labelStyle={{ color: '#a1a1aa' }}
+                      />
+                      <Area type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} fill="url(#colorAttendance)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-[#86868b] space-y-3">
+                    <Activity className="w-8 h-8 opacity-20" />
+                    <span className="text-[11px] font-bold uppercase tracking-widest italic opacity-50">Sin suficientes datos</span>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
