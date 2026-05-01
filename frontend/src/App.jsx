@@ -143,7 +143,7 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
 
   return (
     <>
-      <div className={`fixed ${isMobile ? 'bottom-0 left-0 right-0' : 'bottom-8 left-1/2 -translate-x-1/2'} z-[100] w-full md:w-fit px-4 pb-4 md:pb-0`}>
+      <div className={`fixed ${isMobile ? 'bottom-0 left-0 right-0' : 'bottom-8 left-1/2 -translate-x-1/2'} z-[100] w-full md:w-fit px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:pb-0`}>
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

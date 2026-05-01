@@ -597,8 +597,8 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
         
         {/* Chart Card */}
         <motion.div variants={item} className="lg:col-span-2">
-          <Card className="section-card apple-glass border-white/10 rounded-[3rem] overflow-hidden p-2 shadow-xl">
-            <CardContent className="p-8">
+          <Card className="section-card apple-glass border-white/10 rounded-[2.5rem] md:rounded-[3rem] overflow-hidden p-2 shadow-xl">
+            <CardContent className="p-5 md:p-8">
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-xl font-bold text-white italic tracking-tight">Tendencia Semanal</h3>
@@ -639,8 +639,8 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
 
         {/* Activity Feed */}
         <motion.div variants={item}>
-          <Card className="section-card apple-glass border-white/10 rounded-[3rem] h-full shadow-xl">
-            <CardContent className="p-8">
+          <Card className="section-card apple-glass border-white/10 rounded-[2.5rem] md:rounded-[3rem] h-full shadow-xl">
+            <CardContent className="p-5 md:p-8">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-bold text-white italic tracking-tight">Actividad reciente</h3>
                 <Clock className="w-5 h-5 text-white/40" />

@@ -355,8 +355,8 @@ const Students = () => {
 
         {/* Inscription Modal (Remains as Dialog for focus) */}
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-            <DialogContent className="apple-glass border-white/10 rounded-[3.5rem] p-12 max-w-2xl bg-black/95 backdrop-blur-[100px] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] z-[9999]">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent pointer-events-none rounded-[3.5rem]" />
+            <DialogContent className="apple-glass border-white/10 rounded-[2.5rem] sm:rounded-[3.5rem] p-6 sm:p-12 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-black/95 backdrop-blur-[100px] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] z-[9999] mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent pointer-events-none rounded-[2.5rem] sm:rounded-[3.5rem]" />
               <DialogHeader className="mb-12 relative z-10">
                  <div className="w-16 h-16 rounded-3xl bg-blue-600 text-white flex items-center justify-center shadow-2xl shadow-blue-600/40 mb-6">
                     <UserPlus className="w-8 h-8" />
@@ -428,7 +428,7 @@ const Students = () => {
 
         {/* Delete Confirmation Modal */}
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-            <DialogContent className="apple-glass border-red-500/20 rounded-[3rem] p-10 max-w-md bg-black/90 shadow-[0_50px_100px_-20px_rgba(255,0,0,0.2)]">
+            <DialogContent className="apple-glass border-red-500/20 rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-10 w-[95vw] sm:w-full max-w-md bg-black/90 shadow-[0_50px_100px_-20px_rgba(255,0,0,0.2)] mx-auto">
               <DialogHeader className="text-center space-y-6">
                   <div className="w-20 h-20 rounded-[2.2rem] bg-red-500/10 flex items-center justify-center text-red-500 mx-auto border border-red-500/20">
                       <AlertCircle className="w-10 h-10" />

@@ -169,7 +169,7 @@ const Justifications = () => {
                 Emitir certificado
               </Button>
             </DialogTrigger>
-            <DialogContent className="apple-glass border-white/10 p-10 sm:p-14 rounded-[3rem] max-w-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
+            <DialogContent className="apple-glass border-white/10 p-6 sm:p-14 rounded-[2.5rem] sm:rounded-[3rem] w-[95vw] sm:w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] mx-auto">
                <DialogHeader className="mb-8">
                   <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">Emitir Certificado</DialogTitle>
                   <DialogDescription className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-2">Registrar nueva justificación en el sistema</DialogDescription>
@@ -187,7 +187,7 @@ const Justifications = () => {
                         {students.map(s => <option key={s.id} value={s.id} className="bg-zinc-900">{s.nombre} ({s.seccion})</option>)}
                      </select>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                      <div className="space-y-2">
                         <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Fecha</label>
                         <Input 

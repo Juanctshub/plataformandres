@@ -216,7 +216,7 @@ const AttendanceSheet = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.03 }}
-                className="group relative rounded-[3.5rem] sm:rounded-[4rem] p-8 sm:p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-emerald-500/30 transition-all duration-500 flex flex-col lg:flex-row lg:items-center justify-between gap-10"
+                className="group relative rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-8 bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-emerald-500/30 transition-all duration-500 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-10"
               >
                 <div className="flex items-center gap-8 sm:gap-12 flex-1 overflow-hidden">
                    <div className={`w-16 h-16 sm:w-24 sm:h-24 shrink-0 rounded-[2rem] sm:rounded-[2.8rem] flex items-center justify-center transition-all bg-white/[0.03] border border-white/5 shadow-2xl ${
@@ -250,7 +250,7 @@ const AttendanceSheet = () => {
                 </div>
 
                 {/* Tactical Status Selector */}
-                <div className="flex items-center gap-2 sm:gap-3 bg-black/40 p-2.5 sm:p-3 rounded-[2.5rem] sm:rounded-full border border-white/5 self-end lg:self-auto shadow-2xl">
+                <div className="flex items-center gap-2 sm:gap-3 bg-black/40 p-2 sm:p-3 rounded-[2rem] sm:rounded-full border border-white/5 self-stretch lg:self-auto shadow-2xl overflow-x-auto no-scrollbar justify-between sm:justify-start">
                     {[
                       { id: 'presente', label: 'P', full: 'PRESENTE', color: 'hover:bg-emerald-500/10 hover:text-emerald-400' },
                       { id: 'ausente', label: 'A', full: 'AUSENTE', color: 'hover:bg-red-500/10 hover:text-red-400' },
@@ -261,7 +261,7 @@ const AttendanceSheet = () => {
                         key={opt.id}
                         disabled={s.status === 'justificado' && opt.id !== 'justificado'}
                         onClick={() => handleStatusChange(s.id, opt.id)}
-                        className={`h-14 sm:h-16 px-6 sm:px-10 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 min-w-[60px] sm:min-w-[80px] ${
+                        className={`h-12 sm:h-16 px-4 sm:px-10 flex-1 sm:flex-none rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 min-w-[50px] sm:min-w-[80px] ${
                            s.status === opt.id 
                              ? 'bg-white text-black shadow-[0_15px_30px_-10px_rgba(255,255,255,0.4)] scale-105' 
                              : `text-[#86868b] ${opt.color} ${s.status === 'justificado' && opt.id !== 'justificado' ? 'opacity-10 cursor-not-allowed' : 'hover:scale-105'}`
