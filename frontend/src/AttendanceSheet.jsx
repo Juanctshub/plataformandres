@@ -133,103 +133,77 @@ const AttendanceSheet = () => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-[1600px] mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6"
+      className="max-w-6xl mx-auto py-6 sm:py-12 space-y-6 px-4 sm:px-6"
     >
       {/* Header */}
-      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 sm:gap-12">
-          <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                  <div className="w-1 h-5 bg-emerald-500 rounded-full" />
-                  <span className="text-[11px] text-[#86868b] font-medium tracking-wide">Control de Presencia</span>
-              </div>
-              <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
-                Asistencia
-              </h2>
-              <p className="text-sm text-[#86868b] font-normal max-w-md leading-relaxed">
-                Registro diario de presencialidad estudiantil.
-              </p>
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+              <p className="text-xs text-muted-foreground mb-1">Control de Presencia</p>
+              <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Asistencia</h1>
           </div>
-
-            <Button 
-              onClick={handleSave}
-              disabled={saving}
-              className="h-20 sm:h-24 px-12 sm:px-16 bg-white text-black hover:bg-zinc-200 rounded-[2rem] sm:rounded-[2.5rem] font-black text-[10px] sm:text-xs uppercase tracking-[0.3em] transition-all flex gap-6 shadow-[0_30px_60px_-15px_rgba(255,255,255,0.1)] active:scale-95 w-full xl:w-auto border border-white/10"
-            >
-              {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />}
-              {saving ? 'Sincronizando...' : 'Consolidar Registro Maestro'}
-            </Button>
+          <Button 
+            onClick={handleSave}
+            disabled={saving}
+            className="h-9 px-4 rounded-lg text-xs font-medium bg-white text-black hover:bg-zinc-200"
+          >
+            {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" /> : <Save className="w-3.5 h-3.5 mr-2" />}
+            {saving ? 'Guardando...' : 'Guardar registro'}
+          </Button>
       </div>
 
-      {/* Control Bar: Glassmorphism Selection */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/[0.02] border border-white/5 p-8 sm:p-12 rounded-[3rem] sm:rounded-[4rem] relative overflow-hidden group">
-        <div className="lg:col-span-4 flex flex-col gap-4 relative z-10">
-           <span className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] ml-6">Fecha de Sesión</span>
-           <div className="flex items-center gap-6 bg-white/5 border border-white/5 rounded-[2rem] px-8 py-5 transition-all focus-within:bg-white/10 focus-within:border-emerald-500/30">
-              <CalendarIcon className="w-5 h-5 text-emerald-500" />
-              <input 
-                  type="date" 
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="bg-transparent border-none text-white font-black text-xs sm:text-sm uppercase tracking-widest focus:ring-0 cursor-pointer w-full outline-none"
-              />
-           </div>
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex items-center gap-2 bg-white/[0.03] border border-white/[0.06] rounded-lg px-3 h-10">
+           <CalendarIcon className="w-4 h-4 text-muted-foreground" />
+           <input 
+               type="date" 
+               value={date}
+               onChange={(e) => setDate(e.target.value)}
+               className="bg-transparent border-none text-white text-sm focus:ring-0 cursor-pointer outline-none"
+           />
         </div>
-
-        <div className="lg:col-span-8 flex flex-col gap-4 relative z-10">
-           <span className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] ml-6">Filtrado por Cohorte / Año</span>
-           <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 bg-white/5 p-2 rounded-[2rem] sm:rounded-full border border-white/5">
-              {['Todas', '1ro', '2do', '3ro', '4to', '5to'].map((y) => (
-                <button
-                  key={y}
-                  onClick={() => setFilterSection(y)}
-                  className={`flex-1 px-8 py-4 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap ${
-                    filterSection === y 
-                      ? 'bg-emerald-600 text-white shadow-2xl shadow-emerald-600/30' 
-                      : 'text-[#86868b] hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  {y} {y !== 'Todas' && (isMobile ? '' : 'Año')}
-                </button>
-              ))}
-           </div>
+        <div className="flex gap-2 overflow-x-auto no-scrollbar flex-1">
+           {['Todas', '1ro', '2do', '3ro', '4to', '5to'].map((y) => (
+             <button
+               key={y}
+               onClick={() => setFilterSection(y)}
+               className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                 filterSection === y 
+                   ? 'bg-white text-black' 
+                   : 'bg-white/[0.03] text-muted-foreground hover:text-white border border-white/[0.06]'
+               }`}
+             >
+               {y} {y !== 'Todas' && (isMobile ? '' : 'Año')}
+             </button>
+           ))}
         </div>
-
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-600/5 blur-[120px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
       </div>
 
-      {/* Snapshot Cards: Micro Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
+      {/* Quick Stats */}
+      <div className="grid grid-cols-4 gap-3">
          {[
-           { label: 'Presentes', count: filteredStudents.filter(s => s.status === 'presente').length, color: 'text-emerald-400', bg: 'bg-emerald-500/10', icon: CheckCircle2 },
-           { label: 'Ausentes', count: filteredStudents.filter(s => s.status === 'ausente').length, color: 'text-red-400', bg: 'bg-red-500/10', icon: XCircle },
-           { label: 'Tardanzas', count: filteredStudents.filter(s => s.status === 'retraso').length, color: 'text-amber-400', bg: 'bg-amber-500/10', icon: Clock },
-           { label: 'Justificados', count: filteredStudents.filter(s => s.status === 'justificado').length, color: 'text-blue-400', bg: 'bg-blue-500/10', icon: FileText },
+           { label: 'Presentes', count: filteredStudents.filter(s => s.status === 'presente').length, color: 'text-emerald-400', icon: CheckCircle2 },
+           { label: 'Ausentes', count: filteredStudents.filter(s => s.status === 'ausente').length, color: 'text-red-400', icon: XCircle },
+           { label: 'Tardanzas', count: filteredStudents.filter(s => s.status === 'retraso').length, color: 'text-amber-400', icon: Clock },
+           { label: 'Justificados', count: filteredStudents.filter(s => s.status === 'justificado').length, color: 'text-blue-400', icon: FileText },
          ].map(stat => (
-           <motion.div 
-             key={stat.label} 
-             whileHover={{ y: -5 }}
-             className="bg-white/[0.02] border border-white/5 p-8 sm:p-10 rounded-[3rem] flex items-center justify-between group hover:bg-white/[0.04] transition-all duration-500"
-           >
-              <div className="space-y-4">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${stat.bg} ${stat.color} border border-white/5 shadow-xl`}>
-                    <stat.icon className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#86868b] block">{stat.label}</span>
-              </div>
-              <div className={`text-4xl sm:text-5xl font-black italic tracking-tighter ${stat.color}`}>
-                {stat.count}
-              </div>
-           </motion.div>
+           <div key={stat.label} className="stat-card flex items-center gap-3 p-3">
+               <stat.icon className={`w-4 h-4 ${stat.color} flex-shrink-0`} />
+               <div className="min-w-0">
+                   <div className={`text-lg font-semibold ${stat.color}`}>{stat.count}</div>
+                   <span className="text-[10px] text-muted-foreground">{stat.label}</span>
+               </div>
+           </div>
          ))}
       </div>
 
-      {/* Modern Attendance List: Tactical Interface */}
-      <div className="space-y-6 sm:space-y-10">
-        <div className="flex items-center gap-4 ml-6">
-            <Users className="w-5 h-5 text-white/20" />
-            <h3 className="text-xl font-black text-white/40 uppercase tracking-[0.4em] italic">Listado de Nodo Maestro</h3>
+      {/* Student List */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-3 px-1 mb-3">
+            <Users className="w-4 h-4 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">{filteredStudents.length} estudiantes</span>
         </div>
 
         <AnimatePresence mode="popLayout">

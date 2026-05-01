@@ -181,89 +181,80 @@ const Students = () => {
   );
 
   return (
-    <div className="max-w-[1600px] mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6">
-        {/* Header: Institutional Command Center */}
-        <div className="flex flex-col gap-10 sm:gap-16">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10">
-                <div className="space-y-4 sm:space-y-6">
-                    <motion.div 
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        className="flex items-center gap-5 group"
-                    >
-                        <div className="w-1.5 h-10 bg-blue-600 rounded-full transition-all duration-500 shadow-[0_0_15px_rgba(37,99,235,0.4)]" />
-                        <div className="space-y-2">
-                            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
-                              Matrícula
-                            </h2>
-                            <p className="text-sm text-[#86868b] font-normal max-w-md leading-relaxed">
-                              Registro y gestión de identidades estudiantiles.
-                            </p>
-                        </div>
-                    </motion.div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-4">
-                    <Button 
-                       onClick={() => fileInputRef.current?.click()}
-                       variant="ghost"
-                       className="h-14 sm:h-16 px-6 sm:px-10 rounded-[1.8rem] sm:rounded-[2rem] bg-white/[0.03] border border-white/5 text-[#86868b] hover:text-white hover:bg-white/10 flex items-center gap-4 transition-all"
-                    >
-                       {bulkLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileSpreadsheet className="w-5 h-5" />}
-                       <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest">Sincronizar Excel</span>
-                    </Button>
-                    <input type="file" ref={fileInputRef} className="hidden" accept=".xlsx, .xls" onChange={handleExcelImport} />
-                    
-                    <Button 
-                        onClick={() => setIsAddModalOpen(true)}
-                        className="h-14 sm:h-16 px-8 sm:px-12 bg-white text-black hover:bg-zinc-200 rounded-[1.8rem] sm:rounded-[2rem] font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95 group"
-                    >
-                        <UserPlus className="w-4 h-4 sm:w-5 sm:h-5 mr-3 group-hover:rotate-12 transition-transform" />
-                        Nueva Admisión
-                    </Button>
-                </div>
+    <div className="max-w-6xl mx-auto py-6 sm:py-12 space-y-6 px-4 sm:px-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+                <p className="text-xs text-muted-foreground mb-1">Registro Estudiantil</p>
+                <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Matrícula</h1>
             </div>
-
-            {/* Control Bar: Refined for Mobile */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10">
-                <div className="lg:col-span-7 relative group">
-                    <Search className="absolute left-8 top-1/2 -translate-y-1/2 w-6 h-6 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
-                    <input 
-                        placeholder="Buscar identidad, sección o nombre..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full h-16 sm:h-20 bg-white/[0.02] border border-white/5 rounded-[2rem] sm:rounded-[2.5rem] pl-20 pr-8 text-white font-bold text-lg sm:text-xl focus:ring-1 focus:ring-blue-500/50 outline-none transition-all placeholder:text-white/5"
-                    />
-                </div>
-                <div className="lg:col-span-5 flex items-center gap-3 sm:gap-4 overflow-x-auto no-scrollbar bg-white/[0.02] border border-white/5 p-2 sm:p-3 rounded-[2.5rem]">
-                    {sections.map(s => (
-                       <button
-                          key={s}
-                          onClick={() => setActiveFilter(s)}
-                          className={`px-6 sm:px-8 py-3 sm:py-4 rounded-[1.5rem] sm:rounded-[1.8rem] text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                             activeFilter === s 
-                             ? 'bg-white text-black shadow-2xl' 
-                             : 'text-[#86868b] hover:text-white hover:bg-white/5'
-                          }`}
-                       >
-                          {s}
-                       </button>
-                    ))}
-                </div>
+            <div className="flex items-center gap-2">
+                <Button 
+                   onClick={() => fileInputRef.current?.click()}
+                   variant="outline"
+                   className="h-9 px-4 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+                >
+                   {bulkLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" /> : <FileSpreadsheet className="w-3.5 h-3.5 mr-2" />}
+                   Importar Excel
+                </Button>
+                <input type="file" ref={fileInputRef} className="hidden" accept=".xlsx, .xls" onChange={handleExcelImport} />
+                <Button 
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="h-9 px-4 rounded-lg text-xs font-medium bg-white text-black hover:bg-zinc-200"
+                >
+                    <UserPlus className="w-3.5 h-3.5 mr-2" />
+                    Nueva admisión
+                </Button>
             </div>
         </div>
 
+        {/* Search & Filters */}
+        <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input 
+                    placeholder="Buscar por nombre, cédula o sección..." 
+                    className="h-10 pl-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-sm text-white placeholder:text-muted-foreground/50"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </div>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                {['Todas', ...new Set((Array.isArray(students) ? students : []).map(s => s.seccion).filter(Boolean))].map(sec => (
+                    <button
+                        key={sec}
+                        onClick={() => setFilterSection(sec)}
+                        className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                            filterSection === sec 
+                            ? 'bg-white text-black' 
+                            : 'bg-white/[0.03] text-muted-foreground hover:text-white border border-white/[0.06]'
+                        }`}
+                    >
+                        {sec}
+                    </button>
+                ))}
+            </div>
+        </div>
+
+        {/* Stats Row */}
+        <div className="flex items-center gap-6 text-xs text-muted-foreground">
+            <span>{filteredStudents.length} estudiantes</span>
+            <span className="w-px h-4 bg-white/10" />
+            <span>{new Set((Array.isArray(students) ? students : []).map(s => s.seccion).filter(Boolean)).size} secciones</span>
+        </div>
+
+        {/* Toast */}
         <AnimatePresence mode="wait">
             {msg.text && (
               <motion.div 
-                initial={{ opacity: 0, y: -20, x: '-50%' }}
-                animate={{ opacity: 1, y: 0, x: '-50%' }}
-                exit={{ opacity: 0, y: -20, x: '-50%' }}
-                className={`fixed top-32 left-1/2 z-[10000] px-10 py-5 rounded-[2rem] apple-glass border font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl flex items-center gap-4 ${
-                  msg.type === 'success' ? 'border-emerald-500/30 text-emerald-400' : 'border-red-500/30 text-red-400'
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className={`fixed top-24 left-1/2 -translate-x-1/2 z-[10000] px-5 py-3 rounded-lg text-sm font-medium shadow-xl flex items-center gap-2 ${
+                  msg.type === 'success' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'
                 }`}
               >
-                {msg.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
                 {msg.text}
               </motion.div>
             )}

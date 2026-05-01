@@ -127,321 +127,318 @@ const Login = ({ onLogin }) => {
     };
 
     return (
-        <div className="min-h-screen bg-[#000000] text-white flex items-center justify-center p-6 relative overflow-hidden font-sans">
-            {/* Ultra-Modern Background Layer */}
+        <div className="min-h-screen bg-black text-white flex items-center justify-center p-4 relative overflow-hidden font-sans">
+            {/* Minimal Background */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                <motion.div 
-                 animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
-                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                 className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] bg-blue-500/20 blur-[180px] rounded-full"
+                 animate={{ scale: [1, 1.05, 1], opacity: [0.05, 0.1, 0.05] }}
+                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                 className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-blue-500/20 blur-[120px] rounded-full"
                />
                <motion.div 
-                 animate={{ scale: [1.1, 1, 1.1], opacity: [0.1, 0.2, 0.1] }}
-                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                 className="absolute -bottom-[20%] -right-[10%] w-[70%] h-[70%] bg-indigo-500/20 blur-[180px] rounded-full"
+                 animate={{ scale: [1.05, 1, 1.05], opacity: [0.03, 0.08, 0.03] }}
+                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                 className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] bg-indigo-500/20 blur-[120px] rounded-full"
                />
-               <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-200" />
             </div>
 
             <AnimatePresence mode="wait">
                 <motion.div
                     key={view}
-                    initial={{ opacity: 0, y: 40, scale: 0.98, filter: 'blur(10px)' }}
-                    animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, y: -40, scale: 1.02, filter: 'blur(10px)' }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-full max-w-lg z-10"
+                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 1.02 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="w-full max-w-md z-10"
                 >
-                    <div className="apple-glass border border-white/10 rounded-[3rem] md:rounded-[4rem] p-8 md:p-14 shadow-[0_80px_160px_-40px_rgba(0,0,0,0.9)] relative overflow-hidden">
-                        {/* Interactive Glow */}
-                        <motion.div 
-                           className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"
-                           animate={{ opacity: [0.3, 0.8, 0.3], x: ['-100%', '100%'] }}
-                           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                        />
+                    <div className="bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 sm:p-10 shadow-2xl relative overflow-hidden">
                         
-                        {/* Institutional Branding */}
-                        <div className="flex flex-col items-center text-center space-y-10 mb-14">
+                        {/* Branding */}
+                        <div className="flex flex-col items-center text-center space-y-6 mb-8">
                             <motion.div 
-                                whileHover={{ scale: 1.08, rotate: 2 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="w-28 h-28 rounded-[3.2rem] bg-gradient-to-tr from-blue-600/30 to-indigo-600/30 p-[2px] border border-white/20 shadow-2xl relative group"
+                                className="w-16 h-16 rounded-xl bg-gradient-to-tr from-blue-600/20 to-indigo-600/20 p-px border border-white/10 flex items-center justify-center"
                             >
-                                <div className="w-full h-full bg-black/60 backdrop-blur-2xl rounded-[3.1rem] flex items-center justify-center p-5 group-hover:bg-black/40 transition-colors">
-                                    <img src={logo} alt="Logo" className="w-full h-full object-contain filter brightness-125 contrast-110 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
-                                </div>
-                                <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <img src={logo} alt="Logo" className="w-10 h-10 object-contain filter brightness-110 drop-shadow-md" />
                             </motion.div>
                             
-                            <div className="space-y-3">
-                                <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight">Andrés Bello</h1>
-                                <div className="flex items-center justify-center gap-3">
-                                    <Badge className="bg-white/5 text-[#86868b] border border-white/5 px-4 py-1 text-[10px] font-medium tracking-wide">Plataforma Educativa</Badge>
-                                </div>
+                            <div className="space-y-1.5">
+                                <h1 className="text-2xl font-semibold text-white tracking-tight">Andrés Bello</h1>
+                                <p className="text-sm text-muted-foreground">Plataforma Educativa</p>
                             </div>
                         </div>
 
                         {/* Views Container */}
-                        <div className="min-h-[320px]">
+                        <div className="min-h-[260px]">
                             {view === 'login' && (
-                                <form onSubmit={handleSubmit} className="space-y-10">
-                                    <div className="space-y-5">
-                                        <div className="group relative">
-                                            <div className="absolute left-7 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-blue-500 transition-all duration-300">
-                                                <User className="w-5 h-5" strokeWidth={2.5} />
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div className="space-y-4">
+                                        <div className="space-y-2 relative">
+                                            <label className="text-xs font-medium text-muted-foreground ml-1">Usuario</label>
+                                            <div className="relative">
+                                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <Input
+                                                    placeholder="Ingrese su usuario"
+                                                    value={credentials.username}
+                                                    onChange={e => setCredentials({...credentials, username: e.target.value})}
+                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm transition-all focus:ring-1 focus:ring-blue-500/50"
+                                                    required
+                                                />
                                             </div>
-                                            <Input
-                                                placeholder="Identidad Maestra"
-                                                value={credentials.username}
-                                                onChange={e => setCredentials({...credentials, username: e.target.value})}
-                                                className="h-16 pl-16 bg-white/[0.04] border-white/5 hover:bg-white/[0.08] focus:bg-white/[0.1] focus:border-blue-500/40 rounded-[2rem] text-base font-semibold transition-all placeholder:text-white/20"
-                                                required
-                                            />
                                         </div>
-                                        <div className="group relative">
-                                            <div className="absolute left-7 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-blue-500 transition-all duration-300">
-                                                <Lock className="w-5 h-5" strokeWidth={2.5} />
+                                        <div className="space-y-2 relative">
+                                            <div className="flex justify-between items-center ml-1">
+                                                <label className="text-xs font-medium text-muted-foreground">Contraseña</label>
+                                                <button 
+                                                    type="button"
+                                                    onClick={() => setView('recovery')}
+                                                    className="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                                                >
+                                                    ¿Olvidó su clave?
+                                                </button>
                                             </div>
-                                            <Input
-                                                type="password"
-                                                placeholder="Clave de Encriptación"
-                                                value={credentials.password}
-                                                onChange={e => setCredentials({...credentials, password: e.target.value})}
-                                                className="h-16 pl-16 bg-white/[0.04] border-white/5 hover:bg-white/[0.08] focus:bg-white/[0.1] focus:border-blue-500/40 rounded-[2rem] text-base font-semibold transition-all placeholder:text-white/20"
-                                                required
-                                            />
+                                            <div className="relative">
+                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <Input
+                                                    type="password"
+                                                    placeholder="••••••••"
+                                                    value={credentials.password}
+                                                    onChange={e => setCredentials({...credentials, password: e.target.value})}
+                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm transition-all focus:ring-1 focus:ring-blue-500/50"
+                                                    required
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-5">
+                                    <div className="flex flex-col gap-3">
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-16 w-full bg-white text-black hover:bg-zinc-100 rounded-[2rem] font-black text-xs uppercase tracking-[0.25em] shadow-[0_25px_50px_-12px_rgba(255,255,255,0.2)] transition-all active:scale-[0.97] flex items-center justify-center gap-4 group"
+                                            className="h-11 w-full bg-white text-black hover:bg-zinc-200 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 group"
                                         >
-                                            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                                                 <>
-                                                    Sincronizar <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                                    Iniciar sesión <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                                 </>
                                             )}
                                         </Button>
 
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-2 gap-3">
                                             <Button 
                                                 type="button"
                                                 onClick={() => setView('bio')}
-                                                variant="ghost"
-                                                className="h-14 bg-white/[0.03] hover:bg-white/[0.07] rounded-2xl text-[9px] font-black text-white/40 hover:text-white uppercase tracking-widest gap-2 border border-white/5 transition-all"
+                                                variant="outline"
+                                                className="h-10 bg-transparent hover:bg-white/[0.03] border-white/10 rounded-lg text-xs font-medium text-muted-foreground hover:text-white transition-all"
                                             >
-                                                <Fingerprint className="w-4 h-4 text-blue-500" /> Bio-Auth
+                                                <Fingerprint className="w-4 h-4 mr-2" /> Biometría
                                             </Button>
                                             <Button 
                                                 type="button"
                                                 onClick={() => setView('signup')}
-                                                variant="ghost"
-                                                className="h-14 bg-white/[0.03] hover:bg-white/[0.07] rounded-2xl text-[9px] font-black text-white/40 hover:text-white uppercase tracking-widest gap-2 border border-white/5 transition-all"
+                                                variant="outline"
+                                                className="h-10 bg-transparent hover:bg-white/[0.03] border-white/10 rounded-lg text-xs font-medium text-muted-foreground hover:text-white transition-all"
                                             >
-                                                <UserPlus className="w-4 h-4 text-indigo-500" /> Registro
+                                                <UserPlus className="w-4 h-4 mr-2" /> Registrarse
                                             </Button>
                                         </div>
                                     </div>
-
-                                    <button 
-                                        type="button"
-                                        onClick={() => setView('recovery')}
-                                        className="w-full text-center text-[10px] font-black text-white/30 hover:text-blue-400 uppercase tracking-[0.4em] transition-all hover:scale-105"
-                                    >
-                                        Gestión de Identidad Perdida
-                                    </button>
                                 </form>
                             )}
 
                             {view === 'signup' && (
-                                <form onSubmit={handleSignup} className="space-y-7">
+                                <form onSubmit={handleSignup} className="space-y-6">
                                     <div className="space-y-4">
-                                        <div className="group relative">
-                                            <User className="absolute left-7 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 group-focus-within:text-blue-500 transition-colors" />
-                                            <Input
-                                                placeholder="Usuario Maestro"
-                                                value={signupData.username}
-                                                onChange={e => setSignupData({...signupData, username: e.target.value})}
-                                                className="h-16 pl-16 bg-white/[0.04] border-white/5 rounded-[2rem] text-base font-semibold"
-                                                required
-                                            />
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-medium text-muted-foreground ml-1">Usuario</label>
+                                            <div className="relative">
+                                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <Input
+                                                    placeholder="Elegir usuario"
+                                                    value={signupData.username}
+                                                    onChange={e => setSignupData({...signupData, username: e.target.value})}
+                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm"
+                                                    required
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="group relative">
-                                            <Mail className="absolute left-7 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 group-focus-within:text-blue-500 transition-colors" />
-                                            <Input
-                                                type="email"
-                                                placeholder="Correo Institucional"
-                                                value={signupData.email}
-                                                onChange={e => setSignupData({...signupData, email: e.target.value})}
-                                                className="h-16 pl-16 bg-white/[0.04] border-white/5 rounded-[2rem] text-base font-semibold"
-                                                required
-                                            />
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-medium text-muted-foreground ml-1">Correo electrónico</label>
+                                            <div className="relative">
+                                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <Input
+                                                    type="email"
+                                                    placeholder="ejemplo@correo.com"
+                                                    value={signupData.email}
+                                                    onChange={e => setSignupData({...signupData, email: e.target.value})}
+                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm"
+                                                    required
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="group relative">
-                                            <Lock className="absolute left-7 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 group-focus-within:text-blue-500 transition-colors" />
-                                            <Input
-                                                type="password"
-                                                placeholder="Clave de Encriptación"
-                                                value={signupData.password}
-                                                onChange={e => setSignupData({...signupData, password: e.target.value})}
-                                                className="h-16 pl-16 bg-white/[0.04] border-white/5 rounded-[2rem] text-base font-semibold"
-                                                required
-                                            />
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-medium text-muted-foreground ml-1">Contraseña</label>
+                                            <div className="relative">
+                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <Input
+                                                    type="password"
+                                                    placeholder="••••••••"
+                                                    value={signupData.password}
+                                                    onChange={e => setSignupData({...signupData, password: e.target.value})}
+                                                    className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm"
+                                                    required
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-4 pt-4">
+                                    <div className="flex flex-col gap-3 pt-2">
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-16 w-full bg-white text-black hover:bg-zinc-100 rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95"
+                                            className="h-11 w-full bg-white text-black hover:bg-zinc-200 rounded-lg font-medium text-sm transition-all"
                                         >
-                                            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Generar Identidad Institucional'}
+                                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Crear cuenta'}
                                         </Button>
                                         <Button 
                                             variant="ghost" 
                                             onClick={() => setView('login')}
-                                            className="h-14 text-[9px] font-black text-white/40 hover:text-white uppercase tracking-[0.3em] transition-all"
+                                            className="h-10 text-xs font-medium text-muted-foreground hover:text-white"
                                         >
-                                            <ChevronLeft className="w-4 h-4 mr-2" /> Volver a Sincronización
+                                            <ChevronLeft className="w-4 h-4 mr-1" /> Volver a inicio
                                         </Button>
                                     </div>
                                 </form>
                             )}
 
                             {view === 'recovery' && (
-                                <form onSubmit={handleRecovery} className="space-y-10">
-                                    <div className="space-y-6 text-center">
-                                        <div className="space-y-3">
-                                            <h3 className="text-2xl font-black text-white uppercase italic tracking-tight">Restauración de Nodo</h3>
-                                            <p className="text-xs text-[#86868b] font-semibold leading-relaxed px-10">Seleccione el parámetro de recuperación institucional.</p>
+                                <form onSubmit={handleRecovery} className="space-y-6">
+                                    <div className="space-y-4 text-center">
+                                        <div>
+                                            <h3 className="text-xl font-semibold text-white tracking-tight">Recuperar acceso</h3>
+                                            <p className="text-xs text-muted-foreground mt-1">Seleccione el método de recuperación.</p>
                                         </div>
                                         
-                                        <div className="flex p-1.5 bg-white/[0.03] border border-white/5 rounded-2xl">
+                                        <div className="flex p-1 bg-white/[0.03] border border-white/10 rounded-lg">
                                             <button
                                                 type="button"
                                                 onClick={() => setRecoveryData({...recoveryData, type: 'password'})}
-                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${recoveryData.type === 'password' ? 'bg-white text-black shadow-lg' : 'text-white/40 hover:text-white'}`}
+                                                className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${recoveryData.type === 'password' ? 'bg-white text-black shadow-sm' : 'text-muted-foreground hover:text-white'}`}
                                             >
-                                                Olvido de Clave
+                                                Contraseña
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => setRecoveryData({...recoveryData, type: 'username'})}
-                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${recoveryData.type === 'username' ? 'bg-white text-black shadow-lg' : 'text-white/40 hover:text-white'}`}
+                                                className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${recoveryData.type === 'username' ? 'bg-white text-black shadow-sm' : 'text-muted-foreground hover:text-white'}`}
                                             >
-                                                Olvido de Usuario
+                                                Usuario
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div className="group relative">
-                                        <Mail className="absolute left-7 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 group-focus-within:text-blue-500 transition-colors" />
-                                        <Input
-                                            type="email"
-                                            placeholder="Ingrese su Correo Validado"
-                                            value={recoveryData.email}
-                                            onChange={e => setRecoveryData({...recoveryData, email: e.target.value})}
-                                            className="h-16 pl-16 bg-white/[0.04] border-white/5 rounded-[2rem] text-base font-semibold"
-                                            required
-                                        />
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-medium text-muted-foreground ml-1">Correo asociado</label>
+                                        <div className="relative">
+                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                            <Input
+                                                type="email"
+                                                placeholder="Su correo registrado"
+                                                value={recoveryData.email}
+                                                onChange={e => setRecoveryData({...recoveryData, email: e.target.value})}
+                                                className="pl-9 h-11 bg-white/[0.03] border-white/10 rounded-lg text-sm"
+                                                required
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-4 pt-4">
+                                    <div className="flex flex-col gap-3 pt-2">
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-16 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-[0_20px_40px_-15px_rgba(59,130,246,0.4)] transition-all active:scale-95"
+                                            className="h-11 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium text-sm transition-all"
                                         >
-                                            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Solicitar Llave de Emergencia'}
+                                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Enviar instrucciones'}
                                         </Button>
                                         <Button 
                                             variant="ghost" 
                                             onClick={() => setView('login')}
-                                            className="h-14 text-[9px] font-black text-white/40 hover:text-white uppercase tracking-[0.3em] transition-all"
+                                            className="h-10 text-xs font-medium text-muted-foreground hover:text-white"
                                         >
-                                            Recordé mi Identidad Maestra
+                                            <ChevronLeft className="w-4 h-4 mr-1" /> Recordé mis datos
                                         </Button>
                                     </div>
                                 </form>
                             )}
 
                             {view === 'bio' && (
-                                <div className="space-y-12 text-center">
-                                    <div className="space-y-4">
-                                        <h3 className="text-2xl font-black text-white uppercase italic tracking-tight">Validación Biométrica</h3>
-                                        <p className="text-xs text-[#86868b] font-bold leading-relaxed px-10">Identidad Maestro Nivel 4 Requerida. Iniciando escaneo de patrones institucionales.</p>
+                                <div className="space-y-8 text-center py-4">
+                                    <div className="space-y-2">
+                                        <h3 className="text-xl font-semibold text-white tracking-tight">Biometría</h3>
+                                        <p className="text-xs text-muted-foreground">Acerque su huella o rostro al lector.</p>
                                     </div>
                                     
                                     <div className="flex justify-center relative">
                                         <motion.div 
                                             animate={bioStatus === 'scanning' ? { 
-                                                borderColor: ['rgba(59,130,246,0.1)', 'rgba(59,130,246,0.9)', 'rgba(59,130,246,0.1)'],
-                                                boxShadow: ['0 0 0px rgba(59,130,246,0)', '0 0 40px rgba(59,130,246,0.3)', '0 0 0px rgba(59,130,246,0)']
+                                                borderColor: ['rgba(59,130,246,0.1)', 'rgba(59,130,246,0.5)', 'rgba(59,130,246,0.1)'],
                                             } : {}}
                                             transition={{ duration: 2, repeat: Infinity }}
-                                            className="w-52 h-52 rounded-[4rem] bg-white/[0.03] border-2 border-white/10 flex items-center justify-center relative overflow-hidden group transition-all"
+                                            className="w-32 h-32 rounded-3xl bg-white/[0.02] border border-white/10 flex items-center justify-center relative overflow-hidden"
                                         >
                                             {bioStatus === 'scanning' && (
                                                 <motion.div 
-                                                    initial={{ y: -120 }}
-                                                    animate={{ y: 120 }}
-                                                    transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                                                    className="absolute inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-blue-500 to-transparent shadow-[0_0_30px_rgba(59,130,246,1)] z-20"
+                                                    initial={{ y: -80 }}
+                                                    animate={{ y: 80 }}
+                                                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                                                    className="absolute inset-x-0 h-0.5 bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.8)] z-20"
                                                 />
                                             )}
                                             <AnimatePresence mode="wait">
                                                 {bioStatus === 'success' ? (
-                                                    <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }}>
-                                                        <CheckCircle2 className="w-24 h-24 text-emerald-500" strokeWidth={1} />
+                                                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                                                        <CheckCircle2 className="w-12 h-12 text-emerald-500" strokeWidth={1.5} />
                                                     </motion.div>
                                                 ) : (
-                                                    <motion.div key="scan-icon" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="group-hover:scale-110 transition-transform duration-500">
-                                                        <Scan className={`w-24 h-24 ${bioStatus === 'scanning' ? 'text-blue-500' : 'text-white/20'}`} strokeWidth={0.5} />
+                                                    <motion.div key="scan-icon" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                                        <Scan className={`w-12 h-12 ${bioStatus === 'scanning' ? 'text-blue-500' : 'text-muted-foreground'}`} strokeWidth={1} />
                                                     </motion.div>
                                                 )}
                                             </AnimatePresence>
                                         </motion.div>
                                     </div>
 
-                                    <div className="flex flex-col gap-4 pt-4">
+                                    <div className="flex flex-col gap-3">
                                         <Button 
                                             onClick={handleBioAuth}
                                             disabled={bioStatus === 'scanning' || bioStatus === 'success'}
-                                            className="h-16 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95"
+                                            className="h-11 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium text-sm transition-all"
                                         >
-                                            {bioStatus === 'scanning' ? 'Analizando Identidad...' : bioStatus === 'success' ? 'Validación Completada' : 'Iniciar Escaneo Maestro'}
+                                            {bioStatus === 'scanning' ? 'Analizando...' : bioStatus === 'success' ? 'Completado' : 'Escanear'}
                                         </Button>
                                         <Button 
                                             variant="ghost" 
                                             onClick={() => setView('login')}
-                                            className="h-14 text-[9px] font-black text-white/40 hover:text-white uppercase tracking-[0.3em] transition-all"
+                                            className="h-10 text-xs font-medium text-muted-foreground hover:text-white"
                                         >
-                                            Regresar a Sincronización Manual
+                                            Usar contraseña
                                         </Button>
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* Interactive Status Node */}
+                        {/* Status Message */}
                         <AnimatePresence>
                             {msg.text && (
                                 <motion.div 
-                                    initial={{ opacity: 0, y: 20, height: 0 }}
+                                    initial={{ opacity: 0, y: 10, height: 0 }}
                                     animate={{ opacity: 1, y: 0, height: 'auto' }}
-                                    exit={{ opacity: 0, scale: 0.95, height: 0 }}
-                                    className="mt-12 p-6 rounded-[2.5rem] bg-white/[0.03] border border-white/5 flex items-center gap-6 overflow-hidden shadow-inner"
+                                    exit={{ opacity: 0, scale: 0.98, height: 0 }}
+                                    className="mt-6 pt-6 border-t border-white/5"
                                 >
-                                    <div className={`p-3 rounded-full ${msg.type === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-                                        {msg.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                                    </div>
-                                    <div className="flex flex-col flex-1">
-                                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 mb-1">Estatus del Nodo</span>
-                                        <span className={`text-[13px] font-bold tracking-tight leading-tight ${msg.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    <div className={`p-3 rounded-lg flex items-center gap-3 ${msg.type === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                                        {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
+                                        <span className="text-xs font-medium leading-tight">
                                             {msg.text}
                                         </span>
                                     </div>
@@ -450,31 +447,23 @@ const Login = ({ onLogin }) => {
                         </AnimatePresence>
                     </div>
 
-                    {/* Footer System Info */}
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1 }}
-                        className="mt-16 text-center space-y-8"
-                    >
-                        <div className="flex items-center justify-center gap-10 text-white/20">
-                            <div className="flex items-center gap-2.5">
-                                <ShieldCheck className="w-4 h-4 text-blue-500/50" />
-                                <span className="text-[9px] font-black uppercase tracking-[0.3em]">Quantum Security</span>
+                    {/* Footer Info */}
+                    <div className="mt-8 text-center space-y-4">
+                        <div className="flex items-center justify-center gap-4 text-muted-foreground">
+                            <div className="flex items-center gap-1.5">
+                                <ShieldCheck className="w-3.5 h-3.5" />
+                                <span className="text-[10px] font-medium uppercase tracking-wider">Seguro</span>
                             </div>
-                            <div className="w-1.5 h-1.5 rounded-full bg-white/5" />
-                            <div className="flex items-center gap-2.5">
-                                <Zap className="w-4 h-4 text-indigo-500/50" />
-                                <span className="text-[9px] font-black uppercase tracking-[0.3em]">IA Core Active</span>
+                            <div className="w-1 h-1 rounded-full bg-white/10" />
+                            <div className="flex items-center gap-1.5">
+                                <Zap className="w-3.5 h-3.5" />
+                                <span className="text-[10px] font-medium uppercase tracking-wider">Rápido</span>
                             </div>
                         </div>
-                        <div className="space-y-2">
-                           <p className="text-[10px] text-white/10 font-black tracking-[0.5em] uppercase">
-                               © 2026 U.E. Andrés Bello — Platinum Institution
-                           </p>
-                           <p className="text-[8px] text-white/5 font-bold uppercase tracking-[0.2em]">Hecho por Antigravity v3.1</p>
-                        </div>
-                    </motion.div>
+                        <p className="text-[10px] text-muted-foreground/50">
+                            © 2026 U.E. Andrés Bello
+                        </p>
+                    </div>
                 </motion.div>
             </AnimatePresence>
         </div>

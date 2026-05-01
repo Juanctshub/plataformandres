@@ -28,7 +28,9 @@ import {
 } from 'lucide-react';
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
+import { Card, CardContent } from "./ui/card";
+import { Progress } from "./ui/progress";
+import { AreaChart, Area, ResponsiveContainer, Tooltip as ReTooltip, XAxis } from 'recharts';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -42,17 +44,12 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.1
-      }
+      transition: { staggerChildren: 0.06, delayChildren: 0.05 }
     }
   };
+  const item = { hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } } };
 
-  const item = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.23, 1, 0.32, 1] } }
-  };
+
 
   // ─── REPORTE PRO CON IA ───
   const generateProReport = async () => {
@@ -542,223 +539,222 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       variants={container}
       initial="hidden"
       animate="show"
-      className="max-w-7xl mx-auto py-8 sm:py-20 space-y-16 sm:space-y-32 px-4 sm:px-6"
+      className="max-w-6xl mx-auto py-6 sm:py-12 space-y-8 px-4 sm:px-6"
     >
-      {/* Welcome Header */}
-      <motion.div variants={item} className="space-y-6 sm:space-y-8">
-        <div className="flex items-center gap-3">
-           <div className="w-1 h-5 bg-blue-500 rounded-full" />
-           <span className="text-[11px] text-[#86868b] font-medium tracking-wide">Andrés Bello · Panel de Control</span>
+      {/* ═══ Header ═══ */}
+      <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <p className="text-sm text-muted-foreground mb-1">Bienvenido de vuelta</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+            {user?.username || 'Administrador'}
+          </h1>
         </div>
-        
-        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
-            <div className="space-y-3">
-                <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
-                  Hola, <span className="text-blue-400">{user?.username}</span>
-                </h2>
-                <p className="text-sm sm:text-base text-[#86868b] font-normal max-w-xl leading-relaxed">
-                  Resumen del estado académico. Sistema <span className="text-emerald-400">operativo</span>.
-                </p>
-            </div>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-xs text-muted-foreground">Sistema operativo</span>
+        </div>
+      </motion.div>
 
-            {/* Strategic Hub (Moved New Features Here) */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 w-full xl:w-auto p-4 sm:p-6 bg-white/[0.02] border border-white/5 rounded-[3rem] apple-glass">
-                <Button 
-                   onClick={generateProReport}
-                   disabled={reportLoading}
-                   className="h-16 sm:h-20 px-8 sm:px-12 bg-blue-600 text-white hover:bg-blue-500 rounded-[2rem] font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] transition-all flex gap-4 shadow-2xl active:scale-95"
-                >
-                   {reportLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5" />}
-                   {reportLoading ? 'Generando...' : 'Reporte Pro'}
-                </Button>
-                
-                <div className="relative">
-                   <input type="file" onChange={handleFileImport} className="hidden" id="dash-import" />
-                   <Button 
-                      onClick={() => document.getElementById('dash-import').click()}
-                      disabled={importLoading}
-                      className="h-16 sm:h-20 px-8 sm:px-12 bg-white/5 text-white hover:bg-white/10 border border-white/10 rounded-[2rem] font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] transition-all flex gap-4 active:scale-95"
-                   >
-                      {importLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
-                      Sincronizar
-                   </Button>
-                </div>
-            </div>
-        </div>
+      {/* ═══ Import Message ═══ */}
+      <AnimatePresence>
         {importMsg && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-xs font-black uppercase text-blue-400 tracking-widest bg-blue-500/5 p-4 rounded-2xl border border-blue-500/20 inline-block">
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-sm text-blue-300 font-medium"
+          >
             {importMsg}
           </motion.div>
         )}
+      </AnimatePresence>
+
+      {/* ═══ Stat Cards ═══ */}
+      <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {statCards.map((stat, i) => (
+          <Card key={i} className="stat-card bg-transparent border-white/[0.06] group cursor-pointer" onClick={() => {
+            if (stat.label === 'Matrícula') onTabChange('students');
+            if (stat.label === 'Asistencia') onTabChange('attendance');
+            if (stat.label === 'Justificativos') onTabChange('justifications');
+          }}>
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${stat.color}`}>
+                  <stat.icon className="w-4 h-4" />
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <div className="text-2xl font-semibold text-white tracking-tight">{stat.value}</div>
+              <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+              <p className="text-[10px] text-muted-foreground/60 mt-0.5">{stat.sub}</p>
+            </CardContent>
+          </Card>
+        ))}
       </motion.div>
 
-      {/* Stats Grid */}
-      <div className="grid gap-6 sm:gap-10 grid-cols-2 lg:grid-cols-4">
-        {statCards.map((stat) => (
-          <motion.div 
-            key={stat.label} 
-            variants={item} 
-            whileHover={{ y: -8, scale: 1.01 }}
-            className="group relative overflow-hidden rounded-[2.5rem] p-8 sm:p-10 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-blue-500/20 transition-all duration-500 shadow-xl"
-          >
-            <div className="flex justify-between items-start mb-12 sm:mb-16">
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${stat.color} border border-white/5 shadow-lg`}>
-                    <stat.icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.5} />
+      {/* ═══ Main Grid: Chart + Activity ═══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        
+        {/* Chart Card */}
+        <motion.div variants={item} className="lg:col-span-2">
+          <Card className="section-card bg-transparent border-white/[0.06] overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-sm font-medium text-white">Tendencia Semanal</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">Asistencia promedio por día</p>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                   <ArrowUpRight className="w-4 h-4" />
-                </div>
-            </div>
-            
-            <div className="space-y-1">
-                <p className="text-[11px] font-medium text-[#86868b] tracking-wide">{stat.label}</p>
-                <div className="text-3xl sm:text-4xl font-semibold text-white tracking-tight">
-                    {stat.value}
-                </div>
-                <div className="flex items-center gap-2 mt-4 sm:mt-6">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <p className="text-[10px] text-[#86868b] font-medium uppercase tracking-wider">
-                        {stat.sub}
-                    </p>
-                </div>
-            </div>
-          </motion.div>
-        ))}
+                <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-medium">
+                  En vivo
+                </Badge>
+              </div>
+              <div className="h-[220px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={[
+                    { day: 'Lun', value: 82 },
+                    { day: 'Mar', value: 91 },
+                    { day: 'Mié', value: 87 },
+                    { day: 'Jue', value: 94 },
+                    { day: 'Vie', value: 78 },
+                  ]}>
+                    <defs>
+                      <linearGradient id="colorAttendance" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#71717a', fontSize: 11 }} />
+                    <ReTooltip 
+                      contentStyle={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', fontSize: '12px', color: '#fff' }}
+                      labelStyle={{ color: '#a1a1aa' }}
+                    />
+                    <Area type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} fill="url(#colorAttendance)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Activity Feed */}
+        <motion.div variants={item}>
+          <Card className="section-card bg-transparent border-white/[0.06] h-full">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-sm font-medium text-white">Actividad reciente</h3>
+                <Clock className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <div className="space-y-4 max-h-[260px] overflow-y-auto no-scrollbar">
+                {(stats?.recentActivity && Array.isArray(stats.recentActivity) && stats.recentActivity.length > 0) ? (
+                  stats.recentActivity.map((log, i) => (
+                    <div key={i} className="flex gap-3 group">
+                      <div className="flex flex-col items-center pt-1">
+                        <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                          log.type === 'STUDENT_REG' ? 'bg-emerald-500' :
+                          log.type === 'JUSTIFICATION' ? 'bg-amber-500' :
+                          log.type === 'GRADE' ? 'bg-indigo-500' :
+                          'bg-blue-500'
+                        }`} />
+                        {i < (stats.recentActivity.length - 1) && <div className="w-px h-full bg-white/5 mt-1" />}
+                      </div>
+                      <div className="pb-4 flex-1 min-w-0">
+                        <p className="text-xs text-white/80 leading-snug truncate">{log.event}</p>
+                        <span className="text-[10px] text-muted-foreground">{log.time}</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-12 flex flex-col items-center text-muted-foreground space-y-2">
+                    <Clock className="w-6 h-6 opacity-30" />
+                    <span className="text-xs">Sin actividad reciente</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12">
-        <motion.div variants={item} className="lg:col-span-8 rounded-[3.5rem] p-10 sm:p-14 bg-white/[0.02] border border-white/5 relative overflow-hidden">
-           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-16 relative z-10">
-              <div className="flex items-center gap-5">
-                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
-                    <Activity className="w-7 h-7" />
-                 </div>
-                 <div>
-                    <h3 className="text-2xl sm:text-4xl font-bold text-white tracking-tight">Monitoreo IA</h3>
-                    <p className="text-[10px] text-indigo-400 font-semibold uppercase tracking-widest mt-1">Análisis Predictivo Activo</p>
-                 </div>
+      {/* ═══ AI Monitoring ═══ */}
+      <motion.div variants={item}>
+        <Card className="section-card bg-transparent border-white/[0.06]">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-indigo-400" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-white">Alertas IA</h3>
+                  <p className="text-[10px] text-muted-foreground">Análisis predictivo</p>
+                </div>
               </div>
               <Button 
                 onClick={() => onTabChange('aianalytics')}
-                className="bg-white text-black hover:bg-zinc-200 rounded-full px-8 h-12 text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg"
+                variant="ghost"
+                className="text-xs text-muted-foreground hover:text-white h-8 px-3"
               >
-                 Ver Analíticas Completas
+                Ver todo <ChevronRight className="w-3 h-3 ml-1" />
               </Button>
-           </div>
+            </div>
 
-           <div className="space-y-6 relative z-10">
+            <div className="space-y-3">
               {(aiData?.alerts && Array.isArray(aiData.alerts) && aiData.alerts.length > 0) ? (
-                aiData.alerts.map((alert, i) => (
-                   <div key={i} className="p-6 sm:p-8 rounded-[2.5rem] bg-white/[0.03] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-6 group hover:bg-white/[0.05] transition-all duration-300">
-                      <div className="flex items-center gap-6">
-                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${alert.type === 'danger' ? 'bg-red-500/10 text-red-500 border border-red-500/10' : 'bg-amber-500/10 text-amber-500 border border-amber-500/10'}`}>
-                            {alert.type === 'danger' ? <XCircle className="w-6 h-6" /> : <AlertTriangle className="w-6 h-6" />}
-                         </div>
-                         <div className="space-y-1">
-                            <h4 className="text-lg font-bold text-white tracking-tight">{alert.msg}</h4>
-                            <div className="flex items-center gap-2">
-                                <Sparkles className="w-3 h-3 text-indigo-400" />
-                                <p className="text-[10px] text-[#86868b] font-semibold uppercase tracking-widest">Recomendación IA</p>
-                            </div>
-                         </div>
-                      </div>
-                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-hover:bg-indigo-500 group-hover:text-white transition-all shadow-md">
-                        <ArrowRight className="w-5 h-5" />
-                      </div>
-                   </div>
+                aiData.alerts.slice(0, 3).map((alert, i) => (
+                  <div key={i} className="flex items-center gap-4 p-4 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition-colors group">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      alert.type === 'danger' ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'
+                    }`}>
+                      {alert.type === 'danger' ? <XCircle className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
+                    </div>
+                    <p className="text-sm text-white/80 flex-1 truncate">{alert.msg}</p>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                  </div>
                 ))
               ) : (
-                <div className="py-20 flex flex-col items-center justify-center text-[#86868b] space-y-6 opacity-60 border border-dashed border-white/10 rounded-[3rem] bg-white/[0.01]">
-                   <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
-                      <ShieldCheck className="w-8 h-8" />
-                   </div>
-                   <div className="text-center space-y-2">
-                      <h4 className="text-xl font-bold text-white tracking-tight">Núcleo Estable</h4>
-                      <p className="text-[10px] font-semibold tracking-widest uppercase">Condiciones Óptimas de Operación</p>
-                   </div>
+                <div className="py-8 flex flex-col items-center text-muted-foreground space-y-2">
+                  <ShieldCheck className="w-6 h-6 opacity-30" />
+                  <span className="text-xs">Todo en orden — sin alertas activas</span>
                 </div>
               )}
-           </div>
-        </motion.div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-        <motion.div variants={item} className="lg:col-span-4 rounded-[3.5rem] p-10 sm:p-14 bg-white/[0.02] border border-white/5 relative overflow-hidden">
-           <div className="flex items-center gap-5 mb-12 border-b border-white/5 pb-8">
-              <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-400 border border-orange-500/20">
-                 <Clock className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white tracking-tight uppercase">Actividad</h3>
-                <p className="text-[9px] text-orange-400 font-semibold uppercase tracking-widest mt-1">Logs Maestros</p>
-              </div>
-           </div>
+      {/* ═══ Quick Actions ═══ */}
+      <motion.div variants={item} className="flex flex-wrap items-center gap-3">
+        <Button 
+          onClick={generateProReport}
+          disabled={reportLoading}
+          variant="outline"
+          className="h-9 px-4 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+        >
+          {reportLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" /> : <Printer className="w-3.5 h-3.5 mr-2" />}
+          Reporte IA
+        </Button>
+        
+        <Button 
+          onClick={() => onTabChange('students')}
+          variant="outline"
+          className="h-9 px-4 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+        >
+          <UserPlus className="w-3.5 h-3.5 mr-2" />
+          Nueva admisión
+        </Button>
 
-           <div className="space-y-8 max-h-[500px] overflow-y-auto no-scrollbar pr-2">
-              {(stats?.recentActivity && Array.isArray(stats.recentActivity) && stats.recentActivity.length > 0) ? (
-                stats.recentActivity.map((log, i) => (
-                    <div key={i} className="flex gap-6 group/item">
-                      <div className="flex flex-col items-center gap-2 pt-1.5">
-                         <div className={`w-2.5 h-2.5 rounded-full ${
-                            log.type === 'STUDENT_REG' ? 'bg-emerald-500 shadow-emerald-500/30' :
-                            log.type === 'JUSTIFICATION' ? 'bg-amber-500 shadow-amber-500/30' :
-                            log.type === 'GRADE' ? 'bg-indigo-500 shadow-indigo-500/30' :
-                            'bg-blue-500 shadow-blue-500/30'
-                         }`} />
-                         <div className="w-[1px] h-full bg-white/5" />
-                      </div>
-                      <div className="pb-8 flex-1">
-                         <p className="text-sm font-semibold text-white/90 leading-tight mb-2 group-hover:text-blue-400 transition-colors">{log.event}</p>
-                         <div className="flex items-center gap-2 opacity-40">
-                            <Clock className="w-3 h-3" />
-                            <span className="text-[9px] font-bold uppercase tracking-widest">{log.time}</span>
-                         </div>
-                      </div>
-                   </div>
-                ))
-              ) : (
-                <div className="py-24 flex flex-col items-center justify-center text-[#86868b] space-y-4 opacity-40">
-                   <Clock className="w-10 h-10 mb-2" />
-                   <span className="text-[10px] font-bold tracking-widest uppercase text-center">Sin Actividad Reciente</span>
-                </div>
-              )}
-           </div>
-        </motion.div>
-      </div>
+        <label className="cursor-pointer">
+          <input type="file" className="hidden" accept=".xlsx,.xls,.csv" onChange={handleFileImport} disabled={importLoading} />
+          <div className="h-9 px-4 rounded-lg text-xs font-medium bg-transparent border border-white/10 text-white/70 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
+            {importLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+            Importar Excel
+          </div>
+        </label>
 
-      {/* Action Row */}
-      <motion.div variants={item} className="flex flex-col xl:flex-row xl:items-center gap-6 pt-12 border-t border-white/5">
-         <div className="flex flex-wrap gap-4 flex-1">
-             <Button 
-                onClick={generateProReport}
-                disabled={reportLoading}
-                className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl px-8 h-14 text-[10px] font-bold uppercase tracking-wider transition-all flex gap-3 items-center"
-             >
-                {reportLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Printer className="w-4 h-4 text-blue-500" />}
-                Reporte Ejecutivo IA
-             </Button>
-             
-             <Button 
-                onClick={() => onTabChange('students')}
-                className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl px-8 h-14 text-[10px] font-bold uppercase tracking-wider transition-all flex gap-3 items-center"
-             >
-                <UserPlus className="w-4 h-4 text-emerald-500" />
-                Nueva Admisión
-             </Button>
-
-             <label className="cursor-pointer">
-                <input type="file" className="hidden" accept=".xlsx,.xls,.csv" onChange={handleFileImport} disabled={importLoading} />
-                <div className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl px-8 h-14 text-[10px] font-bold uppercase tracking-wider transition-all flex gap-3 items-center">
-                   {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4 text-amber-500" />}
-                   Importar Datos
-                </div>
-             </label>
-         </div>
-
-         <div className="xl:ml-auto flex items-center gap-5 text-[#86868b] opacity-40">
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-            <Command className="w-4 h-4" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">Andrés Bello Kernel v30.0</span>
-         </div>
+        <div className="ml-auto hidden sm:flex items-center gap-2 text-muted-foreground/40">
+          <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+          <span className="text-[10px] font-medium">Andrés Bello v30</span>
+        </div>
       </motion.div>
     </motion.div>
   );

@@ -294,245 +294,215 @@ const Grades = () => {
 
     return (
         <motion.div 
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-7xl mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6"
+            className="max-w-6xl mx-auto py-6 sm:py-12 space-y-6 px-4 sm:px-6"
         >
-            {/* Premium Header: Apple Style v30.0 */}
-            <motion.div className="space-y-8 sm:space-y-10">
-                <div className="flex items-center gap-4">
-                   <div className="w-1.5 h-8 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.6)]" />
-                   <Badge className="bg-white/5 text-[#86868b] border border-white/5 rounded-full px-5 py-1.5 text-[9px] sm:text-[11px] font-black uppercase tracking-[0.3em]">
-                      Núcleo de Calificaciones v30.0
-                   </Badge>
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <p className="text-xs text-muted-foreground mb-1">Evaluación Continua</p>
+                    <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Calificaciones</h1>
                 </div>
-                
-                <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
-                    <div className="space-y-2">
-                        <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
-                          Calificaciones
-                        </h2>
-                        <p className="text-sm text-[#86868b] font-normal max-w-md leading-relaxed">
-                          Registro y analítica de evaluación continua.
-                        </p>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-4 sm:gap-6 w-full xl:w-auto">
-                        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-                            <DialogTrigger asChild>
-                              <Button className="h-20 sm:h-24 px-12 sm:px-16 bg-white text-black hover:bg-zinc-200 rounded-[2rem] sm:rounded-[2.5rem] font-black text-[10px] sm:text-xs uppercase tracking-[0.3em] transition-all flex gap-6 shadow-[0_30px_60px_-15px_rgba(255,255,255,0.1)] active:scale-95 flex-1 sm:flex-none border border-white/10">
-                                <Plus className="w-6 h-6" />
-                                Registrar Nota
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="apple-glass border-white/10 p-10 sm:p-20 rounded-[3rem] sm:rounded-[4rem] max-w-2xl overflow-hidden">
-                               <div className="absolute top-0 left-0 w-full h-2 bg-amber-500" />
-                               <DialogHeader className="mb-12">
-                                  <DialogTitle className="text-3xl sm:text-5xl font-black text-white tracking-tighter italic uppercase">Registro de Nota</DialogTitle>
-                                  <DialogDescription className="text-[10px] sm:text-xs text-amber-500 font-black uppercase tracking-[0.4em] mt-4 italic">Protocolo de Evaluación v30.0</DialogDescription>
-                               </DialogHeader>
-                               <form onSubmit={handleSubmit} className="space-y-8">
-                                  <div className="space-y-4">
-                                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] ml-6">Alumno a Evaluar</label>
-                                     <select 
-                                        className="w-full bg-white/5 border border-white/10 rounded-[2rem] h-16 px-8 text-sm text-white outline-none focus:ring-1 focus:ring-amber-500/50 appearance-none font-bold"
-                                        value={newGrade.estudiante_id}
-                                        onChange={(e) => setNewGrade({...newGrade, estudiante_id: e.target.value})}
-                                        required
-                                     >
-                                        <option value="" className="bg-zinc-900">Seleccionar Estudiante...</option>
-                                        {students.map(s => <option key={s.id} value={s.id} className="bg-zinc-900">{s.nombre} ({s.cedula})</option>)}
-                                     </select>
-                                  </div>
-                                  <div className="space-y-4">
-                                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] ml-6">Asignatura / Materia</label>
-                                     <Input 
-                                        placeholder="Ej: Matemáticas Avanzadas"
-                                        className="h-16 bg-white/5 border-white/10 rounded-[2rem] text-white font-bold px-8"
-                                        value={newGrade.materia}
-                                        onChange={(e) => setNewGrade({...newGrade, materia: e.target.value})}
-                                        required
-                                     />
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-8">
-                                     <div className="space-y-4">
-                                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] ml-6">Calificación (0-20)</label>
-                                        <Input 
-                                           type="number"
-                                           min="0"
-                                           max="20"
-                                           placeholder="20"
-                                           className="h-16 bg-white/5 border-white/10 rounded-[2rem] text-white font-black text-xl px-8"
-                                           value={newGrade.nota}
-                                           onChange={(e) => setNewGrade({...newGrade, nota: e.target.value})}
-                                           required
-                                        />
-                                     </div>
-                                     <div className="space-y-4">
-                                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] ml-6">Periodo Académico</label>
-                                        <select 
-                                          className="w-full bg-white/5 border border-white/10 rounded-[2rem] h-16 px-8 text-sm text-white outline-none appearance-none font-bold"
-                                          value={newGrade.lapso}
-                                          onChange={(e) => setNewGrade({...newGrade, lapso: e.target.value})}
-                                        >
-                                          <option value="1" className="bg-zinc-900">1er Lapso</option>
-                                          <option value="2" className="bg-zinc-900">2do Lapso</option>
-                                          <option value="3" className="bg-zinc-900">3er Lapso</option>
-                                        </select>
-                                     </div>
-                                  </div>
-                                  <Button type="submit" disabled={submitting} className="w-full h-20 bg-amber-600 text-white hover:bg-amber-500 rounded-full font-black uppercase tracking-[0.3em] transition-all shadow-2xl active:scale-95">
-                                     {submitting ? <Loader2 className="w-7 h-7 animate-spin" /> : "Sincronizar con Expediente"}
-                                  </Button>
-                               </form>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* Action Bar: Import/Export & Filters */}
-            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-10 bg-white/[0.02] border border-white/5 p-8 sm:p-12 rounded-[3rem] sm:rounded-[4rem] relative overflow-hidden group">
-                <div className="flex flex-col md:flex-row items-center gap-8 flex-1 relative z-10">
-                   <div className="relative w-full md:flex-1 md:max-w-2xl group/search">
-                      <Search className="absolute left-10 top-1/2 -translate-y-1/2 w-6 h-6 text-[#86868b] group-focus-within/search:text-amber-500 transition-colors" />
-                       <Input 
-                         placeholder="Buscar por estudiante o materia..." 
-                         className="pl-24 h-18 sm:h-20 bg-white/5 border-white/5 rounded-[2.5rem] text-white text-base font-black italic tracking-tighter focus:ring-1 focus:ring-amber-500/50"
-                         value={searchTerm}
-                         onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                   </div>
-                   <div className="flex items-center gap-3 overflow-x-auto no-scrollbar w-full md:w-auto bg-white/5 p-2 rounded-full border border-white/5">
-                      {years.map((y) => (
-                         <button
-                           key={y}
-                           onClick={() => setYearFilter(y)}
-                           className={`px-10 py-4 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap ${
-                             yearFilter === y 
-                               ? 'bg-white text-black shadow-2xl' 
-                               : 'text-[#86868b] hover:text-white hover:bg-white/5'
-                           }`}
-                         >
-                           {y} {y !== 'Todos' && (isMobile ? '' : 'Año')}
-                         </button>
-                      ))}
-                   </div>
-                </div>
-
-                <div className="flex items-center gap-4 relative z-10">
-                   <input type="file" ref={fileInputRef} onChange={handleExcelImport} accept=".xlsx, .xls" className="hidden" />
-                   <Button 
-                     onClick={() => fileInputRef.current.click()}
-                     disabled={bulkLoading}
-                     className="h-16 sm:h-18 px-8 bg-white/5 border border-white/10 hover:bg-white/10 text-[#86868b] hover:text-white rounded-full font-black text-[10px] uppercase tracking-[0.2em] flex gap-4 transition-all"
-                   >
-                     {bulkLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileSpreadsheet className="w-5 h-5" />}
-                     Carga Masiva
-                   </Button>
-                   <Button 
-                         onClick={exportToExcel}
-                         className="h-16 sm:h-18 px-8 bg-white/5 border border-white/10 hover:bg-white/10 text-[#86868b] hover:text-white rounded-full font-black text-[10px] uppercase tracking-[0.2em] flex gap-4 transition-all"
-                     >
-                         <Download className="w-5 h-5" />
-                         Acta Excel
-                     </Button>
-                </div>
-                <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-l from-amber-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+                <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="h-9 px-4 rounded-lg text-xs font-medium bg-white text-black hover:bg-zinc-200">
+                          <Plus className="w-3.5 h-3.5 mr-2" />
+                          Registrar nota
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 p-6 sm:p-8 rounded-xl max-w-lg">
+                       <DialogHeader className="mb-6">
+                          <DialogTitle className="text-xl font-semibold text-white tracking-tight">Registrar Nota</DialogTitle>
+                          <DialogDescription className="text-sm text-muted-foreground mt-1">Añadir calificación al sistema</DialogDescription>
+                       </DialogHeader>
+                       <form onSubmit={handleSubmit} className="space-y-4">
+                          <div className="space-y-2">
+                             <label className="text-xs text-muted-foreground font-medium">Alumno</label>
+                             <select 
+                                className="w-full bg-white/[0.03] border border-white/[0.06] rounded-lg h-10 px-3 text-sm text-white outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none"
+                                value={newGrade.estudiante_id}
+                                onChange={(e) => setNewGrade({...newGrade, estudiante_id: e.target.value})}
+                                required
+                             >
+                                <option value="" className="bg-zinc-900">Seleccionar...</option>
+                                {students.map(s => <option key={s.id} value={s.id} className="bg-zinc-900">{s.nombre} ({s.cedula})</option>)}
+                             </select>
+                          </div>
+                          <div className="space-y-2">
+                             <label className="text-xs text-muted-foreground font-medium">Asignatura</label>
+                             <Input 
+                                placeholder="Ej: Matemáticas"
+                                className="h-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-white text-sm"
+                                value={newGrade.materia}
+                                onChange={(e) => setNewGrade({...newGrade, materia: e.target.value})}
+                                required
+                             />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                             <div className="space-y-2">
+                                <label className="text-xs text-muted-foreground font-medium">Nota (0-20)</label>
+                                <Input 
+                                   type="number"
+                                   min="0"
+                                   max="20"
+                                   placeholder="20"
+                                   className="h-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-white text-sm"
+                                   value={newGrade.nota}
+                                   onChange={(e) => setNewGrade({...newGrade, nota: e.target.value})}
+                                   required
+                                />
+                             </div>
+                             <div className="space-y-2">
+                                <label className="text-xs text-muted-foreground font-medium">Lapso</label>
+                                <select 
+                                  className="w-full bg-white/[0.03] border border-white/[0.06] rounded-lg h-10 px-3 text-sm text-white outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none"
+                                  value={newGrade.lapso}
+                                  onChange={(e) => setNewGrade({...newGrade, lapso: e.target.value})}
+                                >
+                                  <option value="1" className="bg-zinc-900">1er Lapso</option>
+                                  <option value="2" className="bg-zinc-900">2do Lapso</option>
+                                  <option value="3" className="bg-zinc-900">3er Lapso</option>
+                                </select>
+                             </div>
+                          </div>
+                          <Button type="submit" disabled={submitting} className="w-full h-10 mt-2 bg-white text-black hover:bg-zinc-200 rounded-lg text-sm font-medium transition-all">
+                             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar Nota"}
+                          </Button>
+                       </form>
+                    </DialogContent>
+                </Dialog>
             </div>
 
-            {/* Tactical Metrics: Mini Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 sm:gap-12">
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input 
+                        placeholder="Buscar por estudiante o materia..." 
+                        className="h-10 pl-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-sm text-white placeholder:text-muted-foreground/50"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                    {years.map((y) => (
+                        <button
+                            key={y}
+                            onClick={() => setYearFilter(y)}
+                            className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                                yearFilter === y 
+                                ? 'bg-white text-black' 
+                                : 'bg-white/[0.03] text-muted-foreground hover:text-white border border-white/[0.06]'
+                            }`}
+                        >
+                            {y} {y !== 'Todos' && (isMobile ? '' : 'Año')}
+                        </button>
+                    ))}
+                </div>
+                <div className="flex items-center gap-2 border-l border-white/10 pl-3 ml-1">
+                    <input type="file" ref={fileInputRef} onChange={handleExcelImport} accept=".xlsx, .xls" className="hidden" />
+                    <Button 
+                        onClick={() => fileInputRef.current.click()}
+                        disabled={bulkLoading}
+                        variant="outline"
+                        className="h-10 px-3 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+                        title="Importar notas"
+                    >
+                        {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSpreadsheet className="w-4 h-4" />}
+                    </Button>
+                    <Button 
+                        onClick={exportToExcel}
+                        variant="outline"
+                        className="h-10 px-3 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+                        title="Exportar acta"
+                    >
+                        <Download className="w-4 h-4" />
+                    </Button>
+                </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: 'Promedio Global', value: (filteredGrades.reduce((acc, c) => acc + (parseFloat(c.grade) || 0), 0) / (filteredGrades.length || 1)).toFixed(1), icon: Target, color: 'text-white', bg: 'bg-white/5' },
-                  { label: 'Indice Aprobación', value: `${((filteredGrades.filter(g => (parseFloat(g.grade) || 0) >= 10).length / (filteredGrades.length || 1)) * 100).toFixed(0)}%`, icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-                  { label: 'Registros Maestro', value: filteredGrades.length, icon: Database, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+                  { label: 'Promedio', value: (filteredGrades.reduce((acc, c) => acc + (parseFloat(c.grade) || 0), 0) / (filteredGrades.length || 1)).toFixed(1), icon: Target, color: 'text-white' },
+                  { label: 'Aprobación', value: `${((filteredGrades.filter(g => (parseFloat(g.grade) || 0) >= 10).length / (filteredGrades.length || 1)) * 100).toFixed(0)}%`, icon: TrendingUp, color: 'text-emerald-400' },
+                  { label: 'Registros', value: filteredGrades.length, icon: Database, color: 'text-blue-400' },
                 ].map((m, i) => (
-                  <motion.div 
-                    key={i} 
-                    whileHover={{ y: -5 }}
-                    className={`bg-white/[0.02] border border-white/5 p-8 sm:p-12 rounded-[3.5rem] flex items-center justify-between group transition-all duration-500 ${i === 2 ? 'col-span-2 md:col-span-1' : ''}`}
-                  >
-                     <div className="space-y-4">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${m.bg} ${m.color} border border-white/5 shadow-xl`}>
-                            <m.icon className="w-7 h-7" />
-                        </div>
-                        <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] leading-none">{m.label}</p>
-                     </div>
-                     <div className={`text-5xl sm:text-6xl font-black tracking-tighter italic ${m.color}`}>{m.value}</div>
-                  </motion.div>
+                  <div key={i} className="stat-card flex items-center gap-3 p-3">
+                      <m.icon className={`w-4 h-4 ${m.color} flex-shrink-0`} />
+                      <div className="min-w-0">
+                          <div className={`text-lg font-semibold ${m.color}`}>{m.value}</div>
+                          <span className="text-[10px] text-muted-foreground">{m.label}</span>
+                      </div>
+                  </div>
                 ))}
             </div>
 
-            {/* Main Grades Listing: Premium Tactical Interface */}
-            <div className="space-y-10 sm:space-y-16">
-               <div className="flex items-center gap-6 ml-8">
-                   <Layers className="w-6 h-6 text-white/20" />
-                   <h3 className="text-2xl font-black text-white/40 uppercase tracking-[0.5em] italic">Bitácora de Evaluación</h3>
+            {/* Main Grades Listing */}
+            <div className="space-y-2">
+               <div className="flex items-center gap-3 px-1 mb-3">
+                   <Layers className="w-4 h-4 text-muted-foreground" />
+                   <h3 className="text-xs text-muted-foreground">Listado de evaluaciones</h3>
                </div>
 
-               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-14">
+               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                 <AnimatePresence mode="popLayout">
                    {filteredGrades.length > 0 ? (
                      filteredGrades.map((g, i) => (
                        <motion.div
                          key={g.id || i}
-                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                         exit={{ opacity: 0, scale: 0.9 }}
-                         transition={{ delay: i * 0.03 }}
-                         className="group relative rounded-[4rem] p-10 sm:p-14 bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-amber-500/30 transition-all duration-700 overflow-hidden"
+                         initial={{ opacity: 0, scale: 0.98 }}
+                         animate={{ opacity: 1, scale: 1 }}
+                         exit={{ opacity: 0, scale: 0.98 }}
+                         className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition-colors"
                        >
-                          <div className="flex items-center justify-between gap-10 relative z-10">
-                             <div className="flex items-center gap-8 flex-1 overflow-hidden">
-                                <div className={`w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-[2.5rem] flex items-center justify-center transition-all bg-white/[0.03] border border-white/5 shadow-2xl ${
-                                   parseFloat(g.grade) >= 10 ? 'text-emerald-400 border-emerald-500/20' : 'text-red-400 border-red-500/20'
-                                }`}>
-                                   <GraduationCap className="w-10 h-10 sm:w-12 sm:h-12" />
-                                </div>
-                                <div className="space-y-3 overflow-hidden">
-                                   <h4 className="text-2xl sm:text-3xl font-black text-white tracking-tighter uppercase italic truncate">{g.student}</h4>
-                                   <div className="flex items-center gap-4">
-                                      <span className="text-[10px] text-amber-500 font-black uppercase tracking-[0.3em] italic">{g.subject}</span>
-                                      <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
-                                      <Badge className="bg-white/5 text-[#86868b] border-none rounded-lg px-4 py-1 text-[10px] font-black uppercase tracking-widest">LAPSO {g.lapso}</Badge>
-                                   </div>
+                          <div className="flex items-center gap-4 flex-1 min-w-0">
+                             <div className={`w-10 h-10 shrink-0 rounded-lg flex items-center justify-center bg-white/[0.03] ${
+                                parseFloat(g.grade) >= 10 ? 'text-emerald-400' : 'text-red-400'
+                             }`}>
+                                <GraduationCap className="w-5 h-5" />
+                             </div>
+                             <div className="min-w-0">
+                                <h4 className="text-sm font-medium text-white truncate">{g.student}</h4>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                   <span className="text-[10px] text-amber-500 font-medium truncate">{g.subject}</span>
+                                   <span className="text-[10px] text-muted-foreground">Lapso {g.lapso}</span>
                                 </div>
                              </div>
-
-                             <div className="flex flex-col items-end gap-6">
-                                <div className="text-right">
-                                   <div className={`text-5xl sm:text-7xl font-black tracking-tighter italic leading-none ${
-                                      parseFloat(g.grade) >= 18 ? 'text-blue-500' : 
-                                      parseFloat(g.grade) >= 10 ? 'text-white' : 'text-red-500'
-                                   }`}>
-                                      {parseFloat(g.grade).toFixed(1)}
-                                   </div>
-                                   <Badge className={`mt-4 rounded-full px-6 py-2 text-[10px] font-black uppercase tracking-[0.3em] italic shadow-xl ${
-                                      parseFloat(g.grade) >= 10 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-emerald-500/10' : 'bg-red-500/10 text-red-400 border border-red-500/20 shadow-red-500/10'
-                                   }`}>
-                                      {parseFloat(g.grade) >= 10 ? 'Aprobado' : 'Reprobado'}
-                                    </Badge>
-                                 </div>
-                                 <Button 
-                                   onClick={() => generateIndividualPDF(g.estudiante_id)}
-                                   className="w-16 h-16 sm:w-20 sm:h-20 rounded-[1.8rem] bg-white/5 hover:bg-white text-[#86868b] hover:text-black border border-white/10 p-0 flex items-center justify-center transition-all shadow-2xl"
-                                 >
-                                   <Printer className="w-6 h-6 sm:w-8 sm:h-8" />
-                                 </Button>
-                              </div>
                           </div>
-                          <div className="absolute inset-0 bg-gradient-to-br from-amber-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+
+                          <div className="flex items-center gap-4 pl-4 shrink-0">
+                             <div className="text-right">
+                                <div className={`text-xl font-semibold leading-none ${
+                                   parseFloat(g.grade) >= 18 ? 'text-blue-500' : 
+                                   parseFloat(g.grade) >= 10 ? 'text-white' : 'text-red-500'
+                                }`}>
+                                   {parseFloat(g.grade).toFixed(1)}
+                                </div>
+                                <Badge className={`mt-1 h-5 px-1.5 text-[9px] font-medium border-transparent ${
+                                   parseFloat(g.grade) >= 10 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
+                                }`}>
+                                   {parseFloat(g.grade) >= 10 ? 'Aprobado' : 'Reprobado'}
+                                 </Badge>
+                             </div>
+                             <Button 
+                               onClick={() => generateIndividualPDF(g.estudiante_id)}
+                               variant="ghost"
+                               size="icon"
+                               className="h-8 w-8 text-muted-foreground hover:text-white"
+                             >
+                               <Printer className="w-4 h-4" />
+                             </Button>
+                          </div>
                        </motion.div>
                      ))
                    ) : (
-                     <div className="col-span-full py-64 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[5rem] opacity-30 space-y-12 bg-white/[0.01]">
-                        <div className="w-36 h-36 rounded-[3.5rem] bg-white/5 flex items-center justify-center border border-white/5 shadow-2xl">
-                           <BarChart3 className="w-18 h-18" />
-                        </div>
-                        <div className="text-center space-y-4">
-                           <h4 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Cero Data Académica</h4>
-                           <p className="text-[11px] font-black tracking-[0.5em] uppercase text-[#86868b]">Sin registros detectados en este filtro</p>
+                     <div className="col-span-full py-20 flex flex-col items-center justify-center text-muted-foreground space-y-4 border border-dashed border-white/10 rounded-xl bg-white/[0.01]">
+                        <BarChart3 className="w-8 h-8 opacity-20" />
+                        <div className="text-center">
+                           <h4 className="text-sm font-medium text-white">Sin datos</h4>
+                           <p className="text-xs">No hay calificaciones registradas</p>
                         </div>
                      </div>
                    )}
@@ -540,34 +510,22 @@ const Grades = () => {
                </div>
             </div>
 
+            {/* Toast */}
             <AnimatePresence>
                {msg.text && (
-               <motion.div 
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  className="fixed bottom-32 sm:bottom-12 left-1/2 -translate-x-1/2 sm:left-auto sm:right-12 sm:translate-x-0 z-[2000] w-[calc(100%-2rem)] sm:w-auto"
-               >
-                  <div className="apple-glass p-10 rounded-[3rem] flex items-center gap-8 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] border border-white/10">
-                     <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl ${msg.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
-                        {msg.type === 'success' ? <CheckCircle2 className="w-8 h-8" /> : <AlertCircle className="w-8 h-8" />}
-                     </div>
-                     <div className="flex flex-col flex-1">
-                        <span className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.4em] italic leading-none">Sincronización de Calificaciones</span>
-                        <span className="text-xl font-black text-white mt-2 italic uppercase tracking-tighter leading-none">{msg.text}</span>
-                     </div>
-                     <button onClick={() => setMsg({text:'', type:''})} className="p-4 hover:bg-white/5 rounded-full transition-colors opacity-30 group">
-                        <X className="w-8 h-8 group-hover:text-white" />
-                     </button>
-                  </div>
-               </motion.div>
+                 <motion.div 
+                   initial={{ opacity: 0, y: -8 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   exit={{ opacity: 0, y: -8 }}
+                   className={`fixed top-24 left-1/2 -translate-x-1/2 z-[10000] px-5 py-3 rounded-lg text-sm font-medium shadow-xl flex items-center gap-2 ${
+                     msg.type === 'success' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'
+                   }`}
+                 >
+                   {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                   {msg.text}
+                 </motion.div>
                )}
             </AnimatePresence>
-
-            <div className="flex items-center justify-center gap-6 text-[#86868b] select-none opacity-20 pt-16">
-                <ShieldCheck className="w-5 h-5" />
-                <span className="text-[11px] font-black uppercase tracking-[0.6em] italic">Andrés Bello Kernel v30.0 — Evaluación Certificada</span>
-            </div>
         </motion.div>
     );
 };
