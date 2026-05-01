@@ -192,13 +192,12 @@ const Students = () => {
                         className="flex items-center gap-5 group"
                     >
                         <div className="w-1.5 h-10 bg-blue-600 rounded-full transition-all duration-500 shadow-[0_0_15px_rgba(37,99,235,0.4)]" />
-                        <div className="space-y-4">
-                            <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
-                              Gestión de <br className="sm:hidden" />
-                              <span className="text-blue-500">Matrícula</span>
+                        <div className="space-y-2">
+                            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
+                              Matrícula
                             </h2>
-                            <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
-                              Control centralizado de <span className="text-white">Identidades Estudiantiles</span>. Nodo de Auditoría Activo.
+                            <p className="text-sm text-[#86868b] font-normal max-w-md leading-relaxed">
+                              Registro y gestión de identidades estudiantiles.
                             </p>
                         </div>
                     </motion.div>

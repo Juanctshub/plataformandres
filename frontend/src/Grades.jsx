@@ -53,6 +53,13 @@ const Grades = () => {
     const [bulkLoading, setBulkLoading] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });
     const [yearFilter, setYearFilter] = useState('Todos');
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
     const fileInputRef = useRef(null);
 
     const [newGrade, setNewGrade] = useState({ estudiante_id: '', materia: '', nota: '', lapso: '1' });
@@ -301,13 +308,12 @@ const Grades = () => {
                 </div>
                 
                 <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
-                    <div className="space-y-6">
-                        <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
-                          Rendimiento <br className="sm:hidden" />
-                          <span className="text-amber-500">Académico</span>
+                    <div className="space-y-2">
+                        <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
+                          Calificaciones
                         </h2>
-                        <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
-                          Analítica y registro de evaluación continua. Período <span className="text-white">Lectivo 2026</span>.
+                        <p className="text-sm text-[#86868b] font-normal max-w-md leading-relaxed">
+                          Registro y analítica de evaluación continua.
                         </p>
                     </div>
 

@@ -28,6 +28,13 @@ import { Badge } from "./components/ui/badge";
 const AttendanceSheet = () => {
   const [students, setStudents] = useState([]);
   const [justifications, setJustifications] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [filterSection, setFilterSection] = useState('Todas');
@@ -130,19 +137,18 @@ const AttendanceSheet = () => {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-[1600px] mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6"
     >
-      {/* Header: Tactical Operations */}
-      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-12 sm:gap-20">
-          <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                  <div className="w-1.5 h-8 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
-                  <Badge className="bg-white/5 text-[#86868b] border border-white/5 rounded-full px-5 py-1.5 text-[10px] font-black uppercase tracking-[0.3em] italic">Registro de Nodo Maestro v30.0</Badge>
+      {/* Header */}
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 sm:gap-12">
+          <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                  <div className="w-1 h-5 bg-emerald-500 rounded-full" />
+                  <span className="text-[11px] text-[#86868b] font-medium tracking-wide">Control de Presencia</span>
               </div>
-              <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
-                Control de <br className="sm:hidden" />
-                <span className="text-emerald-500">Asistencia</span>
+              <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
+                Asistencia
               </h2>
-              <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
-                Sincronización táctica de <span className="text-white">Presencialidad</span>. Protocolo de Validación en Tiempo Real.
+              <p className="text-sm text-[#86868b] font-normal max-w-md leading-relaxed">
+                Registro diario de presencialidad estudiantil.
               </p>
           </div>
 

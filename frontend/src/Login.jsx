@@ -173,11 +173,10 @@ const Login = ({ onLogin }) => {
                                 <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                             </motion.div>
                             
-                            <div className="space-y-4">
-                                <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic leading-none">Andrés Bello</h1>
+                            <div className="space-y-3">
+                                <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight">Andrés Bello</h1>
                                 <div className="flex items-center justify-center gap-3">
-                                    <Badge className="bg-blue-600/15 text-blue-400 border border-blue-500/30 px-5 py-1.5 text-[9px] font-black tracking-[0.2em] uppercase italic">Platinum v30.0</Badge>
-                                    <Badge className="bg-white/5 text-white/40 border-none px-4 py-1.5 text-[9px] font-black uppercase tracking-widest">Secure Node</Badge>
+                                    <Badge className="bg-white/5 text-[#86868b] border border-white/5 px-4 py-1 text-[10px] font-medium tracking-wide">Plataforma Educativa</Badge>
                                 </div>
                             </div>
                         </div>

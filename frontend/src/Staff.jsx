@@ -141,10 +141,10 @@ const Staff = () => {
                             animate={{ x: 0, opacity: 1 }}
                             className="flex items-center gap-6 group"
                         >
-                            <div className="w-2 h-12 bg-indigo-600 rounded-full group-hover:h-16 transition-all duration-500 shadow-[0_0_20px_rgba(79,70,229,0.6)]" />
-                            <div>
-                                <h2 className="text-5xl sm:text-7xl font-black text-white italic uppercase tracking-tighter leading-none">Personal</h2>
-                                <p className="text-[10px] sm:text-[13px] text-indigo-400 font-black uppercase tracking-[0.6em] mt-4 italic">Gestión de Talento Humano v30.0</p>
+                            <div className="w-1 h-8 bg-indigo-500 rounded-full" />
+                            <div className="space-y-1">
+                                <h2 className="text-3xl sm:text-5xl font-semibold text-white tracking-tight leading-tight">Personal</h2>
+                                <p className="text-sm text-[#86868b] font-normal mt-1">Gestión de talento humano institucional.</p>
                             </div>
                         </motion.div>
                     </div>
@@ -163,8 +163,8 @@ const Staff = () => {
                                   <div className="w-16 h-16 rounded-3xl bg-indigo-600 text-white flex items-center justify-center shadow-2xl shadow-indigo-600/40 mb-6">
                                      <Plus className="w-8 h-8" />
                                   </div>
-                                   <DialogTitle className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">Nuevo Staff Institucional</DialogTitle>
-                                   <DialogDescription className="text-indigo-400/60 font-black uppercase tracking-[0.3em] text-[8px] mt-3">Gestión de Recursos Humanos v30.0</DialogDescription>
+                                   <DialogTitle className="text-2xl font-semibold text-white tracking-tight">Nuevo Personal</DialogTitle>
+                                   <DialogDescription className="text-sm text-[#86868b] font-normal mt-1">Registro de personal institucional.</DialogDescription>
                                </DialogHeader>
                                <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
                                   <div className="space-y-3 group">

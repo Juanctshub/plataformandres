@@ -207,8 +207,8 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                   <img src={logo} className="w-[90%] h-[90%] object-contain rounded-[2.5rem] relative z-10" alt="Logo" />
                </div>
                <div className="space-y-2 text-center">
-                  <h1 className="text-3xl font-black text-white tracking-tighter italic uppercase leading-none">Núcleo de Inferencia</h1>
-                  <p className="text-[10px] text-blue-400 font-black uppercase tracking-[0.3em] italic">Asistente Institucional Platinum v30.0</p>
+                  <h1 className="text-2xl font-semibold text-white tracking-tight">Asistente IA</h1>
+                  <p className="text-[11px] text-[#86868b] font-medium tracking-wide">Andrés Bello · Plataforma Educativa</p>
                </div>
             </motion.div>
 

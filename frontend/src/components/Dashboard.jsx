@@ -544,23 +544,20 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       animate="show"
       className="max-w-7xl mx-auto py-8 sm:py-20 space-y-16 sm:space-y-32 px-4 sm:px-6"
     >
-      {/* Welcome Header: Aggressive Apple Style Restoration */}
-      <motion.div variants={item} className="space-y-6 sm:space-y-10">
-        <div className="flex items-center gap-4">
-           <div className="w-1.5 h-8 bg-blue-600 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.6)]" />
-           <Badge className="bg-white/5 text-[#86868b] border border-white/5 rounded-full px-5 py-1.5 text-[9px] sm:text-[11px] font-black uppercase tracking-[0.3em] italic">
-              Andrés Bello Platinum v30.0
-           </Badge>
+      {/* Welcome Header */}
+      <motion.div variants={item} className="space-y-6 sm:space-y-8">
+        <div className="flex items-center gap-3">
+           <div className="w-1 h-5 bg-blue-500 rounded-full" />
+           <span className="text-[11px] text-[#86868b] font-medium tracking-wide">Andrés Bello · Panel de Control</span>
         </div>
         
         <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
-            <div className="space-y-6">
-                <h2 className="text-5xl sm:text-8xl font-black tracking-tighter text-white italic uppercase leading-[0.9] sm:leading-none">
-                  Hola, <br className="sm:hidden" />
-                  <span className="text-blue-500">{user?.username}</span>
+            <div className="space-y-3">
+                <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
+                  Hola, <span className="text-blue-400">{user?.username}</span>
                 </h2>
-                <p className="text-base sm:text-2xl text-[#86868b] font-medium max-w-2xl leading-relaxed italic uppercase tracking-tight">
-                  Resumen estratégico del <span className="text-white">Pulso Académico</span>. El núcleo de inferencia está <span className="text-emerald-400">Totalmente Operativo</span>.
+                <p className="text-sm sm:text-base text-[#86868b] font-normal max-w-xl leading-relaxed">
+                  Resumen del estado académico. Sistema <span className="text-emerald-400">operativo</span>.
                 </p>
             </div>
 
@@ -614,12 +611,12 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
             </div>
             
             <div className="space-y-1">
-                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-[#86868b] mb-4 opacity-40 italic">{stat.label}</p>
-                <div className="text-4xl sm:text-6xl font-black text-white tracking-tighter italic uppercase leading-none">
+                <p className="text-[11px] font-medium text-[#86868b] tracking-wide">{stat.label}</p>
+                <div className="text-3xl sm:text-4xl font-semibold text-white tracking-tight">
                     {stat.value}
                 </div>
-                <div className="flex items-center gap-2 mt-6 sm:mt-8">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                <div className="flex items-center gap-2 mt-4 sm:mt-6">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     <p className="text-[10px] text-[#86868b] font-medium uppercase tracking-wider">
                         {stat.sub}
                     </p>
