@@ -127,7 +127,7 @@ const Finance = () => {
                 <motion.div 
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="apple-card p-8 border border-white/5 bg-gradient-to-br from-blue-600/10 to-transparent"
+                    className="apple-glass rounded-[3rem] p-8 border border-white/10 bg-gradient-to-br from-blue-600/10 to-transparent shadow-xl"
                 >
                     <div className="flex justify-between items-start mb-6">
                         <div className="p-3 rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-600/20">
@@ -143,7 +143,7 @@ const Finance = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="apple-card p-8 border border-white/5 bg-gradient-to-br from-emerald-600/10 to-transparent"
+                    className="apple-glass rounded-[3rem] p-8 border border-white/10 bg-gradient-to-br from-emerald-600/10 to-transparent shadow-xl"
                 >
                     <div className="flex justify-between items-start mb-6">
                         <div className="p-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-600/20">
@@ -161,7 +161,7 @@ const Finance = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="apple-card p-8 border border-white/5 bg-gradient-to-br from-red-600/10 to-transparent"
+                    className="apple-glass rounded-[3rem] p-8 border border-white/10 bg-gradient-to-br from-red-600/10 to-transparent shadow-xl"
                 >
                     <div className="flex justify-between items-start mb-6">
                         <div className="p-3 rounded-2xl bg-red-600 text-white shadow-xl shadow-red-600/20">
@@ -180,7 +180,7 @@ const Finance = () => {
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-all" />
                     <Input 
                         placeholder="Buscar por estudiante o cédula..." 
-                        className="h-14 pl-16 bg-white/5 border-white/5 rounded-2xl text-white font-medium"
+                        className="h-14 pl-16 bg-white/[0.03] border border-white/10 rounded-[1.5rem] text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -188,7 +188,7 @@ const Finance = () => {
                 
                 <Button 
                     onClick={() => setIsModalOpen(true)}
-                    className="h-14 px-10 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-blue-600/20 active:scale-95 transition-all"
+                    className="h-14 px-10 rounded-[2rem] bg-white hover:bg-zinc-200 text-black font-black text-[10px] uppercase tracking-widest shadow-xl transition-all active:scale-95"
                 >
                     <Plus className="w-4 h-4 mr-2" />
                     Registrar Transacción
@@ -206,7 +206,7 @@ const Finance = () => {
             </motion.button>
 
             {/* Table */}
-            <div className="apple-card border border-white/5 overflow-hidden">
+            <div className="apple-glass rounded-[3rem] border border-white/10 overflow-hidden shadow-xl p-2">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-white/5">

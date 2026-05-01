@@ -544,8 +544,8 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       {/* ═══ Header ═══ */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <p className="text-sm text-muted-foreground mb-1">Bienvenido de vuelta</p>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+          <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mb-1">Bienvenido de vuelta</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight italic">
             {user?.username || 'Administrador'}
           </h1>
         </div>
@@ -572,7 +572,7 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       {/* ═══ Stat Cards ═══ */}
       <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((stat, i) => (
-          <Card key={i} className="stat-card bg-transparent border-white/[0.06] group cursor-pointer" onClick={() => {
+          <Card key={i} className="stat-card apple-glass border-white/10 rounded-[2rem] group cursor-pointer shadow-lg hover:shadow-blue-500/10 transition-all hover:-translate-y-1" onClick={() => {
             if (stat.label === 'Matrícula') onTabChange('students');
             if (stat.label === 'Asistencia') onTabChange('attendance');
             if (stat.label === 'Justificativos') onTabChange('justifications');
@@ -584,9 +584,9 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
                 </div>
                 <ArrowUpRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-              <div className="text-2xl font-semibold text-white tracking-tight">{stat.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
-              <p className="text-[10px] text-muted-foreground/60 mt-0.5">{stat.sub}</p>
+              <div className="text-3xl font-bold text-white tracking-tight italic">{stat.value}</div>
+              <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-2">{stat.label}</p>
+              <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-1">{stat.sub}</p>
             </CardContent>
           </Card>
         ))}
@@ -597,12 +597,12 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
         
         {/* Chart Card */}
         <motion.div variants={item} className="lg:col-span-2">
-          <Card className="section-card bg-transparent border-white/[0.06] overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
+          <Card className="section-card apple-glass border-white/10 rounded-[3rem] overflow-hidden p-2 shadow-xl">
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h3 className="text-sm font-medium text-white">Tendencia Semanal</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">Asistencia promedio por día</p>
+                  <h3 className="text-xl font-bold text-white italic tracking-tight">Tendencia Semanal</h3>
+                  <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-1">Asistencia promedio por día</p>
                 </div>
                 <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-medium">
                   En vivo
@@ -638,11 +638,11 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
 
         {/* Activity Feed */}
         <motion.div variants={item}>
-          <Card className="section-card bg-transparent border-white/[0.06] h-full">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-sm font-medium text-white">Actividad reciente</h3>
-                <Clock className="w-4 h-4 text-muted-foreground" />
+          <Card className="section-card apple-glass border-white/10 rounded-[3rem] h-full shadow-xl">
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl font-bold text-white italic tracking-tight">Actividad reciente</h3>
+                <Clock className="w-5 h-5 text-white/40" />
               </div>
               <div className="space-y-4 max-h-[260px] overflow-y-auto no-scrollbar">
                 {(stats?.recentActivity && Array.isArray(stats.recentActivity) && stats.recentActivity.length > 0) ? (
@@ -657,9 +657,9 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
                         }`} />
                         {i < (stats.recentActivity.length - 1) && <div className="w-px h-full bg-white/5 mt-1" />}
                       </div>
-                      <div className="pb-4 flex-1 min-w-0">
-                        <p className="text-xs text-white/80 leading-snug truncate">{log.event}</p>
-                        <span className="text-[10px] text-muted-foreground">{log.time}</span>
+                      <div className="pb-5 flex-1 min-w-0 ml-2">
+                        <p className="text-sm font-semibold text-white/90 leading-snug truncate">{log.event}</p>
+                        <span className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em]">{log.time}</span>
                       </div>
                     </div>
                   ))
@@ -677,16 +677,16 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
 
       {/* ═══ AI Monitoring ═══ */}
       <motion.div variants={item}>
-        <Card className="section-card bg-transparent border-white/[0.06]">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-indigo-400" />
+        <Card className="section-card apple-glass border-white/10 rounded-[3rem] p-2 shadow-xl">
+          <CardContent className="p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-[1rem] bg-indigo-500/10 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-indigo-400" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-white">Alertas IA</h3>
-                  <p className="text-[10px] text-muted-foreground">Análisis predictivo</p>
+                  <h3 className="text-xl font-bold text-white italic tracking-tight">Alertas IA</h3>
+                  <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-1">Análisis predictivo</p>
                 </div>
               </div>
               <Button 
@@ -723,30 +723,30 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       </motion.div>
 
       {/* ═══ Quick Actions ═══ */}
-      <motion.div variants={item} className="flex flex-wrap items-center gap-3">
+      <motion.div variants={item} className="flex flex-wrap items-center gap-4 mt-4">
         <Button 
           onClick={generateProReport}
           disabled={reportLoading}
           variant="outline"
-          className="h-9 px-4 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+          className="h-12 px-6 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-transparent border-white/10 text-[#86868b] hover:text-white hover:bg-white/5 transition-all shadow-lg"
         >
-          {reportLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" /> : <Printer className="w-3.5 h-3.5 mr-2" />}
+          {reportLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Printer className="w-4 h-4 mr-2" />}
           Reporte IA
         </Button>
         
         <Button 
           onClick={() => onTabChange('students')}
           variant="outline"
-          className="h-9 px-4 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+          className="h-12 px-6 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-transparent border-white/10 text-[#86868b] hover:text-white hover:bg-white/5 transition-all shadow-lg"
         >
-          <UserPlus className="w-3.5 h-3.5 mr-2" />
+          <UserPlus className="w-4 h-4 mr-2" />
           Nueva admisión
         </Button>
 
         <label className="cursor-pointer">
           <input type="file" className="hidden" accept=".xlsx,.xls,.csv" onChange={handleFileImport} disabled={importLoading} />
-          <div className="h-9 px-4 rounded-lg text-xs font-medium bg-transparent border border-white/10 text-white/70 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
-            {importLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+          <div className="h-12 px-6 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-transparent border border-white/10 text-[#86868b] hover:text-white hover:bg-white/5 flex items-center gap-2 transition-all shadow-lg">
+            {importLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             Importar Excel
           </div>
         </label>

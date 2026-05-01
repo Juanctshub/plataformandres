@@ -158,27 +158,27 @@ const Justifications = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-              <p className="text-xs text-muted-foreground mb-1">Módulo de Certificación</p>
-              <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Justificativos</h1>
+              <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mb-1">Módulo de Certificación</p>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight italic">Justificativos</h1>
           </div>
 
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogTrigger asChild>
-              <Button className="h-9 px-4 rounded-lg text-xs font-medium bg-white text-black hover:bg-zinc-200">
-                <FileCheck className="w-3.5 h-3.5 mr-2" />
+              <Button className="h-12 px-6 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-white text-black hover:bg-zinc-200 shadow-xl transition-all active:scale-95">
+                <FileCheck className="w-4 h-4 mr-2" />
                 Emitir certificado
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 p-6 sm:p-8 rounded-xl max-w-lg">
-               <DialogHeader className="mb-6">
-                  <DialogTitle className="text-xl font-semibold text-white tracking-tight">Emitir Certificado</DialogTitle>
-                  <DialogDescription className="text-sm text-muted-foreground mt-1">Registrar nueva justificación en el sistema</DialogDescription>
+            <DialogContent className="apple-glass border-white/10 p-10 sm:p-14 rounded-[3rem] max-w-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
+               <DialogHeader className="mb-8">
+                  <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">Emitir Certificado</DialogTitle>
+                  <DialogDescription className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-2">Registrar nueva justificación en el sistema</DialogDescription>
                </DialogHeader>
-               <form onSubmit={handleSubmit} className="space-y-4">
+               <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
-                     <label className="text-xs text-muted-foreground font-medium">Alumno</label>
+                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Alumno</label>
                      <select 
-                        className="w-full bg-white/[0.03] border border-white/[0.06] rounded-lg h-10 px-3 text-sm text-white outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] h-14 px-6 text-sm text-white font-semibold outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none transition-all hover:bg-white/[0.05]"
                         value={newJustification.estudiante_id}
                         onChange={(e) => setNewJustification({...newJustification, estudiante_id: e.target.value})}
                         required
@@ -189,18 +189,18 @@ const Justifications = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                      <div className="space-y-2">
-                        <label className="text-xs text-muted-foreground font-medium">Fecha</label>
+                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Fecha</label>
                         <Input 
                            type="date"
-                           className="h-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-white text-sm"
+                           className="h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-white text-sm font-semibold pl-6 transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                            value={newJustification.fecha}
                            onChange={(e) => setNewJustification({...newJustification, fecha: e.target.value})}
                         />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-xs text-muted-foreground font-medium">Motivo</label>
+                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Motivo</label>
                         <select 
-                          className="w-full bg-white/[0.03] border border-white/[0.06] rounded-lg h-10 px-3 text-sm text-white outline-none appearance-none"
+                          className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] h-14 px-6 text-sm text-white font-semibold outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none transition-all hover:bg-white/[0.05]"
                           value={newJustification.motivo}
                           onChange={(e) => setNewJustification({...newJustification, motivo: e.target.value})}
                         >
@@ -211,25 +211,25 @@ const Justifications = () => {
                      </div>
                   </div>
                   <div className="space-y-2">
-                     <label className="text-xs text-muted-foreground font-medium">Evidencia (URL)</label>
+                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Evidencia (URL)</label>
                      <Input 
                         placeholder="https://..."
-                        className="h-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-white text-sm"
+                        className="h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-white text-sm font-semibold pl-6 transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                         value={newJustification.evidencia_url}
                         onChange={(e) => setNewJustification({...newJustification, evidencia_url: e.target.value})}
                      />
                   </div>
                   <div className="space-y-2">
-                     <label className="text-xs text-muted-foreground font-medium">Observación</label>
+                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Observación</label>
                      <textarea 
-                        className="w-full bg-white/[0.03] border border-white/[0.06] rounded-lg p-3 text-white text-sm outline-none focus:ring-1 focus:ring-blue-500/50 min-h-[100px] resize-none"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] p-6 text-white text-sm font-semibold outline-none focus:ring-1 focus:ring-blue-500/50 min-h-[120px] resize-none transition-all hover:bg-white/[0.05]"
                         placeholder="Detalles adicionales..."
                         value={newJustification.comentario}
                         onChange={(e) => setNewJustification({...newJustification, comentario: e.target.value})}
                      />
                   </div>
-                  <Button type="submit" disabled={submitting} className="w-full h-10 bg-blue-600 text-white hover:bg-blue-500 rounded-lg text-sm font-medium">
-                     {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                  <Button type="submit" disabled={submitting} className="w-full h-14 mt-4 bg-white text-black hover:bg-zinc-200 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all shadow-xl active:scale-[0.98]">
+                     {submitting ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                      {submitting ? "Generando..." : "Emitir certificado"}
                   </Button>
                </form>
@@ -238,25 +238,25 @@ const Justifications = () => {
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-4 mt-6">
         <div className="relative flex-1">
-           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
            <Input 
               placeholder="Buscar por nombre o motivo..." 
-              className="h-10 pl-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-sm text-white placeholder:text-muted-foreground/50"
+              className="h-14 pl-12 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold placeholder:text-[#86868b] transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
            />
         </div>
-        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar items-center">
            {['Todos', 'Pendiente', 'Aprobado'].map((f) => (
               <button
                 key={f}
                 onClick={() => setActiveFilter(f)}
-                className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                className={`px-6 py-3 h-14 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all shadow-md ${
                   activeFilter === f 
-                    ? 'bg-white text-black' 
-                    : 'bg-white/[0.03] text-muted-foreground hover:text-white border border-white/[0.06]'
+                    ? 'bg-white text-black scale-[1.02]' 
+                    : 'bg-transparent text-[#86868b] hover:text-white border border-white/10 hover:bg-white/5'
                 }`}
               >
                 {f}
@@ -266,7 +266,7 @@ const Justifications = () => {
       </div>
 
       {/* Results Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8">
         <AnimatePresence mode="popLayout">
           {filteredJustifications.length > 0 ? (
             filteredJustifications.map((j, i) => (
@@ -275,34 +275,34 @@ const Justifications = () => {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.98 }}
-                className="rounded-xl p-5 sm:p-6 bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition-colors flex flex-col h-full"
+                className="apple-glass rounded-[2rem] p-6 border border-white/10 hover:bg-white/[0.04] transition-all flex flex-col h-full shadow-xl hover:shadow-blue-500/5 group"
               >
-                <div className="flex items-start justify-between gap-4 mb-4">
-                   <div className="flex items-center gap-3 min-w-0">
-                      <div className={`w-10 h-10 shrink-0 rounded-lg flex items-center justify-center bg-white/[0.03] ${
+                <div className="flex items-start justify-between gap-4 mb-6">
+                   <div className="flex items-center gap-4 min-w-0">
+                      <div className={`w-12 h-12 shrink-0 rounded-[1rem] flex items-center justify-center shadow-inner bg-white/[0.03] ${
                          j.estado === 'aprobado' ? 'text-emerald-400' : 'text-amber-400'
                       }`}>
-                         {j.estado === 'aprobado' ? <FileCheck className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
+                         {j.estado === 'aprobado' ? <FileCheck className="w-6 h-6" /> : <Clock className="w-6 h-6" />}
                       </div>
                       <div className="min-w-0">
-                         <h3 className="text-sm font-semibold text-white truncate">{j.nombre}</h3>
-                         <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[10px] text-muted-foreground">{j.seccion}</span>
-                            <span className="text-[10px] text-muted-foreground">{new Date(j.fecha).toLocaleDateString('es-VE', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                         <h3 className="text-lg font-bold text-white truncate italic tracking-tight">{j.nombre}</h3>
+                         <div className="flex items-center gap-3 mt-1.5">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-[#86868b] truncate">{j.seccion}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-[#86868b]">{new Date(j.fecha).toLocaleDateString('es-VE', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                          </div>
                       </div>
                    </div>
-                   <Badge className={`h-5 px-1.5 text-[9px] font-medium border-transparent shrink-0 ${
+                   <Badge className={`h-6 px-2 text-[9px] font-black uppercase tracking-widest border-transparent shrink-0 mt-1 ${
                       j.estado === 'aprobado' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
                    }`}>
                       {j.estado}
                    </Badge>
                 </div>
 
-                <div className="flex-1 bg-black/20 rounded-lg p-4 border border-white/[0.02] mb-4">
-                   <div className="flex items-center gap-2 mb-2">
-                      <Stamp className="w-3.5 h-3.5 text-blue-500" />
-                      <span className="text-[10px] font-medium text-blue-500 uppercase tracking-wider">{j.motivo}</span>
+                <div className="flex-1 bg-black/40 rounded-[1.5rem] p-6 border border-white/[0.05] mb-6 shadow-inner">
+                   <div className="flex items-center gap-3 mb-3">
+                      <Stamp className="w-4 h-4 text-blue-500" />
+                      <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{j.motivo}</span>
                    </div>
                    <p className="text-sm text-white/70 italic leading-relaxed">
                       "{j.comentario || 'Sin observación técnica.'}"
@@ -321,11 +321,11 @@ const Justifications = () => {
                    )}
                 </div>
 
-                <div className="flex items-center gap-2 mt-auto">
+                <div className="flex items-center gap-3 mt-auto">
                     <Button 
                         onClick={() => exportSinglePDF(j)}
                         variant="outline"
-                        className="flex-1 h-9 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white hover:bg-white/5"
+                        className="flex-1 h-12 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5 shadow-md transition-all"
                     >
                         <Printer className="w-3.5 h-3.5 mr-2" />
                         Imprimir
@@ -334,9 +334,9 @@ const Justifications = () => {
                     {j.estado !== 'aprobado' && (
                         <Button 
                             onClick={() => handleUpdateStatus(j.id, 'aprobado')}
-                            className="flex-1 h-9 rounded-lg text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white"
+                            className="flex-1 h-12 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-emerald-600/20 hover:bg-emerald-500/30 text-emerald-400 shadow-md transition-all border border-emerald-500/20"
                         >
-                            <CheckCircle2 className="w-3.5 h-3.5 mr-2" />
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
                             Aprobar
                         </Button>
                     )}
@@ -346,7 +346,7 @@ const Justifications = () => {
                             onClick={() => handleUpdateStatus(j.id, 'rechazado')}
                             variant="ghost"
                             size="icon"
-                            className="h-9 w-9 rounded-lg text-red-500 hover:text-red-400 hover:bg-red-500/10 shrink-0"
+                            className="h-12 w-12 rounded-[1.5rem] text-red-500 hover:text-red-400 hover:bg-red-500/10 shrink-0 border border-red-500/10 bg-red-500/5 transition-all"
                         >
                             <XCircle className="w-4 h-4" />
                         </Button>

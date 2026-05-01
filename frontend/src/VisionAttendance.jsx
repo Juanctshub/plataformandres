@@ -89,7 +89,7 @@ const VisionAttendance = ({ onComplete }) => {
                 <motion.div 
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    className="apple-card p-8 border border-white/5 space-y-6 flex flex-col justify-center min-h-[400px]"
+                    className="apple-glass rounded-[3rem] p-8 border border-white/10 shadow-xl space-y-6 flex flex-col justify-center min-h-[400px]"
                 >
                     <input 
                         type="file" 
@@ -114,8 +114,8 @@ const VisionAttendance = ({ onComplete }) => {
                         <div className="relative rounded-[2rem] overflow-hidden group">
                             <img src={preview} className="w-full h-80 object-cover border border-white/10" alt="Preview" />
                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-4">
-                                <Button onClick={() => fileInputRef.current.click()} className="bg-white text-black rounded-full h-12 px-6 font-bold uppercase text-[10px]"><RefreshCcw className="w-4 h-4 mr-2" /> Cambiar</Button>
-                                <Button onClick={processImage} disabled={scanning} className="bg-blue-600 text-white rounded-full h-12 px-6 font-bold uppercase text-[10px] shadow-xl"><Sparkles className="w-4 h-4 mr-2" /> Analizar</Button>
+                                <Button onClick={() => fileInputRef.current.click()} className="bg-white text-black rounded-[2rem] h-12 px-6 font-black uppercase tracking-widest text-[10px] hover:bg-zinc-200 transition-all active:scale-95 shadow-xl"><RefreshCcw className="w-4 h-4 mr-2" /> Cambiar</Button>
+                                <Button onClick={processImage} disabled={scanning} className="bg-blue-600 hover:bg-blue-500 transition-all active:scale-95 text-white rounded-[2rem] h-12 px-6 font-black uppercase tracking-widest text-[10px] shadow-xl"><Sparkles className="w-4 h-4 mr-2" /> Analizar</Button>
                             </div>
                         </div>
                     )}
@@ -131,7 +131,7 @@ const VisionAttendance = ({ onComplete }) => {
                 <motion.div 
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    className="apple-card p-8 border border-white/5 flex flex-col"
+                    className="apple-glass rounded-[3rem] p-8 border border-white/10 shadow-xl flex flex-col"
                 >
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-xs font-black text-white uppercase tracking-widest">Resultados de Escaneo IA</h3>
@@ -155,7 +155,7 @@ const VisionAttendance = ({ onComplete }) => {
                                     initial={{ x: 10, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: i * 0.05 }}
-                                    className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl group hover:bg-white/10 transition-all"
+                                    className="flex items-center justify-between p-4 apple-glass border border-white/10 rounded-[2rem] group hover:bg-white/[0.04] transition-all shadow-md"
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className={`w-2 h-2 rounded-full ${r.status === 'presente' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-red-500 shadow-[0_0_10px_#ef4444]'}`} />
@@ -178,8 +178,8 @@ const VisionAttendance = ({ onComplete }) => {
                     </div>
 
                     {results && (
-                        <div className="mt-8 pt-6 border-t border-white/5">
-                            <Button onClick={handleSave} className="w-full h-14 bg-white text-black hover:bg-zinc-200 rounded-full font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl">
+                        <div className="mt-8 pt-6 border-t border-white/10">
+                            <Button onClick={handleSave} className="w-full h-14 bg-white text-black hover:bg-zinc-200 rounded-[2rem] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl transition-all active:scale-95">
                                 <Save className="w-5 h-5" /> Confirmar y Guardar
                             </Button>
                         </div>

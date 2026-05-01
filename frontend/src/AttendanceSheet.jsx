@@ -140,39 +140,39 @@ const AttendanceSheet = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-              <p className="text-xs text-muted-foreground mb-1">Control de Presencia</p>
-              <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Asistencia</h1>
+              <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mb-1">Control de Presencia</p>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight italic">Asistencia</h1>
           </div>
           <Button 
             onClick={handleSave}
             disabled={saving}
-            className="h-9 px-4 rounded-lg text-xs font-medium bg-white text-black hover:bg-zinc-200"
+            className="h-12 px-6 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-white text-black hover:bg-zinc-200 shadow-xl transition-all active:scale-95"
           >
-            {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" /> : <Save className="w-3.5 h-3.5 mr-2" />}
+            {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
             {saving ? 'Guardando...' : 'Guardar registro'}
           </Button>
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex items-center gap-2 bg-white/[0.03] border border-white/[0.06] rounded-lg px-3 h-10">
-           <CalendarIcon className="w-4 h-4 text-muted-foreground" />
+      <div className="flex flex-col sm:flex-row gap-4 mt-6">
+        <div className="flex items-center gap-3 bg-white/[0.03] border border-white/10 rounded-[1.5rem] px-6 h-14 shadow-md transition-all hover:bg-white/[0.05]">
+           <CalendarIcon className="w-4 h-4 text-white/40" />
            <input 
                type="date" 
                value={date}
                onChange={(e) => setDate(e.target.value)}
-               className="bg-transparent border-none text-white text-sm focus:ring-0 cursor-pointer outline-none"
+               className="bg-transparent border-none text-white text-sm font-semibold focus:ring-0 cursor-pointer outline-none"
            />
         </div>
-        <div className="flex gap-2 overflow-x-auto no-scrollbar flex-1">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar flex-1 items-center">
            {['Todas', '1ro', '2do', '3ro', '4to', '5to'].map((y) => (
              <button
                key={y}
                onClick={() => setFilterSection(y)}
-               className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+               className={`px-6 py-3 h-14 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all shadow-md ${
                  filterSection === y 
-                   ? 'bg-white text-black' 
-                   : 'bg-white/[0.03] text-muted-foreground hover:text-white border border-white/[0.06]'
+                   ? 'bg-white text-black scale-[1.02]' 
+                   : 'bg-transparent text-[#86868b] hover:text-white border border-white/10 hover:bg-white/5'
                }`}
              >
                {y} {y !== 'Todas' && (isMobile ? '' : 'Año')}
@@ -182,18 +182,20 @@ const AttendanceSheet = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
          {[
-           { label: 'Presentes', count: filteredStudents.filter(s => s.status === 'presente').length, color: 'text-emerald-400', icon: CheckCircle2 },
-           { label: 'Ausentes', count: filteredStudents.filter(s => s.status === 'ausente').length, color: 'text-red-400', icon: XCircle },
-           { label: 'Tardanzas', count: filteredStudents.filter(s => s.status === 'retraso').length, color: 'text-amber-400', icon: Clock },
-           { label: 'Justificados', count: filteredStudents.filter(s => s.status === 'justificado').length, color: 'text-blue-400', icon: FileText },
+           { label: 'Presentes', count: filteredStudents.filter(s => s.status === 'presente').length, color: 'text-emerald-400', bg: 'bg-emerald-500/10', icon: CheckCircle2 },
+           { label: 'Ausentes', count: filteredStudents.filter(s => s.status === 'ausente').length, color: 'text-red-400', bg: 'bg-red-500/10', icon: XCircle },
+           { label: 'Tardanzas', count: filteredStudents.filter(s => s.status === 'retraso').length, color: 'text-amber-400', bg: 'bg-amber-500/10', icon: Clock },
+           { label: 'Justificados', count: filteredStudents.filter(s => s.status === 'justificado').length, color: 'text-blue-400', bg: 'bg-blue-500/10', icon: FileText },
          ].map(stat => (
-           <div key={stat.label} className="stat-card flex items-center gap-3 p-3">
-               <stat.icon className={`w-4 h-4 ${stat.color} flex-shrink-0`} />
+           <div key={stat.label} className="apple-glass rounded-[2rem] border border-white/10 p-6 flex items-center gap-5 shadow-xl hover:shadow-white/5 transition-all hover:-translate-y-1">
+               <div className={`w-12 h-12 rounded-[1rem] flex items-center justify-center shrink-0 ${stat.bg}`}>
+                   <stat.icon className={`w-5 h-5 ${stat.color}`} />
+               </div>
                <div className="min-w-0">
-                   <div className={`text-lg font-semibold ${stat.color}`}>{stat.count}</div>
-                   <span className="text-[10px] text-muted-foreground">{stat.label}</span>
+                   <div className={`text-2xl font-bold italic tracking-tight ${stat.color}`}>{stat.count}</div>
+                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#86868b]">{stat.label}</span>
                </div>
            </div>
          ))}

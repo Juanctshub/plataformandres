@@ -244,7 +244,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                           handleSend(fakeEvent);
                         }, 100);
                       }}
-                      className="p-12 rounded-[3rem] bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 hover:border-blue-500/30 transition-all duration-500 text-left group shadow-2xl relative overflow-hidden backdrop-blur-xl"
+                      className="p-12 rounded-[3rem] apple-glass border-white/10 hover:border-blue-500/30 transition-all duration-500 text-left group shadow-xl hover:shadow-2xl relative overflow-hidden"
                     >
                       <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/5 transition-colors duration-500" />
                       <div className="absolute top-0 right-0 p-20 bg-blue-500/10 blur-[60px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -283,7 +283,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                     {m.role === 'user' ? (user?.nombre ? user.nombre.substring(0, 2).toUpperCase() : <User className="w-6 h-6" />) : <Bot className="w-6 h-6" />}
                   </div>
                   <div className={`space-y-4 ${m.role === 'user' ? 'text-right flex flex-col items-end' : 'text-left'}`}>
-                    <div className={`text-base md:text-lg font-medium leading-relaxed tracking-tight text-white/90 whitespace-pre-wrap max-w-full ${m.role === 'user' ? 'bg-white/5 px-8 py-5 rounded-[2.5rem] rounded-tr-none border border-white/5' : 'bg-transparent'}`}>
+                    <div className={`text-base md:text-lg font-medium leading-relaxed tracking-tight text-white/90 whitespace-pre-wrap max-w-full ${m.role === 'user' ? 'apple-glass px-8 py-5 rounded-[2.5rem] rounded-tr-none border-white/10' : 'bg-transparent'}`}>
                       {m.content}
                     </div>
                     
@@ -291,7 +291,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                       <motion.div 
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex flex-col p-6 rounded-[2rem] bg-blue-600/10 border border-blue-500/20 space-y-4"
+                        className="inline-flex flex-col p-6 rounded-[2rem] apple-glass border-blue-500/20 bg-blue-600/5 space-y-4 shadow-xl"
                       >
                          <div className="flex items-center gap-2 text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">
                             <Zap className="w-3 h-3" />
@@ -300,7 +300,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                          <div className="flex gap-3">
                             <Button 
                               onClick={() => handleExecuteAction(i, m.action)}
-                              className="bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold px-8 h-12 rounded-2xl shadow-xl shadow-blue-500/20"
+                              className="bg-white text-black hover:bg-zinc-200 text-[10px] font-black uppercase tracking-widest px-8 h-12 rounded-[2rem] shadow-xl"
                             >
                               EJECUTAR: {m.action.type}
                             </Button>
@@ -311,7 +311,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                                 nm[i].action = null;
                                 setMessages(nm);
                               }}
-                              className="text-[#86868b] hover:text-white text-[11px] font-bold px-8 h-12 rounded-2xl"
+                              className="text-[#86868b] hover:text-white hover:bg-white/5 text-[10px] font-black uppercase tracking-widest px-8 h-12 rounded-[2rem]"
                             >
                               DESCARTAR
                             </Button>
@@ -359,7 +359,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder="Pregúntale al Núcleo de Inferencia..."
-              className="w-full h-20 pl-24 pr-44 bg-zinc-950/80 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] text-lg text-white placeholder:text-white/20 focus:outline-none focus:border-blue-500/30 focus:ring-4 focus:ring-blue-500/5 shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] transition-all relative z-10"
+              className="w-full h-20 pl-24 pr-44 apple-glass border-white/10 rounded-[3rem] text-lg text-white font-medium placeholder:text-[#86868b] focus:outline-none focus:ring-1 focus:ring-blue-500/50 shadow-2xl transition-all relative z-10"
             />
             <div className="absolute right-5 flex items-center gap-4 z-20">
               <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
@@ -369,7 +369,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
               <button 
                 type="submit"
                 disabled={!input.trim() || isTyping}
-                className="w-14 h-14 rounded-2xl bg-white text-black flex flex-col items-center justify-center hover:bg-zinc-200 disabled:opacity-50 transition-all active:scale-95 shadow-xl"
+                className="w-14 h-14 rounded-[2rem] bg-white text-black flex flex-col items-center justify-center hover:bg-zinc-200 disabled:opacity-50 transition-all active:scale-95 shadow-xl"
               >
                 {isTyping ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-6 h-6 ml-0.5" />}
               </button>

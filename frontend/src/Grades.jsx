@@ -301,26 +301,26 @@ const Grades = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <p className="text-xs text-muted-foreground mb-1">Evaluación Continua</p>
-                    <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Calificaciones</h1>
+                    <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mb-1">Evaluación Continua</p>
+                    <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight italic">Calificaciones</h1>
                 </div>
                 <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                     <DialogTrigger asChild>
-                      <Button className="h-9 px-4 rounded-lg text-xs font-medium bg-white text-black hover:bg-zinc-200">
-                          <Plus className="w-3.5 h-3.5 mr-2" />
+                      <Button className="h-12 px-6 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-white text-black hover:bg-zinc-200 shadow-xl transition-all active:scale-95">
+                          <Plus className="w-4 h-4 mr-2" />
                           Registrar nota
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 p-6 sm:p-8 rounded-xl max-w-lg">
-                       <DialogHeader className="mb-6">
-                          <DialogTitle className="text-xl font-semibold text-white tracking-tight">Registrar Nota</DialogTitle>
-                          <DialogDescription className="text-sm text-muted-foreground mt-1">Añadir calificación al sistema</DialogDescription>
+                    <DialogContent className="apple-glass border-white/10 p-10 sm:p-14 rounded-[3rem] max-w-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
+                       <DialogHeader className="mb-8">
+                          <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">Registrar Nota</DialogTitle>
+                          <DialogDescription className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-2">Añadir calificación al sistema</DialogDescription>
                        </DialogHeader>
-                       <form onSubmit={handleSubmit} className="space-y-4">
+                       <form onSubmit={handleSubmit} className="space-y-6">
                           <div className="space-y-2">
-                             <label className="text-xs text-muted-foreground font-medium">Alumno</label>
+                             <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Alumno</label>
                              <select 
-                                className="w-full bg-white/[0.03] border border-white/[0.06] rounded-lg h-10 px-3 text-sm text-white outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none"
+                                className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] h-14 px-6 text-sm text-white font-semibold outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none transition-all hover:bg-white/[0.05]"
                                 value={newGrade.estudiante_id}
                                 onChange={(e) => setNewGrade({...newGrade, estudiante_id: e.target.value})}
                                 required
@@ -330,10 +330,10 @@ const Grades = () => {
                              </select>
                           </div>
                           <div className="space-y-2">
-                             <label className="text-xs text-muted-foreground font-medium">Asignatura</label>
+                             <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Asignatura</label>
                              <Input 
                                 placeholder="Ej: Matemáticas"
-                                className="h-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-white text-sm"
+                                className="h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-white text-sm font-semibold pl-6 transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                                 value={newGrade.materia}
                                 onChange={(e) => setNewGrade({...newGrade, materia: e.target.value})}
                                 required
@@ -341,22 +341,22 @@ const Grades = () => {
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                              <div className="space-y-2">
-                                <label className="text-xs text-muted-foreground font-medium">Nota (0-20)</label>
+                                <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Nota (0-20)</label>
                                 <Input 
                                    type="number"
                                    min="0"
                                    max="20"
                                    placeholder="20"
-                                   className="h-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-white text-sm"
+                                   className="h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-white text-sm font-semibold pl-6 transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                                    value={newGrade.nota}
                                    onChange={(e) => setNewGrade({...newGrade, nota: e.target.value})}
                                    required
                                 />
                              </div>
                              <div className="space-y-2">
-                                <label className="text-xs text-muted-foreground font-medium">Lapso</label>
+                                <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Lapso</label>
                                 <select 
-                                  className="w-full bg-white/[0.03] border border-white/[0.06] rounded-lg h-10 px-3 text-sm text-white outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none"
+                                  className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] h-14 px-6 text-sm text-white font-semibold outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none transition-all hover:bg-white/[0.05]"
                                   value={newGrade.lapso}
                                   onChange={(e) => setNewGrade({...newGrade, lapso: e.target.value})}
                                 >
@@ -366,8 +366,8 @@ const Grades = () => {
                                 </select>
                              </div>
                           </div>
-                          <Button type="submit" disabled={submitting} className="w-full h-10 mt-2 bg-white text-black hover:bg-zinc-200 rounded-lg text-sm font-medium transition-all">
-                             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar Nota"}
+                          <Button type="submit" disabled={submitting} className="w-full h-14 mt-4 bg-white text-black hover:bg-zinc-200 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all shadow-xl active:scale-[0.98]">
+                             {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Guardar Nota"}
                           </Button>
                        </form>
                     </DialogContent>
@@ -375,78 +375,80 @@ const Grades = () => {
             </div>
 
             {/* Controls */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-4 mt-6">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                     <Input 
                         placeholder="Buscar por estudiante o materia..." 
-                        className="h-10 pl-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-sm text-white placeholder:text-muted-foreground/50"
+                        className="h-14 pl-12 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold placeholder:text-[#86868b] transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                <div className="flex gap-2 overflow-x-auto no-scrollbar items-center">
                     {years.map((y) => (
                         <button
                             key={y}
                             onClick={() => setYearFilter(y)}
-                            className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                            className={`px-6 py-3 h-14 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all shadow-md ${
                                 yearFilter === y 
-                                ? 'bg-white text-black' 
-                                : 'bg-white/[0.03] text-muted-foreground hover:text-white border border-white/[0.06]'
+                                ? 'bg-white text-black scale-[1.02]' 
+                                : 'bg-transparent text-[#86868b] hover:text-white border border-white/10 hover:bg-white/5'
                             }`}
                         >
                             {y} {y !== 'Todos' && (isMobile ? '' : 'Año')}
                         </button>
                     ))}
                 </div>
-                <div className="flex items-center gap-2 border-l border-white/10 pl-3 ml-1">
+                <div className="flex items-center gap-3 border-l border-white/10 pl-4 ml-1">
                     <input type="file" ref={fileInputRef} onChange={handleExcelImport} accept=".xlsx, .xls" className="hidden" />
                     <Button 
                         onClick={() => fileInputRef.current.click()}
                         disabled={bulkLoading}
                         variant="outline"
-                        className="h-10 px-3 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+                        className="h-14 w-14 rounded-[1.5rem] bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5 shadow-md transition-all flex items-center justify-center p-0"
                         title="Importar notas"
                     >
-                        {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSpreadsheet className="w-4 h-4" />}
+                        {bulkLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileSpreadsheet className="w-5 h-5" />}
                     </Button>
                     <Button 
                         onClick={exportToExcel}
                         variant="outline"
-                        className="h-10 px-3 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+                        className="h-14 w-14 rounded-[1.5rem] bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5 shadow-md transition-all flex items-center justify-center p-0"
                         title="Exportar acta"
                     >
-                        <Download className="w-4 h-4" />
+                        <Download className="w-5 h-5" />
                     </Button>
                 </div>
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
                 {[
-                  { label: 'Promedio', value: (filteredGrades.reduce((acc, c) => acc + (parseFloat(c.grade) || 0), 0) / (filteredGrades.length || 1)).toFixed(1), icon: Target, color: 'text-white' },
-                  { label: 'Aprobación', value: `${((filteredGrades.filter(g => (parseFloat(g.grade) || 0) >= 10).length / (filteredGrades.length || 1)) * 100).toFixed(0)}%`, icon: TrendingUp, color: 'text-emerald-400' },
-                  { label: 'Registros', value: filteredGrades.length, icon: Database, color: 'text-blue-400' },
+                  { label: 'Promedio Global', value: (filteredGrades.reduce((acc, c) => acc + (parseFloat(c.grade) || 0), 0) / (filteredGrades.length || 1)).toFixed(1), icon: Target, color: 'text-white', bg: 'bg-white/10' },
+                  { label: 'Tasa Aprobación', value: `${((filteredGrades.filter(g => (parseFloat(g.grade) || 0) >= 10).length / (filteredGrades.length || 1)) * 100).toFixed(0)}%`, icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+                  { label: 'Calificaciones', value: filteredGrades.length, icon: Database, color: 'text-blue-400', bg: 'bg-blue-500/10' },
                 ].map((m, i) => (
-                  <div key={i} className="stat-card flex items-center gap-3 p-3">
-                      <m.icon className={`w-4 h-4 ${m.color} flex-shrink-0`} />
+                  <div key={i} className="apple-glass rounded-[2rem] border border-white/10 p-6 flex items-center gap-5 shadow-xl hover:shadow-blue-500/5 transition-all hover:-translate-y-1">
+                      <div className={`w-12 h-12 rounded-[1rem] flex items-center justify-center shrink-0 ${m.bg}`}>
+                          <m.icon className={`w-5 h-5 ${m.color}`} />
+                      </div>
                       <div className="min-w-0">
-                          <div className={`text-lg font-semibold ${m.color}`}>{m.value}</div>
-                          <span className="text-[10px] text-muted-foreground">{m.label}</span>
+                          <div className={`text-2xl font-bold italic tracking-tight ${m.color}`}>{m.value}</div>
+                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#86868b]">{m.label}</span>
                       </div>
                   </div>
                 ))}
             </div>
 
             {/* Main Grades Listing */}
-            <div className="space-y-2">
-               <div className="flex items-center gap-3 px-1 mb-3">
-                   <Layers className="w-4 h-4 text-muted-foreground" />
-                   <h3 className="text-xs text-muted-foreground">Listado de evaluaciones</h3>
+            <div className="space-y-4 mt-8">
+               <div className="flex items-center gap-3 px-2 mb-4">
+                   <Layers className="w-5 h-5 text-[#86868b]" />
+                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#86868b]">Listado de evaluaciones</h3>
                </div>
 
-               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <AnimatePresence mode="popLayout">
                    {filteredGrades.length > 0 ? (
                      filteredGrades.map((g, i) => (
@@ -455,32 +457,32 @@ const Grades = () => {
                          initial={{ opacity: 0, scale: 0.98 }}
                          animate={{ opacity: 1, scale: 1 }}
                          exit={{ opacity: 0, scale: 0.98 }}
-                         className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition-colors"
+                         className="flex items-center justify-between p-6 rounded-[2rem] apple-glass border border-white/10 hover:bg-white/[0.04] transition-all shadow-lg hover:shadow-blue-500/5 group"
                        >
-                          <div className="flex items-center gap-4 flex-1 min-w-0">
-                             <div className={`w-10 h-10 shrink-0 rounded-lg flex items-center justify-center bg-white/[0.03] ${
+                          <div className="flex items-center gap-5 flex-1 min-w-0">
+                             <div className={`w-12 h-12 shrink-0 rounded-[1rem] flex items-center justify-center bg-white/[0.03] shadow-inner ${
                                 parseFloat(g.grade) >= 10 ? 'text-emerald-400' : 'text-red-400'
                              }`}>
-                                <GraduationCap className="w-5 h-5" />
+                                <GraduationCap className="w-6 h-6" />
                              </div>
                              <div className="min-w-0">
-                                <h4 className="text-sm font-medium text-white truncate">{g.student}</h4>
-                                <div className="flex items-center gap-2 mt-0.5">
-                                   <span className="text-[10px] text-amber-500 font-medium truncate">{g.subject}</span>
-                                   <span className="text-[10px] text-muted-foreground">Lapso {g.lapso}</span>
+                                <h4 className="text-sm font-bold text-white truncate">{g.student}</h4>
+                                <div className="flex items-center gap-3 mt-1.5">
+                                   <span className="text-[10px] text-amber-500 font-black uppercase tracking-widest truncate">{g.subject}</span>
+                                   <span className="text-[9px] text-[#86868b] font-bold uppercase tracking-widest">Lapso {g.lapso}</span>
                                 </div>
                              </div>
                           </div>
 
-                          <div className="flex items-center gap-4 pl-4 shrink-0">
+                          <div className="flex items-center gap-5 pl-4 shrink-0">
                              <div className="text-right">
-                                <div className={`text-xl font-semibold leading-none ${
+                                <div className={`text-2xl font-bold italic tracking-tight leading-none ${
                                    parseFloat(g.grade) >= 18 ? 'text-blue-500' : 
                                    parseFloat(g.grade) >= 10 ? 'text-white' : 'text-red-500'
                                 }`}>
                                    {parseFloat(g.grade).toFixed(1)}
                                 </div>
-                                <Badge className={`mt-1 h-5 px-1.5 text-[9px] font-medium border-transparent ${
+                                <Badge className={`mt-2 h-6 px-2 text-[9px] font-black uppercase tracking-widest border-transparent ${
                                    parseFloat(g.grade) >= 10 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
                                 }`}>
                                    {parseFloat(g.grade) >= 10 ? 'Aprobado' : 'Reprobado'}
@@ -490,7 +492,7 @@ const Grades = () => {
                                onClick={() => generateIndividualPDF(g.estudiante_id)}
                                variant="ghost"
                                size="icon"
-                               className="h-8 w-8 text-muted-foreground hover:text-white"
+                               className="h-10 w-10 text-white/40 hover:text-white rounded-[1rem] bg-white/5 opacity-0 group-hover:opacity-100 transition-all"
                              >
                                <Printer className="w-4 h-4" />
                              </Button>
