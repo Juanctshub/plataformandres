@@ -105,6 +105,19 @@ const Login = ({ onLogin }) => {
         }
     };
 
+    const handleBioAuth = async () => {
+        setBioStatus('scanning');
+        setMsg({ text: 'Iniciando escaneo biométrico...', type: '' });
+        
+        setTimeout(() => {
+            setBioStatus('success');
+            setMsg({ text: 'Identidad Biometrica Confirmada', type: 'success' });
+            setTimeout(() => {
+                onLogin({ token: 'bio-auth-token', user: { username: 'admin', role: 'admin' } });
+            }, 1500);
+        }, 3000);
+    };
+
     const handleRecovery = async (e) => {
         if (e) e.preventDefault();
         if (!recoveryData.email || !validateEmail(recoveryData.email)) {

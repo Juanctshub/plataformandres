@@ -45,7 +45,7 @@ const Students = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeFilter, setActiveFilter] = useState('Todos');
+  const [filterSection, setFilterSection] = useState('Todos');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
@@ -85,7 +85,7 @@ const Students = () => {
     ((s.nombre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
      (s.cedula || '').includes(searchTerm) ||
      (s.seccion?.toLowerCase() || '').includes(searchTerm.toLowerCase())) &&
-    (activeFilter === 'Todos' || (s.seccion || '').includes(activeFilter))
+    (filterSection === 'Todos' || (s.seccion || '').includes(filterSection))
   ) : [];
 
   const handleSubmit = async (e) => {

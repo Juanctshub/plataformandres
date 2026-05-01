@@ -8,7 +8,9 @@ import {
   AlertCircle,
   Loader2,
   Clock,
-  History
+  History,
+  Plus,
+  Sparkles
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";
