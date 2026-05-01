@@ -248,7 +248,6 @@ const InstitutionalSettings = () => {
         { name: 'Institución', icon: Building2 },
         { name: 'Seguridad', icon: ShieldCheck },
         { name: 'Notificaciones', icon: Bell },
-        { name: 'Plan de Pago', icon: CreditCard },
         { name: 'Historial', icon: History },
     ];
 
@@ -526,53 +525,6 @@ const InstitutionalSettings = () => {
                                     </div>
                                   ))}
                                </div>
-                            </div>
-                         )}
-
-                         {/* ═══ PLAN DE PAGO ═══ */}
-                         {activeSection === 'Plan de Pago' && (
-                            <div className="space-y-12">
-                               <div className="apple-card bg-gradient-to-br from-zinc-900 to-black border border-white/10 p-12 relative overflow-hidden rounded-[4rem]">
-                                  <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[150%] bg-blue-600/10 blur-[100px] rounded-full rotate-12" />
-                                  <div className="relative z-10 space-y-12">
-                                     <div className="flex justify-between items-start">
-                                        <div className="space-y-4">
-                                           <Badge className="bg-blue-600 text-white border-none px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em]">Premium Enterprise</Badge>
-                                           <h4 className="text-7xl font-black text-white italic tracking-tighter">ACTIVO</h4>
-                                           <p className="text-xs text-[#86868b] font-bold uppercase tracking-widest pl-1">Licencia de por vida — U.E. Andrés Bello</p>
-                                        </div>
-                                        <div className="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl">
-                                           <Globe className="w-10 h-10 text-white/20" />
-                                        </div>
-                                     </div>
-                                     <div className="space-y-6">
-                                        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                                           <div className="h-full w-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_30px_rgba(37,99,235,0.6)]" />
-                                        </div>
-                                        <div className="flex justify-between items-center text-[10px] font-black text-[#86868b] uppercase tracking-[0.4em]">
-                                           <span>Estado Permanente</span>
-                                           <span className="text-emerald-400 italic">Sincronización Vitalicia</span>
-                                        </div>
-                                     </div>
-                                  </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-8">
-                                   {[
-                                      { label: 'Tipo de Licencia', value: 'Enterprise Global', icon: CreditCard },
-                                      { label: 'Soporte', value: 'Prioridad Nivel 1', icon: Cpu },
-                                      { label: 'Almacenamiento', value: 'Infinite Cloud', icon: Database },
-                                      { label: 'Usuarios', value: 'Ilimitados', icon: User },
-                                   ].map((m, i) => (
-                                      <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 flex flex-col gap-6 hover:bg-white/[0.04] transition-all group/plan">
-                                         <m.icon className="w-8 h-8 text-blue-400 group-hover/plan:scale-110 transition-transform" />
-                                         <div className="flex flex-col">
-                                            <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">{m.label}</span>
-                                            <span className="text-md font-black text-white mt-1 uppercase italic">{m.value}</span>
-                                         </div>
-                                      </div>
-                                   ))}
-                                </div>
                             </div>
                          )}
 

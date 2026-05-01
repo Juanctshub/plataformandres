@@ -8,29 +8,23 @@ import {
   Loader2, 
   CheckCircle2, 
   AlertCircle,
-  Fingerprint,
   Mail,
   UserPlus,
   ChevronLeft,
-  Scan,
-  Cpu,
-  Zap,
-  Bot
+  Zap
 } from 'lucide-react';
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
-import { Badge } from "./components/ui/badge";
 
 import logo from './assets/logo.png';
 
 const Login = ({ onLogin }) => {
-    const [view, setView] = useState('login'); // login, recovery, bio, signup
+    const [view, setView] = useState('login'); // login, recovery, signup
     const [credentials, setCredentials] = useState({ username: '', password: '' });
     const [signupData, setSignupData] = useState({ username: '', email: '', password: '' });
     const [recoveryData, setRecoveryData] = useState({ email: '', type: 'password' }); // type: password, username
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });
-    const [bioStatus, setBioStatus] = useState('idle');
 
     // Validation Helpers
     const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -55,13 +49,13 @@ const Login = ({ onLogin }) => {
             const data = await res.json();
             
             if (res.ok) {
-                setMsg({ text: 'Sincronización Exitosa. Accediendo al Núcleo...', type: 'success' });
+                setMsg({ text: 'Acceso autorizado', type: 'success' });
                 setTimeout(() => onLogin(data), 800);
             } else {
-                setMsg({ text: data.error || 'Fallo de Autenticación Central', type: 'error' });
+                setMsg({ text: data.error || 'Credenciales incorrectas', type: 'error' });
             }
         } catch (e) {
-            setMsg({ text: 'Error Crítico: Nodo Maestro fuera de línea', type: 'error' });
+            setMsg({ text: 'Error de conexión', type: 'error' });
         } finally {
             setLoading(false);
         }
@@ -70,11 +64,11 @@ const Login = ({ onLogin }) => {
     const handleSignup = async (e) => {
         if (e) e.preventDefault();
         if (!signupData.username || !signupData.password || !signupData.email) {
-            setMsg({ text: 'Complete todos los campos obligatorios', type: 'error' });
+            setMsg({ text: 'Complete todos los campos', type: 'error' });
             return;
         }
         if (!validateEmail(signupData.email)) {
-            setMsg({ text: 'Formato de correo institucional inválido', type: 'error' });
+            setMsg({ text: 'Formato de correo inválido', type: 'error' });
             return;
         }
 
@@ -93,45 +87,31 @@ const Login = ({ onLogin }) => {
             });
             const data = await res.json();
             if (res.ok) {
-                setMsg({ text: 'Identidad Generada. Sincronice para Activar.', type: 'success' });
+                setMsg({ text: 'Cuenta creada exitosamente.', type: 'success' });
                 setTimeout(() => setView('login'), 1500);
             } else {
-                setMsg({ text: data.error || 'Error en Registro de Nodo', type: 'error' });
+                setMsg({ text: data.error || 'Error en el registro', type: 'error' });
             }
         } catch (e) {
-            setMsg({ text: 'Fallo de Red en Registro', type: 'error' });
+            setMsg({ text: 'Error de red', type: 'error' });
         } finally {
             setLoading(false);
         }
     };
 
-    const handleBioAuth = async () => {
-        setBioStatus('scanning');
-        setMsg({ text: 'Iniciando escaneo biométrico...', type: '' });
-        
-        setTimeout(() => {
-            setBioStatus('success');
-            setMsg({ text: 'Identidad Biometrica Confirmada', type: 'success' });
-            setTimeout(() => {
-                onLogin({ token: 'bio-auth-token', user: { username: 'admin', role: 'admin' } });
-            }, 1500);
-        }, 3000);
-    };
-
     const handleRecovery = async (e) => {
         if (e) e.preventDefault();
         if (!recoveryData.email || !validateEmail(recoveryData.email)) {
-            setMsg({ text: 'Ingrese un correo institucional válido', type: 'error' });
+            setMsg({ text: 'Ingrese un correo válido', type: 'error' });
             return;
         }
 
         setLoading(true);
-        // Simular validación con el servidor (o llamar a endpoint si existiera)
         setTimeout(() => {
             setMsg({ 
                 text: recoveryData.type === 'password' 
-                    ? 'Enlace de restauración enviado al correo.' 
-                    : 'Su Identidad Maestra ha sido enviada al correo.', 
+                    ? 'Instrucciones enviadas al correo.' 
+                    : 'Su usuario ha sido enviado al correo.', 
                 type: 'success' 
             });
             setLoading(false);
@@ -140,120 +120,89 @@ const Login = ({ onLogin }) => {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white flex items-center justify-center p-4 relative overflow-hidden font-sans">
-            {/* Minimal Background */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-               <motion.div 
-                 animate={{ scale: [1, 1.05, 1], opacity: [0.05, 0.1, 0.05] }}
-                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                 className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-blue-500/20 blur-[120px] rounded-full"
-               />
-               <motion.div 
-                 animate={{ scale: [1.05, 1, 1.05], opacity: [0.03, 0.08, 0.03] }}
-                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                 className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] bg-indigo-500/20 blur-[120px] rounded-full"
-               />
-            </div>
-
+        <div className="min-h-screen bg-[#f5f5f7] flex flex-col items-center justify-center p-4 relative font-sans">
+            
             <AnimatePresence mode="wait">
                 <motion.div
                     key={view}
-                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 1.02 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.02 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="w-full max-w-md z-10"
+                    className="w-full max-w-[640px] z-10"
                 >
-                    <div className="apple-glass border border-white/10 rounded-[3rem] p-10 sm:p-14 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] relative overflow-hidden group">
+                    <div 
+                        className="bg-white rounded-[32px] p-10 sm:p-14 relative flex flex-col justify-center min-h-[610px]"
+                        style={{
+                            border: '1px solid #FFFFFF',
+                            boxShadow: '0px 12px 28px #C5CBD0'
+                        }}
+                    >
                         
                         {/* Branding */}
-                        <div className="flex flex-col items-center text-center space-y-6 mb-8">
-                            <motion.div 
-                                className="w-16 h-16 rounded-xl bg-gradient-to-tr from-blue-600/20 to-indigo-600/20 p-px border border-white/10 flex items-center justify-center"
-                            >
-                                <img src={logo} alt="Logo" className="w-10 h-10 object-contain filter brightness-110 drop-shadow-md" />
+                        <div className="flex flex-col items-center text-center space-y-4 mb-10">
+                            <motion.div className="w-20 h-20 mb-2">
+                                <img src={logo} alt="Logo" className="w-full h-full object-contain drop-shadow-sm" />
                             </motion.div>
                             
-                            <div className="space-y-1.5">
-                                <h1 className="text-3xl font-bold text-white tracking-tight italic">Andrés Bello</h1>
-                                <p className="text-xs font-bold text-[#86868b] uppercase tracking-[0.2em]">Plataforma Educativa</p>
+                            <div className="space-y-1">
+                                <h1 className="text-2xl font-semibold text-[#1d1d1f] tracking-tight">Iniciar Sesión</h1>
+                                <p className="text-[13px] text-[#86868b] font-medium">U.E. Andrés Bello</p>
                             </div>
                         </div>
 
                         {/* Views Container */}
-                        <div className="min-h-[260px]">
+                        <div className="flex-1 max-w-[320px] mx-auto w-full">
                             {view === 'login' && (
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="space-y-4">
-                                        <div className="space-y-2 relative">
-                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Usuario</label>
-                                            <div className="relative">
-                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                                                <Input
-                                                    placeholder="Ingrese su usuario"
-                                                    value={credentials.username}
-                                                    onChange={e => setCredentials({...credentials, username: e.target.value})}
-                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
-                                                    required
-                                                />
-                                            </div>
+                                        <div className="relative">
+                                            <Input
+                                                placeholder="Nombre de usuario"
+                                                value={credentials.username}
+                                                onChange={e => setCredentials({...credentials, username: e.target.value})}
+                                                className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                                required
+                                            />
                                         </div>
-                                        <div className="space-y-2 relative">
-                                            <div className="flex justify-between items-center ml-2">
-                                                <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em]">Contraseña</label>
-                                                <button 
-                                                    type="button"
-                                                    onClick={() => setView('recovery')}
-                                                    className="text-[10px] font-bold text-blue-400 hover:text-blue-300 transition-colors uppercase tracking-wider"
-                                                >
-                                                    ¿Olvidó su clave?
-                                                </button>
-                                            </div>
-                                            <div className="relative">
-                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                                                <Input
-                                                    type="password"
-                                                    placeholder="••••••••"
-                                                    value={credentials.password}
-                                                    onChange={e => setCredentials({...credentials, password: e.target.value})}
-                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
-                                                    required
-                                                />
-                                            </div>
+                                        <div className="relative">
+                                            <Input
+                                                type="password"
+                                                placeholder="Contraseña"
+                                                value={credentials.password}
+                                                onChange={e => setCredentials({...credentials, password: e.target.value})}
+                                                className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                                required
+                                            />
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-3">
+                                    <div className="flex flex-col gap-4 mt-8">
+                                        <div className="flex items-center justify-center gap-4 text-[13px] mb-4">
+                                            <button 
+                                                type="button"
+                                                onClick={() => setView('signup')}
+                                                className="text-[#0071e3] hover:underline"
+                                            >
+                                                Crear cuenta
+                                            </button>
+                                            <span className="text-[#d2d2d7]">|</span>
+                                            <button 
+                                                type="button"
+                                                onClick={() => setView('recovery')}
+                                                className="text-[#0071e3] hover:underline"
+                                            >
+                                                ¿Olvidaste tu contraseña?
+                                            </button>
+                                        </div>
+
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-14 w-full bg-white text-black hover:bg-zinc-200 rounded-[2rem] font-bold text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-3 group shadow-xl"
+                                            className="h-12 w-full bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full font-medium text-[15px] transition-all flex items-center justify-center gap-2"
                                         >
-                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                                                <>
-                                                    Iniciar sesión <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                                </>
-                                            )}
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><ArrowRight className="w-5 h-5" /></>}
                                         </Button>
-
-                                        <div className="grid grid-cols-2 gap-4 mt-2">
-                                            <Button 
-                                                type="button"
-                                                onClick={() => setView('bio')}
-                                                variant="outline"
-                                                className="h-12 bg-transparent hover:bg-white/[0.05] border-white/10 rounded-[1.5rem] text-[10px] font-black text-[#86868b] hover:text-white transition-all uppercase tracking-widest shadow-lg"
-                                            >
-                                                <Fingerprint className="w-4 h-4 mr-2" /> Biometría
-                                            </Button>
-                                            <Button 
-                                                type="button"
-                                                onClick={() => setView('signup')}
-                                                variant="outline"
-                                                className="h-12 bg-transparent hover:bg-white/[0.05] border-white/10 rounded-[1.5rem] text-[10px] font-black text-[#86868b] hover:text-white transition-all uppercase tracking-widest shadow-lg"
-                                            >
-                                                <UserPlus className="w-4 h-4 mr-2" /> Registrarse
-                                            </Button>
-                                        </div>
                                     </div>
                                 </form>
                             )}
@@ -261,227 +210,130 @@ const Login = ({ onLogin }) => {
                             {view === 'signup' && (
                                 <form onSubmit={handleSignup} className="space-y-6">
                                     <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Usuario</label>
-                                            <div className="relative">
-                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                                                <Input
-                                                    placeholder="Elegir usuario"
-                                                    value={signupData.username}
-                                                    onChange={e => setSignupData({...signupData, username: e.target.value})}
-                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Correo electrónico</label>
-                                            <div className="relative">
-                                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                                                <Input
-                                                    type="email"
-                                                    placeholder="ejemplo@correo.com"
-                                                    value={signupData.email}
-                                                    onChange={e => setSignupData({...signupData, email: e.target.value})}
-                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Contraseña</label>
-                                            <div className="relative">
-                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                                                <Input
-                                                    type="password"
-                                                    placeholder="••••••••"
-                                                    value={signupData.password}
-                                                    onChange={e => setSignupData({...signupData, password: e.target.value})}
-                                                    className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
+                                        <Input
+                                            placeholder="Nombre de usuario"
+                                            value={signupData.username}
+                                            onChange={e => setSignupData({...signupData, username: e.target.value})}
+                                            className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                            required
+                                        />
+                                        <Input
+                                            type="email"
+                                            placeholder="Correo electrónico"
+                                            value={signupData.email}
+                                            onChange={e => setSignupData({...signupData, email: e.target.value})}
+                                            className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                            required
+                                        />
+                                        <Input
+                                            type="password"
+                                            placeholder="Contraseña"
+                                            value={signupData.password}
+                                            onChange={e => setSignupData({...signupData, password: e.target.value})}
+                                            className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                            required
+                                        />
                                     </div>
 
-                                    <div className="flex flex-col gap-3 pt-2">
+                                    <div className="flex flex-col gap-4 mt-8">
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-14 w-full bg-white text-black hover:bg-zinc-200 rounded-[2rem] font-bold text-sm shadow-xl hover:shadow-white/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+                                            className="h-12 w-full bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full font-medium text-[15px] transition-all flex items-center justify-center"
                                         >
-                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Crear cuenta'}
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Continuar'}
                                         </Button>
-                                        <Button 
-                                            variant="ghost" 
+                                        <button 
+                                            type="button" 
                                             onClick={() => setView('login')}
-                                            className="h-12 text-[10px] font-black text-[#86868b] hover:text-white uppercase tracking-widest transition-all rounded-[1.5rem]"
+                                            className="text-[13px] text-[#0071e3] hover:underline flex items-center justify-center gap-1"
                                         >
-                                            <ChevronLeft className="w-4 h-4 mr-1" /> Volver a inicio
-                                        </Button>
+                                            <ChevronLeft className="w-4 h-4" /> Volver
+                                        </button>
                                     </div>
                                 </form>
                             )}
 
                             {view === 'recovery' && (
                                 <form onSubmit={handleRecovery} className="space-y-6">
-                                    <div className="space-y-4 text-center">
-                                        <div>
-                                            <h3 className="text-2xl font-bold text-white tracking-tight italic">Recuperar acceso</h3>
-                                            <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-1">Seleccione el método de recuperación</p>
-                                        </div>
-                                        
-                                        <div className="flex p-1 bg-white/[0.03] border border-white/10 rounded-[1.5rem]">
-                                            <button
-                                                type="button"
-                                                onClick={() => setRecoveryData({...recoveryData, type: 'password'})}
-                                                className={`flex-1 py-3 rounded-[1.2rem] text-[10px] font-black uppercase tracking-widest transition-all ${recoveryData.type === 'password' ? 'bg-white text-black shadow-md' : 'text-[#86868b] hover:text-white'}`}
-                                            >
-                                                Contraseña
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setRecoveryData({...recoveryData, type: 'username'})}
-                                                className={`flex-1 py-3 rounded-[1.2rem] text-[10px] font-black uppercase tracking-widest transition-all ${recoveryData.type === 'username' ? 'bg-white text-black shadow-md' : 'text-[#86868b] hover:text-white'}`}
-                                            >
-                                                Usuario
-                                            </button>
-                                        </div>
+                                    <div className="flex bg-[#f5f5f7] p-1 rounded-[12px] mb-6">
+                                        <button
+                                            type="button"
+                                            onClick={() => setRecoveryData({...recoveryData, type: 'password'})}
+                                            className={`flex-1 py-2 text-[13px] font-medium rounded-[8px] transition-all ${recoveryData.type === 'password' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b]'}`}
+                                        >
+                                            Contraseña
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRecoveryData({...recoveryData, type: 'username'})}
+                                            className={`flex-1 py-2 text-[13px] font-medium rounded-[8px] transition-all ${recoveryData.type === 'username' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b]'}`}
+                                        >
+                                            Usuario
+                                        </button>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Correo asociado</label>
-                                        <div className="relative">
-                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                                            <Input
-                                                type="email"
-                                                placeholder="Su correo registrado"
-                                                value={recoveryData.email}
-                                                onChange={e => setRecoveryData({...recoveryData, email: e.target.value})}
-                                                className="pl-12 h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-sm text-white font-semibold transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
+                                    <Input
+                                        type="email"
+                                        placeholder="Correo electrónico asociado"
+                                        value={recoveryData.email}
+                                        onChange={e => setRecoveryData({...recoveryData, email: e.target.value})}
+                                        className="h-14 bg-white border border-[#d2d2d7] rounded-[12px] text-[17px] text-[#1d1d1f] transition-all focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 px-4 placeholder:text-[#86868b]"
+                                        required
+                                    />
 
-                                    <div className="flex flex-col gap-3 pt-2">
+                                    <div className="flex flex-col gap-4 mt-8">
                                         <Button 
                                             type="submit" 
                                             disabled={loading}
-                                            className="h-14 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] font-bold text-sm shadow-xl hover:shadow-blue-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+                                            className="h-12 w-full bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full font-medium text-[15px] transition-all flex items-center justify-center"
                                         >
-                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Enviar instrucciones'}
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Restablecer'}
                                         </Button>
-                                        <Button 
-                                            variant="ghost" 
+                                        <button 
+                                            type="button" 
                                             onClick={() => setView('login')}
-                                            className="h-12 text-[10px] font-black text-[#86868b] hover:text-white uppercase tracking-widest transition-all rounded-[1.5rem]"
+                                            className="text-[13px] text-[#0071e3] hover:underline flex items-center justify-center gap-1"
                                         >
-                                            <ChevronLeft className="w-4 h-4 mr-1" /> Recordé mis datos
-                                        </Button>
+                                            <ChevronLeft className="w-4 h-4" /> Cancelar
+                                        </button>
                                     </div>
                                 </form>
                             )}
-
-                            {view === 'bio' && (
-                                <div className="space-y-8 text-center py-4">
-                                    <div className="space-y-2">
-                                        <h3 className="text-xl font-semibold text-white tracking-tight">Biometría</h3>
-                                        <p className="text-xs text-muted-foreground">Acerque su huella o rostro al lector.</p>
-                                    </div>
-                                    
-                                    <div className="flex justify-center relative">
-                                        <motion.div 
-                                            animate={bioStatus === 'scanning' ? { 
-                                                borderColor: ['rgba(59,130,246,0.1)', 'rgba(59,130,246,0.5)', 'rgba(59,130,246,0.1)'],
-                                            } : {}}
-                                            transition={{ duration: 2, repeat: Infinity }}
-                                            className="w-32 h-32 rounded-3xl bg-white/[0.02] border border-white/10 flex items-center justify-center relative overflow-hidden"
-                                        >
-                                            {bioStatus === 'scanning' && (
-                                                <motion.div 
-                                                    initial={{ y: -80 }}
-                                                    animate={{ y: 80 }}
-                                                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                                                    className="absolute inset-x-0 h-0.5 bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.8)] z-20"
-                                                />
-                                            )}
-                                            <AnimatePresence mode="wait">
-                                                {bioStatus === 'success' ? (
-                                                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                                                        <CheckCircle2 className="w-12 h-12 text-emerald-500" strokeWidth={1.5} />
-                                                    </motion.div>
-                                                ) : (
-                                                    <motion.div key="scan-icon" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                                        <Scan className={`w-12 h-12 ${bioStatus === 'scanning' ? 'text-blue-500' : 'text-muted-foreground'}`} strokeWidth={1} />
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </motion.div>
-                                    </div>
-
-                                    <div className="flex flex-col gap-3">
-                                        <Button 
-                                            onClick={handleBioAuth}
-                                            disabled={bioStatus === 'scanning' || bioStatus === 'success'}
-                                            className="h-14 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] font-bold text-sm shadow-xl hover:shadow-blue-500/20 transition-all active:scale-[0.98] uppercase tracking-widest"
-                                        >
-                                            {bioStatus === 'scanning' ? 'Analizando...' : bioStatus === 'success' ? 'Completado' : 'Escanear'}
-                                        </Button>
-                                        <Button 
-                                            variant="ghost" 
-                                            onClick={() => setView('login')}
-                                            className="h-12 text-[10px] font-black text-[#86868b] hover:text-white uppercase tracking-widest transition-all rounded-[1.5rem]"
-                                        >
-                                            Usar contraseña
-                                        </Button>
-                                    </div>
-                                </div>
-                            )}
                         </div>
+
+                        {/* Divider Line near bottom */}
+                        <div className="absolute bottom-[80px] left-1/2 -translate-x-1/2 w-[302px] h-[1px] bg-[#d2d2d7]/50" />
 
                         {/* Status Message */}
                         <AnimatePresence>
                             {msg.text && (
                                 <motion.div 
-                                    initial={{ opacity: 0, y: 10, height: 0 }}
-                                    animate={{ opacity: 1, y: 0, height: 'auto' }}
-                                    exit={{ opacity: 0, scale: 0.98, height: 0 }}
-                                    className="mt-6 pt-6 border-t border-white/5"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.98 }}
+                                    className="absolute bottom-6 left-0 right-0 flex justify-center"
                                 >
-                                    <div className={`p-3 rounded-lg flex items-center gap-3 ${msg.type === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-                                        {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
-                                        <span className="text-xs font-medium leading-tight">
-                                            {msg.text}
-                                        </span>
+                                    <div className={`px-4 py-2 rounded-full flex items-center gap-2 text-[13px] font-medium shadow-sm ${msg.type === 'success' ? 'bg-[#e3f5eb] text-[#1a7f37]' : 'bg-[#fce8e6] text-[#c92a2a]'}`}>
+                                        {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                                        {msg.text}
                                     </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
                     </div>
-
-                    {/* Footer Info */}
-                    <div className="mt-8 text-center space-y-4">
-                        <div className="flex items-center justify-center gap-4 text-muted-foreground">
-                            <div className="flex items-center gap-1.5">
-                                <ShieldCheck className="w-3.5 h-3.5" />
-                                <span className="text-[10px] font-medium uppercase tracking-wider">Seguro</span>
-                            </div>
-                            <div className="w-1 h-1 rounded-full bg-white/10" />
-                            <div className="flex items-center gap-1.5">
-                                <Zap className="w-3.5 h-3.5" />
-                                <span className="text-[10px] font-medium uppercase tracking-wider">Rápido</span>
-                            </div>
-                        </div>
-                        <p className="text-[10px] text-muted-foreground/50">
-                            © 2026 U.E. Andrés Bello
-                        </p>
-                    </div>
                 </motion.div>
             </AnimatePresence>
+
+            {/* Footer Footer */}
+            <div className="absolute bottom-6 text-[#86868b] text-[12px] flex flex-col items-center gap-2">
+                <div className="flex gap-4">
+                    <span>Plataforma segura</span>
+                    <span>Ayuda</span>
+                </div>
+            </div>
         </div>
     );
 };
-
 
 export default Login;

@@ -44,7 +44,7 @@ import { Badge } from "./components/ui/badge";
 import { Button } from "./components/ui/button";
 import InstitutionalSettings from './InstitutionalSettings';
 import Finance from './Finance';
-import LapseControl from './LapseControl';
+
 import VisionAttendance from './VisionAttendance';
 import RepresentativeView from './RepresentativeView';
 import logo from './assets/logo.png';
@@ -133,7 +133,6 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
     ...(userName === 'admin' || userRole === 'admin' ? [
       { id: 'finance', icon: TrendingUp, label: 'Finanzas' },
       { id: 'staff', icon: Users, label: 'Personal' },
-      { id: 'lapses', icon: CalendarRange, label: 'Lapsos' },
       { id: 'settings', icon: SettingsIcon, label: 'Ajustes' }
     ] : [])
   ];
