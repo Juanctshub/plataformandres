@@ -60,7 +60,7 @@ app.post('/api/login', async (req, res) => {
     const cleanPassword = password.trim();
 
     try {
-        const result = await db.query("SELECT * FROM usuarios WHERE username = $1", [cleanUsername]);
+        const result = await db.query("SELECT * FROM usuarios WHERE LOWER(username) = LOWER($1)", [cleanUsername]);
         const user = result.rows[0];
 
         if (!user) return res.status(401).json({ error: "Identidad no registrada en el Nodo Maestro" });

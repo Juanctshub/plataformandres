@@ -135,7 +135,7 @@ const Login = ({ onLogin }) => {
                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     className="w-full max-w-[480px] z-10"
                 >
-                    <div className="apple-glass bg-[#1c1c1e]/40 backdrop-blur-2xl border border-white/[0.08] rounded-[2.5rem] p-10 sm:p-14 relative flex flex-col justify-center min-h-[580px] shadow-[0_0_80px_-20px_rgba(0,0,0,1)]">
+                    <div className="apple-glass bg-[#1c1c1e]/40 backdrop-blur-2xl border border-white/[0.08] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-14 relative flex flex-col justify-center min-h-[500px] sm:min-h-[580px] shadow-[0_0_80px_-20px_rgba(0,0,0,1)]">
                         
                         {/* Branding */}
                         <div className="flex flex-col items-center text-center space-y-5 mb-10">
