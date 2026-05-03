@@ -91,7 +91,7 @@ const Grades = () => {
         return matchesSearch && matchesYear;
     }) : [];
 
-    const years = ['Todas', '1ro', '2do', '3ro', '4to', '5to'];
+    const years = ['Todas', '1', '2', '3', '4', '5'];
 
     const handleSubmit = async (e) => {
         if (e) e.preventDefault();
@@ -188,7 +188,7 @@ const Grades = () => {
                                 : 'bg-white/5 text-[#86868b] hover:text-white'
                             }`}
                         >
-                            {y}
+                            {y === 'Todas' ? 'Todas' : `${y} Año`}
                         </button>
                     ))}
                 </div>

@@ -88,15 +88,20 @@ const Staff = () => {
                 },
                 body: JSON.stringify(newStaff)
             });
+            
+            const data = await res.json();
+            
             if (res.ok) {
                 setMsg({ text: 'Personal registrado en el Nodo Maestro', type: 'success' });
                 setIsAddModalOpen(false);
                 setNewStaff({ nombre: '', rol: 'Docente', email: '', contacto: '' });
                 fetchStaff();
                 window.dispatchEvent(new Event('refresh-dashboard'));
+            } else {
+                setMsg({ text: data.error || 'Fallo en la sincronización del personal', type: 'error' });
             }
         } catch (e) {
-            setMsg({ text: 'Error al registrar personal', type: 'error' });
+            setMsg({ text: 'Error de enlace con el servidor de personal', type: 'error' });
         } finally {
             setSubmitting(false);
             setTimeout(() => setMsg({ text: '', type: '' }), 4000);

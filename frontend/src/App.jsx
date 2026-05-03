@@ -412,7 +412,6 @@ const AndresBelloSuite = () => {
       setProposalLoading(false);
     }
   };
-
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -428,17 +427,27 @@ const AndresBelloSuite = () => {
     try {
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
       const headers = { 'Authorization': `Bearer ${tokenValue}` };
-      
-      const responses = await Promise.allSettled([
-        fetch(`${baseUrl}/api/estudiantes`, { headers }),
-        fetch(`${baseUrl}/api/ai/analytics`, { headers }),
-        fetch(`${baseUrl}/api/justificaciones`, { headers }),
-        fetch(`${baseUrl}/api/personal`, { headers }),
-        fetch(`${baseUrl}/api/asistencia/stats`, { headers })
+
+      // Helper for clean fetching with auth check
+      const authedFetch = async (url) => {
+          const r = await fetch(url, { headers });
+          if (r.status === 401 || r.status === 403) {
+              console.warn("Sessión expirada o inválida. Redirigiendo...");
+              handleLogout();
+              return null;
+          }
+          return r;
+      };
+
+      const [resStd, resAi, resJust, resStaff, resAtt] = await Promise.all([
+        authedFetch(`${baseUrl}/api/estudiantes`),
+        authedFetch(`${baseUrl}/api/ai/analytics`),
+        authedFetch(`${baseUrl}/api/justificaciones`),
+        authedFetch(`${baseUrl}/api/personal`),
+        authedFetch(`${baseUrl}/api/asistencia/stats`)
       ]);
 
-      const [resStd, resAi, resJust, resStaff, resAtt] = responses.map(r => r.status === 'fulfilled' ? r.value : null);
-      const aiDataRes = responses[1];
+      if (!resStd) return; // Already handled logout
 
       // Prepare Notifications based on AI data
       if (aiDataRes.status === 'fulfilled' && aiDataRes.value.ok) {
@@ -727,14 +736,19 @@ const AndresBelloSuite = () => {
 
           <AnimatePresence>
             {activeTab === 'aichat' && (
-              <motion.div
-                key="aichat-immersive"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[1000] bg-black overflow-hidden"
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.05 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="fixed inset-0 z-[1000] bg-black"
               >
-                <AIChatView searchTerm={searchTerm} user={user} onClose={() => setActiveTab('dashboard')} onRefresh={() => fetchData(token)} />
+                <AIChatView 
+                  searchTerm={searchTerm} 
+                  user={user} 
+                  onClose={() => setActiveTab('dashboard')} 
+                  onRefresh={() => fetchData(token)} 
+                />
               </motion.div>
             )}
           </AnimatePresence>

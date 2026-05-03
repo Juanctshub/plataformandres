@@ -90,7 +90,7 @@ const AttendanceSheet = () => {
     try {
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
       const promises = students
-        .filter(s => filterSection === 'Todas' || s.seccion === filterSection)
+        .filter(s => filterSection === 'Todas' || (s.seccion || '').startsWith(filterSection))
         .map(s => fetch(`${baseUrl}/api/asistencia`, {
           method: 'POST',
           headers: { 
@@ -158,21 +158,21 @@ const AttendanceSheet = () => {
                className="bg-transparent border-none text-white text-[15px] font-bold focus:ring-0 cursor-pointer outline-none w-full"
            />
         </div>
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-           {['Todas', '1ro', '2do', '3ro', '4to', '5to'].map((y) => (
-             <button
-               key={y}
-               onClick={() => setFilterSection(y)}
-               className={`px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
-                 filterSection === y 
-                   ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
-                   : 'bg-white/5 text-[#86868b] hover:text-white'
-               }`}
-             >
-               {y}
-             </button>
-           ))}
-        </div>
+         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+            {['Todas', '1', '2', '3', '4', '5'].map((y) => (
+              <button
+                key={y}
+                onClick={() => setFilterSection(y)}
+                className={`px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
+                  filterSection === y 
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                    : 'bg-white/5 text-[#86868b] hover:text-white'
+                }`}
+              >
+                {y === 'Todas' ? 'Todas' : `${y} Año`}
+              </button>
+            ))}
+         </div>
       </motion.div>
 
       {/* Quick Stats */}

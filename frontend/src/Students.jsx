@@ -102,14 +102,20 @@ const Students = () => {
         },
         body: JSON.stringify(newStudent)
       });
+      
+      const data = await res.json();
+      
       if (res.ok) {
-        setMsg({ text: 'Inscripción procesada', type: 'success' });
+        setMsg({ text: 'Estudiante inscrito y sincronizado', type: 'success' });
         setIsAddModalOpen(false);
-        setNewStudent({ cedula: '', nombre: '', seccion: '', representante: '', contacto: '' });
+        setNewStudent({ cedula: '', nombre: '', seccion: '1A', año: '1' });
         fetchStudents();
+        window.dispatchEvent(new Event('refresh-dashboard'));
+      } else {
+        setMsg({ text: data.error || 'Error en la inscripción', type: 'error' });
       }
     } catch (e) {
-      setMsg({ text: 'Error fatal', type: 'error' });
+      setMsg({ text: 'Error de enlace con el servidor de matrícula', type: 'error' });
     } finally {
       setSubmitting(false);
       setTimeout(() => setMsg({ text: '', type: '' }), 4000);
@@ -241,14 +247,23 @@ const Students = () => {
                        />
                     </div>
                     <div className="space-y-3">
-                       <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-2">Sección</label>
-                       <Input 
-                          placeholder="Ej: 5A"
-                          className="h-14 bg-[#1c1c1e] border-none rounded-2xl text-white font-bold"
-                          value={newStudent.seccion}
-                          onChange={(e) => setNewStudent({...newStudent, seccion: e.target.value})}
-                          required
-                       />
+                       <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-2">Ubicación Académica</label>
+                       <div className="flex gap-2">
+                           <select 
+                                className="flex-1 h-14 bg-[#1c1c1e] border-none rounded-2xl px-4 text-white font-bold outline-none appearance-none"
+                                value={newStudent.año || '1'}
+                                onChange={(e) => setNewStudent({...newStudent, año: e.target.value, seccion: `${e.target.value}${newStudent.seccion?.slice(-1) || 'A'}`})}
+                           >
+                               {[1,2,3,4,5].map(y => <option key={y} value={y} className="bg-black">{y} Año</option>)}
+                           </select>
+                           <select 
+                                className="w-20 h-14 bg-[#1c1c1e] border-none rounded-2xl px-4 text-white font-bold outline-none appearance-none"
+                                value={newStudent.seccion?.slice(-1) || 'A'}
+                                onChange={(e) => setNewStudent({...newStudent, seccion: `${newStudent.año || '1'}${e.target.value}`})}
+                           >
+                               {['A','B','C'].map(s => <option key={s} value={s} className="bg-black">{s}</option>)}
+                           </select>
+                       </div>
                     </div>
                  </div>
                  <div className="space-y-3">

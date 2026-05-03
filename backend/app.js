@@ -14,10 +14,10 @@ const initGroq = () => {
     try {
         let key = process.env.GROQ_API_KEY || process.env.GROQ_API_TOKEN;
         if (key) {
-            // Limpieza agresiva de token
-            key = key.trim().replace(/^["']|["']$/g, '').trim();
+            // Limpieza extrema de token para evitar errores de enlace
+            key = String(key).trim().replace(/^["']|["']$/g, '').trim();
             groq = new Groq({ apiKey: key });
-            console.log("Nucleo Groq Llama 3.3 Sincronizado (Token Sanitizado).");
+            console.log("Nucleo Groq Llama 3.3 Sincronizado (Token Platinum Sanitizado).");
         }
         else {
             console.warn("ADVERTENCIA: GROQ_API_KEY no detectada. El núcleo de inferencia estará inactivo.");
@@ -196,8 +196,9 @@ app.post('/api/estudiantes', authenticateToken, async (req, res) => {
         await logAudit(req.user.id, "CREATE_STUDENT", { id: result.rows[0].id, nombre, seccion });
         res.json({ success: true, message: "Estudiante inscrito correctamente" });
     } catch (err) {
-        if (err.message.includes('unique')) return res.status(400).json({ error: "La cédula ya está registrada" });
-        res.status(500).json({ error: err.message });
+        console.error("[STUDENT_REG_ERROR]", err.message);
+        if (err.message.includes('unique')) return res.status(400).json({ error: "La cédula ya está registrada en el Nodo Maestro" });
+        res.status(500).json({ error: "Fallo en la sincronización de matrícula: " + err.message });
     }
 });
 
@@ -398,7 +399,8 @@ app.post('/api/personal', authenticateToken, async (req, res) => {
         await logAudit(req.user.id, "REGISTER_STAFF", { id: result.rows[0].id, nombre, rol });
         res.json({ success: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("[STAFF_REG_ERROR]", err.message);
+        res.status(500).json({ error: "Fallo en la sincronización de personal: " + err.message });
     }
 });
 
