@@ -23,23 +23,23 @@ import {
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
-import { Badge } from "./components/ui/badge";
 
 const AttendanceSheet = () => {
   const [students, setStudents] = useState([]);
-  const [justifications, setJustifications] = useState([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [filterSection, setFilterSection] = useState('Todas');
   const [msg, setMsg] = useState({ text: '', type: '' });
   const [saving, setSaving] = useState(false);
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+  };
+  const item = { 
+    hidden: { opacity: 0, y: 15 }, 
+    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } } 
+  };
 
   const fetchData = async () => {
     try {
@@ -57,8 +57,6 @@ const AttendanceSheet = () => {
       
       const studentsArray = Array.isArray(stdData) ? stdData : [];
       const justArray = Array.isArray(justData) ? justData : [];
-      
-      setJustifications(justArray);
 
       const mappedStudents = studentsArray.map(s => {
         const hasJustification = justArray.find(j => 
@@ -75,15 +73,13 @@ const AttendanceSheet = () => {
 
       setStudents(mappedStudents);
     } catch (e) {
-      console.error('Error fetching data:', e);
+      console.error(e);
     } finally {
-      setTimeout(() => setLoading(false), 1000);
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [date]);
+  useEffect(() => { fetchData(); }, [date]);
 
   const handleStatusChange = (id, status) => {
     setStudents(students.map(s => s.id === id ? { ...s, status } : s));
@@ -110,216 +106,164 @@ const AttendanceSheet = () => {
         }));
       
       await Promise.all(promises);
-      setMsg({ text: 'Asistencia sincronizada exitosamente', type: 'success' });
+      setMsg({ text: 'Asistencia Sincronizada', type: 'success' });
       setTimeout(() => setMsg({ text: '', type: '' }), 4000);
     } catch (e) {
-      setMsg({ text: 'Error al sincronizar con el núcleo', type: 'error' });
+      setMsg({ text: 'Error de Sincronización', type: 'error' });
     } finally {
       setSaving(false);
     }
   };
 
-  const sections = ['Todas', ...new Set(students.map(s => s.seccion))];
   const filteredStudents = students.filter(s => filterSection === 'Todas' || s.seccion?.includes(filterSection));
 
   if (loading) return (
-    <div className="space-y-12">
-        <div className="h-10 w-64 bg-white/5 rounded-full animate-pulse" />
-        <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-20 apple-glass rounded-2xl animate-pulse" />)}
-        </div>
+    <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
+        <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
+        <p className="text-[11px] font-black uppercase tracking-widest text-white/30">Cargando Protocolo...</p>
     </div>
   );
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-6xl mx-auto py-6 sm:py-12 space-y-6 px-4 sm:px-6"
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="max-w-6xl mx-auto py-8 sm:py-14 space-y-10 px-5 sm:px-10"
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div>
-              <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mb-1">Control de Presencia</p>
-              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight italic">Asistencia</h1>
+              <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight italic leading-tight">Asistencia</h1>
+              <p className="text-[12px] font-bold text-[#86868b] uppercase tracking-[0.3em] mt-3">Control de Presencia • {date}</p>
           </div>
           <Button 
             onClick={handleSave}
             disabled={saving}
-            className="h-12 px-6 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-white text-black hover:bg-zinc-200 shadow-xl transition-all active:scale-95"
+            className="ios-button-primary bg-white text-black h-12 px-8 active:scale-95"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-            {saving ? 'Guardando...' : 'Guardar registro'}
+            {saving ? 'Guardando...' : 'Sincronizar'}
           </Button>
-      </div>
+      </motion.div>
 
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 mt-6">
-        <div className="flex items-center gap-3 bg-white/[0.03] border border-white/10 rounded-[1.5rem] px-6 h-14 shadow-md transition-all hover:bg-white/[0.05]">
-           <CalendarIcon className="w-4 h-4 text-white/40" />
+      <motion.div variants={item} className="flex flex-col sm:flex-row gap-4">
+        <div className="flex items-center gap-4 bg-[#1c1c1e] rounded-2xl px-6 h-14 border border-white/5 shadow-md">
+           <CalendarIcon className="w-5 h-5 text-blue-500" />
            <input 
                type="date" 
                value={date}
                onChange={(e) => setDate(e.target.value)}
-               className="bg-transparent border-none text-white text-sm font-semibold focus:ring-0 cursor-pointer outline-none"
+               className="bg-transparent border-none text-white text-[15px] font-bold focus:ring-0 cursor-pointer outline-none w-full"
            />
         </div>
-        <div className="flex gap-2 overflow-x-auto no-scrollbar flex-1 items-center">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
            {['Todas', '1ro', '2do', '3ro', '4to', '5to'].map((y) => (
              <button
                key={y}
                onClick={() => setFilterSection(y)}
-               className={`px-6 py-3 h-14 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all shadow-md ${
+               className={`px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
                  filterSection === y 
-                   ? 'bg-white text-black scale-[1.02]' 
-                   : 'bg-transparent text-[#86868b] hover:text-white border border-white/10 hover:bg-white/5'
+                   ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                   : 'bg-white/5 text-[#86868b] hover:text-white'
                }`}
              >
-               {y} {y !== 'Todas' && (isMobile ? '' : 'Año')}
+               {y}
              </button>
            ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+      <motion.div variants={item} className="grid grid-cols-2 md:grid-cols-4 gap-4">
          {[
-           { label: 'Presentes', count: filteredStudents.filter(s => s.status === 'presente').length, color: 'text-emerald-400', bg: 'bg-emerald-500/10', icon: CheckCircle2 },
-           { label: 'Ausentes', count: filteredStudents.filter(s => s.status === 'ausente').length, color: 'text-red-400', bg: 'bg-red-500/10', icon: XCircle },
-           { label: 'Tardanzas', count: filteredStudents.filter(s => s.status === 'retraso').length, color: 'text-amber-400', bg: 'bg-amber-500/10', icon: Clock },
-           { label: 'Justificados', count: filteredStudents.filter(s => s.status === 'justificado').length, color: 'text-blue-400', bg: 'bg-blue-500/10', icon: FileText },
+           { label: 'Presentes', count: filteredStudents.filter(s => s.status === 'presente').length, color: 'text-emerald-400', icon: CheckCircle2 },
+           { label: 'Ausentes', count: filteredStudents.filter(s => s.status === 'ausente').length, color: 'text-red-400', icon: XCircle },
+           { label: 'Tardanzas', count: filteredStudents.filter(s => s.status === 'retraso').length, color: 'text-amber-400', icon: Clock },
+           { label: 'Justificados', count: filteredStudents.filter(s => s.status === 'justificado').length, color: 'text-blue-400', icon: FileText },
          ].map(stat => (
-           <div key={stat.label} className="apple-glass rounded-[2rem] border border-white/10 p-6 flex items-center gap-5 shadow-xl hover:shadow-white/5 transition-all hover:-translate-y-1">
-               <div className={`w-12 h-12 rounded-[1rem] flex items-center justify-center shrink-0 ${stat.bg}`}>
-                   <stat.icon className={`w-5 h-5 ${stat.color}`} />
-               </div>
-               <div className="min-w-0">
-                   <div className={`text-2xl font-bold italic tracking-tight ${stat.color}`}>{stat.count}</div>
-                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#86868b]">{stat.label}</span>
-               </div>
+           <div key={stat.label} className="apple-card p-5 border-white/5 flex flex-col gap-2">
+               <stat.icon className={`w-4 h-4 ${stat.color}`} />
+               <p className="text-2xl font-bold text-white italic">{stat.count}</p>
+               <p className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">{stat.label}</p>
            </div>
          ))}
-      </div>
+      </motion.div>
 
       {/* Student List */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-3 px-1 mb-3">
-            <Users className="w-4 h-4 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">{filteredStudents.length} estudiantes</span>
-        </div>
-
-        <AnimatePresence mode="popLayout">
+      <motion.div variants={item} className="ios-list-group space-y-3">
           {filteredStudents.length > 0 ? (
             filteredStudents.map((s, idx) => (
-              <motion.div 
-                key={s.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.03 }}
-                className="group relative rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-8 bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-emerald-500/30 transition-all duration-500 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-10"
-              >
-                <div className="flex items-center gap-8 sm:gap-12 flex-1 overflow-hidden">
-                   <div className={`w-16 h-16 sm:w-24 sm:h-24 shrink-0 rounded-[2rem] sm:rounded-[2.8rem] flex items-center justify-center transition-all bg-white/[0.03] border border-white/5 shadow-2xl ${
-                      s.status === 'presente' ? 'text-emerald-400 border-emerald-500/20' : 
-                      s.status === 'ausente' ? 'text-red-400 border-red-500/20' :
-                      s.status === 'justificado' ? 'text-blue-400 border-blue-500/20' :
-                      'text-amber-400 border-amber-500/20'
+              <div key={s.id} className="ios-list-item flex flex-col sm:flex-row sm:items-center justify-between gap-6 py-8 px-8">
+                <div className="flex items-center gap-6">
+                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-xl ${
+                      s.status === 'presente' ? 'bg-emerald-500/10 text-emerald-400' : 
+                      s.status === 'ausente' ? 'bg-red-500/10 text-red-400' :
+                      s.status === 'justificado' ? 'bg-blue-500/10 text-blue-400' :
+                      'bg-amber-500/10 text-amber-400'
                    }`}>
-                      {s.status === 'presente' ? <CheckCircle2 className="w-8 h-8 sm:w-12 sm:h-12" /> : 
-                       s.status === 'ausente' ? <XCircle className="w-8 h-8 sm:w-12 sm:h-12" /> : 
-                       s.status === 'justificado' ? <FileText className="w-8 h-8 sm:w-12 sm:h-12" /> :
-                       <Clock className="w-8 h-8 sm:w-12 sm:h-12" />}
+                      {s.nombre.charAt(0)}
                    </div>
-                   
-                   <div className="space-y-2 sm:space-y-4 overflow-hidden">
-                       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-                          <h4 className="text-2xl sm:text-4xl font-black text-white tracking-tighter uppercase italic truncate">{s.nombre}</h4>
-                          {s.isJustified && (
-                             <Badge className="bg-blue-500 text-white border-none rounded-full px-4 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] italic shadow-lg shadow-blue-500/30">PASE AUTORIZADO</Badge>
-                          )}
-                       </div>
-                       <div className="flex items-center gap-4 sm:gap-6">
-                          <div className="flex items-center gap-3 bg-white/5 px-4 py-1.5 rounded-full border border-white/5">
-                             <IdCard className="w-3.5 h-3.5 text-[#86868b]" />
-                             <p className="text-[10px] sm:text-[11px] text-[#86868b] font-black uppercase tracking-[0.2em]">CI: {s.cedula}</p>
-                          </div>
-                          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
-                          <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg px-4 py-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-tighter">{s.seccion}</Badge>
-                       </div>
+                   <div className="min-w-0">
+                      <div className="flex items-center gap-3">
+                        <h4 className="text-[17px] font-bold text-white truncate leading-tight">{s.nombre}</h4>
+                        {s.isJustified && <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[8px] font-black uppercase tracking-widest">AUTORIZADO</span>}
+                      </div>
+                      <p className="text-[11px] font-bold text-[#86868b] uppercase tracking-widest mt-1">CI: {s.cedula} • {s.seccion}</p>
                    </div>
                 </div>
 
-                {/* Tactical Status Selector */}
-                <div className="flex items-center gap-2 sm:gap-3 bg-black/40 p-2 sm:p-3 rounded-[2rem] sm:rounded-full border border-white/5 self-stretch lg:self-auto shadow-2xl overflow-x-auto no-scrollbar justify-between sm:justify-start">
+                <div className="flex items-center gap-2 bg-black/40 p-2 rounded-2xl self-stretch sm:self-auto justify-between sm:justify-start">
                     {[
-                      { id: 'presente', label: 'P', full: 'PRESENTE', color: 'hover:bg-emerald-500/10 hover:text-emerald-400' },
-                      { id: 'ausente', label: 'A', full: 'AUSENTE', color: 'hover:bg-red-500/10 hover:text-red-400' },
-                      { id: 'justificado', label: 'J', full: 'JUSTIFICADO', color: 'hover:bg-blue-500/10 hover:text-blue-400' },
-                      { id: 'retraso', label: 'T', full: 'RETRASO', color: 'hover:bg-amber-500/10 hover:text-amber-400' }
+                      { id: 'presente', label: 'P', color: 'text-emerald-400' },
+                      { id: 'ausente', label: 'A', color: 'text-red-400' },
+                      { id: 'justificado', label: 'J', color: 'text-blue-400' },
+                      { id: 'retraso', label: 'T', color: 'text-amber-400' }
                     ].map(opt => (
                      <button
                         key={opt.id}
                         disabled={s.status === 'justificado' && opt.id !== 'justificado'}
                         onClick={() => handleStatusChange(s.id, opt.id)}
-                        className={`h-12 sm:h-16 px-4 sm:px-10 flex-1 sm:flex-none rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 min-w-[50px] sm:min-w-[80px] ${
+                        className={`h-12 w-12 rounded-xl text-[12px] font-black transition-all ${
                            s.status === opt.id 
-                             ? 'bg-white text-black shadow-[0_15px_30px_-10px_rgba(255,255,255,0.4)] scale-105' 
-                             : `text-[#86868b] ${opt.color} ${s.status === 'justificado' && opt.id !== 'justificado' ? 'opacity-10 cursor-not-allowed' : 'hover:scale-105'}`
+                             ? 'bg-white text-black scale-105 shadow-xl' 
+                             : `text-[#86868b] hover:text-white ${s.status === 'justificado' && opt.id !== 'justificado' ? 'opacity-10' : ''}`
                         }`}
                      >
-                        <span className="hidden xl:inline">{opt.full}</span>
-                        <span className="xl:hidden">{opt.label}</span>
+                        {opt.label}
                      </button>
                     ))}
                 </div>
-
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
-              </motion.div>
+              </div>
             ))
           ) : (
-             <div className="py-52 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[4rem] opacity-30 space-y-10 bg-white/[0.01]">
-                <div className="w-32 h-32 rounded-[3rem] bg-white/5 flex items-center justify-center border border-white/5">
-                   <ClipboardCheck className="w-16 h-16" />
-                </div>
-                <div className="text-center space-y-3">
-                   <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter">Silencio Operativo</h4>
-                   <p className="text-[11px] font-black tracking-[0.4em] uppercase">Sin registros detectados en esta sesión</p>
-                </div>
+             <div className="py-20 flex flex-col items-center opacity-20">
+                <ClipboardCheck className="w-12 h-12 mb-4" />
+                <p className="text-[11px] font-black uppercase tracking-widest">Sin registros en sección</p>
              </div>
           )}
-        </AnimatePresence>
-      </div>
+      </motion.div>
 
+      {/* Notification */}
       <AnimatePresence>
         {msg.text && (
           <motion.div 
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed bottom-32 sm:bottom-12 left-1/2 -translate-x-1/2 sm:left-auto sm:right-12 sm:translate-x-0 z-[2000] w-[calc(100%-2rem)] sm:w-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 rounded-full backdrop-blur-2xl border text-[11px] font-black uppercase tracking-widest flex items-center gap-3 shadow-2xl ${
+                msg.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
+            }`}
           >
-             <div className="apple-glass p-8 rounded-[2.5rem] flex items-center gap-6 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] border border-white/10">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl ${msg.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
-                   {msg.type === 'success' ? <CheckCircle2 className="w-7 h-7" /> : <AlertCircle className="w-7 h-7" />}
-                </div>
-                <div className="flex flex-col flex-1">
-                   <span className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] italic">Sincronización de Núcleo</span>
-                   <span className="text-lg font-black text-white mt-1 italic uppercase tracking-tighter">{msg.text}</span>
-                </div>
-                <button onClick={() => setMsg({text:'', type:''})} className="p-3 hover:bg-white/5 rounded-full transition-colors opacity-30 group">
-                   <X className="w-6 h-6 group-hover:text-white" />
-                </button>
-             </div>
+            {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+            {msg.text}
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="flex items-center justify-center gap-6 text-[#86868b] select-none opacity-20 pt-10">
-          <ShieldCheck className="w-5 h-5" />
-          <span className="text-[11px] font-black uppercase tracking-[0.5em] italic">Protocolo de Asistencia v30.0 — Andrés Bello</span>
-      </div>
     </motion.div>
   );
 };
 
 export default AttendanceSheet;
+

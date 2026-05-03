@@ -8,16 +8,23 @@ const jwt = require('jsonwebtoken');
 const db = require('./db');
 const { authenticateToken, JWT_SECRET } = require('./auth');
 
+let groq = null;
+
 const initGroq = () => {
-    let key = process.env.GROQ_API_KEY || process.env.GROQ_API_TOKEN;
-    if (key) {
-        // Aggressive cleaning: trim, remove quotes, and visible weirdness
-        key = key.trim().replace(/^["']|["']$/g, '').trim();
-        groq = new Groq({ apiKey: key });
-        console.log("Nucleo Groq Llama 3.3 Sincronizado (Token Sanitizado).");
-        return true;
+    try {
+        let key = process.env.GROQ_API_KEY || process.env.GROQ_API_TOKEN;
+        if (key) {
+            // Limpieza agresiva de token
+            key = key.trim().replace(/^["']|["']$/g, '').trim();
+            groq = new Groq({ apiKey: key });
+            console.log("Nucleo Groq Llama 3.3 Sincronizado (Token Sanitizado).");
+        }
+        else {
+            console.warn("ADVERTENCIA: GROQ_API_KEY no detectada. El núcleo de inferencia estará inactivo.");
+        }
+    } catch (e) {
+        return false;
     }
-    return false;
 };
 initGroq();
 
@@ -56,11 +63,15 @@ app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) return res.status(400).json({ error: "Faltan credenciales" });
     
-    const cleanUsername = username.trim();
+    const cleanId = username.trim();
     const cleanPassword = password.trim();
 
     try {
-        const result = await db.query("SELECT * FROM usuarios WHERE LOWER(username) = LOWER($1)", [cleanUsername]);
+        // Permitir login por username o email
+        const result = await db.query(
+            "SELECT * FROM usuarios WHERE LOWER(username) = LOWER($1) OR LOWER(email) = LOWER($1)", 
+            [cleanId]
+        );
         const user = result.rows[0];
 
         if (!user) return res.status(401).json({ error: "Identidad no registrada en el Nodo Maestro" });
@@ -78,20 +89,23 @@ app.post('/api/login', async (req, res) => {
 
 // REGISTRO
 app.post('/api/register', async (req, res) => {
-    const { username, password, role } = req.body;
+    const { username, email, password, role } = req.body;
     if (!username || !password) return res.status(400).json({ error: "Datos de identidad insuficientes" });
 
     const cleanUsername = username.trim();
+    const cleanEmail = email ? email.trim() : null;
     const cleanPassword = password.trim();
 
     try {
         const hashedPassword = await bcrypt.hash(cleanPassword, 10);
-        const result = await db.query("INSERT INTO usuarios (username, password, role) VALUES ($1, $2, $3) RETURNING id", 
-                      [cleanUsername, hashedPassword, role || 'docente']);
-        await logAudit(result.rows[0].id, "USER_REGISTERED", { username: cleanUsername, role: role || 'docente' });
+        const result = await db.query(
+            "INSERT INTO usuarios (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id", 
+            [cleanUsername, cleanEmail, hashedPassword, role || 'docente']
+        );
+        await logAudit(result.rows[0].id, "USER_REGISTERED", { username: cleanUsername, email: cleanEmail, role: role || 'docente' });
         res.json({ success: true, message: "Identidad validada y sincronizada" });
     } catch (err) {
-        if (err.message.includes('unique')) return res.status(400).json({ error: "Esta identidad ya existe en el sistema" });
+        if (err.message.includes('unique')) return res.status(400).json({ error: "Esta identidad o correo ya existe en el sistema" });
         res.status(500).json({ error: "Error en el registro del nodo: " + err.message });
     }
 });

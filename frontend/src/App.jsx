@@ -138,35 +138,44 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
   ];
 
   // Most important items for mobile bottom bar
-  const primaryItems = menuItems.slice(0, isMobile ? 4 : menuItems.length);
-  const secondaryItems = isMobile ? menuItems.slice(4) : [];
+  const primaryItems = menuItems.slice(0, isMobile ? 5 : menuItems.length);
+  const secondaryItems = isMobile ? menuItems.slice(5) : [];
 
   return (
     <>
-      <div className={`fixed ${isMobile ? 'bottom-0 left-0 right-0' : 'bottom-8 left-1/2 -translate-x-1/2'} z-[100] w-full md:w-fit px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:pb-0`}>
+      <div className={`fixed ${isMobile ? 'bottom-0 left-0 right-0' : 'bottom-8 left-1/2 -translate-x-1/2'} z-[100] w-full md:w-fit`}>
         <motion.div 
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className={`apple-glass ${isMobile ? 'rounded-[2.5rem] py-2' : 'rounded-full py-2.5'} px-4 flex items-center justify-around md:justify-center gap-2 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]`}
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          className={`${isMobile ? 'ios-tab-bar h-[84px] px-6' : 'apple-glass rounded-full py-2.5 px-4 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]'} flex items-center justify-around md:justify-center gap-2`}
         >
           {primaryItems.map((item) => (
             <button
               key={item.id}
               onClick={() => onTabChange(item.id)}
-              className={`p-3.5 rounded-full transition-all duration-300 relative group flex flex-col items-center ${
+              className={`transition-all duration-300 relative flex flex-col items-center gap-1 ${
+                isMobile ? 'w-16' : 'p-3.5 rounded-full'
+              } ${
                 activeTab === item.id 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110' 
-                  : 'text-[#86868b] hover:text-white hover:bg-white/5'
+                  ? (isMobile ? 'text-blue-500' : 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110') 
+                  : 'text-[#86868b] hover:text-white'
               }`}
             >
-              <item.icon className={isMobile ? "w-[22px] h-[22px]" : "w-[20px] h-[20px]"} strokeWidth={2} />
+              <div className="relative">
+                <item.icon className={isMobile ? "w-6 h-6" : "w-5 h-5"} strokeWidth={activeTab === item.id ? 2.5 : 2} />
+                {activeTab === item.id && isMobile && (
+                  <motion.div layoutId="navDot" className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+                )}
+              </div>
+              {isMobile && (
+                <span className={`text-[10px] font-bold tracking-tight ${activeTab === item.id ? 'text-blue-500' : 'text-[#86868b]'}`}>
+                  {item.label}
+                </span>
+              )}
               {!isMobile && (
                 <div className="absolute -top-12 left-1/2 -translate-x-1/2 apple-glass px-4 py-1.5 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none scale-90 group-hover:scale-100">
                    <span className="text-[10px] whitespace-nowrap font-semibold text-white/90">{item.label}</span>
                 </div>
-              )}
-              {activeTab === item.id && (
-                <motion.div layoutId="navGlow" className="absolute inset-0 bg-blue-400/20 blur-md rounded-full -z-10" />
               )}
             </button>
           ))}
@@ -174,9 +183,10 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
           {isMobile && secondaryItems.length > 0 && (
             <button 
               onClick={() => setShowMenu(!showMenu)}
-              className={`p-3.5 rounded-full text-[#86868b] transition-all ${showMenu ? 'bg-white/10 text-white' : ''}`}
+              className={`w-16 flex flex-col items-center gap-1 transition-all ${showMenu ? 'text-white' : 'text-[#86868b]'}`}
             >
-              <SettingsIcon className="w-[22px] h-[22px]" />
+              <SettingsIcon className="w-6 h-6" />
+              <span className="text-[10px] font-bold tracking-tight">Más</span>
             </button>
           )}
 
@@ -192,46 +202,50 @@ const FloatingNav = ({ activeTab, onTabChange, userName, onLogout }) => {
         </motion.div>
       </div>
 
-      {/* Mobile Secondary Menu */}
+      {/* Mobile Secondary Menu Overlay */}
       <AnimatePresence>
         {isMobile && showMenu && (
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-xl p-10 flex flex-col justify-end pb-32"
-          >
-            <div className="space-y-6">
-               <h3 className="text-2xl font-bold text-white uppercase tracking-tighter mb-10">Opciones Maestras</h3>
-               <div className="grid grid-cols-2 gap-4">
-                  {secondaryItems.map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => { onTabChange(item.id); setShowMenu(false); }}
-                      className="apple-card flex flex-col items-center gap-4 py-8 border-white/5"
-                    >
-                       <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-blue-400">
-                          <item.icon className="w-6 h-6" />
-                       </div>
-                       <span className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">{item.label}</span>
-                    </button>
-                  ))}
-                  <button
-                    onClick={onLogout}
-                    className="apple-card flex flex-col items-center gap-4 py-8 border-red-500/10 bg-red-500/5 col-span-2"
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMenu(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90]"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed bottom-0 left-0 right-0 z-[110] bg-[#1c1c1e] rounded-t-[2.5rem] p-8 pb-[calc(2rem+env(safe-area-inset-bottom))] border-t border-white/5"
+            >
+              <div className="space-y-2">
+                {secondaryItems.map(item => (
+                  <button 
+                    key={item.id}
+                    onClick={() => { onTabChange(item.id); setShowMenu(false); }}
+                    className="w-full h-16 flex items-center gap-4 px-6 rounded-2xl bg-white/5 active:bg-white/10 transition-all"
                   >
-                     <LogOut className="w-6 h-6 text-red-500" />
-                     <span className="text-[10px] font-bold uppercase tracking-widest text-red-500/60">Cerrar Sesión Institucional</span>
+                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                      <item.icon className="w-5 h-5 text-white/60" />
+                    </div>
+                    <span className="text-[15px] font-bold text-white">{item.label}</span>
+                    <ChevronRight className="w-4 h-4 ml-auto text-white/20" />
                   </button>
-               </div>
-               <Button 
-                 onClick={() => setShowMenu(false)}
-                 className="w-full h-16 rounded-[2rem] bg-white text-black font-bold uppercase text-xs tracking-widest mt-10"
-               >
-                 Volver al Control
-               </Button>
-            </div>
-          </motion.div>
+                ))}
+                <button 
+                  onClick={onLogout}
+                  className="w-full h-16 flex items-center gap-4 px-6 rounded-2xl bg-red-500/10 active:bg-red-500/20 transition-all mt-4"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-red-400">
+                    <LogOut className="w-5 h-5" />
+                  </div>
+                  <span className="text-[15px] font-bold text-red-400">Cerrar Sesión</span>
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

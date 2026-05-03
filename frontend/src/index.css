@@ -4,115 +4,127 @@
 
 @layer base {
   :root {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 217 91% 60%;
+    --background: 0 0% 0%; /* Pure Black for OLED */
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 212 100% 50%; /* Apple Blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 4% 12%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 240 4% 16%;
-    --muted-foreground: 240 5% 55%;
-    --accent: 240 4% 16%;
-    --accent-foreground: 0 0% 95%;
-    --destructive: 0 63% 31%;
+    --secondary: 240 4% 10%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4% 15%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 4% 15%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 4% 14%;
-    --input: 240 4% 14%;
-    --ring: 217 91% 60%;
-    --radius: 0.75rem;
+    --border: 240 4% 12%;
+    --input: 240 4% 12%;
+    --ring: 212 100% 50%;
+    --radius: 1.25rem;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     @apply bg-background text-foreground;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.011em;
+    letter-spacing: -0.022em;
     overflow-x: hidden;
+  }
+  
+  h1, h2, h3, h4 {
+    @apply tracking-tight font-bold italic;
   }
 }
 
-/* ═══ SaaS Glass System ═══ */
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
+/* ═══ Apple Glassmorphism ═══ */
 .apple-glass {
-  background: rgba(28, 28, 30, 0.6);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  background: rgba(18, 18, 18, 0.7);
+  backdrop-filter: blur(40px) saturate(210%);
+  -webkit-backdrop-filter: blur(40px) saturate(210%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
-/* ═══ Card Variants ═══ */
-.apple-card {
-  @apply glass rounded-xl p-6 transition-all duration-300;
-}
-.apple-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
+.apple-glass-light {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(25px) saturate(160%);
+  -webkit-backdrop-filter: blur(25px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.stat-card {
-  @apply rounded-xl p-5 bg-white/[0.03] border border-white/[0.06] transition-all duration-300;
-}
-.stat-card:hover {
-  @apply bg-white/[0.06] border-white/[0.1];
-  transform: translateY(-1px);
+/* ═══ iOS Component Styles ═══ */
+.ios-card {
+  @apply rounded-[2.5rem] p-6 bg-[#1c1c1e]/40 border border-white/[0.04] shadow-2xl transition-all duration-500 backdrop-blur-md;
 }
 
-.section-card {
-  @apply rounded-xl p-6 bg-white/[0.02] border border-white/[0.06];
+.ios-list-group {
+  @apply bg-[#1c1c1e] rounded-[2rem] overflow-hidden border border-white/[0.05] shadow-inner;
 }
 
-/* ═══ Floating Nav ═══ */
-.floating-nav {
-  @apply apple-glass rounded-2xl py-3 px-5 fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+.ios-list-item {
+  @apply px-6 py-5 flex items-center justify-between border-b border-white/[0.05] last:border-b-0 hover:bg-white/[0.03] active:bg-white/[0.08] transition-all;
+}
+
+.ios-input {
+  @apply h-14 bg-[#1c1c1e] border border-white/[0.05] rounded-[1.25rem] px-5 text-[17px] text-white placeholder:text-[#86868b] focus:ring-1 focus:ring-blue-500/50 transition-all outline-none;
+}
+
+.ios-button-primary {
+  @apply h-12 rounded-full bg-white text-black font-bold text-[15px] px-8 active:scale-[0.97] transition-all shadow-xl;
+}
+
+.ios-button-blue {
+  @apply h-12 rounded-full bg-blue-600 text-white font-bold text-[15px] px-8 active:scale-[0.97] transition-all shadow-lg shadow-blue-600/30;
+}
+
+/* ═══ iOS Tab Bar ═══ */
+.ios-tab-bar {
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ═══ Animations ═══ */
+@keyframes pulse-gentle {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+.animate-pulse-gentle {
+  animation: pulse-gentle 3s ease-in-out infinite;
+}
+
+.ios-spring {
+  transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* ═══ Scrollbar ═══ */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-}
-::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.15);
-}
-.scroll-thin {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+  border-radius: 20px;
 }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ═══ Animations ═══ */
-.fade-up {
-  animation: fadeUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ═══ Typography ═══ */
+.text-label {
+  @apply text-[11px] font-black uppercase tracking-[0.25em] text-[#86868b];
 }
 
-/* ═══ Utility ═══ */
-.text-gradient {
-  background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.text-title {
+  @apply text-3xl font-bold tracking-tight italic text-white;
 }
+

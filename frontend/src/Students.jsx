@@ -14,19 +14,15 @@ import {
   Filter,
   CheckCircle2,
   AlertCircle,
-  ShieldCheck,
   FileSpreadsheet,
   Upload,
   Download,
   Loader2,
   X,
-  ArrowRight,
   UserPlus,
-  Target,
   Activity,
-  Zap,
   Bot,
-  Database
+  ArrowRight
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -37,7 +33,6 @@ import {
   DialogDescription, 
   DialogHeader, 
   DialogTitle, 
-  DialogTrigger 
 } from "./components/ui/dialog";
 import * as XLSX from 'xlsx';
 
@@ -45,7 +40,7 @@ const Students = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterSection, setFilterSection] = useState('Todos');
+  const [filterSection, setFilterSection] = useState('Todas');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
@@ -62,6 +57,15 @@ const Students = () => {
     contacto: '' 
   });
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+  };
+  const item = { 
+    hidden: { opacity: 0, y: 15 }, 
+    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } } 
+  };
+
   const fetchStudents = async () => {
     try {
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
@@ -70,23 +74,20 @@ const Students = () => {
       });
       const data = await res.json();
       setStudents(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error('Error fetching students:', e);
-    } finally {
-      setTimeout(() => setLoading(false), 1000);
-    }
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
   };
 
-  useEffect(() => {
-    fetchStudents();
-  }, []);
+  useEffect(() => { fetchStudents(); }, []);
 
   const filteredStudents = Array.isArray(students) ? students.filter(s => 
     ((s.nombre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
      (s.cedula || '').includes(searchTerm) ||
      (s.seccion?.toLowerCase() || '').includes(searchTerm.toLowerCase())) &&
-    (filterSection === 'Todos' || (s.seccion || '').includes(filterSection))
+    (filterSection === 'Todas' || (s.seccion || '').includes(filterSection))
   ) : [];
+
+  const sections = ['Todas', ...new Set((Array.isArray(students) ? students : []).map(s => s.seccion).filter(Boolean))];
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
@@ -102,355 +103,189 @@ const Students = () => {
         body: JSON.stringify(newStudent)
       });
       if (res.ok) {
-        setMsg({ text: 'Estudiante inscrito en el Núcleo Maestro', type: 'success' });
+        setMsg({ text: 'Inscripción procesada', type: 'success' });
         setIsAddModalOpen(false);
         setNewStudent({ cedula: '', nombre: '', seccion: '', representante: '', contacto: '' });
         fetchStudents();
-        window.dispatchEvent(new Event('refresh-dashboard'));
-      } else {
-        const d = await res.json();
-        setMsg({ text: d.msg || 'Error en inscripción', type: 'error' });
       }
     } catch (e) {
-      setMsg({ text: 'Error fatal de conexión', type: 'error' });
+      setMsg({ text: 'Error fatal', type: 'error' });
     } finally {
       setSubmitting(false);
       setTimeout(() => setMsg({ text: '', type: '' }), 4000);
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
-      const res = await fetch(`${baseUrl}/api/estudiantes/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        setMsg({ text: 'Registro eliminado del historial', type: 'success' });
-        setIsDeleteModalOpen(false);
-        fetchStudents();
-        window.dispatchEvent(new Event('refresh-dashboard'));
-      }
-    } catch (e) { console.error(e); }
-    finally { setTimeout(() => setMsg({ text: '', type: '' }), 4000); }
-  };
-
-  const handleExcelImport = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setBulkLoading(true);
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      try {
-        const bstr = evt.target.result;
-        const wb = XLSX.read(bstr, { type: 'binary' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(ws);
-        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
-        const token = localStorage.getItem('token');
-        for (const row of data) {
-           await fetch(`${baseUrl}/api/estudiantes`, {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-             body: JSON.stringify({
-               cedula: row.Cedula || row.CI || '',
-               nombre: row.Nombre || row.Estudiante || '',
-               seccion: row.Seccion || row.Grado || '',
-               representante: row.Representante || '',
-               contacto: row.Contacto || row.Telefono || ''
-             })
-           });
-        }
-        setMsg({ text: 'Matrícula Masiva Procesada', type: 'success' });
-        fetchStudents();
-        window.dispatchEvent(new Event('refresh-dashboard'));
-      } catch (e) { setMsg({ text: 'Error en procesamiento Excel', type: 'error' }); }
-      finally { setBulkLoading(false); }
-    };
-    reader.readAsBinaryString(file);
-  };
-
-  const sections = ['Todos', '1ro', '2do', '3ro', '4to', '5to'];
-
   if (loading) return (
-    <div className="flex flex-col items-center justify-center h-96 space-y-4">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
-        <p className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em]">Sincronizando Matrícula...</p>
+    <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
+        <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
+        <p className="text-[11px] font-black uppercase tracking-widest text-white/30">Accediendo a Matrículas...</p>
     </div>
   );
 
   return (
-    <div className="max-w-6xl mx-auto py-6 sm:py-12 space-y-6 px-4 sm:px-6">
+    <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="max-w-6xl mx-auto py-8 sm:py-14 space-y-10 px-5 sm:px-10"
+    >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div>
-                <p className="text-xs text-muted-foreground mb-1">Registro Estudiantil</p>
-                <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Matrícula</h1>
+                <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight italic leading-tight">Matrícula</h1>
+                <p className="text-[12px] font-bold text-[#86868b] uppercase tracking-[0.3em] mt-3">Registro Maestro • {filteredStudents.length} Alumnos</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
                 <Button 
                    onClick={() => fileInputRef.current?.click()}
-                   variant="outline"
-                   className="h-9 px-4 rounded-lg text-xs font-medium bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5"
+                   variant="ghost"
+                   className="h-12 w-12 rounded-2xl bg-white/5 text-white/40 hover:text-white p-0"
                 >
-                   {bulkLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" /> : <FileSpreadsheet className="w-3.5 h-3.5 mr-2" />}
-                   Importar Excel
+                   <FileSpreadsheet className="w-5 h-5" />
                 </Button>
-                <input type="file" ref={fileInputRef} className="hidden" accept=".xlsx, .xls" onChange={handleExcelImport} />
+                <input type="file" ref={fileInputRef} className="hidden" accept=".xlsx, .xls" />
                 <Button 
                     onClick={() => setIsAddModalOpen(true)}
-                    className="h-9 px-4 rounded-lg text-xs font-medium bg-white text-black hover:bg-zinc-200"
+                    className="ios-button-primary bg-white text-black h-12 px-8 active:scale-95"
                 >
-                    <UserPlus className="w-3.5 h-3.5 mr-2" />
-                    Nueva admisión
+                    <Plus className="w-4 h-4 mr-2" /> Admisión
                 </Button>
             </div>
-        </div>
+        </motion.div>
 
-        {/* Search & Filters */}
-        <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        {/* Filters */}
+        <motion.div variants={item} className="space-y-6">
+            <div className="relative group w-full">
+                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
                 <Input 
-                    placeholder="Buscar por nombre, cédula o sección..." 
-                    className="h-10 pl-10 bg-white/[0.03] border-white/[0.06] rounded-lg text-sm text-white placeholder:text-muted-foreground/50"
+                    placeholder="Escanear por nombre o cédula..." 
+                    className="h-14 pl-16 bg-[#1c1c1e]/60 border-none rounded-2xl text-white font-bold transition-all focus:ring-1 focus:ring-blue-500/50 text-[15px]"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-            <div className="flex gap-2 overflow-x-auto no-scrollbar">
-                {['Todas', ...new Set((Array.isArray(students) ? students : []).map(s => s.seccion).filter(Boolean))].map(sec => (
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                {sections.map(sec => (
                     <button
                         key={sec}
                         onClick={() => setFilterSection(sec)}
-                        className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                        className={`px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                             filterSection === sec 
-                            ? 'bg-white text-black' 
-                            : 'bg-white/[0.03] text-muted-foreground hover:text-white border border-white/[0.06]'
+                            ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                            : 'bg-white/5 text-[#86868b] hover:text-white'
                         }`}
                     >
                         {sec}
                     </button>
                 ))}
             </div>
-        </div>
+        </motion.div>
 
-        {/* Stats Row */}
-        <div className="flex items-center gap-6 text-xs text-muted-foreground">
-            <span>{filteredStudents.length} estudiantes</span>
-            <span className="w-px h-4 bg-white/10" />
-            <span>{new Set((Array.isArray(students) ? students : []).map(s => s.seccion).filter(Boolean)).size} secciones</span>
-        </div>
-
-        {/* Toast */}
-        <AnimatePresence mode="wait">
-            {msg.text && (
-              <motion.div 
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                className={`fixed top-24 left-1/2 -translate-x-1/2 z-[10000] px-5 py-3 rounded-lg text-sm font-medium shadow-xl flex items-center gap-2 ${
-                  msg.type === 'success' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'
-                }`}
-              >
-                {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                {msg.text}
-              </motion.div>
+        {/* List / Grid */}
+        <motion.div variants={item} className="ios-list-group space-y-3">
+            {filteredStudents.map((s, i) => (
+                <div key={s.id} className="ios-list-item flex items-center justify-between group">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 font-bold text-[14px]">
+                            {s.nombre[0]}
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-[15px] font-bold text-white truncate">{s.nombre}</p>
+                            <p className="text-[11px] font-bold text-[#86868b] uppercase tracking-wider">{s.cedula} • {s.seccion}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${s.solvente ? 'bg-emerald-500' : 'bg-red-500'} mr-2`} />
+                        <Button 
+                           onClick={() => { setStudentToDelete(s); setIsDeleteModalOpen(true); }}
+                           variant="ghost" 
+                           className="w-10 h-10 rounded-xl text-white/10 hover:text-red-500 hover:bg-red-500/10 p-0 transition-colors"
+                        >
+                           <Trash2 className="w-4 h-4" />
+                        </Button>
+                        <ChevronRight className="w-5 h-5 text-[#86868b]/30" />
+                    </div>
+                </div>
+            ))}
+            {filteredStudents.length === 0 && (
+                <div className="py-20 flex flex-col items-center opacity-20">
+                    <Users className="w-12 h-12 mb-4" />
+                    <p className="text-[11px] font-black uppercase tracking-widest">Sin registros encontrados</p>
+                </div>
             )}
-        </AnimatePresence>
+        </motion.div>
 
-        {/* Students Grid: Higher Density */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 sm:gap-10">
-            <AnimatePresence>
-              {filteredStudents.length > 0 ? (
-                filteredStudents.map((student, i) => (
-                  <motion.div
-                    key={student.id}
-                    layout
-                    initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="group relative overflow-hidden rounded-[4rem] p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-blue-500/30 transition-all duration-700 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]"
-                  >
-                     <div className="flex justify-between items-start mb-12">
-                        <div className="w-20 h-20 rounded-[2.2rem] bg-white/[0.03] border border-white/10 flex items-center justify-center text-white/20 group-hover:bg-blue-600/10 group-hover:text-blue-500 group-hover:border-blue-500/20 shadow-2xl transition-all duration-500 overflow-hidden relative">
-                           <UserIcon className="w-10 h-10 relative z-10" strokeWidth={1.5} />
-                           <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                        <Badge className="bg-blue-600/10 text-blue-400 border border-blue-500/20 rounded-[1.2rem] px-6 py-2.5 text-[9px] font-black uppercase tracking-widest">
-                           {student.seccion}
-                        </Badge>
-                     </div>
-
-                     <div className="space-y-6">
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-3">
-                               <div className={`w-2 h-2 rounded-full ${student.solvente ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-red-500 shadow-red-500/50'} shadow-lg`} />
-                               <span className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.2em]">
-                                  {student.solvente ? 'Estatus Solvente' : 'Compromiso Pendiente'}
-                               </span>
-                            </div>
-                            <h3 className="text-3xl font-black text-white tracking-tighter uppercase italic leading-none group-hover:text-blue-400 transition-colors">
-                               {student.nombre}
-                            </h3>
-                        </div>
-
-                        <div className="space-y-4 pt-10 border-t border-white/5">
-                           <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                 <IdCard className="w-4 h-4 text-[#86868b]/40" />
-                                 <span className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Identidad</span>
-                              </div>
-                              <span className="text-xs font-bold text-white/80">{student.cedula}</span>
-                           </div>
-                           <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                 <Users className="w-4 h-4 text-[#86868b]/40" />
-                                 <span className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Representante</span>
-                              </div>
-                              <span className="text-xs font-bold text-white/80">{student.representante || 'Sin Asignar'}</span>
-                           </div>
-                        </div>
-                     </div>
-
-                     <div className="absolute bottom-8 right-12 opacity-0 group-hover:opacity-100 translate-y-3 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-4">
-                        <Button 
-                           onClick={() => { setStudentToDelete(student); setIsDeleteModalOpen(true); }}
-                           variant="ghost" 
-                           className="h-12 w-12 p-0 rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white shadow-2xl transition-all"
-                        >
-                           <Trash2 className="w-5 h-5" />
-                        </Button>
-                        <Button 
-                           variant="ghost" 
-                           className="h-12 px-8 rounded-2xl bg-white/5 text-white hover:bg-white hover:text-black transition-all shadow-2xl"
-                        >
-                           <span className="text-[10px] font-black uppercase tracking-widest">Expediente</span>
-                        </Button>
-                     </div>
-                  </motion.div>
-                ))
-              ) : (
-                <motion.div 
-                   initial={{ opacity: 0 }}
-                   animate={{ opacity: 1 }}
-                   className="col-span-full py-48 text-center space-y-8 bg-white/[0.01] border border-dashed border-white/10 rounded-[5rem]"
-                >
-                   <div className="w-32 h-32 rounded-[3rem] bg-white/5 flex items-center justify-center text-white/10 mx-auto border border-white/5 shadow-inner">
-                      <Bot className="w-16 h-16" />
-                   </div>
-                   <div className="space-y-4">
-                      <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Búsqueda sin Resultados</h3>
-                      <p className="text-[11px] text-[#86868b] font-black uppercase tracking-[0.3em] max-w-sm mx-auto leading-relaxed">
-                         El Núcleo de Inteligencia no ha localizado registros bajo el parámetro: <span className="text-blue-500">"{searchTerm}"</span>
-                      </p>
-                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-        </div>
-
-
-        {/* Inscription Modal (Remains as Dialog for focus) */}
+        {/* Add Modal */}
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-            <DialogContent className="apple-glass border-white/10 rounded-[2.5rem] sm:rounded-[3.5rem] p-6 sm:p-12 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-black/95 backdrop-blur-[100px] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] z-[9999] mx-auto">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent pointer-events-none rounded-[2.5rem] sm:rounded-[3.5rem]" />
-              <DialogHeader className="mb-12 relative z-10">
-                 <div className="w-16 h-16 rounded-3xl bg-blue-600 text-white flex items-center justify-center shadow-2xl shadow-blue-600/40 mb-6">
-                    <UserPlus className="w-8 h-8" />
+            <DialogContent className="ios-modal-content">
+              <div className="flex items-center justify-between mb-10">
+                 <div>
+                    <h2 className="text-3xl font-bold text-white italic tracking-tight">Admisión</h2>
+                    <p className="text-[11px] font-bold text-blue-400/60 uppercase tracking-widest mt-1">Identidad Institucional</p>
                  </div>
-                 <DialogTitle className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">Nueva Admisión</DialogTitle>
-                 <DialogDescription className="text-blue-400/60 font-black uppercase tracking-[0.3em] text-[8px] mt-3">Sincronización de Identidad Institucional v30.0</DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
-                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                    <div className="space-y-3 group">
-                       <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Identidad (CI)</label>
+                 <Button onClick={() => setIsAddModalOpen(false)} variant="ghost" className="rounded-full w-10 h-10 p-0 text-white/40 hover:text-white">
+                    <X className="w-6 h-6" />
+                 </Button>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-8">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                       <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-2">Identidad (CI)</label>
                        <Input 
                           placeholder="V-00.000.000"
-                          className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
+                          className="h-14 bg-[#1c1c1e] border-none rounded-2xl text-white font-bold"
                           value={newStudent.cedula}
                           onChange={(e) => setNewStudent({...newStudent, cedula: e.target.value})}
                           required
                        />
                     </div>
-                    <div className="space-y-3 group">
-                       <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Sección Académica</label>
+                    <div className="space-y-3">
+                       <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-2">Sección</label>
                        <Input 
-                          placeholder="Ej: 5to Año A"
-                          className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
+                          placeholder="Ej: 5A"
+                          className="h-14 bg-[#1c1c1e] border-none rounded-2xl text-white font-bold"
                           value={newStudent.seccion}
                           onChange={(e) => setNewStudent({...newStudent, seccion: e.target.value})}
                           required
                        />
                     </div>
                  </div>
-                 <div className="space-y-3 group">
-                    <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Nombre Completo del Estudiante</label>
+                 <div className="space-y-3">
+                    <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-2">Nombre Completo</label>
                     <Input 
-                       placeholder="Nombres y Apellidos del alumno"
-                       className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
+                       className="h-14 bg-[#1c1c1e] border-none rounded-2xl text-white font-bold"
                        value={newStudent.nombre}
                        onChange={(e) => setNewStudent({...newStudent, nombre: e.target.value})}
                        required
                     />
                  </div>
-                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                    <div className="space-y-3 group">
-                       <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Representante Legal</label>
-                       <Input 
-                          placeholder="Nombre del Padre/Madre"
-                          className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
-                          value={newStudent.representante}
-                          onChange={(e) => setNewStudent({...newStudent, representante: e.target.value})}
-                          required
-                       />
-                    </div>
-                    <div className="space-y-3 group">
-                       <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-blue-500 transition-colors">Contacto de Emergencia</label>
-                       <Input 
-                          placeholder="Teléfono móvil"
-                          className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-white/30"
-                          value={newStudent.contacto}
-                          onChange={(e) => setNewStudent({...newStudent, contacto: e.target.value})}
-                          required
-                       />
-                    </div>
-                 </div>
-                 <Button type="submit" disabled={submitting} className="w-full h-20 bg-white text-black hover:bg-zinc-200 rounded-[2.5rem] font-black text-xs uppercase tracking-[0.3em] transition-all shadow-2xl active:scale-[0.98] mt-6">
-                    {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Consolidar Inscripción"}
+                 <Button type="submit" disabled={submitting} className="ios-button-primary bg-white text-black h-16 w-full text-[14px] font-black mt-4">
+                    {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirmar Admisión"}
                  </Button>
               </form>
             </DialogContent>
         </Dialog>
 
-        {/* Delete Confirmation Modal */}
-        <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-            <DialogContent className="apple-glass border-red-500/20 rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-10 w-[95vw] sm:w-full max-w-md bg-black/90 shadow-[0_50px_100px_-20px_rgba(255,0,0,0.2)] mx-auto">
-              <DialogHeader className="text-center space-y-6">
-                  <div className="w-20 h-20 rounded-[2.2rem] bg-red-500/10 flex items-center justify-center text-red-500 mx-auto border border-red-500/20">
-                      <AlertCircle className="w-10 h-10" />
-                  </div>
-                  <div>
-                     <DialogTitle className="text-3xl font-black text-white italic uppercase tracking-tighter">Baja del Sistema</DialogTitle>
-                     <DialogDescription className="text-red-400/60 font-black uppercase tracking-[0.4em] text-[9px] mt-4">Esta acción revocará la identidad institucional permanentemente.</DialogDescription>
-                  </div>
-              </DialogHeader>
-              <div className="py-10 text-center">
-                  <p className="text-sm font-bold text-[#86868b] uppercase tracking-wider leading-relaxed">
-                     ¿Confirmar revocación de la identidad: <br/> <span className="text-white text-lg italic mt-4 block">{studentToDelete?.nombre}</span>?
-                  </p>
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                  <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="h-16 rounded-[1.8rem] font-black text-[10px] uppercase tracking-widest text-[#86868b] hover:text-white">Abortar</Button>
-                  <Button onClick={() => handleDelete(studentToDelete.id)} className="h-16 rounded-[1.8rem] bg-red-600 text-white hover:bg-red-500 font-black text-[10px] uppercase tracking-widest shadow-2xl transition-all active:scale-95">Confirmar Baja</Button>
-              </div>
-            </DialogContent>
-        </Dialog>
-    </div>
+        {/* Notification */}
+        <AnimatePresence>
+            {msg.text && (
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 rounded-full backdrop-blur-2xl border text-[11px] font-black uppercase tracking-widest flex items-center gap-3 shadow-2xl ${
+                        msg.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
+                    }`}
+                >
+                    {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                    {msg.text}
+                </motion.div>
+            )}
+        </AnimatePresence>
+    </motion.div>
   );
 };
 
 export default Students;
+
