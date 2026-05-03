@@ -450,8 +450,8 @@ const AndresBelloSuite = () => {
       if (!resStd) return; // Already handled logout
 
       // Prepare Notifications based on AI data
-      if (aiDataRes.status === 'fulfilled' && aiDataRes.value.ok) {
-        const aiJson = await aiDataRes.value.clone().json();
+      if (resAi && resAi.ok) {
+        const aiJson = await resAi.clone().json();
         if (aiJson && aiJson.alerts) {
           setNotifications(aiJson.alerts.map((a, i) => ({
             id: `ai-${i}`,
