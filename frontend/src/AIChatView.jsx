@@ -212,47 +212,33 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
             </div>
 
             {/* Input Area */}
-            <div className="p-6 md:p-10 bg-black/40 backdrop-blur-xl border-t border-white/5">
-                <div className="max-w-4xl mx-auto">
-                    <div className="hidden md:flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-2">
-                        {[
-                            'Auditar Matrícula',
-                            'Resumen Financiero',
-                            'Proyecciones 2026',
-                            'Optimizar Secciones'
-                        ].map((q, i) => (
-                            <button 
-                                key={i}
-                                onClick={() => setInput(q)}
-                                className="px-5 py-2.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white hover:bg-white/10 transition-all whitespace-nowrap active:scale-95"
-                            >
-                                {q}
-                            </button>
-                        ))}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[92%] sm:w-[85%] max-w-4xl z-20">
+                <form 
+                    onSubmit={handleSend}
+                    className="apple-glass rounded-[2.5rem] p-2 flex items-center gap-3 shadow-2xl border-white/10 group focus-within:border-blue-500/30 transition-all"
+                >
+                    <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-focus-within:text-blue-500 transition-colors">
+                        <Bot className="w-5 h-5" />
                     </div>
-                    <form onSubmit={handleSend} className="relative">
-                        <input 
-                            type="text"
-                            value={input}
-                            onChange={e => setInput(e.target.value)}
-                            placeholder="Ingrese comando de inferencia..."
-                            className="w-full h-16 pl-8 pr-20 bg-zinc-900/80 border border-white/10 rounded-[1.5rem] text-[16px] text-white font-bold placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all shadow-2xl"
-                        />
-                        <button 
-                            type="submit"
-                            disabled={!input.trim() || isTyping}
-                            className={`absolute right-2 top-2 h-12 w-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 ${
-                                input.trim() ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white/5 text-white/10'
-                            }`}
-                        >
-                            <Send className="w-5 h-5" />
-                        </button>
-                    </form>
-                    <div className="mt-4 flex items-center justify-center gap-3 opacity-20">
-                        <div className="h-[1px] w-8 bg-white" />
-                        <span className="text-[9px] font-black text-white uppercase tracking-[0.5em]">Terminal de Gestión Platinum</span>
-                        <div className="h-[1px] w-8 bg-white" />
-                    </div>
+                    <input 
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Instrucciones para el Núcleo..."
+                        className="flex-1 bg-transparent border-none text-white text-[16px] font-bold outline-none placeholder:text-white/10"
+                    />
+                    <Button 
+                        type="submit"
+                        disabled={!input.trim() || isTyping}
+                        className="w-12 h-12 rounded-full bg-white text-black hover:bg-blue-500 hover:text-white transition-all p-0 flex items-center justify-center shadow-lg active:scale-90"
+                    >
+                        {isTyping ? <Loader2 className="w-5 h-5 animate-spin" /> : <ArrowRight className="w-5 h-5" />}
+                    </Button>
+                </form>
+                <div className="flex justify-center gap-4 mt-4">
+                    <p className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.2em] flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Nodo Sincronizado v3.3.0
+                    </p>
                 </div>
             </div>
         </div>

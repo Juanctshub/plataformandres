@@ -20,7 +20,6 @@ const Login = ({ onLogin }) => {
     const [view, setView] = useState('login'); // login, recovery, signup
     const [credentials, setCredentials] = useState({ username: '', password: '' });
     const [signupData, setSignupData] = useState({ username: '', email: '', password: '' });
-    const [recoveryData, setRecoveryData] = useState({ email: '', type: 'password' });
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });
     const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -147,7 +146,7 @@ const Login = ({ onLogin }) => {
 
                         <div className="text-center mb-12">
                             <h1 className="text-4xl font-bold tracking-tighter text-white mb-3 italic">
-                                {view === 'login' ? 'Bienvenido' : view === 'signup' ? 'Registro' : 'Recuperación'}
+                                {view === 'login' ? 'Bienvenido' : 'Registro'}
                             </h1>
                             <div className="flex items-center justify-center gap-3">
                                 <div className="h-px w-4 bg-white/10" />
@@ -195,9 +194,8 @@ const Login = ({ onLogin }) => {
                                         {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <>AUTENTICAR <ArrowRight className="w-5 h-5" /></>}
                                     </Button>
 
-                                    <div className="flex justify-between items-center px-4 pt-6">
+                                    <div className="flex justify-center items-center px-4 pt-6">
                                         <button type="button" onClick={() => setView('signup')} className="text-[13px] font-black text-blue-500 hover:text-blue-400 uppercase tracking-widest">Crear Cuenta</button>
-                                        <button type="button" onClick={() => setView('recovery')} className="text-[13px] font-black text-[#86868b] hover:text-white uppercase tracking-widest">Soporte</button>
                                     </div>
                                 </form>
                             )}

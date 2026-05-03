@@ -23,6 +23,16 @@ const initDB = async () => {
         role TEXT NOT NULL DEFAULT 'docente'
       )
     `);
+    
+    // Migración: Asegurar que existe la columna email si la tabla ya existía
+    await client.query(`
+      DO $$ 
+      BEGIN 
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='usuarios' AND column_name='email') THEN
+          ALTER TABLE usuarios ADD COLUMN email TEXT UNIQUE;
+        END IF;
+      END $$;
+    `);
 
     // 2. Crear Administrador Inicial si no existe
     const adminPass = "AndresBello2026";

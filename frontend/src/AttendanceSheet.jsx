@@ -148,31 +148,54 @@ const AttendanceSheet = () => {
       </motion.div>
 
       {/* Controls */}
-      <motion.div variants={item} className="flex flex-col sm:flex-row gap-4">
-        <div className="flex items-center gap-4 bg-[#1c1c1e] rounded-2xl px-6 h-14 border border-white/5 shadow-md">
-           <CalendarIcon className="w-5 h-5 text-blue-500" />
-           <input 
-               type="date" 
-               value={date}
-               onChange={(e) => setDate(e.target.value)}
-               className="bg-transparent border-none text-white text-[15px] font-bold focus:ring-0 cursor-pointer outline-none w-full"
-           />
-        </div>
-         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            {['Todas', '1', '2', '3', '4', '5'].map((y) => (
-              <button
-                key={y}
-                onClick={() => setFilterSection(y)}
-                className={`px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
-                  filterSection === y 
-                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
-                    : 'bg-white/5 text-[#86868b] hover:text-white'
-                }`}
-              >
-                {y === 'Todas' ? 'Todas' : `${y} Año`}
-              </button>
-            ))}
+      <motion.div variants={item} className="flex flex-col gap-4">
+         <div className="flex flex-col md:flex-row gap-4 w-full">
+            <div className="flex items-center gap-4 bg-[#1c1c1e] rounded-3xl px-6 h-16 border border-white/5 shadow-md flex-1">
+               <CalendarIcon className="w-5 h-5 text-blue-500" />
+               <input 
+                   type="date" 
+                   value={date}
+                   onChange={(e) => setDate(e.target.value)}
+                   className="bg-transparent border-none text-white text-[16px] font-bold focus:ring-0 cursor-pointer outline-none w-full italic"
+               />
+            </div>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+               {['Todas', '1', '2', '3', '4', '5'].map((y) => (
+                 <button
+                   key={y}
+                   onClick={() => setFilterSection(y)}
+                   className={`px-8 py-4 rounded-3xl text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
+                     filterSection === y 
+                       ? 'bg-white text-black shadow-2xl' 
+                       : 'bg-white/5 text-[#86868b] hover:text-white'
+                   }`}
+                 >
+                   {y === 'Todas' ? 'Todas' : `${y} Año`}
+                 </button>
+               ))}
+            </div>
          </div>
+         {filterSection !== 'Todas' && (
+           <motion.div 
+             initial={{ opacity: 0, y: -10 }} 
+             animate={{ opacity: 1, y: 0 }}
+             className="flex gap-3 justify-center md:justify-start"
+           >
+              {['A', 'B', 'C'].map(sec => (
+                <button
+                  key={sec}
+                  onClick={() => setFilterSection(`${filterSection}${sec}`)}
+                  className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                    filterSection.endsWith(sec)
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white/5 text-white/40'
+                  }`}
+                >
+                  Sección {sec}
+                </button>
+              ))}
+           </motion.div>
+         )}
       </motion.div>
 
       {/* Quick Stats */}

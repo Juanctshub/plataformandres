@@ -132,81 +132,87 @@ const Finance = () => {
 
             {/* Stats */}
             <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="ios-card bg-blue-500/5 border-blue-500/10 p-8 group">
+                <div className="ios-card bg-gradient-to-br from-blue-600/10 to-transparent border-blue-500/20 p-8 group">
                     <div className="flex justify-between items-start mb-8">
-                        <div className="w-12 h-12 rounded-2xl bg-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/40">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/40 group-hover:scale-110 transition-transform">
                             <TrendingUp className="w-6 h-6 text-white" />
                         </div>
-                        <Badge className="bg-blue-500/10 text-blue-400 border-none px-3 py-1 text-[10px] font-bold uppercase tracking-widest">Total</Badge>
+                        <Badge className="bg-blue-500/10 text-blue-400 border-none px-3 py-1 text-[10px] font-bold uppercase tracking-widest">Master Audit</Badge>
                     </div>
-                    <div className="text-4xl font-bold text-white italic tracking-tight">${totalRevenue.toLocaleString()}</div>
-                    <p className="text-[11px] font-black text-[#86868b] uppercase tracking-widest mt-2">Recaudación Acumulada</p>
+                    <div className="text-4xl font-bold text-white italic tracking-tight group-hover:translate-x-1 transition-transform">${totalRevenue.toLocaleString()}</div>
+                    <p className="text-[11px] font-black text-[#86868b] uppercase tracking-widest mt-2">Recaudación de Ciclo</p>
                 </div>
 
-                <div className="ios-card bg-emerald-500/5 border-emerald-500/10 p-8 group">
+                <div className="ios-card bg-gradient-to-br from-emerald-600/10 to-transparent border-emerald-500/20 p-8 group">
                     <div className="flex justify-between items-start mb-8">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/40">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/40 group-hover:scale-110 transition-transform">
                             <CheckCircle2 className="w-6 h-6 text-white" />
                         </div>
-                        <Badge className="bg-emerald-500/10 text-emerald-400 border-none px-3 py-1 text-[10px] font-bold uppercase tracking-widest">Solvencia</Badge>
+                        <Badge className="bg-emerald-500/10 text-emerald-400 border-none px-3 py-1 text-[10px] font-bold uppercase tracking-widest">Cumplimiento</Badge>
                     </div>
-                    <div className="text-4xl font-bold text-white italic tracking-tight">{solvencyRate}%</div>
-                    <p className="text-[11px] font-black text-[#86868b] uppercase tracking-widest mt-2">Nivel de Cumplimiento</p>
+                    <div className="text-4xl font-bold text-white italic tracking-tight group-hover:translate-x-1 transition-transform">{solvencyRate}%</div>
+                    <p className="text-[11px] font-black text-[#86868b] uppercase tracking-widest mt-2">Índice de Solvencia</p>
                 </div>
 
-                <div className="ios-card bg-indigo-500/5 border-indigo-500/10 p-8 group sm:col-span-2 lg:col-span-1">
+                <div className="ios-card bg-gradient-to-br from-indigo-600/10 to-transparent border-indigo-500/20 p-8 group sm:col-span-2 lg:col-span-1">
                     <div className="flex justify-between items-start mb-8">
-                        <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/40">
+                        <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/40 group-hover:scale-110 transition-transform">
                             <Activity className="w-6 h-6 text-white" />
                         </div>
-                        <Badge className="bg-indigo-500/10 text-indigo-400 border-none px-3 py-1 text-[10px] font-bold uppercase tracking-widest">Estado</Badge>
+                        <Badge className="bg-indigo-500/10 text-indigo-400 border-none px-3 py-1 text-[10px] font-bold uppercase tracking-widest">IA Health</Badge>
                     </div>
-                    <div className="text-xl font-bold text-white italic tracking-tight">
-                        {solvencyRate > 75 ? 'Óptimo' : solvencyRate > 50 ? 'Estable' : 'Crítico'}
+                    <div className="text-xl font-bold text-white italic tracking-tight uppercase group-hover:translate-x-1 transition-transform">
+                        {solvencyRate > 75 ? 'Flujo Óptimo' : solvencyRate > 50 ? 'Estable' : 'Alerta Roja'}
                     </div>
-                    <p className="text-[11px] font-black text-[#86868b] uppercase tracking-widest mt-2">Salud Financiera v3.0</p>
+                    <p className="text-[11px] font-black text-[#86868b] uppercase tracking-widest mt-2">Estado del Nodo v3.0</p>
                 </div>
             </motion.div>
 
             {/* Search */}
-            <motion.div variants={item} className="relative group max-w-2xl mx-auto w-full">
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
+            <motion.div variants={item} className="relative group max-w-2xl mx-auto w-full px-2">
+                <div className="absolute left-8 top-1/2 -translate-y-1/2 z-10">
+                    <Search className="w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
+                </div>
                 <Input 
-                    placeholder="Filtrar por estudiante o ID..." 
-                    className="h-14 pl-16 bg-[#1c1c1e]/60 border-none rounded-2xl text-white font-bold transition-all focus:ring-1 focus:ring-blue-500/50 text-[15px]"
+                    placeholder="Búsqueda Inteligente..." 
+                    className="h-16 pl-16 bg-[#1c1c1e]/80 border-white/5 rounded-[1.5rem] text-white font-bold transition-all focus:ring-1 focus:ring-blue-500/50 text-[16px] placeholder:text-white/10"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </motion.div>
 
             {/* Transactions List */}
-            <motion.div variants={item} className="space-y-4">
-                <div className="flex items-center justify-between px-4 mb-2">
-                    <h3 className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em]">Transacciones Recientes</h3>
-                    <History className="w-4 h-4 text-[#86868b]" />
+            <motion.div variants={item} className="space-y-6">
+                <div className="flex items-center justify-between px-6">
+                    <h3 className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.3em] italic">Bitácora de Transacciones</h3>
+                    <div className="flex items-center gap-3 text-[10px] font-bold text-white/20 uppercase tracking-widest">
+                        <Activity className="w-3 h-3" /> Tiempo Real
+                    </div>
                 </div>
-                <div className="ios-list-group space-y-3">
+                <div className="ios-list-group">
                     {filteredPayments.map((p, i) => (
-                        <div key={p.id} className="ios-list-item flex items-center justify-between group">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 font-bold text-[14px]">
+                        <div key={p.id} className="ios-list-item py-8 group hover:bg-white/[0.02]">
+                            <div className="flex items-center gap-6 flex-1 min-w-0">
+                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white/5 to-transparent flex items-center justify-center text-white/40 font-bold text-xl group-hover:from-blue-500/20 transition-all">
                                     {(p.estudiante || '?')[0]}
                                 </div>
-                                <div className="min-w-0">
-                                    <p className="text-[15px] font-bold text-white truncate">{p.estudiante}</p>
-                                    <p className="text-[11px] font-bold text-[#86868b] uppercase tracking-wider">{p.mes_correspondiente} • {p.metodo}</p>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-[17px] font-bold text-white truncate italic tracking-tight">{p.estudiante}</p>
+                                    <p className="text-[11px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-1">{p.mes_correspondiente} • {p.metodo}</p>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-[16px] font-bold text-emerald-400 italic tracking-tight">+${p.monto}</p>
-                                <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">{new Date(p.fecha).toLocaleDateString()}</p>
+                            <div className="text-right ml-4">
+                                <p className="text-[20px] font-bold text-emerald-400 italic tracking-tighter group-hover:scale-105 transition-transform">+${p.monto}</p>
+                                <p className="text-[9px] font-black text-white/20 uppercase tracking-widest mt-1">{new Date(p.fecha).toLocaleDateString()}</p>
                             </div>
                         </div>
                     ))}
                     {filteredPayments.length === 0 && (
-                        <div className="py-20 flex flex-col items-center opacity-20">
-                            <Wallet className="w-12 h-12 mb-4" />
-                            <p className="text-[11px] font-black uppercase tracking-widest">No se encontraron pagos</p>
+                        <div className="py-32 flex flex-col items-center justify-center gap-6">
+                            <div className="w-20 h-20 rounded-[2.5rem] bg-white/5 flex items-center justify-center text-white/10">
+                                <Wallet className="w-10 h-10" />
+                            </div>
+                            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-white/20">Bóveda Vacía</p>
                         </div>
                     )}
                 </div>

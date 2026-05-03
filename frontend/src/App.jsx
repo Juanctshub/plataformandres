@@ -496,8 +496,11 @@ const AndresBelloSuite = () => {
         setStats(prev => ({ ...prev, recentActivity: actData }));
       }
       
-      // Fetch Notifications
       const resNotif = await fetch(`${baseUrl}/api/notifications`, { headers });
+      if (resNotif.status === 401) {
+        handleLogout();
+        return;
+      }
       if (resNotif.ok) setNotifications(await resNotif.json());
 
       setTimeout(() => setIsInitializing(false), 800);

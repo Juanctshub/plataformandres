@@ -52,7 +52,8 @@ const Students = () => {
   const [newStudent, setNewStudent] = useState({ 
     cedula: '', 
     nombre: '', 
-    seccion: '', 
+    seccion: '1A', 
+    año: '1',
     representante: '', 
     contacto: '' 
   });
