@@ -99,77 +99,6 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-black overflow-hidden z-[1000] ios-transition">
-      {/* Background Aesthetic */}
-      <div className="absolute inset-0 -z-10 bg-[#000]">
-        <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-blue-600/10 to-transparent" />
-        <div className="absolute bottom-0 right-0 w-[60%] h-[40%] bg-indigo-600/5 blur-[120px] rounded-full" />
-      </div>
-
-      {/* iOS Header */}
-      <div className="pt-14 pb-4 px-6 border-b border-white/5 backdrop-blur-3xl bg-black/40 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-4">
-            <motion.div 
-                whileHover={{ scale: 1.05 }}
-                className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 p-0.5 shadow-xl shadow-blue-500/20"
-            >
-                <div className="w-full h-full rounded-[0.9rem] bg-black/20 flex items-center justify-center overflow-hidden">
-                    <img src={logo} className="w-8 h-8 object-contain" alt="AB" />
-                </div>
-            </motion.div>
-            <div>
-                <h2 className="text-[17px] font-bold text-white italic tracking-tight">Núcleo Andrés Bello</h2>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                    <span className="text-[9px] font-black text-emerald-500/80 uppercase tracking-widest">Inferencia Activa</span>
-                </div>
-            </div>
-        </div>
-        <Button onClick={onClose} variant="ghost" className="w-10 h-10 rounded-full p-0 text-white/40 hover:text-white bg-white/5 active:scale-90 transition-all">
-            <X className="w-5 h-5" />
-        </Button>
-      </div>
-
-      {/* Messages */}
-      <div 
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 py-6 space-y-6 no-scrollbar scroll-smooth"
-      >
-        <AnimatePresence initial={false}>
-          {messages.map((m, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 15, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
-            >
-              <div className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  {m.role === 'assistant' && (
-                      <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 flex items-center justify-center mt-auto mb-1 flex-shrink-0">
-                          <Bot className="w-4 h-4 text-blue-400" />
-                      </div>
-                  )}
-                  <div className={`px-5 py-3.5 rounded-[1.75rem] text-[15px] font-bold leading-tight shadow-sm ${
-                    m.role === 'user' 
-                      ? 'bg-blue-600 text-white rounded-tr-none' 
-                      : 'bg-[#1c1c1e] text-white/90 rounded-tl-none border border-white/5'
-                  }`}>
-                    {m.content}
-                  </div>
-              </div>
-              <span className={`text-[9px] font-black text-[#86868b] uppercase tracking-widest mt-2 px-12 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
-                  {m.timestamp}
-              </span>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-
-        {isTyping && (
-          <div className="flex items-start gap-3">
-             <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 flex items-center justify-center mt-auto mb-1 flex-shrink-0">
     <div className="fixed inset-0 z-[1000] flex overflow-hidden bg-[#0a0a0b]">
         
         {/* Left Sidebar - Terminal Status (Desktop Only) */}
@@ -216,7 +145,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
         <div className="flex-1 flex flex-col relative overflow-hidden">
             
             {/* Header Area */}
-            <div className="h-20 border-b border-white/5 px-8 flex items-center justify-between bg-black/40 backdrop-blur-md z-10">
+            <div className="h-20 border-b border-white/5 px-6 md:px-8 flex items-center justify-between bg-black/40 backdrop-blur-md z-10">
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-2xl bg-indigo-600/20 flex items-center justify-center border border-indigo-500/20">
                         <Bot className="w-6 h-6 text-indigo-400" />
@@ -231,11 +160,8 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                 </div>
                 
                 <div className="flex items-center gap-4">
-                    <button className="p-2 rounded-xl hover:bg-white/5 text-[#86868b] hover:text-white transition-all" onClick={onClose}>
-                        <History className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 rounded-xl hover:bg-white/5 text-[#86868b] hover:text-white transition-all">
-                        <LayoutGrid className="w-5 h-5" />
+                    <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/5 text-[#86868b] hover:text-white transition-all">
+                        <X className="w-5 h-5" />
                     </button>
                 </div>
             </div>
@@ -252,7 +178,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                         animate={{ opacity: 1, y: 0 }}
                         className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                        <div className={`max-w-[85%] md:max-w-[70%] flex gap-4 ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className={`max-w-[90%] md:max-w-[70%] flex gap-4 ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                             <div className={`w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center border ${
                                 m.role === 'user' 
                                 ? 'bg-white/5 border-white/10 text-white/40' 
@@ -268,8 +194,8 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
                                 } shadow-xl backdrop-blur-md`}>
                                     {m.content}
                                 </div>
-                                <span className="text-[9px] font-black text-white/20 uppercase tracking-widest px-2">
-                                    {m.role === 'user' ? 'Originador' : 'Inferencia'}
+                                <span className={`text-[9px] font-black text-white/20 uppercase tracking-widest px-2 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
+                                    {m.role === 'user' ? 'Originador' : 'Inferencia'} • {m.timestamp}
                                 </span>
                             </div>
                         </div>
@@ -288,7 +214,7 @@ const AIChatView = ({ searchTerm, user, onClose, onRefresh }) => {
             {/* Input Area */}
             <div className="p-6 md:p-10 bg-black/40 backdrop-blur-xl border-t border-white/5">
                 <div className="max-w-4xl mx-auto">
-                    <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-2">
+                    <div className="hidden md:flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-2">
                         {[
                             'Auditar Matrícula',
                             'Resumen Financiero',
