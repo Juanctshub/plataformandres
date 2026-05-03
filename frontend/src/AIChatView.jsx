@@ -16,7 +16,8 @@ import {
   Mic,
   MoreVertical,
   Maximize2,
-  ChevronDown
+  ChevronDown,
+  ShieldCheck
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";
