@@ -113,7 +113,7 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
       variants={container}
       initial="hidden"
       animate="show"
-      className="max-w-screen-xl mx-auto py-8 sm:py-14 space-y-10 px-5 sm:px-10"
+      className="max-w-screen-2xl mx-auto py-8 md:py-20 space-y-12 md:space-y-20 px-6 md:px-16"
     >
       {/* ═══ Header ═══ */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
@@ -204,31 +204,33 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
                   <Clock className="w-5 h-5 text-[#86868b]" />
                 </div>
             </div>
-            <div className="ios-list-group bg-transparent border-none space-y-5 max-h-[340px] overflow-y-auto no-scrollbar relative z-10">
+            <div className="ios-list-group bg-transparent border-none space-y-6 max-h-[500px] overflow-y-auto no-scrollbar relative z-10 px-2">
                 {stats?.recentActivity?.length > 0 ? (
                     stats.recentActivity.map((log, i) => (
                         <div 
                           key={i} 
                           onClick={() => log.target && onTabChange(log.target)}
-                          className="flex gap-5 group items-start p-4 rounded-[1.5rem] hover:bg-white/[0.03] active:scale-[0.98] transition-all cursor-pointer border border-transparent hover:border-white/5"
+                          className="flex gap-6 group items-start p-6 rounded-[2.5rem] bg-white/[0.02] hover:bg-white/[0.05] active:scale-[0.98] transition-all cursor-pointer border border-white/5 hover:border-white/10"
                         >
-                            <div className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 shadow-[0_0_12px] ${
+                            <div className={`mt-2 w-3 h-3 rounded-full flex-shrink-0 shadow-[0_0_15px] ${
                                 log.type === 'STUDENT_REG' ? 'bg-emerald-400 shadow-emerald-400/50' :
                                 log.type === 'JUSTIFICATION' ? 'bg-amber-400 shadow-amber-400/50' :
                                 log.type === 'GRADE' ? 'bg-blue-400 shadow-blue-400/50' :
                                 'bg-white/20 shadow-white/10'
                             }`} />
                             <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between gap-2 mb-1">
-                                  <p className="text-[14px] font-bold text-white leading-tight truncate">{log.event}</p>
-                                  <ArrowUpRight className="w-3 h-3 text-white/20 group-hover:text-white/60 transition-colors flex-shrink-0" />
+                                <div className="flex items-center justify-between gap-3 mb-2">
+                                  <p className="text-[15px] font-black text-white leading-tight truncate italic">{log.event}</p>
+                                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                                    <ArrowUpRight className="w-4 h-4 text-white" />
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                  <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">{log.time}</span>
+                                <div className="flex items-center gap-4">
+                                  <span className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em]">{log.time}</span>
                                   {log.details && (
                                     <>
-                                      <div className="w-1 h-1 rounded-full bg-white/10" />
-                                      <span className="text-[9px] font-bold text-white/40 uppercase tracking-tighter">{log.details}</span>
+                                      <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+                                      <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">{log.details}</span>
                                     </>
                                   )}
                                 </div>
@@ -236,9 +238,9 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
                         </div>
                     ))
                 ) : (
-                    <div className="py-24 flex flex-col items-center opacity-10">
-                        <Clock className="w-12 h-12 mb-4" />
-                        <span className="text-[11px] font-black uppercase tracking-[0.4em]">Sincronizando...</span>
+                    <div className="py-32 flex flex-col items-center opacity-10">
+                        <Clock className="w-16 h-16 mb-6" />
+                        <span className="text-[12px] font-black uppercase tracking-[0.5em]">Sincronizando...</span>
                     </div>
                 )}
             </div>

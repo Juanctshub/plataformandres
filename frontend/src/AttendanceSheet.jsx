@@ -158,7 +158,7 @@ const AttendanceSheet = () => {
       variants={container}
       initial="hidden"
       animate="show"
-      className="max-w-6xl mx-auto py-6 md:py-14 space-y-8 md:space-y-12 px-4 md:px-10"
+      className="max-w-screen-2xl mx-auto py-8 md:py-20 space-y-12 md:space-y-20 px-6 md:px-16"
     >
       {/* Dynamic Header */}
       <motion.div variants={item} className="flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -173,7 +173,7 @@ const AttendanceSheet = () => {
                 <Badge variant="outline" className="bg-white/5 border-white/10 text-[#86868b] px-3 py-1 font-bold tracking-widest text-[9px] uppercase">
                   Protocolo v4.2
                 </Badge>
-                <p className="text-[11px] font-bold text-[#86868b] uppercase tracking-[0.2em]">Corte: {new Date(date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                <p className="text-[12px] font-black text-[#86868b] uppercase tracking-[0.3em]">Corte: {new Date(date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
               </div>
           </div>
           <div className="flex items-center gap-3">
@@ -197,54 +197,54 @@ const AttendanceSheet = () => {
 
       {/* Responsive Controls */}
       <motion.div variants={item} className="space-y-6">
-         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-            <div className="md:col-span-4 flex items-center gap-2 group">
-               <div className="relative flex-1">
+         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8">
+            <div className="flex items-center gap-4 group">
+               <div className="relative w-full md:w-80">
                  <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                    <CalendarIcon className="w-4 h-4 text-blue-500/60 group-focus-within:text-blue-500 transition-colors" />
+                    <CalendarIcon className="w-5 h-5 text-blue-500/60 group-focus-within:text-blue-500 transition-colors" />
                  </div>
                  <input 
                      type="date" 
                      value={date}
                      onChange={(e) => setDate(e.target.value)}
-                     className="w-full bg-[#1c1c1e] rounded-[1.5rem] pl-14 pr-6 h-16 border border-white/5 text-white text-[15px] font-bold focus:ring-1 focus:ring-blue-500/30 outline-none transition-all italic"
+                     className="w-full bg-[#1c1c1e] rounded-[2rem] pl-16 pr-8 h-20 border border-white/5 text-white text-[17px] font-black focus:ring-2 focus:ring-blue-500/20 outline-none transition-all italic shadow-2xl"
                  />
                </div>
-               <div className="flex flex-col gap-1">
+               <div className="flex gap-2">
                  <button 
                    onClick={() => {
-                     const d = new Date(date);
-                     d.setDate(d.getDate() + 1);
-                     setDate(d.toISOString().split('T')[0]);
-                   }}
-                   className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all"
-                 >
-                   <ChevronRight className="w-4 h-4 -rotate-90" />
-                 </button>
-                 <button 
-                   onClick={() => {
-                     const d = new Date(date);
+                     const d = new Date(date + 'T12:00:00');
                      d.setDate(d.getDate() - 1);
                      setDate(d.toISOString().split('T')[0]);
                    }}
-                   className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all"
+                   className="w-14 h-20 rounded-[1.5rem] bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all flex items-center justify-center border border-white/5"
                  >
-                   <ChevronRight className="w-4 h-4 rotate-90" />
+                   <ChevronRight className="w-6 h-6 rotate-180" />
+                 </button>
+                 <button 
+                   onClick={() => {
+                     const d = new Date(date + 'T12:00:00');
+                     d.setDate(d.getDate() + 1);
+                     setDate(d.toISOString().split('T')[0]);
+                   }}
+                   className="w-14 h-20 rounded-[1.5rem] bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all flex items-center justify-center border border-white/5"
+                 >
+                   <ChevronRight className="w-6 h-6" />
                  </button>
                </div>
             </div>
-            <div className="md:col-span-8 flex gap-2 overflow-x-auto no-scrollbar py-1">
+            <div className="flex gap-3 overflow-x-auto no-scrollbar py-2 bg-white/[0.02] p-2 rounded-[2.5rem] border border-white/5">
                {['Todas', '1', '2', '3', '4', '5'].map((y) => (
                  <button
                    key={y}
                    onClick={() => setFilterSection(y)}
-                   className={`px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${
+                   className={`px-10 py-5 rounded-[2rem] text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-500 ${
                      filterSection.startsWith(y) 
-                       ? 'bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.2)] scale-105' 
-                       : 'bg-white/5 text-[#86868b] hover:text-white hover:bg-white/10'
+                       ? 'bg-white text-black shadow-[0_20px_50px_rgba(255,255,255,0.15)] scale-[1.05] z-10' 
+                       : 'text-[#86868b] hover:text-white hover:bg-white/5'
                    }`}
                  >
-                   {y === 'Todas' ? 'Toda la Matrícula' : `${y} Año`}
+                   {y === 'Todas' ? 'Matrícula Global' : `${y} Año Académico`}
                  </button>
                ))}
             </div>
@@ -296,14 +296,14 @@ const AttendanceSheet = () => {
             <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">{filteredStudents.length} registros</span>
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-8">
           {loading ? (
             <div className="h-64 flex items-center justify-center bg-white/5 rounded-[2.5rem] border border-white/5 border-dashed">
                 <Loader2 className="w-8 h-8 animate-spin text-blue-500/20" />
             </div>
           ) : filteredStudents.length > 0 ? (
             filteredStudents.map((s) => (
-              <div key={s.id} className="ios-card group hover:bg-white/[0.04] transition-all border-white/5 relative overflow-hidden">
+              <div key={s.id} className="ios-card group hover:bg-white/[0.05] transition-all border-white/5 relative overflow-hidden p-8 md:p-10 rounded-[3rem] shadow-2xl">
                 {/* Background sync indicator */}
                 {existingAttendance[s.id] && (
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl -mr-16 -mt-16 pointer-events-none" />

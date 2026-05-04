@@ -137,7 +137,7 @@ const Students = () => {
         variants={container}
         initial="hidden"
         animate="show"
-        className="max-w-7xl mx-auto py-6 md:py-16 space-y-10 md:space-y-20 px-4 md:px-12"
+        className="max-w-screen-2xl mx-auto py-8 md:py-24 space-y-12 md:space-y-24 px-6 md:px-16"
     >
         {/* Header */}
         <motion.div variants={item} className="flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -195,41 +195,44 @@ const Students = () => {
         </motion.div>
 
         {/* Grid */}
-        <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-24 md:pb-0">
+        <motion.div variants={item} className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-10 pb-32">
             {filteredStudents.map((s, i) => (
                 <motion.div 
                     key={s.id}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.02 }}
-                    className="ios-card p-5 md:p-6 bg-white/[0.03] border-white/5 hover:bg-white/[0.05] transition-all flex items-center justify-between group"
+                    transition={{ delay: i * 0.03 }}
+                    className="ios-card p-8 md:p-10 bg-white/[0.03] border-white/5 hover:bg-white/[0.05] hover:border-white/10 transition-all flex items-center justify-between group rounded-[3rem] shadow-2xl"
                 >
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/20 font-black text-lg md:text-xl group-hover:bg-blue-600/10 group-hover:text-blue-400 group-hover:border-blue-500/20 transition-all">
-                            {s.nombre[0]}
-                        </div>
-                        <div className="min-w-0">
-                            <h4 className="text-[15px] md:text-[16px] font-bold text-white truncate italic tracking-tight">{s.nombre}</h4>
-                            <div className="flex items-center gap-2 mt-1.5">
-                                <span className="text-[9px] md:text-[10px] font-black text-[#86868b] uppercase tracking-widest leading-none">CI: {s.cedula}</span>
-                                <div className="w-1 h-1 rounded-full bg-white/10" />
-                                <span className="text-[9px] md:text-[10px] font-black text-blue-500/60 uppercase leading-none">{s.seccion}</span>
+                    <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                        <div className="flex items-center gap-8">
+                            <div className="w-20 h-20 md:w-24 md:h-24 rounded-[2rem] md:rounded-[2.5rem] bg-white/5 border border-white/10 flex items-center justify-center text-white/20 font-black text-3xl md:text-4xl group-hover:bg-blue-600/10 group-hover:text-blue-400 group-hover:border-blue-500/20 transition-all shadow-2xl">
+                                {s.nombre[0]}
+                            </div>
+                            <div className="min-w-0">
+                                <h4 className="text-[22px] md:text-[28px] font-black text-white truncate italic tracking-tighter leading-none mb-3">{s.nombre}</h4>
+                                <div className="flex items-center gap-4">
+                                    <span className="text-[11px] md:text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em] leading-none">CI: {s.cedula}</span>
+                                    <div className="w-2 h-2 rounded-full bg-white/10" />
+                                    <span className="text-[11px] md:text-[12px] font-black text-blue-500 uppercase tracking-widest leading-none">{s.seccion}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Button 
-                           onClick={() => setSelectedStudentForExpediente(s)}
-                           className="h-10 px-4 rounded-xl bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest mr-2"
-                        >
-                           Expediente
-                        </Button>
-                        <Button 
-                           onClick={() => { setStudentToDelete(s); setIsDeleteModalOpen(true); }}
-                           className="h-10 w-10 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all p-0 flex-shrink-0 opacity-0 group-hover:opacity-100 md:opacity-100"
-                        >
-                           <Trash2 className="w-4 h-4" />
-                        </Button>
+                        
+                        <div className="flex items-center gap-4">
+                            <Button 
+                               onClick={() => setSelectedStudentForExpediente(s)}
+                               className="h-16 px-10 rounded-[1.5rem] bg-blue-600 text-white hover:bg-blue-500 transition-all text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-blue-600/30 active:scale-95"
+                            >
+                               EXPEDIENTE
+                            </Button>
+                            <Button 
+                               onClick={() => { setStudentToDelete(s); setIsDeleteModalOpen(true); }}
+                               className="h-16 w-16 rounded-[1.5rem] bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all p-0 flex-shrink-0 opacity-0 group-hover:opacity-100 shadow-xl"
+                            >
+                               <Trash2 className="w-6 h-6" />
+                            </Button>
+                        </div>
                     </div>
                 </motion.div>
             ))}
