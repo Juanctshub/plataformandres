@@ -381,6 +381,7 @@ const AttendanceSheet = () => {
                   <p className="text-[9px] font-bold text-white/10 uppercase tracking-widest">Ajuste los filtros de búsqueda o verifique la base de datos</p>
                 </div>
              </div>
+           )}
            </div>
         </motion.div>
 
