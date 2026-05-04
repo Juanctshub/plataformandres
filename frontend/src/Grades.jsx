@@ -49,6 +49,7 @@ const Grades = () => {
     const [submitting, setSubmitting] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });
     const [yearFilter, setYearFilter] = useState('Todas');
+    const [sectionFilter, setSectionFilter] = useState('Todas');
     const fileInputRef = useRef(null);
 
     const [newGrade, setNewGrade] = useState({ estudiante_id: '', materia: '', nota: '', lapso: '1' });
@@ -85,13 +86,18 @@ const Grades = () => {
         const studentName = g.student || g.nombre || '';
         const subjectName = g.subject || g.materia || '';
         const sectionName = g.seccion || '';
+        
         const matchesSearch = studentName.toLowerCase().includes(searchTerm.toLowerCase()) || 
                              subjectName.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesYear = yearFilter === 'Todas' || sectionName.includes(yearFilter);
-        return matchesSearch && matchesYear;
+        
+        const matchesYear = yearFilter === 'Todas' || sectionName.startsWith(yearFilter);
+        const matchesSection = sectionFilter === 'Todas' || sectionName.endsWith(sectionFilter);
+        
+        return matchesSearch && matchesYear && matchesSection;
     }) : [];
 
     const years = ['Todas', '1', '2', '3', '4', '5'];
+    const sections = ['Todas', 'A', 'B', 'C'];
 
     const handleSubmit = async (e) => {
         if (e) e.preventDefault();
@@ -177,20 +183,45 @@ const Grades = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-                    {years.map(y => (
-                        <button
-                            key={y}
-                            onClick={() => setYearFilter(y)}
-                            className={`px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                                yearFilter === y 
-                                ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
-                                : 'bg-white/5 text-[#86868b] hover:text-white'
-                            }`}
-                        >
-                            {y === 'Todas' ? 'Todas' : `${y} Año`}
-                        </button>
-                    ))}
+                
+                <div className="space-y-4">
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Año Escolar</span>
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                            {years.map(y => (
+                                <button
+                                    key={y}
+                                    onClick={() => setYearFilter(y)}
+                                    className={`px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                                        yearFilter === y 
+                                        ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                                        : 'bg-white/5 text-[#86868b] hover:text-white'
+                                    }`}
+                                >
+                                    {y === 'Todas' ? 'Todas' : `${y} Año`}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Sección Académica</span>
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                            {sections.map(s => (
+                                <button
+                                    key={s}
+                                    onClick={() => setSectionFilter(s)}
+                                    className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                                        sectionFilter === s 
+                                        ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
+                                        : 'bg-white/5 text-[#86868b] hover:text-white'
+                                    }`}
+                                >
+                                    {s === 'Todas' ? 'Todas' : `Sección ${s}`}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </motion.div>
 

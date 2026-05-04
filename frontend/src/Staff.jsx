@@ -136,89 +136,89 @@ const Staff = () => {
     );
 
     return (
-        <div className="max-w-7xl mx-auto py-6 sm:py-16 space-y-12 sm:space-y-24 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto py-6 md:py-16 space-y-10 md:space-y-24 px-4 md:px-12">
             {/* Header: Human Talent Hub */}
-            <div className="flex flex-col gap-10 sm:gap-16">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10">
-                    <div className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col gap-8 md:gap-16">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                    <div className="space-y-3 md:space-y-6">
                         <motion.div 
-                            initial={{ x: -30, opacity: 0 }}
+                            initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
-                            className="flex items-center gap-6 group"
+                            className="flex items-center gap-4 md:gap-6 group"
                         >
-                            <div className="w-1 h-8 bg-indigo-500 rounded-full" />
-                            <div className="space-y-1">
-                                <h2 className="text-3xl sm:text-5xl font-semibold text-white tracking-tight leading-tight">Personal</h2>
-                                <p className="text-sm text-[#86868b] font-normal mt-1">Gestión de talento humano institucional.</p>
+                            <div className="w-1 h-6 md:h-10 bg-indigo-500 rounded-full" />
+                            <div className="space-y-0.5">
+                                <h2 className="text-3xl md:text-6xl font-bold text-white tracking-tighter leading-none italic">Personal</h2>
+                                <p className="text-[10px] md:text-xs font-black text-[#86868b] uppercase tracking-[0.3em]">Gestión de Talento Humano</p>
                             </div>
                         </motion.div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-3">
                         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                             <DialogTrigger asChild>
-                              <Button className="h-14 sm:h-16 px-8 sm:px-12 bg-white text-black hover:bg-zinc-200 rounded-[1.8rem] sm:rounded-[2rem] font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95 group">
-                                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-3 group-hover:rotate-90 transition-transform" />
+                              <Button className="h-14 md:h-18 px-8 md:px-14 bg-white text-black hover:bg-zinc-200 rounded-[1.5rem] md:rounded-[2.5rem] font-black text-[10px] md:text-xs uppercase tracking-[0.2em] shadow-2xl transition-all active:scale-95 group flex-1 md:flex-none">
+                                <Plus className="w-4 h-4 md:w-5 md:h-5 mr-3 group-hover:rotate-90 transition-transform" />
                                 Integrar Staff
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="apple-glass border-white/10 p-12 rounded-[3.5rem] max-w-2xl bg-black/95 backdrop-blur-[100px] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] z-[9999]">
-                               <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/5 to-transparent pointer-events-none rounded-[3.5rem]" />
-                               <DialogHeader className="mb-12 relative z-10">
-                                  <div className="w-16 h-16 rounded-3xl bg-indigo-600 text-white flex items-center justify-center shadow-2xl shadow-indigo-600/40 mb-6">
-                                     <Plus className="w-8 h-8" />
+                            <DialogContent className="apple-glass border-white/10 p-6 md:p-14 rounded-[2rem] md:rounded-[4rem] max-w-2xl bg-black/95 backdrop-blur-[120px] shadow-[0_100px_200px_-50px_rgba(0,0,0,1)] z-[1000]">
+                               <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/10 to-transparent pointer-events-none rounded-[2rem] md:rounded-[4rem]" />
+                               <DialogHeader className="mb-8 md:mb-12 relative z-10">
+                                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-indigo-600 text-white flex items-center justify-center shadow-2xl shadow-indigo-600/40 mb-6 mx-auto md:mx-0">
+                                     <User className="w-6 h-6 md:w-10 md:h-10" />
                                   </div>
-                                   <DialogTitle className="text-2xl font-semibold text-white tracking-tight">Nuevo Personal</DialogTitle>
-                                   <DialogDescription className="text-sm text-[#86868b] font-normal mt-1">Registro de personal institucional.</DialogDescription>
+                                   <DialogTitle className="text-2xl md:text-4xl font-bold text-white tracking-tighter text-center md:text-left">Nuevo Registro</DialogTitle>
+                                   <DialogDescription className="text-[10px] md:text-xs font-bold text-[#86868b] uppercase tracking-widest mt-2 text-center md:text-left">Validación de Identidad en Nodo Maestro</DialogDescription>
                                </DialogHeader>
-                               <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
-                                  <div className="space-y-3 group">
-                                     <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-indigo-500 transition-colors">Nombre Completo</label>
+                               <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 relative z-10">
+                                  <div className="space-y-2 group">
+                                     <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-2 group-focus-within:text-indigo-500 transition-colors">Nombre Completo</label>
                                      <Input 
                                         placeholder="Ej: Lic. Andrés Bello"
-                                        className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/10"
+                                        className="h-14 md:h-16 bg-white/[0.03] border-white/10 rounded-2xl text-white font-bold focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/10"
                                         value={newStaff.nombre}
                                         onChange={(e) => setNewStaff({...newStaff, nombre: e.target.value})}
                                         required
                                      />
                                   </div>
-                                  <div className="space-y-3 group">
-                                     <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-indigo-500 transition-colors">Cargo o Función</label>
+                                  <div className="space-y-2 group">
+                                     <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-2 group-focus-within:text-indigo-500 transition-colors">Cargo Asignado</label>
                                      <div className="relative">
                                          <select 
-                                             className="w-full bg-white/[0.03] border border-white/5 rounded-[1.5rem] h-16 px-6 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 appearance-none font-bold transition-all"
+                                             className="w-full bg-white/[0.03] border border-white/10 rounded-2xl h-14 md:h-16 px-6 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 appearance-none font-bold transition-all"
                                              value={newStaff.rol}
                                              onChange={(e) => setNewStaff({...newStaff, rol: e.target.value})}
                                          >
-                                             {roles.map(r => <option key={r} value={r} className="bg-[#000000] text-white">{r}</option>)}
+                                             {roles.map(r => <option key={r} value={r} className="bg-zinc-950 text-white">{r}</option>)}
                                          </select>
                                          <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] rotate-90" />
                                      </div>
                                   </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                                     <div className="space-y-3 group">
-                                        <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-indigo-500 transition-colors">Correo Corporativo</label>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+                                     <div className="space-y-2 group">
+                                        <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-2 group-focus-within:text-indigo-500 transition-colors">Correo Electrónico</label>
                                         <Input 
-                                           placeholder="correo@institucion.edu"
-                                           className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/10"
+                                           placeholder="staff@andresbello.edu"
+                                           className="h-14 md:h-16 bg-white/[0.03] border-white/10 rounded-2xl text-white font-bold focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-white/10"
                                            value={newStaff.email}
                                            onChange={(e) => setNewStaff({...newStaff, email: e.target.value})}
                                            required
                                         />
                                      </div>
-                                     <div className="space-y-3 group">
-                                        <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-4 group-focus-within:text-indigo-500 transition-colors">Contacto Directo</label>
+                                     <div className="space-y-2 group">
+                                        <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-2 group-focus-within:text-indigo-500 transition-colors">Móvil / Contacto</label>
                                         <Input 
-                                           placeholder="04XX-XXXXXXX"
-                                           className="h-16 bg-white/[0.03] border-white/5 rounded-[1.5rem] text-white font-bold focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/10"
+                                           placeholder="+58 4XX-XXXXXXX"
+                                           className="h-14 md:h-16 bg-white/[0.03] border-white/10 rounded-2xl text-white font-bold focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-white/10"
                                            value={newStaff.contacto}
                                            onChange={(e) => setNewStaff({...newStaff, contacto: e.target.value})}
                                            required
                                         />
                                      </div>
                                   </div>
-                                  <Button type="submit" disabled={submitting} className="w-full h-20 bg-white text-black hover:bg-zinc-200 rounded-[2.5rem] font-black text-xs uppercase tracking-[0.3em] transition-all shadow-2xl active:scale-[0.98] mt-6">
-                                     {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Validar e Integrar al Staff"}
+                                  <Button type="submit" disabled={submitting} className="w-full h-16 md:h-20 bg-white text-black hover:bg-zinc-200 rounded-[1.5rem] md:rounded-[2.5rem] font-black text-[10px] md:text-xs uppercase tracking-[0.3em] transition-all shadow-2xl active:scale-[0.98] mt-4">
+                                     {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Ejecutar Registro de Personal"}
                                   </Button>
                                </form>
                             </DialogContent>
@@ -226,26 +226,26 @@ const Staff = () => {
                     </div>
                 </div>
 
-                {/* Control Bar: Refined for Mobile */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10">
-                    <div className="lg:col-span-7 relative group">
-                        <Search className="absolute left-8 top-1/2 -translate-y-1/2 w-6 h-6 text-[#86868b] group-focus-within:text-indigo-500 transition-colors" />
+                {/* Filter Bar */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
+                    <div className="lg:col-span-6 relative group">
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-indigo-400 transition-colors" />
                         <input 
-                            placeholder="Buscar por nombre, cargo o departamento..."
+                            placeholder="Buscar identidad staff..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-16 sm:h-20 bg-white/[0.02] border border-white/5 rounded-[2rem] sm:rounded-[2.5rem] pl-20 pr-8 text-white font-bold text-lg sm:text-xl focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all placeholder:text-white/5"
+                            className="w-full h-14 md:h-18 bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-[2rem] pl-16 pr-8 text-white font-bold text-sm md:text-base focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all placeholder:text-white/5 shadow-inner"
                         />
                     </div>
-                    <div className="lg:col-span-5 flex items-center gap-3 sm:gap-4 overflow-x-auto no-scrollbar bg-white/[0.02] border border-white/5 p-2 sm:p-3 rounded-[2.5rem]">
+                    <div className="lg:col-span-6 flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
                         {['Todos', ...roles].map((r) => (
                           <button
                             key={r}
                             onClick={() => setActiveRole(r)}
-                            className={`px-6 sm:px-8 py-3 sm:py-4 rounded-[1.5rem] sm:rounded-[1.8rem] text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                            className={`px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap shadow-xl ${
                               activeRole === r 
-                                ? 'bg-white text-black shadow-2xl' 
-                                : 'text-[#86868b] hover:text-white hover:bg-white/5'
+                                ? 'bg-indigo-600 text-white shadow-indigo-600/20' 
+                                : 'bg-white/5 text-[#86868b] hover:text-white hover:bg-white/10 border border-white/5'
                             }`}
                           >
                             {r}
@@ -255,140 +255,122 @@ const Staff = () => {
                 </div>
             </div>
 
-            {/* Staff Grid: Increased Gap for Elegance */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 sm:gap-20">
-               <AnimatePresence>
+            {/* Staff Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-12 pb-24 md:pb-0">
+               <AnimatePresence mode="popLayout">
                   {filteredStaff.length > 0 ? (
                     filteredStaff.map((s, i) => (
                       <motion.div
                         key={s?.id || `staff-${i}`}
                         layout
-                        initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ delay: i * 0.05 }}
-                        className="group relative overflow-hidden rounded-[4rem] p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-indigo-500/30 transition-all duration-700 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]"
+                        className="group relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-10 bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-indigo-500/20 transition-all duration-500"
                       >
-                         <div className="flex justify-between items-start mb-12">
-                            <div className="w-20 h-20 rounded-[2.2rem] bg-white/[0.03] border border-white/10 flex items-center justify-center text-white/20 group-hover:bg-indigo-600/10 group-hover:text-indigo-500 group-hover:border-indigo-500/20 shadow-2xl transition-all duration-500 overflow-hidden relative">
-                               <User className="w-10 h-10 relative z-10" strokeWidth={1.5} />
-                               <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                         <div className="flex justify-between items-start mb-8 md:mb-12">
+                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/20 group-hover:bg-indigo-600/10 group-hover:text-indigo-400 group-hover:border-indigo-500/20 transition-all duration-300">
+                               <User className="w-6 h-6 md:w-8 md:h-8" strokeWidth={1.5} />
                             </div>
-                            <Badge className={`rounded-[1.2rem] px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all ${
-                               s.rol === 'Directivo' ? 'bg-white text-black' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+                            <Badge className={`rounded-xl px-4 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-widest ${
+                               s.rol === 'Directivo' ? 'bg-white text-black' : 'bg-white/10 text-white/40 border-none'
                             }`}>
                                {s.rol}
                             </Badge>
                          </div>
 
-                         <div className="space-y-6">
+                         <div className="space-y-6 md:space-y-8">
                             <div>
-                                <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase leading-none group-hover:text-indigo-400 transition-colors">{s.nombre}</h3>
-                                <div className="flex items-center gap-3 mt-4">
-                                   <Sparkles className="w-3.5 h-3.5 text-indigo-500/50" />
-                                   <span className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.2em]">Identidad Staff Validada</span>
+                                <h3 className="text-xl md:text-2xl font-black text-white tracking-tighter italic uppercase truncate leading-none">{s.nombre}</h3>
+                                <div className="flex items-center gap-2 mt-3">
+                                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                   <span className="text-[8px] md:text-[9px] font-black text-[#86868b] uppercase tracking-widest">Estado: Sincronizado</span>
                                 </div>
                             </div>
                             
-                            <div className="space-y-4 pt-10 border-t border-white/5">
-                               <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                     <Mail className="w-4 h-4 text-[#86868b]/40" />
-                                     <span className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Email</span>
-                                  </div>
-                                  <span className="text-xs font-bold text-white/80">{s.email}</span>
+                            <div className="space-y-3 pt-6 md:pt-8 border-t border-white/5">
+                               <div className="flex items-center justify-between text-xs">
+                                  <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">Email</span>
+                                  <span className="text-white/60 font-bold truncate max-w-[150px]">{s.email}</span>
                                </div>
-                               <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                     <Phone className="w-4 h-4 text-[#86868b]/40" />
-                                     <span className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">Contacto</span>
-                                  </div>
-                                  <span className="text-xs font-bold text-white/80">{s.contacto}</span>
+                               <div className="flex items-center justify-between text-xs">
+                                  <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">Contacto</span>
+                                  <span className="text-white/60 font-bold">{s.contacto}</span>
                                </div>
                             </div>
                          </div>
 
-                         <div className="absolute bottom-8 right-12 opacity-0 group-hover:opacity-100 translate-y-3 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-4">
+                         <div className="flex items-center gap-2 mt-8 md:mt-10">
                             <Button 
                                 onClick={() => { setStaffToDelete(s); setIsDeleteModalOpen(true); }}
-                                variant="ghost" 
-                                className="h-12 w-12 p-0 rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white shadow-2xl transition-all"
+                                className="h-12 w-12 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all p-0 flex-shrink-0"
                             >
                                 <Trash2 className="w-5 h-5" />
                             </Button>
-                            <Button 
-                               variant="ghost" 
-                               className="h-12 px-8 rounded-2xl bg-white/5 text-white hover:bg-white hover:text-black transition-all shadow-2xl"
-                            >
-                               <span className="text-[10px] font-black uppercase tracking-widest">Perfil</span>
+                            <Button className="h-12 flex-1 rounded-xl bg-white/5 text-white/60 hover:bg-white hover:text-black font-black text-[9px] uppercase tracking-widest transition-all">
+                                Perfil Maestro
                             </Button>
                          </div>
                       </motion.div>
                     ))
                   ) : (
                     <motion.div 
-                       initial={{ opacity: 0 }}
-                       animate={{ opacity: 1 }}
-                       className="col-span-full py-48 text-center space-y-8 bg-white/[0.01] border border-dashed border-white/10 rounded-[5rem]"
+                       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                       className="col-span-full py-24 md:py-48 text-center space-y-6 bg-white/[0.01] border border-dashed border-white/10 rounded-[3rem] md:rounded-[5rem]"
                     >
-                       <div className="w-32 h-32 rounded-[3rem] bg-white/5 flex items-center justify-center text-white/10 mx-auto border border-white/5 shadow-inner">
-                          <Bot className="w-16 h-16" />
-                       </div>
-                       <div className="space-y-4">
-                          <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Staff No Sincronizado</h3>
-                          <p className="text-[11px] text-[#86868b] font-black uppercase tracking-[0.3em] max-w-sm mx-auto leading-relaxed">
-                             El nodo maestro no detectó identidades bajo el rol: <span className="text-indigo-500">"{activeRole}"</span>
-                          </p>
+                       <Bot className="w-12 h-12 md:w-20 md:h-20 text-white/5 mx-auto" />
+                       <div className="space-y-2">
+                          <h3 className="text-xl md:text-3xl font-black text-white italic uppercase tracking-tighter">Sin Resultados</h3>
+                          <p className="text-[10px] md:text-xs text-[#86868b] font-bold uppercase tracking-widest">El nodo no detectó identidades bajo este parámetro.</p>
                        </div>
                     </motion.div>
                   )}
                </AnimatePresence>
             </div>
 
-            {/* Global Notification Node */}
+            {/* Notification Portal */}
             <AnimatePresence>
                {msg.text && (
                <motion.div 
-                  initial={{ opacity: 0, y: 20, x: 20 }}
-                  animate={{ opacity: 1, y: 0, x: 0 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="fixed bottom-32 right-12 z-[10000]"
+                  className="fixed top-24 left-4 right-4 md:left-auto md:right-12 md:w-96 z-[2000]"
                >
-                  <div className="apple-glass p-8 rounded-[2.5rem] flex items-center gap-6 shadow-2xl border border-white/10 min-w-[400px]">
-                     <div className={`p-4 rounded-[1.2rem] ${msg.type === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-                        {msg.type === 'success' ? <CheckCircle2 className="w-6 h-6" /> : <AlertCircle className="w-6 h-6" />}
+                  <div className="apple-glass p-5 md:p-6 rounded-3xl md:rounded-[2rem] flex items-center gap-4 shadow-2xl border border-white/10">
+                     <div className={`p-3 rounded-xl ${msg.type === 'success' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                        {msg.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
                      </div>
-                     <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.4em] mb-1">Human Resources Kernel</span>
-                        <span className={`text-[14px] font-bold ${msg.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>{msg.text}</span>
+                     <div className="flex-1 min-w-0">
+                        <span className="text-[8px] font-black text-[#86868b] uppercase tracking-widest block mb-1">Human Resources Kernel</span>
+                        <p className={`text-[12px] font-bold truncate ${msg.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>{msg.text}</p>
                      </div>
-                     <button onClick={() => setMsg({text:'', type:''})} className="ml-auto p-2 hover:bg-white/5 rounded-full transition-colors">
-                        <X className="w-5 h-5 text-white/20" />
+                     <button onClick={() => setMsg({text:'', type:''})} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                        <X className="w-4 h-4 text-white/20" />
                      </button>
                   </div>
                </motion.div>
                )}
             </AnimatePresence>
-            {/* Delete Confirmation Modal */}
+
+            {/* Delete Modal */}
             <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-                <DialogContent className="apple-glass border-red-500/20 rounded-[3rem] p-10 max-w-md bg-black/90 shadow-[0_50px_100px_-20px_rgba(255,0,0,0.2)] z-[10000]">
-                  <DialogHeader className="text-center space-y-6">
-                      <div className="w-20 h-20 rounded-[2.2rem] bg-red-500/10 flex items-center justify-center text-red-500 mx-auto border border-red-500/20">
-                          <AlertCircle className="w-10 h-10" />
+                <DialogContent className="apple-glass border-red-500/20 rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 max-w-md bg-zinc-950/95 backdrop-blur-3xl z-[10000]">
+                  <DialogHeader className="text-center space-y-4 md:space-y-6">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 mx-auto border border-red-500/20">
+                          <Trash2 className="w-8 h-8 md:w-10 md:h-10" />
                       </div>
-                      <div>
-                         <DialogTitle className="text-3xl font-black text-white italic uppercase tracking-tighter">Baja de Personal</DialogTitle>
-                         <DialogDescription className="text-red-400/60 font-black uppercase tracking-[0.4em] text-[9px] mt-4">Esta action desactivará la identidad en el nodo maestro permanentemente.</DialogDescription>
-                      </div>
+                      <DialogTitle className="text-2xl md:text-3xl font-black text-white italic uppercase tracking-tighter">Baja de Personal</DialogTitle>
                   </DialogHeader>
-                  <div className="py-10 text-center">
-                      <p className="text-sm font-bold text-[#86868b] uppercase tracking-wider leading-relaxed">
+                  <div className="py-6 md:py-10 text-center">
+                      <p className="text-xs md:text-sm font-bold text-[#86868b] uppercase tracking-wider leading-relaxed">
                          ¿Confirmar la desvinculación de: <br/> <span className="text-white text-lg italic mt-4 block">{staffToDelete?.nombre}</span>?
                       </p>
                   </div>
-                  <div className="grid grid-cols-2 gap-6">
-                      <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="h-16 rounded-[1.8rem] font-black text-[10px] uppercase tracking-widest text-[#86868b] hover:text-white">Cancelar</Button>
-                      <Button onClick={() => { handleDelete(staffToDelete.id); setIsDeleteModalOpen(false); }} className="h-16 rounded-[1.8rem] bg-red-600 text-white hover:bg-red-500 font-black text-[10px] uppercase tracking-widest shadow-2xl transition-all active:scale-95">Confirmar Baja</Button>
+                  <div className="grid grid-cols-2 gap-4 md:gap-6">
+                      <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="h-14 md:h-16 rounded-xl md:rounded-2xl font-black text-[9px] md:text-[10px] uppercase tracking-widest text-[#86868b]">Cancelar</Button>
+                      <Button onClick={() => { handleDelete(staffToDelete.id); setIsDeleteModalOpen(false); }} className="h-14 md:h-16 rounded-xl md:rounded-2xl bg-red-600 text-white hover:bg-red-500 font-black text-[9px] md:text-[10px] uppercase tracking-widest shadow-2xl transition-all active:scale-95">Confirmar</Button>
                   </div>
                 </DialogContent>
             </Dialog>

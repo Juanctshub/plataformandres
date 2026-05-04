@@ -53,6 +53,8 @@ const Justifications = () => {
     evidencia_url: ''
   });
   const [msg, setMsg] = useState({ text: '', type: '' });
+  const [editingJustification, setEditingJustification] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -94,25 +96,48 @@ const Justifications = () => {
     setSubmitting(true);
     try {
       const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
-      const res = await fetch(`${baseUrl}/api/justificaciones`, {
-        method: 'POST',
+      const url = editingJustification 
+        ? `${baseUrl}/api/justificaciones/${editingJustification.id}`
+        : `${baseUrl}/api/justificaciones`;
+      
+      const res = await fetch(url, {
+        method: editingJustification ? 'PUT' : 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(newJustification)
+        body: JSON.stringify(editingJustification || newJustification)
       });
+      
       if (res.ok) {
-        setMsg({ text: 'Certificado emitido exitosamente', type: 'success' });
+        setMsg({ 
+            text: editingJustification ? 'Certificado sincronizado' : 'Certificado emitido', 
+            type: 'success' 
+        });
         setIsAddModalOpen(false);
-        setNewJustification({ ...newJustification, comentario: '' });
+        setIsEditModalOpen(false);
+        setEditingJustification(null);
+        setNewJustification({ ...newJustification, comentario: '', estudiante_id: '' });
         fetchData();
       }
-    } catch (e) { setMsg({ text: 'Error de conexión con el núcleo', type: 'error' }); }
+    } catch (e) { setMsg({ text: 'Error de comunicación con el núcleo', type: 'error' }); }
     finally { 
         setSubmitting(false);
         setTimeout(() => setMsg({ text: '', type: '' }), 4000);
     }
+  };
+
+  const openEdit = (j) => {
+    setEditingJustification({
+      id: j.id,
+      estudiante_id: j.estudiante_id,
+      fecha: j.fecha.split('T')[0],
+      motivo: j.motivo,
+      comentario: j.comentario || '',
+      evidencia_url: j.evidencia_url || '',
+      estado: j.estado
+    });
+    setIsEditModalOpen(true);
   };
 
   const exportSinglePDF = (j) => {
@@ -169,7 +194,7 @@ const Justifications = () => {
                 Emitir certificado
               </Button>
             </DialogTrigger>
-            <DialogContent className="apple-glass border-white/10 p-6 sm:p-14 rounded-[2.5rem] sm:rounded-[3rem] w-[95vw] sm:w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] mx-auto">
+            <DialogContent className="apple-glass border-white/10 p-6 sm:p-14 rounded-[2.5rem] sm:rounded-[3rem] w-[95vw] sm:w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl mx-auto">
                <DialogHeader className="mb-8">
                   <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">Emitir Certificado</DialogTitle>
                   <DialogDescription className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-2">Registrar nueva justificación en el sistema</DialogDescription>
@@ -178,7 +203,7 @@ const Justifications = () => {
                   <div className="space-y-2">
                      <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Alumno</label>
                      <select 
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] h-14 px-6 text-sm text-white font-semibold outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none transition-all hover:bg-white/[0.05]"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] h-14 px-6 text-sm text-white font-semibold outline-none appearance-none"
                         value={newJustification.estudiante_id}
                         onChange={(e) => setNewJustification({...newJustification, estudiante_id: e.target.value})}
                         required
@@ -187,52 +212,70 @@ const Justifications = () => {
                         {students.map(s => <option key={s.id} value={s.id} className="bg-zinc-900">{s.nombre} ({s.seccion})</option>)}
                      </select>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                      <div className="space-y-2">
                         <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Fecha</label>
-                        <Input 
-                           type="date"
-                           className="h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-white text-sm font-semibold pl-6 transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
-                           value={newJustification.fecha}
-                           onChange={(e) => setNewJustification({...newJustification, fecha: e.target.value})}
-                        />
+                        <Input type="date" className="h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-white" value={newJustification.fecha} onChange={(e) => setNewJustification({...newJustification, fecha: e.target.value})} />
                      </div>
                      <div className="space-y-2">
                         <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Motivo</label>
-                        <select 
-                          className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] h-14 px-6 text-sm text-white font-semibold outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none transition-all hover:bg-white/[0.05]"
-                          value={newJustification.motivo}
-                          onChange={(e) => setNewJustification({...newJustification, motivo: e.target.value})}
-                        >
+                        <select className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] h-14 px-6 text-sm text-white font-semibold outline-none appearance-none" value={newJustification.motivo} onChange={(e) => setNewJustification({...newJustification, motivo: e.target.value})}>
                           <option value="Médico" className="bg-zinc-900">Médico</option>
                           <option value="Personal" className="bg-zinc-900">Personal</option>
                           <option value="Institucional" className="bg-zinc-900">Institucional</option>
                         </select>
                      </div>
                   </div>
-                  <div className="space-y-2">
-                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Evidencia (URL)</label>
-                     <Input 
-                        placeholder="https://..."
-                        className="h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-white text-sm font-semibold pl-6 transition-all focus:ring-1 focus:ring-blue-500/50 hover:bg-white/[0.05]"
-                        value={newJustification.evidencia_url}
-                        onChange={(e) => setNewJustification({...newJustification, evidencia_url: e.target.value})}
-                     />
-                  </div>
-                  <div className="space-y-2">
-                     <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Observación</label>
-                     <textarea 
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] p-6 text-white text-sm font-semibold outline-none focus:ring-1 focus:ring-blue-500/50 min-h-[120px] resize-none transition-all hover:bg-white/[0.05]"
-                        placeholder="Detalles adicionales..."
-                        value={newJustification.comentario}
-                        onChange={(e) => setNewJustification({...newJustification, comentario: e.target.value})}
-                     />
-                  </div>
-                  <Button type="submit" disabled={submitting} className="w-full h-14 mt-4 bg-white text-black hover:bg-zinc-200 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all shadow-xl active:scale-[0.98]">
-                     {submitting ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                     {submitting ? "Generando..." : "Emitir certificado"}
+                  <Button type="submit" disabled={submitting} className="w-full h-14 mt-4 bg-white text-black hover:bg-zinc-200 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all">
+                     {submitting ? "Procesando..." : "Emitir certificado"}
                   </Button>
                </form>
+            </DialogContent>
+          </Dialog>
+
+          {/* Edit Justification Dialog */}
+          <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+            <DialogContent className="apple-glass border-white/10 p-6 sm:p-12 rounded-[2.5rem] sm:rounded-[3rem] w-[95vw] sm:w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl mx-auto">
+               <DialogHeader className="mb-6">
+                  <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">Corregir Certificado</DialogTitle>
+                  <DialogDescription className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-2">Modificar registros existentes en el Nodo Maestro</DialogDescription>
+               </DialogHeader>
+               {editingJustification && (
+                 <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Motivo del Ajuste</label>
+                       <select 
+                          className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] h-14 px-6 text-sm text-white font-semibold outline-none appearance-none"
+                          value={editingJustification.motivo}
+                          onChange={(e) => setEditingJustification({...editingJustification, motivo: e.target.value})}
+                       >
+                          <option value="Médico" className="bg-zinc-900">Médico</option>
+                          <option value="Personal" className="bg-zinc-900">Personal</option>
+                          <option value="Institucional" className="bg-zinc-900">Institucional</option>
+                       </select>
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Nueva Fecha</label>
+                       <Input 
+                          type="date"
+                          className="h-14 bg-white/[0.03] border-white/10 rounded-[1.5rem] text-white"
+                          value={editingJustification.fecha}
+                          onChange={(e) => setEditingJustification({...editingJustification, fecha: e.target.value})}
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Comentario de Auditoría</label>
+                       <textarea 
+                          className="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] p-6 text-white text-sm font-semibold outline-none min-h-[100px] resize-none"
+                          value={editingJustification.comentario}
+                          onChange={(e) => setEditingJustification({...editingJustification, comentario: e.target.value})}
+                       />
+                    </div>
+                    <Button type="submit" disabled={submitting} className="w-full h-14 mt-4 bg-blue-600 text-white hover:bg-blue-500 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all">
+                       {submitting ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "Sincronizar cambios"}
+                    </Button>
+                 </form>
+               )}
             </DialogContent>
           </Dialog>
       </div>
@@ -321,20 +364,29 @@ const Justifications = () => {
                    )}
                 </div>
 
-                <div className="flex items-center gap-3 mt-auto">
+                <div className="flex flex-col sm:flex-row items-center gap-3 mt-auto">
                     <Button 
                         onClick={() => exportSinglePDF(j)}
                         variant="outline"
-                        className="flex-1 h-12 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/5 shadow-md transition-all"
+                        className="w-full sm:flex-1 h-12 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-transparent border-white/10 text-white/70 hover:text-white transition-all"
                     >
                         <Printer className="w-3.5 h-3.5 mr-2" />
                         Imprimir
+                    </Button>
+
+                    <Button 
+                        onClick={() => openEdit(j)}
+                        variant="outline"
+                        className="w-full sm:flex-1 h-12 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-white/5 border-white/10 text-white transition-all"
+                    >
+                        <Search className="w-3.5 h-3.5 mr-2" />
+                        Modificar
                     </Button>
                     
                     {j.estado !== 'aprobado' && (
                         <Button 
                             onClick={() => handleUpdateStatus(j.id, 'aprobado')}
-                            className="flex-1 h-12 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-emerald-600/20 hover:bg-emerald-500/30 text-emerald-400 shadow-md transition-all border border-emerald-500/20"
+                            className="w-full sm:flex-1 h-12 rounded-[2rem] text-[10px] font-black uppercase tracking-widest bg-emerald-600/20 hover:bg-emerald-500/30 text-emerald-400 transition-all border border-emerald-500/20"
                         >
                             <CheckCircle2 className="w-4 h-4 mr-2" />
                             Aprobar
@@ -345,10 +397,10 @@ const Justifications = () => {
                         <Button 
                             onClick={() => handleUpdateStatus(j.id, 'rechazado')}
                             variant="ghost"
-                            size="icon"
-                            className="h-12 w-12 rounded-[1.5rem] text-red-500 hover:text-red-400 hover:bg-red-500/10 shrink-0 border border-red-500/10 bg-red-500/5 transition-all"
+                            className="w-full sm:w-12 h-12 rounded-[1.5rem] text-red-500 hover:bg-red-500/10 border border-red-500/10 transition-all flex items-center justify-center"
                         >
                             <XCircle className="w-4 h-4" />
+                            <span className="sm:hidden ml-2 text-[10px] font-black uppercase">Rechazar</span>
                         </Button>
                     )}
                 </div>

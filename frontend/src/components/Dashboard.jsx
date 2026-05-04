@@ -196,30 +196,49 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
 
         {/* Activity Feed */}
         <motion.div variants={item}>
-          <Card className="ios-card bg-[#1c1c1e]/60 border-none h-full p-8 overflow-hidden">
-            <div className="flex items-center justify-between mb-10">
+          <Card className="ios-card bg-[#1c1c1e]/60 border-none h-full p-8 overflow-hidden relative">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-600/5 rounded-full blur-3xl" />
+            <div className="flex items-center justify-between mb-10 relative z-10">
                 <h3 className="text-2xl font-bold text-white italic tracking-tight">Historial</h3>
-                <Clock className="w-5 h-5 text-[#86868b]" />
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-[#86868b]" />
+                </div>
             </div>
-            <div className="ios-list-group bg-transparent border-none space-y-6 max-h-[300px] overflow-y-auto no-scrollbar">
+            <div className="ios-list-group bg-transparent border-none space-y-5 max-h-[340px] overflow-y-auto no-scrollbar relative z-10">
                 {stats?.recentActivity?.length > 0 ? (
                     stats.recentActivity.map((log, i) => (
-                        <div key={i} className="flex gap-5 group items-start">
-                            <div className={`mt-1.5 w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-[0_0_8px] ${
-                                log.type === 'STUDENT_REG' ? 'bg-emerald-500 shadow-emerald-500/50' :
-                                log.type === 'JUSTIFICATION' ? 'bg-amber-500 shadow-amber-500/50' :
-                                'bg-blue-500 shadow-blue-500/50'
+                        <div 
+                          key={i} 
+                          onClick={() => log.target && onTabChange(log.target)}
+                          className="flex gap-5 group items-start p-4 rounded-[1.5rem] hover:bg-white/[0.03] active:scale-[0.98] transition-all cursor-pointer border border-transparent hover:border-white/5"
+                        >
+                            <div className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 shadow-[0_0_12px] ${
+                                log.type === 'STUDENT_REG' ? 'bg-emerald-400 shadow-emerald-400/50' :
+                                log.type === 'JUSTIFICATION' ? 'bg-amber-400 shadow-amber-400/50' :
+                                log.type === 'GRADE' ? 'bg-blue-400 shadow-blue-400/50' :
+                                'bg-white/20 shadow-white/10'
                             }`} />
                             <div className="flex-1 min-w-0">
-                                <p className="text-[14px] font-bold text-white/90 truncate leading-tight mb-1">{log.event}</p>
-                                <p className="text-[10px] font-black text-[#86868b] uppercase tracking-widest">{log.time}</p>
+                                <div className="flex items-center justify-between gap-2 mb-1">
+                                  <p className="text-[14px] font-bold text-white leading-tight truncate">{log.event}</p>
+                                  <ArrowUpRight className="w-3 h-3 text-white/20 group-hover:text-white/60 transition-colors flex-shrink-0" />
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest">{log.time}</span>
+                                  {log.details && (
+                                    <>
+                                      <div className="w-1 h-1 rounded-full bg-white/10" />
+                                      <span className="text-[9px] font-bold text-white/40 uppercase tracking-tighter">{log.details}</span>
+                                    </>
+                                  )}
+                                </div>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <div className="py-20 flex flex-col items-center opacity-20">
-                        <Clock className="w-8 h-8 mb-2" />
-                        <span className="text-[10px] font-black uppercase tracking-widest">Sin Actividad</span>
+                    <div className="py-24 flex flex-col items-center opacity-10">
+                        <Clock className="w-12 h-12 mb-4" />
+                        <span className="text-[11px] font-black uppercase tracking-[0.4em]">Sincronizando...</span>
                     </div>
                 )}
             </div>
@@ -229,41 +248,57 @@ const Dashboard = ({ stats, aiData, onTabChange }) => {
 
       {/* ═══ AI Alerts ═══ */}
       <motion.div variants={item}>
-        <Card className="ios-card bg-indigo-600/5 border border-indigo-500/10 p-8 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Sparkles className="w-20 h-20 text-indigo-400" />
+        <Card className="ios-card bg-indigo-600/5 border border-indigo-500/10 p-8 sm:p-10 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
+                <Sparkles className="w-40 h-40 text-indigo-400" />
             </div>
-            <div className="flex items-center justify-between mb-10">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
-                        <Sparkles className="w-6 h-6 text-indigo-400" />
+            {/* Scanline effect */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] z-0 pointer-events-none bg-[length:100%_4px,4px_100%]" />
+            
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12 relative z-10">
+                <div className="flex items-center gap-5">
+                    <div className="w-16 h-16 rounded-[1.75rem] bg-indigo-500/20 flex items-center justify-center shadow-2xl shadow-indigo-500/20 border border-indigo-500/20">
+                        <Activity className="w-8 h-8 text-indigo-400 animate-pulse" />
                     </div>
                     <div>
-                        <h3 className="text-2xl font-bold text-white italic tracking-tight">Núcleo de Inferencia</h3>
-                        <p className="text-[11px] font-bold text-indigo-400/60 uppercase tracking-widest mt-1">Alertas IA Sincronizadas</p>
+                        <h3 className="text-3xl font-bold text-white italic tracking-tight">Núcleo de Inferencia</h3>
+                        <div className="flex items-center gap-3 mt-1.5">
+                          <span className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.25em]">Alertas IA Sincronizadas</span>
+                          <div className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-[8px] font-black text-indigo-300 uppercase tracking-widest border border-indigo-500/30">Active v3.5</div>
+                        </div>
                     </div>
                 </div>
-                <Button variant="ghost" onClick={() => onTabChange('aianalytics')} className="text-xs font-bold text-white/40 hover:text-white uppercase tracking-widest">
-                    Ver Auditoría <ChevronRight className="w-4 h-4 ml-1" />
+                <Button 
+                  variant="ghost" 
+                  onClick={() => onTabChange('aianalytics')} 
+                  className="h-12 px-8 rounded-full text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 uppercase tracking-widest border border-white/5 transition-all"
+                >
+                    Auditoría de Sistemas <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 relative z-10">
                 {aiData?.alerts?.length > 0 ? (
                     aiData.alerts.slice(0, 2).map((alert, i) => (
-                        <div key={i} className="p-5 rounded-3xl bg-white/[0.03] border border-white/5 flex items-center gap-5 hover:bg-white/[0.05] transition-colors">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                                alert.type === 'danger' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
+                        <div key={i} className="group/alert p-6 rounded-[2rem] bg-white/[0.03] border border-white/5 flex items-center gap-6 hover:bg-white/[0.06] transition-all duration-500">
+                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg transition-transform group-hover/alert:scale-110 ${
+                                alert.type === 'danger' ? 'bg-red-500/20 text-red-400 shadow-red-500/10' : 'bg-amber-500/20 text-amber-400 shadow-amber-500/10'
                             }`}>
-                                {alert.type === 'danger' ? <XCircle className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
+                                {alert.type === 'danger' ? <XCircle className="w-7 h-7" /> : <AlertTriangle className="w-7 h-7" />}
                             </div>
-                            <p className="text-[14px] font-bold text-white/80 leading-snug">{alert.msg}</p>
+                            <div className="flex-1">
+                                <p className="text-[15px] font-bold text-white/90 leading-snug mb-1">{alert.msg}</p>
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-1.5 h-1.5 rounded-full ${alert.type === 'danger' ? 'bg-red-500' : 'bg-amber-500'}`} />
+                                  <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">Protocolo de Seguridad Nivel {alert.type === 'danger' ? '4' : '2'}</span>
+                                </div>
+                            </div>
                         </div>
                     ))
                 ) : (
-                    <div className="col-span-2 py-10 flex flex-col items-center opacity-30">
-                        <ShieldCheck className="w-8 h-8 mb-2" />
-                        <span className="text-[10px] font-black uppercase tracking-widest">Sin Alertas Críticas</span>
+                    <div className="col-span-2 py-14 flex flex-col items-center opacity-20 border-2 border-dashed border-white/5 rounded-[2.5rem]">
+                        <ShieldCheck className="w-12 h-12 mb-4" />
+                        <span className="text-[11px] font-black uppercase tracking-[0.5em]">Matriz Segura • Sin Anomalías</span>
                     </div>
                 )}
             </div>

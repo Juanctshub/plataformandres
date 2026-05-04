@@ -44,6 +44,8 @@ import { Badge } from "./components/ui/badge";
 import { Button } from "./components/ui/button";
 import InstitutionalSettings from './InstitutionalSettings';
 import Finance from './Finance';
+import AppSidebar from './components/AppSidebar';
+import { SidebarProvider } from './components/ui/sidebar';
 
 import VisionAttendance from './VisionAttendance';
 import RepresentativeView from './RepresentativeView';
@@ -439,12 +441,13 @@ const AndresBelloSuite = () => {
           return r;
       };
 
+      const t = Date.now();
       const [resStd, resAi, resJust, resStaff, resAtt] = await Promise.all([
-        authedFetch(`${baseUrl}/api/estudiantes`),
-        authedFetch(`${baseUrl}/api/ai/analytics`),
-        authedFetch(`${baseUrl}/api/justificaciones`),
-        authedFetch(`${baseUrl}/api/personal`),
-        authedFetch(`${baseUrl}/api/asistencia/stats`)
+        authedFetch(`${baseUrl}/api/estudiantes?t=${t}`),
+        authedFetch(`${baseUrl}/api/ai/analytics?t=${t}`),
+        authedFetch(`${baseUrl}/api/justificaciones?t=${t}`),
+        authedFetch(`${baseUrl}/api/personal?t=${t}`),
+        authedFetch(`${baseUrl}/api/asistencia/stats?t=${t}`)
       ]);
 
       if (!resStd) return; // Already handled logout
@@ -463,6 +466,7 @@ const AndresBelloSuite = () => {
       }
       
       const stds = resStd && resStd.ok ? await resStd.json() : [];
+      console.log(`[DEBUG] Students fetched: ${stds.length}`, stds);
       const ai = resAi && resAi.ok ? await resAi.json() : { title: '', security: '', alerts: [] };
       const justs = resJust && resJust.ok ? await resJust.json() : [];
       const staffArr = resStaff && resStaff.ok ? await resStaff.json() : [];
@@ -545,157 +549,105 @@ const AndresBelloSuite = () => {
   return (
     <AnimatePresence mode="wait">
       {hasCriticalError ? (
-        <CriticalErrorScreen key="error" onRetry={() => {
-           setHasCriticalError(false);
-           setIsInitializing(true);
-           fetchData(token);
-        }} />
+        <CriticalErrorScreen key="error" onRetry={() => { setHasCriticalError(false); setIsInitializing(true); fetchData(token); }} />
       ) : isInitializing ? (
         <SplashScreen key="splash" isInitialized={!isInitializing} />
       ) : !token ? (
         <Login key="login" onLogin={handleLogin} />
       ) : (
-        <div key="app-root" className="min-h-screen bg-[#000000] text-white selection:bg-blue-500/30">
-          
-          <AnimatePresence>
-            {activeTab !== 'aichat' && (
-              <motion.header 
-                initial={{ y: -100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -100, opacity: 0 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="h-20 md:h-24 apple-glass border-b border-white/5 px-4 md:px-8 flex items-center justify-between sticky top-0 z-[80]"
-              >
-                <div className="flex items-center gap-4 md:gap-8">
-                  <div className="flex items-center gap-3 md:gap-4 group cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-                     <img src={logo} className="w-9 h-9 md:w-11 md:h-11 rounded-full shadow-lg border border-white/10 group-hover:scale-105 transition-transform object-cover" alt="Logo" />
-                     <div className="flex flex-col">
-                        <h2 className="text-xs md:text-sm font-bold tracking-tight text-white leading-none uppercase">Andrés Bello</h2>
-                        <span className="hidden md:inline text-[9px] font-bold tracking-[0.1em] text-[#86868b] uppercase mt-1">Platinum Edition</span>
-                     </div>
-                  </div>
-                  <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-5 py-2 active:scale-95 group focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">
-                     <Search className="w-3.5 h-3.5 text-[#86868b] group-focus-within:text-blue-400" />
-                     <input 
-                       type="text" 
-                       placeholder="Explorar sistema... (Enter para buscar)" 
-                       value={searchTerm}
-                       onChange={(e) => setSearchTerm(e.target.value)}
-                       onKeyDown={(e) => {
-                         if (e.key === 'Enter') {
-                           if (searchTerm.trim()) {
-                             setActiveTab('aichat');
-                           }
-                         }
-                       }}
-                       className="bg-transparent border-none outline-none text-[11px] font-medium text-white placeholder:text-[#86868b] w-48"
-                     />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 md:gap-6">
-                   <div className="relative">
-                      <button 
-                        onClick={() => setIsNotifOpen(!isNotifOpen)}
-                        className={`relative p-2.5 rounded-full hover:bg-white/5 transition-all ${isNotifOpen ? 'bg-white/10 text-white' : 'text-[#86868b]'}`}
-                      >
-                         <Bell className="w-5 h-5" />
-                         {(notifications.length > 0 || proposals.length > 0) && (
-                            <div className="absolute top-1 right-1 flex items-center justify-center">
-                              <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center animate-pulse">
-                                <span className="text-[7px] font-black text-white">{proposals.length + notifications.length}</span>
-                              </div>
-                            </div>
-                         )}
-                      </button>
-                      
-                      <AnimatePresence>
-                        {isNotifOpen && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="absolute right-0 mt-4 w-96 apple-glass border border-white/10 rounded-[1.75rem] shadow-2xl p-6 z-[100]"
-                          >
-                             <div className="flex items-center justify-between mb-6">
-                                <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">Centro de Comandos</h4>
-                                <div className="flex gap-2">
-                                  {proposals.length > 0 && (
-                                    <Badge className="bg-blue-600 text-white border-none px-2.5 py-0.5 text-[8px] font-black animate-pulse">
-                                      {proposals.length} IA
-                                    </Badge>
-                                  )}
-                                  <Badge className="bg-white/10 text-white/60 border-none px-2 py-0.5 text-[8px]">{notifications.length}</Badge>
-                                </div>
-                             </div>
-                             <div className="space-y-3 max-h-[400px] overflow-y-auto no-scrollbar">
-                                {/* AI Proposals - Priority */}
-                                {proposals.map(p => (
-                                  <div 
-                                    key={`prop-${p.id}`}
-                                    onClick={() => {
-                                      setSelectedProposal(p);
-                                      setIsNotifOpen(false);
-                                    }}
-                                    className="p-4 rounded-2xl bg-blue-600/10 border border-blue-500/20 hover:bg-blue-600/20 transition-all cursor-pointer group"
-                                  >
-                                     <div className="flex items-center gap-3 mb-2">
-                                        <div className="w-6 h-6 rounded-lg bg-blue-600 flex items-center justify-center">
-                                          <Bot className="w-3 h-3 text-white" />
-                                        </div>
-                                        <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">PROPUESTA IA</span>
-                                        <span className="text-[8px] text-blue-400/50 font-bold ml-auto">{p.type}</span>
-                                     </div>
-                                     <h5 className="text-xs font-bold text-white mb-1">{p.title}</h5>
-                                     <p className="text-[10px] text-blue-300/60 leading-tight">{(p.description || '').slice(0, 80)}...</p>
-                                     <div className="flex items-center gap-2 mt-3">
-                                       <span className="text-[8px] font-black text-blue-400 uppercase tracking-wider">Click para revisar →</span>
-                                     </div>
-                                  </div>
-                                ))}
-
-                                {proposals.length > 0 && notifications.length > 0 && (
-                                  <div className="border-t border-white/5 my-2" />
-                                )}
-
-                                {/* Regular notifications */}
-                                {notifications.filter(n => n.type !== 'ai_proposal').map(n => (
-                                  <div 
-                                    key={n.id} 
-                                    onClick={() => {
-                                      setActiveTab('aichat');
-                                      setIsNotifOpen(false);
-                                    }}
-                                    className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group"
-                                  >
-                                     <div className="flex items-center gap-3 mb-1">
-                                        <Sparkles className="w-3 h-3 text-blue-400" />
-                                        <span className="text-[9px] font-bold text-white uppercase">{n.title}</span>
-                                     </div>
-                                     <p className="text-[11px] text-[#86868b] leading-tight group-hover:text-white/80 transition-colors">{n.msg}</p>
-                                  </div>
-                                ))}
-                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                   </div>
-                   <div className="h-6 md:h-8 w-[1px] bg-white/10" />
-                   <div className="flex items-center gap-2 md:gap-4 group cursor-pointer pr-1 md:pr-2">
-                      <div className="hidden md:flex flex-col items-end">
-                        <span className="text-[11px] font-bold text-white uppercase">{user?.username || 'Admin'}</span>
-                        <span className="text-[9px] font-medium text-blue-500 tracking-widest uppercase mt-0.5">Control Maestro</span>
-                      </div>
-                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs md:text-sm">
-                        {user?.username?.substring(0, 1).toUpperCase() || 'A'}
-                      </div>
-                   </div>
-                </div>
-              </motion.header>
+        <SidebarProvider defaultOpen={!isMobile}>
+          <div key="app-root" className="flex min-h-screen bg-[#000000] text-white selection:bg-blue-500/30 w-full overflow-hidden">
+            
+            {/* Desktop Sidebar */}
+            {!isMobile && (
+              <div className="hidden lg:block border-r border-white/5 h-screen sticky top-0">
+                <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} userName={user?.username} />
+              </div>
             )}
-          </AnimatePresence>
 
-          <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 md:py-14 pb-32 md:pb-14">
+            <div className="flex-1 flex flex-col min-w-0 relative">
+              <AnimatePresence>
+                {activeTab !== 'aichat' && (
+                  <motion.header 
+                    initial={{ y: -100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -100, opacity: 0 }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="h-16 md:h-20 apple-glass border-b border-white/5 px-4 md:px-12 flex items-center justify-between sticky top-0 z-[80]"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+                         <img src={logo} className="w-8 h-8 md:w-10 md:h-10 rounded-full shadow-lg border border-white/10 group-hover:scale-105 transition-transform object-cover" alt="Logo" />
+                         <div className="flex flex-col">
+                            <h2 className="text-[11px] md:text-sm font-bold tracking-tight text-white leading-none uppercase">Andrés Bello</h2>
+                            <span className="hidden md:inline text-[8px] font-bold tracking-[0.1em] text-[#86868b] uppercase mt-1">Platinum Core v14.2</span>
+                         </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 md:gap-6">
+                       <div className="relative">
+                          <button 
+                            onClick={() => setIsNotifOpen(!isNotifOpen)}
+                            className={`relative p-2.5 rounded-full hover:bg-white/5 transition-all ${isNotifOpen ? 'bg-white/10 text-white' : 'text-[#86868b]'}`}
+                          >
+                             <Bell className="w-5 h-5" />
+                             {(notifications.length > 0 || proposals.length > 0) && (
+                                <div className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,1)]" />
+                             )}
+                          </button>
+                          
+                          <AnimatePresence>
+                            {isNotifOpen && (
+                              <motion.div 
+                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="absolute right-0 mt-4 w-[calc(100vw-2rem)] md:w-96 apple-glass border border-white/10 rounded-[2rem] shadow-2xl p-6 z-[100] max-h-[80vh] overflow-hidden"
+                                style={{ transformOrigin: 'top right' }}
+                              >
+                                 <div className="flex items-center justify-between mb-6">
+                                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#86868b]">Centro de Comandos</h4>
+                                    <div className="flex items-center gap-2">
+                                      <Badge className="bg-blue-600 text-white border-none px-2.5 py-0.5 text-[8px] font-black">{proposals.length + notifications.length}</Badge>
+                                      <button onClick={() => setIsNotifOpen(false)} className="md:hidden p-1 text-white/40"><X className="w-4 h-4" /></button>
+                                    </div>
+                                 </div>
+                                 <div className="space-y-3 max-h-[400px] overflow-y-auto no-scrollbar">
+                                    {proposals.map(p => (
+                                      <div key={`prop-${p.id}`} onClick={() => { setSelectedProposal(p); setIsNotifOpen(false); }} className="p-4 rounded-2xl bg-blue-600/10 border border-blue-500/20 hover:bg-blue-600/20 transition-all cursor-pointer">
+                                         <div className="flex items-center gap-2 mb-1">
+                                            <Bot className="w-3 h-3 text-blue-400" />
+                                            <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest">PROPUESTA IA</span>
+                                         </div>
+                                         <h5 className="text-xs font-bold text-white mb-1">{p.title}</h5>
+                                         <p className="text-[10px] text-blue-300/60 leading-tight truncate">{p.description}</p>
+                                      </div>
+                                    ))}
+                                    {notifications.filter(n => n.type !== 'ai_proposal').map(n => (
+                                      <div key={n.id} className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer">
+                                         <div className="flex items-center gap-2 mb-1">
+                                            <Sparkles className="w-3 h-3 text-white/40" />
+                                            <span className="text-[9px] font-bold text-white uppercase">{n.title}</span>
+                                         </div>
+                                         <p className="text-[11px] text-[#86868b] leading-tight">{n.msg}</p>
+                                      </div>
+                                    ))}
+                                 </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                       </div>
+                       <div className="h-6 w-[1px] bg-white/10" />
+                       <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
+                          {user?.username?.substring(0, 1).toUpperCase() || 'A'}
+                       </div>
+                    </div>
+                  </motion.header>
+                )}
+              </AnimatePresence>
+
+          <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-6 md:py-14 pb-32 md:pb-14 pt-safe">
             <ErrorBoundary key={activeTab} resetKey={activeTab}>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -704,6 +656,7 @@ const AndresBelloSuite = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="w-full overflow-x-hidden"
                 >
                   {activeTab === 'dashboard' && <Dashboard stats={stats} aiData={aiData} onTabChange={setActiveTab} />}
                   {activeTab === 'students' && <Students />}
@@ -905,20 +858,86 @@ const AndresBelloSuite = () => {
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveTab('aichat')}
-                  className="fixed bottom-28 md:bottom-24 right-6 md:right-10 w-14 h-14 md:w-16 md:h-16 apple-glass rounded-3xl flex items-center justify-center z-[90] group shadow-2xl transition-all text-blue-400"
+                  className="fixed bottom-28 md:bottom-12 right-6 md:right-12 w-14 h-14 md:w-16 md:h-16 apple-glass rounded-[2rem] flex items-center justify-center z-[90] shadow-2xl text-blue-500 border border-blue-500/20"
                 >
-                   <Sparkles className="w-6 h-6 md:w-7 md:h-7" />
-                   {!isMobile && (
-                     <div className="absolute -top-12 right-0 apple-glass px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none scale-90 group-hover:scale-100">
-                       <span className="text-[11px] whitespace-nowrap font-semibold text-white/90">Asistente IA</span>
-                     </div>
-                   )}
+                   <Bot className="w-6 h-6 md:w-8 md:h-8" />
                 </motion.button>
               </>
             )}
           </AnimatePresence>
 
-        </div>
+          <AnimatePresence>
+            {selectedProposal && (
+              <motion.div 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 md:p-10"
+                onClick={() => setSelectedProposal(null)}
+              >
+                <motion.div 
+                  initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+                  className="w-full max-w-lg apple-glass rounded-[3rem] p-8 md:p-12 border border-white/10 shadow-2xl relative"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <div className="absolute top-8 right-8">
+                     <button onClick={() => setSelectedProposal(null)} className="p-2 hover:bg-white/5 rounded-full">
+                       <X className="w-6 h-6 text-white/20" />
+                     </button>
+                  </div>
+
+                  <div className="space-y-8">
+                    <div className="flex items-center gap-4">
+                       <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center">
+                          <Cpu className="w-7 h-7 text-white" />
+                       </div>
+                       <div>
+                          <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Protocolo de Optimización</span>
+                          <h3 className="text-2xl font-bold text-white tracking-tight italic">{selectedProposal.title}</h3>
+                       </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <p className="text-[15px] text-white/70 font-medium leading-relaxed">{selectedProposal.description}</p>
+                      {selectedProposal.ai_reasoning && (
+                         <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                            <p className="text-[11px] text-white/40 italic font-medium">{selectedProposal.ai_reasoning}</p>
+                         </div>
+                      )}
+                    </div>
+
+                    {proposalResult ? (
+                      <div className={`p-6 rounded-2xl ${proposalResult.success ? 'bg-emerald-600/10 border-emerald-500/20' : 'bg-red-600/10 border-red-500/20'} border`}>
+                         <div className="flex items-center gap-3">
+                            {proposalResult.success ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <XCircle className="w-5 h-5 text-red-400" />}
+                            <span className="text-sm font-bold text-white">{proposalResult.message}</span>
+                         </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        <Button
+                          onClick={() => handleProposalDecision(selectedProposal.id, 'approved')}
+                          disabled={proposalLoading}
+                          className="h-16 bg-white text-black hover:bg-zinc-200 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-2xl"
+                        >
+                          {proposalLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Aprobar Ejecución'}
+                        </Button>
+                        <Button
+                          onClick={() => handleProposalDecision(selectedProposal.id, 'rejected')}
+                          disabled={proposalLoading}
+                          variant="ghost"
+                          className="h-14 text-white/40 hover:text-red-400 font-bold text-[11px] uppercase tracking-widest"
+                        >
+                          Rechazar Protocolo
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          </div>
+          </div>
+        </SidebarProvider>
       )}
     </AnimatePresence>
   );

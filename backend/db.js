@@ -63,7 +63,8 @@ const initDB = async () => {
         estudiante_id INTEGER REFERENCES estudiantes(id),
         fecha TEXT NOT NULL,
         estado TEXT NOT NULL,
-        observacion TEXT
+        observacion TEXT,
+        UNIQUE(estudiante_id, fecha)
       )
     `);
 

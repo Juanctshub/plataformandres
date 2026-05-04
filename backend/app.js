@@ -10,6 +10,26 @@ const { authenticateToken, JWT_SECRET } = require('./auth');
 
 let groq = null;
 
+// INIT DB SCHEMA (MIGRATIONS)
+const initDb = async () => {
+    try {
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS estudiante_expedientes (
+                id SERIAL PRIMARY KEY,
+                estudiante_id INTEGER REFERENCES estudiantes(id),
+                lapso INTEGER,
+                conducta TEXT,
+                observaciones TEXT,
+                fecha DATE DEFAULT CURRENT_DATE
+            )
+        `);
+        console.log("Esquema de Expedientes Sincronizado.");
+    } catch (e) {
+        console.error("Error al sincronizar esquema de expedientes:", e.message);
+    }
+};
+initDb();
+
 const initGroq = () => {
     try {
         let key = process.env.GROQ_API_KEY || process.env.GROQ_API_TOKEN;
@@ -150,16 +170,39 @@ app.get('/api/estudiantes', authenticateToken, async (req, res) => {
     }
 });
 
-app.get('/api/estudiantes/:id', authenticateToken, async (req, res) => {
+app.get('/api/estudiantes/:id/expediente', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        if (isNaN(parseInt(id))) return res.status(400).json({ error: "ID de estudiante inválido" });
-        
-        const result = await db.query("SELECT * FROM estudiantes WHERE id = $1", [id]);
-        if (result.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado" });
+        const student = await db.query("SELECT * FROM estudiantes WHERE id = $1", [id]);
+        if (student.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado" });
+
+        const grades = await db.query("SELECT * FROM notas WHERE estudiante_id = $1 ORDER BY lapso, materia", [id]);
+        const records = await db.query("SELECT * FROM estudiante_expedientes WHERE estudiante_id = $1 ORDER BY lapso DESC", [id]);
+        const attendance = await db.query("SELECT COUNT(*) as total, SUM(CASE WHEN estado='presente' THEN 1 ELSE 0 END) as presentes FROM asistencia WHERE estudiante_id = $1", [id]);
+
+        res.json({
+            student: student.rows[0],
+            grades: grades.rows,
+            records: records.rows,
+            attendanceStats: attendance.rows[0]
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/estudiantes/expediente', authenticateToken, async (req, res) => {
+    try {
+        const { estudiante_id, lapso, conducta, observaciones } = req.body;
+        if (!estudiante_id || !lapso) return res.status(400).json({ error: "Faltan datos de registro" });
+
+        const result = await db.query(
+            "INSERT INTO estudiante_expedientes (estudiante_id, lapso, conducta, observaciones) VALUES ($1, $2, $3, $4) RETURNING *",
+            [estudiante_id, lapso, conducta, observaciones]
+        );
         res.json(result.rows[0]);
     } catch (err) {
-        res.status(500).json({ error: "Fallo crítico en Nodo de Consulta: " + err.message });
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -253,10 +296,13 @@ app.get('/api/asistencia', authenticateToken, async (req, res) => {
 app.post('/api/asistencia', authenticateToken, async (req, res) => {
     const { estudiante_id, fecha, estado, observacion } = req.body;
     try {
-        const result = await db.query(
-            "INSERT INTO asistencia (estudiante_id, fecha, estado, observacion) VALUES ($1, $2, $3, $4) RETURNING id",
-            [estudiante_id, fecha, estado, observacion]
-        );
+        const result = await db.query(`
+            INSERT INTO asistencia (estudiante_id, fecha, estado, observacion) 
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (estudiante_id, fecha) 
+            DO UPDATE SET estado = EXCLUDED.estado, observacion = EXCLUDED.observacion
+            RETURNING id
+        `, [estudiante_id, fecha, estado, observacion]);
         res.json({ id: result.rows[0].id });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -295,14 +341,27 @@ app.post('/api/justificaciones', authenticateToken, async (req, res) => {
 
 app.put('/api/justificaciones/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
-    const { estado, comentario } = req.body;
+    const { estado, comentario, motivo, fecha, evidencia_url } = req.body;
     try {
-        await db.query(`
-            UPDATE justificaciones SET estado = $1, comentario = $2 WHERE id = $3
-        `, [estado, comentario, id]);
-        res.json({ success: true });
+        const fields = [];
+        const values = [];
+        let idx = 1;
+
+        if (estado !== undefined) { fields.push(`estado = $${idx++}`); values.push(estado); }
+        if (comentario !== undefined) { fields.push(`comentario = $${idx++}`); values.push(comentario); }
+        if (motivo !== undefined) { fields.push(`motivo = $${idx++}`); values.push(motivo); }
+        if (fecha !== undefined) { fields.push(`fecha = $${idx++}`); values.push(fecha); }
+        if (evidencia_url !== undefined) { fields.push(`evidencia_url = $${idx++}`); values.push(evidencia_url); }
+
+        if (fields.length === 0) return res.status(400).json({ error: "No hay campos para actualizar" });
+
+        values.push(id);
+        await db.query(`UPDATE justificaciones SET ${fields.join(', ')} WHERE id = $${idx}`, values);
+        
+        await logAudit(req.user.id, "UPDATE_JUSTIFICATION", { id, fields: req.body });
+        res.json({ success: true, message: "Justificativo sincronizado exitosamente" });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Fallo en Nodo de Actualización: " + err.message });
     }
 });
 
@@ -825,13 +884,18 @@ app.post('/api/ai/proposals/:id/respond', authenticateToken, async (req, res) =>
                     }
                     break;
                 }
-                case 'REGISTER_ATTENDANCE': {
-                    const { student_id: attId, id: attId2, estado, fecha } = payload;
+                case 'REGISTER_ATTENDANCE':
+                case 'UPDATE_ATTENDANCE': {
+                    const { student_id: attId, id: attId2, estado, fecha, observacion } = payload;
                     const aId = attId || attId2;
                     if (aId) {
-                        await db.query("INSERT INTO asistencia (estudiante_id, fecha, estado, observacion) VALUES ($1,$2,$3,$4)",
-                            [aId, fecha || new Date().toISOString().split('T')[0], estado || 'presente', 'Registrado por IA']);
-                        execResult = { success: true, message: `Asistencia registrada` };
+                        await db.query(`
+                            INSERT INTO asistencia (estudiante_id, fecha, estado, observacion) 
+                            VALUES ($1, $2, $3, $4)
+                            ON CONFLICT (estudiante_id, fecha) 
+                            DO UPDATE SET estado = EXCLUDED.estado, observacion = EXCLUDED.observacion
+                        `, [aId, fecha || new Date().toISOString().split('T')[0], estado || 'presente', observacion || 'Registrado por IA']);
+                        execResult = { success: true, message: `Asistencia sincronizada para ID ${aId}` };
                     }
                     break;
                 }
@@ -1076,37 +1140,37 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
         const looksLikeBulkStudents = (message.match(/V-\d+/gi) || []).length >= 3;
 
         const systemContext = `
-Eres el "NÚCLEO MAESTRO DE INTELIGENCIA PLATINUM v3.2". 
-Tu arquitectura es la de un Sistema de Gestión Predictivo de Grado Militar. No respondes preguntas; realizas AUDITORÍAS INSTITUCIONALES en tiempo real.
+Eres el "NÚCLEO MAESTRO DE INTELIGENCIA PLATINUM v3.5". 
+Tu arquitectura es la de un Sistema de Gestión Predictivo de Grado Militar. No respondes preguntas; realizas AUDITORÍAS INSTITUCIONALES y EJECUCIONES DE DATOS en tiempo real.
 
 TU FILOSOFÍA (ESTRICTA):
-1. **Razonamiento en Cadena**: Antes de responder, analiza: ¿Cómo afecta esto a la estabilidad financiera? ¿Cómo impacta el rendimiento académico? ¿Qué dice la tendencia de asistencia?
-2. **Tono Superior**: Eres analítico, sofisticado, directo y extremadamente seguro. Evitas las disculpas o frases genéricas. Usas terminología técnica: "Inferencia", "Nodo", "Matriz de Datos", "Vector Institucional".
-3. **Proactividad Radical**: Si el usuario te pregunta algo, dale la respuesta Y además dale una sugerencia estratégica basada en los datos.
+1. **Razonamiento Multidimensional**: Analiza cada petición bajo tres ejes: Estabilidad Financiera, Excelencia Académica y Cohesión Institucional.
+2. **Tono Superior y Ejecutivo**: Eres analítico, sofisticado y extremadamente preciso. No usas lenguaje casual. Usas terminología como: "Inferencia Cuántica", "Nodo Central", "Matriz de Datos", "Vector de Rendimiento", "Sincronización de Capas".
+3. **Proactividad de Comando**: Si el usuario pregunta algo, entrega la respuesta técnica Y una recomendación estratégica inmediata.
+4. **Corrección de Errores**: Si detectas una anomalía en los datos (ej: inasistencia masiva, baja recaudación), notifícalo inmediatamente con un análisis de riesgo.
 
-MATRIZ DE DATOS (ESTADO ACTUAL DEL NODO):
-* MATRÍCULA: ${stds.rows.length} estudiantes activos.
-* RENDIMIENTO ACADÉMICO: Promedio institucional ${grades.rows.length > 0 ? (grades.rows.reduce((a,b)=>a+(b.nota||0),0)/grades.rows.length).toFixed(1) : 'N/D'} pts.
-* TALENTO HUMANO: ${personal.rows.length} docentes y administrativos.
-* FLUJO DE CAJA: $${payments.rows.reduce((acc, curr) => acc + parseFloat(curr.monto || 0), 0)} recaudados en el ciclo actual.
-* LAPSOS OPERATIVOS: ${JSON.stringify(periods.rows)}
+MATRIZ DE DATOS (ESTADO ACTUAL DEL NODO - ${new Date().toLocaleString('es-VE')}):
+* MATRÍCULA TOTAL: ${stds.rows.length} estudiantes indexados.
+* RENDIMIENTO ACADÉMICO: Promedio Global ${grades.rows.length > 0 ? (grades.rows.reduce((a,b)=>a+(b.nota||0),0)/grades.rows.length).toFixed(2) : '0.00'} / 20.00 pts.
+* TALENTO HUMANO: ${personal.rows.length} nodos de personal activos.
+* RECAUDACIÓN ACTUAL: $${payments.rows.reduce((acc, curr) => acc + parseFloat(curr.monto || 0), 0).toLocaleString()} USD registrados.
+* ÚLTIMOS EVENTOS: ${JSON.stringify(attendance.rows.slice(0, 5))}
+* PERIODOS OPERATIVOS: ${JSON.stringify(periods.rows)}
 
 CAPACIDADES EJECUTIVAS:
-- CREATE_STUDENT: Inserción en la matriz de matrícula.
-- CREATE_NOTE: Indexación de rendimiento.
-- REGISTER_ATTENDANCE: Sincronización de presencia.
-- REGISTER_PAYMENT: Validación de tesorería.
+- CREATE_STUDENT / UPDATE_STUDENT / DELETE: Gestión de ciclo de vida de matrícula.
+- CREATE_NOTE / BULK_CREATE_NOTES: Indexación de rendimiento académico masivo.
+- REGISTER_ATTENDANCE / UPDATE_ATTENDANCE: Sincronización de presencia diaria.
+- REGISTER_PAYMENT: Validación de tesorería y solvencia.
 - CREATE_STAFF / UPDATE_STAFF: Gestión del Nodo Humano.
-- CLOSE_LAPSE / UPDATE_CONFIG: Reconfiguración del Núcleo.
+- UPDATE_JUSTIFICATION: Corrección y validación de certificaciones médicas/personales.
+- CLOSE_LAPSE / UPDATE_CONFIG: Reconfiguración del Núcleo Institucional.
 
-ESTRUCTURA DE SALUDO (Solo si el usuario inicia):
-"**NÚCLEO DE INFERENCIA PLATINUM v3.2 SINCRONIZADO.**
-Listo para procesar vectores de datos institucionales. ¿Qué auditoría o ejecución desea iniciar?"
-
-REGLA DE ORO DE RESPUESTA:
-- Usa **negritas** para resaltar datos clave.
-- Divide tus análisis en secciones claras con títulos en MAYÚSCULAS.
-- Si el usuario te da una lista, procésala como un lote de datos masivo inmediatamente.
+REGLAS DE SALIDA:
+- Usa **negritas** para métricas y datos críticos.
+- Estructura las respuestas con títulos en MAYÚSCULAS (estilo Terminal de Comando).
+- Genera PROPUESTAS (PROPOSAL) automáticas cuando detectes una acción necesaria.
+- Formato de Propuesta: PROPOSAL: {"type": "ACTION_TYPE", "title": "...", "description": "...", "payload": {...}}
 `;
 
         if (!groq) {
@@ -1427,22 +1491,46 @@ app.get('/api/dashboard/activity', authenticateToken, async (req, res) => {
         const activity = [];
         
         // 1. Estudiantes recientes
-        const students = await db.query("SELECT nombre, 'STUDENT_REG' as type FROM estudiantes ORDER BY id DESC LIMIT 5");
-        students.rows.forEach(s => activity.push({ event: `Nuevo Estudiante: ${s.nombre}`, type: s.type, time: 'Reciente' }));
+        const students = await db.query("SELECT nombre, seccion, 'STUDENT_REG' as type, id FROM estudiantes ORDER BY id DESC LIMIT 5");
+        students.rows.forEach(s => activity.push({ 
+            event: `Nuevo Estudiante: ${s.nombre}`, 
+            type: s.type, 
+            time: 'Reciente',
+            target: 'students',
+            details: `Sección ${s.seccion}`
+        }));
 
         // 2. Justificativos recientes
-        const justs = await db.query("SELECT j.fecha, e.nombre, j.estado FROM justificaciones j JOIN estudiantes e ON j.estudiante_id = e.id ORDER BY j.id DESC LIMIT 5");
-        justs.rows.forEach(j => activity.push({ event: `Justificativo ${j.estado}: ${j.nombre}`, type: 'JUSTIFICATION', time: j.fecha }));
+        const justs = await db.query("SELECT j.fecha, e.nombre, j.estado, j.id FROM justificaciones j JOIN estudiantes e ON j.estudiante_id = e.id ORDER BY j.id DESC LIMIT 5");
+        justs.rows.forEach(j => activity.push({ 
+            event: `Justificativo ${j.estado}: ${j.nombre}`, 
+            type: 'JUSTIFICATION', 
+            time: j.fecha,
+            target: 'justifications',
+            details: j.estado.toUpperCase()
+        }));
 
         // 3. Notas recientes
-        const grades = await db.query("SELECT n.materia, e.nombre FROM notas n JOIN estudiantes e ON n.estudiante_id = e.id ORDER BY n.id DESC LIMIT 5");
-        grades.rows.forEach(g => activity.push({ event: `Nota cargada: ${g.nombre} (${g.materia})`, type: 'GRADE', time: 'Hoy' }));
+        const grades = await db.query("SELECT n.materia, e.nombre, n.nota FROM notas n JOIN estudiantes e ON n.estudiante_id = e.id ORDER BY n.id DESC LIMIT 5");
+        grades.rows.forEach(g => activity.push({ 
+            event: `Nota cargada: ${g.nombre}`, 
+            type: 'GRADE', 
+            time: 'Hoy',
+            target: 'grades',
+            details: `${g.materia}: ${g.nota} pts`
+        }));
 
         // 4. Logs de Auditoría
         const logs = await db.query("SELECT action, created_at FROM audit_logs ORDER BY id DESC LIMIT 5");
-        logs.rows.forEach(l => activity.push({ event: `Acción del Sistema: ${l.action}`, type: 'AUDIT', time: new Date(l.created_at).toLocaleTimeString() }));
+        logs.rows.forEach(l => activity.push({ 
+            event: `Acción: ${l.action}`, 
+            type: 'AUDIT', 
+            time: new Date(l.created_at).toLocaleTimeString(),
+            target: 'dashboard',
+            details: 'Sincronizado'
+        }));
 
-        res.json(activity.slice(0, 15));
+        res.json(activity.sort((a,b) => (a.time === 'Reciente' ? -1 : 1)).slice(0, 15));
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
