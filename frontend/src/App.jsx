@@ -44,8 +44,6 @@ import { Badge } from "./components/ui/badge";
 import { Button } from "./components/ui/button";
 import InstitutionalSettings from './InstitutionalSettings';
 import Finance from './Finance';
-import AppSidebar from './components/AppSidebar';
-import { SidebarProvider } from './components/ui/sidebar';
 
 import VisionAttendance from './VisionAttendance';
 import RepresentativeView from './RepresentativeView';
@@ -555,16 +553,8 @@ const AndresBelloSuite = () => {
       ) : !token ? (
         <Login key="login" onLogin={handleLogin} />
       ) : (
-        <SidebarProvider defaultOpen={!isMobile}>
           <div key="app-root" className="flex min-h-screen bg-[#000000] text-white selection:bg-blue-500/30 w-full overflow-hidden">
             
-            {/* Desktop Sidebar */}
-            {!isMobile && (
-              <div className="hidden lg:block border-r border-white/5 h-screen sticky top-0">
-                <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} userName={user?.username} />
-              </div>
-            )}
-
             <div className="flex-1 flex flex-col min-w-0 relative">
               <AnimatePresence>
                 {activeTab !== 'aichat' && (
@@ -937,7 +927,6 @@ const AndresBelloSuite = () => {
           </AnimatePresence>
           </div>
           </div>
-        </SidebarProvider>
       )}
     </AnimatePresence>
   );
