@@ -163,7 +163,8 @@ const Justifications = () => {
 
   const filteredJustifications = Array.isArray(justifications) ? justifications.filter(j => 
     ((j.nombre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
-     (j.motivo?.toLowerCase() || '').includes(searchTerm.toLowerCase())) &&
+     (j.motivo?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+     (j.seccion?.toLowerCase() || '').includes(searchTerm.toLowerCase())) &&
     (activeFilter === 'Todos' || j.estado === activeFilter.toLowerCase())
   ) : [];
 
@@ -178,7 +179,7 @@ const Justifications = () => {
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-6xl mx-auto py-6 sm:py-12 space-y-6 px-4 sm:px-6"
+      className="max-w-screen-2xl mx-auto py-8 md:py-24 space-y-12 md:space-y-20 px-6 md:px-16"
     >
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">

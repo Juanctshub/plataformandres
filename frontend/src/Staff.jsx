@@ -70,7 +70,9 @@ const Staff = () => {
     }, []);
 
     const filteredStaff = Array.isArray(staff) ? staff.filter(s => 
-        (s.nombre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) &&
+        ((s.nombre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+         (s.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+         (s.rol?.toLowerCase() || '').includes(searchTerm.toLowerCase())) &&
         (activeRole === 'Todos' || s.rol === activeRole)
     ) : [];
 
@@ -136,7 +138,7 @@ const Staff = () => {
     );
 
     return (
-        <div className="max-w-7xl mx-auto py-6 md:py-16 space-y-10 md:space-y-24 px-4 md:px-12">
+        <div className="max-w-screen-2xl mx-auto py-8 md:py-24 space-y-12 md:space-y-24 px-6 md:px-16">
             {/* Header: Human Talent Hub */}
             <div className="flex flex-col gap-8 md:gap-16">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -256,7 +258,7 @@ const Staff = () => {
             </div>
 
             {/* Staff Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-12 pb-24 md:pb-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-8 md:gap-14 pb-32 md:pb-0">
                <AnimatePresence mode="popLayout">
                   {filteredStaff.length > 0 ? (
                     filteredStaff.map((s, i) => (

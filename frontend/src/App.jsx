@@ -593,7 +593,7 @@ const AndresBelloSuite = () => {
                                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
-                                className="absolute right-0 mt-4 w-[calc(100vw-2rem)] md:w-96 apple-glass border border-white/10 rounded-[2rem] shadow-2xl p-6 z-[100] max-h-[80vh] overflow-hidden"
+                                className="fixed md:absolute left-4 right-4 md:left-auto md:right-0 mt-4 md:w-96 apple-glass border border-white/10 rounded-[2.5rem] shadow-2xl p-8 z-[100] max-h-[80vh] overflow-hidden"
                                 style={{ transformOrigin: 'top right' }}
                               >
                                  <div className="flex items-center justify-between mb-6">

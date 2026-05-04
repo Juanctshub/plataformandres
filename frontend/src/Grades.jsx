@@ -139,7 +139,7 @@ const Grades = () => {
             variants={container}
             initial="hidden"
             animate="show"
-            className="max-w-6xl mx-auto py-8 sm:py-14 space-y-10 px-5 sm:px-10"
+            className="max-w-screen-2xl mx-auto py-8 md:py-24 space-y-12 md:space-y-20 px-6 md:px-16"
         >
             {/* Header */}
             <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
@@ -172,75 +172,74 @@ const Grades = () => {
                 ))}
             </motion.div>
 
-            {/* Filters */}
-            <motion.div variants={item} className="space-y-6">
-                <div className="relative group w-full">
+            <motion.div variants={item} className="flex flex-col xl:flex-row gap-8">
+                <div className="relative group flex-1">
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
                     <Input 
-                        placeholder="Buscar por alumno o materia..." 
-                        className="h-14 pl-16 bg-[#1c1c1e]/60 border-none rounded-2xl text-white font-bold transition-all focus:ring-1 focus:ring-blue-500/50 text-[15px]"
+                        placeholder="Buscar por alumno, materia o identidad..." 
+                        className="h-20 pl-16 bg-[#1c1c1e] border border-white/5 rounded-[2rem] text-white font-black transition-all focus:ring-2 focus:ring-blue-500/20 text-[17px] shadow-2xl italic placeholder:text-white/5"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
                 
-                <div className="space-y-4">
-                    <div className="flex flex-col gap-2">
-                        <span className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Año Escolar</span>
-                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-                            {years.map(y => (
-                                <button
-                                    key={y}
-                                    onClick={() => setYearFilter(y)}
-                                    className={`px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                                        yearFilter === y 
-                                        ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
-                                        : 'bg-white/5 text-[#86868b] hover:text-white'
-                                    }`}
-                                >
-                                    {y === 'Todas' ? 'Todas' : `${y} Año`}
-                                </button>
-                            ))}
-                        </div>
+                <div className="flex flex-col md:flex-row gap-4">
+                    <div className="bg-white/[0.02] p-2 rounded-[2.5rem] border border-white/5 flex gap-2 overflow-x-auto no-scrollbar">
+                        {years.map(y => (
+                            <button
+                                key={y}
+                                onClick={() => setYearFilter(y)}
+                                className={`px-8 py-4 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                                    yearFilter === y 
+                                    ? 'bg-white text-black shadow-2xl scale-[1.05]' 
+                                    : 'text-[#86868b] hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                {y === 'Todas' ? 'Matrícula Global' : `${y} Año`}
+                            </button>
+                        ))}
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                        <span className="text-[9px] font-black text-[#86868b] uppercase tracking-[0.2em] ml-2">Sección Académica</span>
-                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-                            {sections.map(s => (
-                                <button
-                                    key={s}
-                                    onClick={() => setSectionFilter(s)}
-                                    className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                                        sectionFilter === s 
-                                        ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
-                                        : 'bg-white/5 text-[#86868b] hover:text-white'
-                                    }`}
-                                >
-                                    {s === 'Todas' ? 'Todas' : `Sección ${s}`}
-                                </button>
-                            ))}
-                        </div>
+                    <div className="bg-white/[0.02] p-2 rounded-[2.5rem] border border-white/5 flex gap-2 overflow-x-auto no-scrollbar">
+                        {sections.map(s => (
+                            <button
+                                key={s}
+                                onClick={() => setSectionFilter(s)}
+                                className={`px-10 py-4 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                                    sectionFilter === s 
+                                    ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/30 scale-[1.05]' 
+                                    : 'text-[#86868b] hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                {s === 'Todas' ? 'Todas' : `Secc ${s}`}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </motion.div>
 
             {/* List */}
-            <motion.div variants={item} className="ios-list-group space-y-3">
+            <motion.div variants={item} className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-8 pb-32">
                 {filteredGrades.map((g, i) => (
-                    <div key={g.id || i} className="ios-list-item flex items-center justify-between group">
-                        <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-[14px] ${
-                                (g.nota || g.grade) >= 10 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
+                    <div key={g.id || i} className="ios-card group p-8 md:p-10 hover:bg-white/[0.05] transition-all border-white/5 flex items-center justify-between rounded-[3rem] shadow-2xl">
+                        <div className="flex items-center gap-8">
+                            <div className={`w-20 h-20 md:w-24 md:h-24 rounded-[2.5rem] flex items-center justify-center font-black text-2xl md:text-3xl shadow-inner ${
+                                (parseFloat(g.nota || g.grade) || 0) >= 10 ? 'bg-emerald-500/10 text-emerald-400 shadow-emerald-500/10' : 'bg-red-500/10 text-red-400 shadow-red-500/10'
                             }`}>
                                 {g.nota || g.grade}
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[15px] font-bold text-white truncate">{g.student || g.nombre}</p>
-                                <p className="text-[11px] font-bold text-[#86868b] uppercase tracking-wider">{g.subject || g.materia} • Lapso {g.lapso}</p>
+                                <p className="text-[20px] md:text-[24px] font-black text-white truncate italic tracking-tighter leading-none mb-3">{g.student || g.nombre}</p>
+                                <div className="flex items-center gap-4">
+                                    <span className="text-[11px] md:text-[12px] font-black text-[#86868b] uppercase tracking-[0.2em]">{g.subject || g.materia}</span>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+                                    <span className="text-[11px] md:text-[12px] font-bold text-blue-500 uppercase tracking-widest">LAPSO {g.lapso}</span>
+                                </div>
                             </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-[#86868b]/30" />
+                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                            <ChevronRight className="w-6 h-6 text-white" />
+                        </div>
                     </div>
                 ))}
                 {filteredGrades.length === 0 && (
