@@ -83,6 +83,14 @@ const Students = () => {
 
   useEffect(() => { fetchStudents(); }, []);
 
+  // Pagination State (Point 13)
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterSection]);
+
   const filteredStudents = Array.isArray(students) ? students.filter(s => 
     ((s.nombre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
      (s.cedula || '').includes(searchTerm) ||
@@ -90,7 +98,17 @@ const Students = () => {
     (filterSection === 'Todas' || (s.seccion || '').includes(filterSection))
   ) : [];
 
-  const sections = ['Todas', ...new Set((Array.isArray(students) ? students : []).map(s => s.seccion).filter(Boolean))];
+  const sections = ['Todas', ...new Set((Array.isArray(students) ? students : []).map(s => s.seccion).filter(Boolean))].sort((a, b) => {
+    if (a === 'Todas') return -1;
+    if (b === 'Todas') return 1;
+    return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+  });
+
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+  const paginatedStudents = filteredStudents.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
@@ -171,7 +189,7 @@ const Students = () => {
             <div className="relative group max-w-3xl mx-auto w-full">
                 <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
                 <Input 
-                    placeholder="Buscar identidad por nombre o CI..." 
+                    placeholder="Buscar por Nombre o Cédula (C.I.)..." 
                     className="h-14 md:h-18 pl-16 bg-white/[0.03] border-white/5 rounded-2xl md:rounded-[2rem] text-white font-bold transition-all focus:ring-1 focus:ring-blue-500/30 text-[15px] md:text-[17px] shadow-inner placeholder:text-white/5"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -193,10 +211,9 @@ const Students = () => {
                 ))}
             </div>
         </motion.div>
-
         {/* Grid */}
-        <motion.div variants={item} className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-10 pb-32">
-            {filteredStudents.map((s, i) => (
+        <motion.div variants={item} className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-10 pb-10">
+            {paginatedStudents.map((s, i) => (
                 <motion.div 
                     key={s.id}
                     initial={{ opacity: 0, y: 15 }}
@@ -224,13 +241,13 @@ const Students = () => {
                                onClick={() => setSelectedStudentForExpediente(s)}
                                className="h-16 px-10 rounded-[1.5rem] bg-blue-600 text-white hover:bg-blue-500 transition-all text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-blue-600/30 active:scale-95"
                             >
-                               EXPEDIENTE
+                                EXPEDIENTE
                             </Button>
                             <Button 
                                onClick={() => { setStudentToDelete(s); setIsDeleteModalOpen(true); }}
                                className="h-16 w-16 rounded-[1.5rem] bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all p-0 flex-shrink-0 opacity-0 group-hover:opacity-100 shadow-xl"
                             >
-                               <Trash2 className="w-6 h-6" />
+                                <Trash2 className="w-6 h-6" />
                             </Button>
                         </div>
                     </div>
@@ -246,6 +263,33 @@ const Students = () => {
                 </div>
             )}
         </motion.div>
+
+        {/* Pagination Controls (Point 13) */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between bg-[#1c1c1e]/60 border border-white/5 px-6 py-4 rounded-[2rem] mt-4 mb-20">
+            <span className="text-[11px] font-bold text-[#86868b] uppercase tracking-wider">
+              Página {currentPage} de {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                className="h-10 rounded-xl px-4 text-[11px] font-bold text-white border-white/10 hover:bg-white/5"
+              >
+                Anterior
+              </Button>
+              <Button
+                variant="outline"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                className="h-10 rounded-xl px-4 text-[11px] font-bold text-white border-white/10 hover:bg-white/5"
+              >
+                Siguiente
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Admission Modal - Mobile Sheet */}
         <AnimatePresence>

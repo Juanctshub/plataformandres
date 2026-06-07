@@ -47,8 +47,7 @@ const Login = ({ onLogin }) => {
             const data = await res.json();
             
             if (res.ok) {
-                setMsg({ text: 'Identidad Validada', type: 'success' });
-                setTimeout(() => onLogin(data), 1200);
+                onLogin(data);
             } else {
                 setMsg({ text: data.error || 'Acceso Denegado', type: 'error' });
                 setIsAuthenticating(false);
@@ -151,7 +150,7 @@ const Login = ({ onLogin }) => {
                             <div className="flex items-center justify-center gap-3">
                                 <div className="h-px w-4 bg-white/10" />
                                 <p className="text-[11px] font-black text-[#86868b] uppercase tracking-[0.3em]">
-                                    {view === 'login' ? 'Nodo Andrés Bello' : 'Sincronización ID'}
+                                    {view === 'login' ? 'Plataforma Andrés Bello' : 'Registro de Cuenta'}
                                 </p>
                                 <div className="h-px w-4 bg-white/10" />
                             </div>
@@ -222,7 +221,7 @@ const Login = ({ onLogin }) => {
                                         <div className="h-px bg-white/5 mx-5" />
                                         <input 
                                             type="password"
-                                            placeholder="Contraseña de Nodo"
+                                            placeholder="Contraseña"
                                             className="w-full h-16 bg-transparent px-6 text-[17px] focus:outline-none font-bold text-white"
                                             value={signupData.password}
                                             onChange={e => setSignupData({...signupData, password: e.target.value})}

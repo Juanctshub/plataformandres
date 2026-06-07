@@ -90,12 +90,12 @@ const AIChatView = ({ onClose, onRefresh }) => {
               setTimeout(onRefresh, 1000);
             }
         } else {
-            throw new Error(data.error || 'Error de enlace con el Núcleo');
+            throw new Error(data.error || 'Error de enlace con la Inteligencia Artificial');
         }
     } catch (e) {
         setMessages(prev => [...prev, { 
             role: 'assistant', 
-            content: "⚠️ **FALLO DE NODO**: El motor de inferencia no responde. Verifique el enlace de datos.",
+            content: "⚠️ **FALLO DE CONEXIÓN**: El motor de IA no responde. Verifique el enlace de datos.",
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }]);
     } finally {

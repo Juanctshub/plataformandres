@@ -53,6 +53,15 @@ const Grades = () => {
     const fileInputRef = useRef(null);
 
     const [newGrade, setNewGrade] = useState({ estudiante_id: '', materia: '', nota: '', lapso: '1' });
+    const [allowedSubjects, setAllowedSubjects] = useState([]);
+
+    // Pagination State (Point 13)
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, yearFilter, sectionFilter]);
 
     const container = {
         hidden: { opacity: 0 },
@@ -68,14 +77,21 @@ const Grades = () => {
             const token = localStorage.getItem('token');
             const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/_/backend';
             const headers = { 'Authorization': `Bearer ${token}` };
-            const [resG, resS] = await Promise.all([
+            const [resG, resS, resM] = await Promise.all([
                 fetch(`${baseUrl}/api/notas`, { headers }),
-                fetch(`${baseUrl}/api/estudiantes`, { headers })
+                fetch(`${baseUrl}/api/estudiantes`, { headers }),
+                fetch(`${baseUrl}/api/docente/materias`, { headers })
             ]);
             const gData = await resG.json();
             const sData = await resS.json();
+            const mData = await resM.json();
             setGrades(Array.isArray(gData) ? gData : []);
             setStudents(Array.isArray(sData) ? sData : []);
+            const subjectsList = Array.isArray(mData) ? mData : [];
+            setAllowedSubjects(subjectsList);
+            if (subjectsList.length > 0) {
+                setNewGrade(prev => ({ ...prev, materia: subjectsList[0] }));
+            }
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
     };
@@ -86,15 +102,23 @@ const Grades = () => {
         const studentName = g.student || g.nombre || '';
         const subjectName = g.subject || g.materia || '';
         const sectionName = g.seccion || '';
+        const studentCedula = g.cedula || '';
         
         const matchesSearch = studentName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             subjectName.toLowerCase().includes(searchTerm.toLowerCase());
+                             subjectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             studentCedula.toLowerCase().includes(searchTerm.toLowerCase());
         
         const matchesYear = yearFilter === 'Todas' || sectionName.startsWith(yearFilter);
         const matchesSection = sectionFilter === 'Todas' || sectionName.endsWith(sectionFilter);
         
         return matchesSearch && matchesYear && matchesSection;
     }) : [];
+
+    const totalPages = Math.ceil(filteredGrades.length / itemsPerPage);
+    const paginatedGrades = filteredGrades.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     const years = ['Todas', '1', '2', '3', '4', '5'];
     const sections = ['Todas', 'A', 'B', 'C'];
@@ -176,7 +200,7 @@ const Grades = () => {
                 <div className="relative group flex-1">
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] group-focus-within:text-blue-500 transition-colors" />
                     <Input 
-                        placeholder="Buscar por alumno, materia o identidad..." 
+                        placeholder="Buscar por Alumno, Cédula (C.I.) o Materia..." 
                         className="h-20 pl-16 bg-[#1c1c1e] border border-white/5 rounded-[2rem] text-white font-black transition-all focus:ring-2 focus:ring-blue-500/20 text-[17px] shadow-2xl italic placeholder:text-white/5"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -219,8 +243,8 @@ const Grades = () => {
             </motion.div>
 
             {/* List */}
-            <motion.div variants={item} className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-8 pb-32">
-                {filteredGrades.map((g, i) => (
+            <motion.div variants={item} className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-8 pb-10">
+                {paginatedGrades.map((g, i) => (
                     <div key={g.id || i} className="ios-card group p-8 md:p-10 hover:bg-white/[0.05] transition-all border-white/5 flex items-center justify-between rounded-[3rem] shadow-2xl">
                         <div className="flex items-center gap-8">
                             <div className={`w-20 h-20 md:w-24 md:h-24 rounded-[2.5rem] flex items-center justify-center font-black text-2xl md:text-3xl shadow-inner ${
@@ -243,12 +267,39 @@ const Grades = () => {
                     </div>
                 ))}
                 {filteredGrades.length === 0 && (
-                    <div className="py-20 flex flex-col items-center opacity-20">
+                    <div className="py-20 flex flex-col items-center opacity-20 col-span-full">
                         <GraduationCap className="w-12 h-12 mb-4" />
                         <p className="text-[11px] font-black uppercase tracking-widest">Sin registros académicos</p>
                     </div>
                 )}
             </motion.div>
+
+            {/* Pagination Controls (Point 13) */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between bg-[#1c1c1e]/60 border border-white/5 px-6 py-4 rounded-[2rem] mt-4 mb-20">
+                <span className="text-[11px] font-bold text-[#86868b] uppercase tracking-wider">
+                  Página {currentPage} de {totalPages}
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    className="h-10 rounded-xl px-4 text-[11px] font-bold text-white border-white/10 hover:bg-white/5"
+                  >
+                    Anterior
+                  </Button>
+                  <Button
+                    variant="outline"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    className="h-10 rounded-xl px-4 text-[11px] font-bold text-white border-white/10 hover:bg-white/5"
+                  >
+                    Siguiente
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Registrar Modal */}
             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
@@ -277,13 +328,26 @@ const Grades = () => {
                         </div>
                         <div className="space-y-3">
                             <label className="text-[10px] font-black text-[#86868b] uppercase tracking-widest pl-2">Materia</label>
-                            <Input 
-                                placeholder="Ej: Física"
-                                className="h-14 bg-[#1c1c1e] border-none rounded-2xl text-white font-bold"
+                            <select 
+                                className="w-full bg-[#1c1c1e] border border-white/5 rounded-2xl h-14 px-6 text-[15px] text-white font-bold outline-none focus:ring-1 focus:ring-blue-500/50 appearance-none cursor-pointer"
                                 value={newGrade.materia}
                                 onChange={(e) => setNewGrade({...newGrade, materia: e.target.value})}
                                 required
-                            />
+                                style={{
+                                    backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>")`,
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundPosition: 'right 16px center',
+                                    backgroundSize: '16px'
+                                }}
+                            >
+                                {allowedSubjects.length === 0 ? (
+                                    <option value="" className="bg-zinc-900">Sin materias asignadas</option>
+                                ) : (
+                                    allowedSubjects.map((sub, idx) => (
+                                        <option key={idx} value={sub} className="bg-zinc-900">{sub}</option>
+                                    ))
+                                )}
+                            </select>
                         </div>
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-3">

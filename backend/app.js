@@ -280,13 +280,38 @@ app.get('/api/public/estudiante/:cedula', async (req, res) => {
 });
 
 // ASISTENCIA (Pase de Lista)
+// ASISTENCIA (Pase de Lista)
 app.get('/api/asistencia', authenticateToken, async (req, res) => {
+    const { seccion, start_date, end_date } = req.query;
     try {
-        const result = await db.query(`
-            SELECT a.id, e.nombre, e.seccion, a.fecha, a.estado, a.observacion 
+        let queryStr = `
+            SELECT a.id, a.estudiante_id, e.nombre, e.seccion, a.fecha, a.estado, a.observacion 
             FROM asistencia a 
             JOIN estudiantes e ON a.estudiante_id = e.id
-        `);
+            WHERE 1=1
+        `;
+        const params = [];
+        let paramIndex = 1;
+
+        if (seccion && seccion !== 'Todas') {
+            queryStr += ` AND e.seccion = $${paramIndex}`;
+            params.push(seccion);
+            paramIndex++;
+        }
+        if (start_date) {
+            queryStr += ` AND a.fecha >= $${paramIndex}`;
+            params.push(start_date);
+            paramIndex++;
+        }
+        if (end_date) {
+            queryStr += ` AND a.fecha <= $${paramIndex}`;
+            params.push(end_date);
+            paramIndex++;
+        }
+
+        queryStr += ` ORDER BY a.fecha DESC, e.nombre ASC`;
+
+        const result = await db.query(queryStr, params);
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -296,6 +321,12 @@ app.get('/api/asistencia', authenticateToken, async (req, res) => {
 app.post('/api/asistencia', authenticateToken, async (req, res) => {
     const { estudiante_id, fecha, estado, observacion } = req.body;
     try {
+        // First check if there is an existing record to see if it's an update (modification)
+        const existingResult = await db.query(
+            "SELECT estado FROM asistencia WHERE estudiante_id = $1 AND fecha = $2",
+            [estudiante_id, fecha]
+        );
+        
         const result = await db.query(`
             INSERT INTO asistencia (estudiante_id, fecha, estado, observacion) 
             VALUES ($1, $2, $3, $4)
@@ -303,6 +334,29 @@ app.post('/api/asistencia', authenticateToken, async (req, res) => {
             DO UPDATE SET estado = EXCLUDED.estado, observacion = EXCLUDED.observacion
             RETURNING id
         `, [estudiante_id, fecha, estado, observacion]);
+
+        // Audit logging (Point 11)
+        if (existingResult.rows.length > 0) {
+            const oldEstado = existingResult.rows[0].estado;
+            if (oldEstado !== estado) {
+                // It was modified!
+                await logAudit(req.user.id, "UPDATE_ATTENDANCE", { 
+                    estudiante_id, 
+                    fecha, 
+                    old_status: oldEstado, 
+                    new_status: estado,
+                    is_past_date: fecha !== new Date().toISOString().split('T')[0]
+                });
+            }
+        } else {
+            // New attendance registered
+            await logAudit(req.user.id, "CREATE_ATTENDANCE", { 
+                estudiante_id, 
+                fecha, 
+                status: estado 
+            });
+        }
+
         res.json({ id: result.rows[0].id });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -369,7 +423,7 @@ app.put('/api/justificaciones/:id', authenticateToken, async (req, res) => {
 app.get('/api/notas', authenticateToken, async (req, res) => {
     try {
         const result = await db.query(`
-            SELECT n.id, n.estudiante_id, e.nombre as student, e.seccion, n.materia as subject, n.nota as grade, n.lapso, n.fecha
+            SELECT n.id, n.estudiante_id, e.nombre as student, e.cedula, e.seccion, n.materia as subject, n.nota as grade, n.lapso, n.fecha
             FROM notas n
             JOIN estudiantes e ON n.estudiante_id = e.id
             ORDER BY n.fecha DESC
@@ -383,6 +437,17 @@ app.get('/api/notas', authenticateToken, async (req, res) => {
 app.post('/api/notas', authenticateToken, async (req, res) => {
     const { estudiante_id, materia, nota, lapso, fecha } = req.body;
     try {
+        // Enforce docente-materia mapping (Point 2)
+        if (req.user.role === 'docente') {
+            const check = await db.query(
+                "SELECT 1 FROM docente_materias WHERE usuario_id = $1 AND LOWER(TRIM(materia)) = LOWER(TRIM($2))",
+                [req.user.id, materia]
+            );
+            if (check.rows.length === 0) {
+                return res.status(403).json({ error: "No tiene autorización para registrar notas en esta materia." });
+            }
+        }
+
         const result = await db.query(`
             INSERT INTO notas (estudiante_id, materia, nota, lapso, fecha)
             VALUES ($1, $2, $3, $4, $5) RETURNING id
@@ -555,6 +620,77 @@ app.post('/api/ai/vision/attendance', authenticateToken, async (req, res) => {
     }
 });
 
+// DOCENTE MATERIAS (Point 2)
+app.get('/api/docente/materias', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role === 'admin') {
+            const defaultSubjects = ['Matemáticas', 'Física', 'Química', 'Biología', 'Castellano', 'Inglés', 'Historia', 'Geografía'];
+            const dbSubjects = await db.query("SELECT DISTINCT materia FROM notas");
+            const dbHorarios = await db.query("SELECT DISTINCT materia FROM horarios");
+            const allSubjects = new Set([
+                ...defaultSubjects,
+                ...dbSubjects.rows.map(r => r.materia.trim()),
+                ...dbHorarios.rows.map(r => r.materia.trim())
+            ]);
+            return res.json(Array.from(allSubjects));
+        } else {
+            const result = await db.query("SELECT materia FROM docente_materias WHERE usuario_id = $1", [req.user.id]);
+            const materias = result.rows.map(r => r.materia.trim());
+            if (materias.length === 0) {
+                return res.json(['Física', 'Biología', 'Química', 'Matemáticas']);
+            }
+            return res.json(materias);
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// HISTORIAL DE CAMBIOS DE ASISTENCIA (Point 11)
+app.get('/api/audit/asistencia', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT a.id, a.action, a.details, a.created_at, u.username as user_name
+            FROM audit_logs a
+            JOIN usuarios u ON a.user_id = u.id
+            WHERE a.action IN ('UPDATE_ATTENDANCE', 'CREATE_ATTENDANCE')
+            ORDER BY a.created_at DESC
+        `);
+        const parsedRows = result.rows.map(row => {
+            let parsedDetails = {};
+            try {
+                parsedDetails = typeof row.details === 'string' ? JSON.parse(row.details) : row.details;
+            } catch (e) {
+                parsedDetails = { raw: row.details };
+            }
+            return {
+                id: row.id,
+                action: row.action,
+                details: parsedDetails,
+                created_at: row.created_at,
+                username: row.user_name
+            };
+        });
+        
+        const studentIds = parsedRows.map(r => r.details.estudiante_id).filter(Boolean);
+        if (studentIds.length > 0) {
+            const stdRes = await db.query("SELECT id, nombre FROM estudiantes WHERE id = ANY($1)", [studentIds]);
+            const stdMap = {};
+            stdRes.rows.forEach(s => {
+                stdMap[s.id] = s.nombre;
+            });
+            parsedRows.forEach(r => {
+                if (r.details.estudiante_id) {
+                    r.studentName = stdMap[r.details.estudiante_id] || `Estudiante #${r.details.estudiante_id}`;
+                }
+            });
+        }
+        res.json(parsedRows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // CONFIGURACIONES (Ajustes Institucionales Persistentes)
 app.get('/api/config', authenticateToken, async (req, res) => {
     try {
@@ -629,9 +765,25 @@ app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
     try {
         const total = await db.query("SELECT COUNT(*) as count FROM asistencia");
         const present = await db.query("SELECT COUNT(*) as count FROM asistencia WHERE estado = 'presente'");
-        const totalCount = parseInt(total.rows[0].count);
-        const presentCount = parseInt(present.rows[0].count);
-        const percentage = totalCount > 0 ? ((presentCount / totalCount) * 100).toFixed(1) + '%' : 'Sin datos';
+        const totalCount = parseInt(total.rows[0].count || 0);
+        const presentCount = parseInt(present.rows[0].count || 0);
+        const percentage = totalCount > 0 ? ((presentCount / totalCount) * 100).toFixed(1) + '%' : '0%';
+
+        // Get latest date with records (Point 1)
+        const latestDateResult = await db.query("SELECT MAX(fecha) as max_fecha FROM asistencia");
+        const latestDate = latestDateResult.rows[0].max_fecha;
+
+        let todayPresentCount = 0;
+        let todayAbsentCount = 0;
+
+        if (latestDate) {
+            const presentToday = await db.query("SELECT COUNT(*) as count FROM asistencia WHERE fecha = $1 AND estado = 'presente'", [latestDate]);
+            const absentToday = await db.query("SELECT COUNT(*) as count FROM asistencia WHERE fecha = $1 AND (estado = 'ausente' OR estado = 'retirado' OR estado = 'inasistente')", [latestDate]);
+            todayPresentCount = parseInt(presentToday.rows[0].count || 0);
+            todayAbsentCount = parseInt(absentToday.rows[0].count || 0);
+        }
+
+        // Get last 5 school days for weekly trend (Point 16)
         const weeklyData = await db.query(`
             SELECT fecha, 
                    COUNT(*) as total_dia, 
@@ -639,20 +791,47 @@ app.get('/api/asistencia/stats', authenticateToken, async (req, res) => {
             FROM asistencia 
             GROUP BY fecha 
             ORDER BY fecha DESC 
-            LIMIT 5
+            LIMIT 15
         `);
         
-        const trend = weeklyData.rows.reverse().map(r => {
-            const d = new Date(r.fecha);
-            const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-            const dayName = days[d.getUTCDay()];
-            return {
-                day: dayName,
-                value: r.total_dia > 0 ? Math.round((parseInt(r.presentes) / parseInt(r.total_dia)) * 100) : 0
-            };
+        const existingData = {};
+        weeklyData.rows.forEach(r => {
+            existingData[r.fecha] = r;
         });
 
-        res.json({ percentage, total: totalCount, present: presentCount, weeklyTrend: trend });
+        const trend = [];
+        const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+        
+        let currentDate = latestDate ? new Date(latestDate + 'T12:00:00') : new Date();
+        let daysAdded = 0;
+        let safetyLimit = 30;
+        
+        while (daysAdded < 5 && safetyLimit > 0) {
+            safetyLimit--;
+            const dateStr = currentDate.toISOString().split('T')[0];
+            const dayOfWeek = currentDate.getDay();
+            
+            // Only school days: Monday to Friday
+            if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                const dayName = days[dayOfWeek];
+                const r = existingData[dateStr];
+                trend.unshift({
+                    day: dayName,
+                    value: r && parseInt(r.total_dia) > 0 ? Math.round((parseInt(r.presentes) / parseInt(r.total_dia)) * 100) : 0
+                });
+                daysAdded++;
+            }
+            currentDate.setDate(currentDate.getDate() - 1);
+        }
+
+        res.json({ 
+            percentage, 
+            total: totalCount, 
+            present: presentCount, 
+            todayPresent: todayPresentCount,
+            todayAbsent: todayAbsentCount,
+            weeklyTrend: trend 
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

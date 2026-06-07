@@ -94,7 +94,7 @@ const Staff = () => {
             const data = await res.json();
             
             if (res.ok) {
-                setMsg({ text: 'Personal registrado en el Nodo Maestro', type: 'success' });
+                setMsg({ text: 'Personal registrado en el Servidor Principal', type: 'success' });
                 setIsAddModalOpen(false);
                 setNewStaff({ nombre: '', rol: 'Docente', email: '', contacto: '' });
                 fetchStaff();
@@ -171,7 +171,7 @@ const Staff = () => {
                                      <User className="w-6 h-6 md:w-10 md:h-10" />
                                   </div>
                                    <DialogTitle className="text-2xl md:text-4xl font-bold text-white tracking-tighter text-center md:text-left">Nuevo Registro</DialogTitle>
-                                   <DialogDescription className="text-[10px] md:text-xs font-bold text-[#86868b] uppercase tracking-widest mt-2 text-center md:text-left">Validación de Identidad en Nodo Maestro</DialogDescription>
+                                   <DialogDescription className="text-[10px] md:text-xs font-bold text-[#86868b] uppercase tracking-widest mt-2 text-center md:text-left">Validación de Identidad en Servidor Principal</DialogDescription>
                                </DialogHeader>
                                <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 relative z-10">
                                   <div className="space-y-2 group">
@@ -324,7 +324,7 @@ const Staff = () => {
                        <Bot className="w-12 h-12 md:w-20 md:h-20 text-white/5 mx-auto" />
                        <div className="space-y-2">
                           <h3 className="text-xl md:text-3xl font-black text-white italic uppercase tracking-tighter">Sin Resultados</h3>
-                          <p className="text-[10px] md:text-xs text-[#86868b] font-bold uppercase tracking-widest">El nodo no detectó identidades bajo este parámetro.</p>
+                          <p className="text-[10px] md:text-xs text-[#86868b] font-bold uppercase tracking-widest">El sistema no detectó registros bajo este parámetro.</p>
                        </div>
                     </motion.div>
                   )}

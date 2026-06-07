@@ -28,7 +28,9 @@ import {
   Zap,
   MessageSquare,
   Scan,
-  TrendingUp
+  TrendingUp,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 import Login from './Login';
@@ -303,9 +305,9 @@ const CriticalErrorScreen = ({ onRetry }) => (
      <div className="w-20 h-20 rounded-3xl bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500 mb-8">
         <AlertCircle className="w-10 h-10" />
      </div>
-     <h2 className="text-3xl font-bold text-white tracking-tight text-center uppercase mb-4">Error Crítico de Núcleo</h2>
+     <h2 className="text-3xl font-bold text-white tracking-tight text-center uppercase mb-4">Error Crítico del Servidor</h2>
      <p className="text-sm text-[#86868b] font-medium text-center max-w-sm mb-12 leading-relaxed">
-        El Nodo Maestro no ha respondido en el intervalo asignado. Verifique su red institucional o el estado del servidor.
+        El Servidor Central no ha respondido en el intervalo asignado. Verifique su red institucional o el estado del servidor.
      </p>
      <Button 
        onClick={onRetry}
@@ -347,6 +349,17 @@ const AndresBelloSuite = () => {
   const [notifications, setNotifications] = useState([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'light') {
+      root.classList.add('light');
+    } else {
+      root.classList.remove('light');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -576,6 +589,13 @@ const AndresBelloSuite = () => {
                     </div>
 
                     <div className="flex items-center gap-3 md:gap-6">
+                       <button 
+                         onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+                         className="p-2.5 rounded-full hover:bg-white/5 transition-all text-[#86868b] hover:text-white"
+                         title={theme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}
+                       >
+                          {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+                       </button>
                        <div className="relative">
                           <button 
                             onClick={() => setIsNotifOpen(!isNotifOpen)}

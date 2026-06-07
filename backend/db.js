@@ -152,6 +152,38 @@ const initDB = async () => {
       await client.query("INSERT INTO lapsos (lapso, estado) VALUES ($1, 'abierto') ON CONFLICT DO NOTHING", [l]);
     }
 
+    // 12. Tabla de Materias por Docente (Point 2)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS docente_materias (
+        id SERIAL PRIMARY KEY,
+        usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+        materia TEXT NOT NULL,
+        UNIQUE(usuario_id, materia)
+      )
+    `);
+
+    // Seed docente_materias
+    const docMaterias = [
+      { username: 'luciana1.', materias: ['Física', 'Matemáticas'] },
+      { username: 'franchox', materias: ['Matemáticas', 'Castellano'] },
+      { username: 'Lorenzo', materias: ['Física', 'Química'] },
+      { username: 'aaa', materias: ['Biología'] },
+      { username: 'Al', materias: ['Química'] },
+      { username: 'lucianasant', materias: ['Biología', 'Química'] },
+      { username: 'Aa', materias: ['Matemáticas', 'Física'] },
+      { username: 'ana cristina', materias: ['Química', 'Biología'] },
+    ];
+
+    for (const dm of docMaterias) {
+      const uRes = await client.query("SELECT id FROM usuarios WHERE username = $1", [dm.username]);
+      if (uRes.rows.length > 0) {
+        const uId = uRes.rows[0].id;
+        for (const mat of dm.materias) {
+          await client.query("INSERT INTO docente_materias (usuario_id, materia) VALUES ($1, $2) ON CONFLICT DO NOTHING", [uId, mat]);
+        }
+      }
+    }
+
     console.log('Connected to Neon Postgres and all professional tables initialized.');
   } catch (err) {
     console.error('Error initializing Postgres:', err.message);

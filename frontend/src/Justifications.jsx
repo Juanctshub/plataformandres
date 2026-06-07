@@ -239,7 +239,7 @@ const Justifications = () => {
             <DialogContent className="apple-glass border-white/10 p-6 sm:p-12 rounded-[2.5rem] sm:rounded-[3rem] w-[95vw] sm:w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl mx-auto">
                <DialogHeader className="mb-6">
                   <DialogTitle className="text-3xl font-bold text-white tracking-tight italic">Corregir Certificado</DialogTitle>
-                  <DialogDescription className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-2">Modificar registros existentes en el Nodo Maestro</DialogDescription>
+                  <DialogDescription className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.2em] mt-2">Modificar registros existentes en el Servidor Central</DialogDescription>
                </DialogHeader>
                {editingJustification && (
                  <form onSubmit={handleSubmit} className="space-y-5">
