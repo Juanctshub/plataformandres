@@ -21,10 +21,21 @@ import { Input } from "./components/ui/input";
 import { Badge } from "./components/ui/badge";
 
 const StudentExpediente = ({ student, onClose }) => {
+    const currentYearNum = parseInt(student.seccion?.charAt(0) || '1');
+    const allowedYears = [];
+    for (let i = 1; i <= currentYearNum; i++) {
+        allowedYears.push(`${i} Año`);
+    }
+
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
-    const [newRecord, setNewRecord] = useState({ lapso: 1, conducta: 'Excelente', observaciones: '' });
+    const [newRecord, setNewRecord] = useState({ 
+        lapso: 1, 
+        conducta: 'Excelente', 
+        observaciones: '',
+        año_academico: `${currentYearNum} Año`
+    });
     const [submitting, setSubmitting] = useState(false);
     const [msg, setMsg] = useState({ text: '', type: '' });
 
@@ -64,7 +75,7 @@ const StudentExpediente = ({ student, onClose }) => {
             if (res.ok) {
                 setMsg({ text: 'Expediente actualizado', type: 'success' });
                 setIsAdding(false);
-                setNewRecord({ lapso: 1, conducta: 'Excelente', observaciones: '' });
+                setNewRecord({ lapso: 1, conducta: 'Excelente', observaciones: '', año_academico: `${currentYearNum} Año` });
                 fetchExpediente();
             }
         } catch (e) {
@@ -202,7 +213,7 @@ const StudentExpediente = ({ student, onClose }) => {
                                 {data?.records.map((r, i) => (
                                     <div key={i} className="ios-card p-6 bg-white/[0.02] border-white/5 space-y-4 group hover:bg-white/[0.04] transition-all">
                                         <div className="flex items-center justify-between">
-                                            <Badge className="bg-white/5 text-[#86868b] border-none px-3 font-black text-[8px] uppercase">{r.lapso} LAPSO</Badge>
+                                            <Badge className="bg-white/5 text-[#86868b] border-none px-3 font-black text-[8px] uppercase">{r.año_academico ? `${r.año_academico} • ` : ''}{r.lapso} LAPSO</Badge>
                                             <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">{r.conducta}</span>
                                         </div>
                                         <p className="text-xs text-white/60 leading-relaxed italic">"{r.observaciones}"</p>
@@ -240,13 +251,37 @@ const StudentExpediente = ({ student, onClose }) => {
                             </div>
 
                             <form onSubmit={handleSubmitRecord} className="max-w-2xl space-y-8">
-                                <div className="grid grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="space-y-3">
+                                        <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-2">Año Académico</label>
+                                        <select 
+                                            className="w-full h-16 bg-white/[0.03] border border-white/10 rounded-2xl px-6 text-sm text-white font-bold outline-none appearance-none cursor-pointer"
+                                            value={newRecord.año_academico}
+                                            onChange={(e) => setNewRecord({...newRecord, año_academico: e.target.value})}
+                                            style={{
+                                                backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>")`,
+                                                backgroundRepeat: 'no-repeat',
+                                                backgroundPosition: 'right 16px center',
+                                                backgroundSize: '16px'
+                                            }}
+                                        >
+                                            {allowedYears.map((y, idx) => (
+                                                <option key={idx} value={y} className="bg-zinc-950">{y}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                     <div className="space-y-3">
                                         <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-2">Lapso Escolar</label>
                                         <select 
-                                            className="w-full h-16 bg-white/[0.03] border border-white/10 rounded-2xl px-6 text-sm text-white font-bold outline-none appearance-none"
+                                            className="w-full h-16 bg-white/[0.03] border border-white/10 rounded-2xl px-6 text-sm text-white font-bold outline-none appearance-none cursor-pointer"
                                             value={newRecord.lapso}
-                                            onChange={(e) => setNewRecord({...newRecord, lapso: e.target.value})}
+                                            onChange={(e) => setNewRecord({...newRecord, lapso: parseInt(e.target.value)})}
+                                            style={{
+                                                backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>")`,
+                                                backgroundRepeat: 'no-repeat',
+                                                backgroundPosition: 'right 16px center',
+                                                backgroundSize: '16px'
+                                            }}
                                         >
                                             <option value="1" className="bg-zinc-950">1er Lapso</option>
                                             <option value="2" className="bg-zinc-950">2do Lapso</option>
@@ -256,9 +291,15 @@ const StudentExpediente = ({ student, onClose }) => {
                                     <div className="space-y-3">
                                         <label className="text-[9px] font-black text-[#86868b] uppercase tracking-widest pl-2">Conducta Global</label>
                                         <select 
-                                            className="w-full h-16 bg-white/[0.03] border border-white/10 rounded-2xl px-6 text-sm text-white font-bold outline-none appearance-none"
+                                            className="w-full h-16 bg-white/[0.03] border border-white/10 rounded-2xl px-6 text-sm text-white font-bold outline-none appearance-none cursor-pointer"
                                             value={newRecord.conducta}
                                             onChange={(e) => setNewRecord({...newRecord, conducta: e.target.value})}
+                                            style={{
+                                                backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>")`,
+                                                backgroundRepeat: 'no-repeat',
+                                                backgroundPosition: 'right 16px center',
+                                                backgroundSize: '16px'
+                                            }}
                                         >
                                             <option value="Excelente" className="bg-zinc-950">Excelente</option>
                                             <option value="Positivo" className="bg-zinc-950">Positivo</option>

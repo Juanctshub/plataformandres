@@ -307,7 +307,7 @@ const IAAnalytics = () => {
                         <h4 className="text-lg font-semibold text-white tracking-tight">Estado Cluster</h4>
                      </div>
                      <p className="text-xs text-[#86868b] leading-relaxed font-medium">
-                        El núcleo de inferencia está procesando 42 sets de datos secundarios. Estabilidad del sistema: 99.98%.
+                         El Asistente Escolar IA está procesando 42 sets de datos secundarios. Estabilidad del sistema: 99.98%.
                      </p>
                      <div className="mt-8 flex items-center justify-between opacity-40">
                         <span className="text-[10px] font-bold uppercase tracking-widest">Master Root</span>

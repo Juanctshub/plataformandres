@@ -20,10 +20,24 @@ const initDb = async () => {
                 lapso INTEGER,
                 conducta TEXT,
                 observaciones TEXT,
-                fecha DATE DEFAULT CURRENT_DATE
+                fecha DATE DEFAULT CURRENT_DATE,
+                año_academico TEXT
             )
         `);
-        console.log("Esquema de Expedientes Sincronizado.");
+        await db.query("ALTER TABLE estudiante_expedientes ADD COLUMN IF NOT EXISTS año_academico TEXT");
+        await db.query(`
+            UPDATE estudiante_expedientes ee
+            SET año_academico = COALESCE(
+                (
+                    SELECT CONCAT(SUBSTRING(e.seccion FROM 1 FOR 1), ' Año')
+                    FROM estudiantes e
+                    WHERE e.id = ee.estudiante_id
+                ),
+                '1 Año'
+            )
+            WHERE ee.año_academico IS NULL OR ee.año_academico = ''
+        `);
+        console.log("Esquema de Expedientes Sincronizado y campos retroalimentados.");
     } catch (e) {
         console.error("Error al sincronizar esquema de expedientes:", e.message);
     }
@@ -40,7 +54,7 @@ const initGroq = () => {
             console.log("Nucleo Groq Llama 3.3 Sincronizado (Token Platinum Sanitizado).");
         }
         else {
-            console.warn("ADVERTENCIA: GROQ_API_KEY no detectada. El núcleo de inferencia estará inactivo.");
+            console.warn("ADVERTENCIA: GROQ_API_KEY no detectada. El Asistente Escolar IA estará inactivo.");
         }
     } catch (e) {
         return false;
@@ -77,6 +91,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // LOGIN
 app.post('/api/login', async (req, res) => {
@@ -94,7 +109,7 @@ app.post('/api/login', async (req, res) => {
         );
         const user = result.rows[0];
 
-        if (!user) return res.status(401).json({ error: "Identidad no registrada en el Nodo Maestro" });
+        if (!user) return res.status(401).json({ error: "Identidad no registrada en el Servidor Central" });
 
         const validPass = await bcrypt.compare(cleanPassword, user.password);
         if (!validPass) return res.status(401).json({ error: "Llave de encriptación incorrecta" });
@@ -126,7 +141,7 @@ app.post('/api/register', async (req, res) => {
         res.json({ success: true, message: "Identidad validada y sincronizada" });
     } catch (err) {
         if (err.message.includes('unique')) return res.status(400).json({ error: "Esta identidad o correo ya existe en el sistema" });
-        res.status(500).json({ error: "Error en el registro del nodo: " + err.message });
+        res.status(500).json({ error: "Error en el registro del servidor: " + err.message });
     }
 });
 
@@ -142,14 +157,14 @@ app.post('/api/recover', async (req, res) => {
     }, 1500);
 });
 
-// BIO-AUTENTICACIÓN (Nodo de Validación)
+// BIO-AUTENTICACIÓN (Servidor de Validación)
 app.post('/api/bio-auth', async (req, res) => {
     try {
         const userResult = await db.query("SELECT id, username, role FROM usuarios WHERE username = 'admin'");
         const user = userResult.rows[0];
-        if (!user) throw new Error("Nodo Administrador no encontrado");
+        if (!user) throw new Error("Usuario Administrador no encontrado");
         const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '48h' });
-        res.json({ success: true, message: "Acceso Biométrico Validado en Nodo Seguro", token, user: { username: user.username, role: user.role } });
+        res.json({ success: true, message: "Acceso Biométrico Validado en Servidor Seguro", token, user: { username: user.username, role: user.role } });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -177,7 +192,7 @@ app.get('/api/estudiantes/:id/expediente', authenticateToken, async (req, res) =
         if (student.rows.length === 0) return res.status(404).json({ error: "Estudiante no encontrado" });
 
         const grades = await db.query("SELECT * FROM notas WHERE estudiante_id = $1 ORDER BY lapso, materia", [id]);
-        const records = await db.query("SELECT * FROM estudiante_expedientes WHERE estudiante_id = $1 ORDER BY lapso DESC", [id]);
+        const records = await db.query("SELECT * FROM estudiante_expedientes WHERE estudiante_id = $1 ORDER BY COALESCE(año_academico, '') DESC, lapso DESC", [id]);
         const attendance = await db.query("SELECT COUNT(*) as total, SUM(CASE WHEN estado='presente' THEN 1 ELSE 0 END) as presentes FROM asistencia WHERE estudiante_id = $1", [id]);
 
         res.json({
@@ -193,12 +208,12 @@ app.get('/api/estudiantes/:id/expediente', authenticateToken, async (req, res) =
 
 app.post('/api/estudiantes/expediente', authenticateToken, async (req, res) => {
     try {
-        const { estudiante_id, lapso, conducta, observaciones } = req.body;
+        const { estudiante_id, lapso, conducta, observaciones, año_academico } = req.body;
         if (!estudiante_id || !lapso) return res.status(400).json({ error: "Faltan datos de registro" });
 
         const result = await db.query(
-            "INSERT INTO estudiante_expedientes (estudiante_id, lapso, conducta, observaciones) VALUES ($1, $2, $3, $4) RETURNING *",
-            [estudiante_id, lapso, conducta, observaciones]
+            "INSERT INTO estudiante_expedientes (estudiante_id, lapso, conducta, observaciones, año_academico) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+            [estudiante_id, lapso, conducta, observaciones, año_academico || '']
         );
         res.json(result.rows[0]);
     } catch (err) {
@@ -240,7 +255,7 @@ app.post('/api/estudiantes', authenticateToken, async (req, res) => {
         res.json({ success: true, message: "Estudiante inscrito correctamente" });
     } catch (err) {
         console.error("[STUDENT_REG_ERROR]", err.message);
-        if (err.message.includes('unique')) return res.status(400).json({ error: "La cédula ya está registrada en el Nodo Maestro" });
+        if (err.message.includes('unique')) return res.status(400).json({ error: "La cédula ya está registrada en el Servidor Central" });
         res.status(500).json({ error: "Fallo en la sincronización de matrícula: " + err.message });
     }
 });
@@ -415,7 +430,7 @@ app.put('/api/justificaciones/:id', authenticateToken, async (req, res) => {
         await logAudit(req.user.id, "UPDATE_JUSTIFICATION", { id, fields: req.body });
         res.json({ success: true, message: "Justificativo sincronizado exitosamente" });
     } catch (err) {
-        res.status(500).json({ error: "Fallo en Nodo de Actualización: " + err.message });
+        res.status(500).json({ error: "Fallo en Servidor de Actualización: " + err.message });
     }
 });
 
@@ -1236,11 +1251,31 @@ app.get('/api/notifications', authenticateToken, async (req, res) => {
             });
         }
         
-        // 4. System status
+        // 4. Students exceeding the absence limit (>= 3 absences)
+        const criticalAbsences = await db.query(`
+            SELECT e.id, e.nombre, e.seccion, COUNT(a.id) as absences
+            FROM asistencia a
+            JOIN estudiantes e ON a.estudiante_id = e.id
+            WHERE a.estado IN ('ausente', 'retirado', 'inasistente')
+            GROUP BY e.id, e.nombre, e.seccion
+            HAVING COUNT(a.id) >= 3
+            ORDER BY absences DESC
+        `);
+        criticalAbsences.rows.forEach(student => {
+            notifications.push({
+                id: `absent-limit-${student.id}`,
+                type: 'warning',
+                title: 'Alerta de Inasistencia',
+                msg: `El estudiante ${student.nombre} (${student.seccion}) ha acumulado ${student.absences} inasistencias.`,
+                time: new Date()
+            });
+        });
+
+        // 5. System status
         const totalStudents = await db.query("SELECT COUNT(*) as count FROM estudiantes");
         notifications.push({
             id: 'sys-1', type: 'system',
-            title: 'Estado del Nodo',
+            title: 'Estado del Servidor',
             msg: `${totalStudents.rows[0].count} estudiante(s). Sistema operativo.`
         });
         
@@ -1353,7 +1388,7 @@ REGLAS DE SALIDA:
 `;
 
         if (!groq) {
-            return res.status(503).json({ error: "El núcleo de inferencia Groq no está configurado." });
+            return res.status(503).json({ error: "El Asistente Escolar IA no está configurado." });
         }
 
         // If user is pasting a bulk list of students, handle it directly
@@ -1610,7 +1645,7 @@ REGLAS DE SALIDA:
         });
     } catch (err) {
         console.error("Groq Error:", err);
-        res.status(500).json({ error: "Fallo en el núcleo de inferencia Groq" });
+        res.status(500).json({ error: "Fallo en el Asistente Escolar IA" });
     }
 });
 
@@ -1713,6 +1748,13 @@ app.get('/api/dashboard/activity', authenticateToken, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+
+
+// Wildcard fallback to serve the frontend for React path routing
+app.get(/^(?!\/api).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 app.listen(PORT, () => {

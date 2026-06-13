@@ -137,7 +137,7 @@ const InstitutionalSettings = () => {
           entries.push({ event: `Última nota registrada: ${lastNote.student} - ${lastNote.subject}: ${lastNote.grade}`, user: 'Docente', time: lastNote.fecha || 'Reciente', color: 'bg-indigo-500' });
         }
 
-        entries.push({ event: `${students.length} estudiantes en matrícula activa`, user: 'Nodo Maestro', time: new Date().toLocaleDateString(), color: 'bg-blue-500' });
+        entries.push({ event: `${students.length} estudiantes en matrícula activa`, user: 'Servidor Central', time: new Date().toLocaleDateString(), color: 'bg-blue-500' });
         entries.push({ event: `${notas.length} calificaciones registradas en total`, user: 'Sistema Académico', time: 'Acumulado', color: 'bg-emerald-500' });
         entries.push({ event: 'Configuración del sistema cargada', user: 'Admin Root', time: 'Sesión actual', color: 'bg-blue-500' });
         entries.push({ event: 'Sincronización con Neon PostgreSQL activa', user: 'Cloud SQL', time: 'Permanente', color: 'bg-emerald-500' });
@@ -387,7 +387,7 @@ const InstitutionalSettings = () => {
                                </div>
 
                                <div className="space-y-8">
-                                  <h4 className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.4em] pl-4 italic">Arquitectura del Nodo</h4>
+                                  <h4 className="text-[10px] font-black text-[#86868b] uppercase tracking-[0.4em] pl-4 italic">Arquitectura del Servidor</h4>
                                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                      {[
                                         { label: 'Base de Datos', status: 'Sincronizado', icon: Database, color: 'text-emerald-400' },

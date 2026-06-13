@@ -34,7 +34,7 @@ const AIChatView = ({ onClose, onRefresh }) => {
     setMessages([
       { 
         role: 'assistant', 
-        content: "NÚCLEO MAESTRO v3.5 Sincronizado.\n\nHe indexado la base de datos institucional. Estoy preparado para procesar consultas ejecutivas o ejecutar protocolos de auditoría en tiempo real.\n\n**¿Qué vector de datos desea analizar hoy?**",
+        content: "Asistente Escolar IA v3.5 Sincronizado.\n\nHe indexado la base de datos institucional. Estoy preparado para procesar consultas ejecutivas o ejecutar protocolos de auditoría en tiempo real.\n\n**¿Qué vector de datos desea analizar hoy?**",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);

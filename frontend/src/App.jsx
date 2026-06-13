@@ -543,7 +543,7 @@ const AndresBelloSuite = () => {
 
   const handleLogin = (data) => {
     if (!data.token) {
-        console.error("Error: Token no recibido del Nodo Maestro");
+        console.error("Error: Token no recibido del Servidor Central");
         return;
     }
     localStorage.setItem('token', data.token);
@@ -634,15 +634,22 @@ const AndresBelloSuite = () => {
                                          <p className="text-[10px] text-blue-300/60 leading-tight truncate">{p.description}</p>
                                       </div>
                                     ))}
-                                    {notifications.filter(n => n.type !== 'ai_proposal').map(n => (
-                                      <div key={n.id} className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer">
-                                         <div className="flex items-center gap-2 mb-1">
-                                            <Sparkles className="w-3 h-3 text-white/40" />
-                                            <span className="text-[9px] font-bold text-white uppercase">{n.title}</span>
-                                         </div>
-                                         <p className="text-[11px] text-[#86868b] leading-tight">{n.msg}</p>
-                                      </div>
-                                    ))}
+                                    {notifications.filter(n => n.type !== 'ai_proposal').map(n => {
+                                      const isWarning = n.type === 'warning' || n.type === 'danger' || n.id?.startsWith('absent-');
+                                      const IconComponent = isWarning ? AlertCircle : Sparkles;
+                                      const iconColor = isWarning ? "text-amber-400 animate-pulse" : "text-white/40";
+                                      const cardBg = isWarning ? "bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20" : "bg-white/5 border-white/5 hover:bg-white/10";
+                                      const titleColor = isWarning ? "text-amber-400" : "text-white";
+                                      return (
+                                        <div key={n.id} className={`p-4 rounded-2xl border transition-all cursor-pointer ${cardBg}`}>
+                                           <div className="flex items-center gap-2 mb-1">
+                                              <IconComponent className={`w-3 h-3 ${iconColor}`} />
+                                              <span className={`text-[9px] font-bold uppercase ${titleColor}`}>{n.title}</span>
+                                           </div>
+                                           <p className="text-[11px] text-[#86868b] leading-tight">{n.msg}</p>
+                                        </div>
+                                      );
+                                    })}
                                  </div>
                               </motion.div>
                             )}
